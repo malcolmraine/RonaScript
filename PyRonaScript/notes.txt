@@ -1,0 +1,22 @@
+Questions:
+    - Will this be a stack or register based VM?
+    - What declaration qualifiers will be allowed?
+    - How will automatic garbage collection be handled?
+    -
+
+
+GENERAL NOTES:
+    - Everything is classified as a 'scope'. What this means is that
+
+    - Need functions to check for different conditions so that doesnt need
+        to be done in the main parsing functions
+            * check for function call
+            * check for literal
+            * check for id
+            * etc
+
+PARSER NOTES:
+    - Each handler function will return a subtree which can be added to the
+        parent tree of the calling function
+
+    - The main parser function will only assemble the created subtrees

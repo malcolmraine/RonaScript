@@ -1,0 +1,24 @@
+
+
+/*
+ * FUTURE FEATURE IDEAS
+ */
+
+
+// Built-in range limiting with saturation
+int(0, 10)          // integer type limited to 0-10 range
+float(0.0, 0.99)    // float type limited to 0.0-0.99 range
+
+
+// List type enforcement
+list(int)       // List restricted to integer members only
+list(string)    // List restricted to string members only
+
+
+// Type and identifier aliasing
+alias IntU8_t is int(0,255);        // IntU8_t is an alias for a range limited int
+alias Name_t is string;             // Name_t is an alias for the string type
+alias Gpa_t is float(0.0, 4.0)      // Gpa_t is an alias for a range limited float
+
+var x: int = 0;     // Declaring x
+alias new_x is x;   // Creating an alias, new_x, for x

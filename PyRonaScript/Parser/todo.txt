@@ -1,0 +1,6 @@
+
+
+EXPRESSIONS:
+    - function calls
+    - class property accessors
+    - class method calls
