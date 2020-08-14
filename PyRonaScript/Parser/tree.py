@@ -31,7 +31,7 @@ from .ast_nodes import Scope
 
 class Tree(object):
     def __init__(self):
-        self.root = Scope()
+        self.root = None
 
 
 
