@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-File: Lexer.py
+File: lexer.py
 Description:
 Author: Malcolm Hall
 Version: 1
@@ -26,7 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from Token import Token, TokenType, token_sets
+from token import Token, TokenType, token_sets
 from cpp_helpers import *
 from .lexer_base import LexerBase
 
@@ -35,7 +35,7 @@ from .lexer_base import LexerBase
 FILE FORMATS:
     - *.rn Source code file
     - *.rnc Compiled byte code file
-        * running a byte code file will skip the Lexer, Parser, and code generation stages, 
+        * running a byte code file will skip the lexer, parser, and code generation stages, 
             jumping directly to the runtime stage
 HANDLERS:
     - string literals
@@ -87,9 +87,9 @@ class Lexer(LexerBase):
         """
         Verifies token formatting, pushes onto token stack, and returns the token.
 
-        :param token: Token to be emitted.
+        :param token: token to be emitted.
         :param n: Number of buffer advancements to make.
-        :return: Token
+        :return: token
         """
         self.tok_str = ""
         self.adv_buf(n)
@@ -120,7 +120,7 @@ class Lexer(LexerBase):
         Handles reserved word emission.
 
         :param lexeme: word to be emitted as a token.
-        :return: Token
+        :return: token
         """
         return self.emit(lexeme, 0)
 
@@ -129,7 +129,7 @@ class Lexer(LexerBase):
         Default emission handler.
 
         :param c: character
-        :return: Token
+        :return: token
         """
         if self.tok_str == "":
             return self.emit(c)
@@ -141,7 +141,7 @@ class Lexer(LexerBase):
         Comment emission handler.
 
         :param c: character
-        :return: Token
+        :return: token
         """
         if self.tok_str == "":
             if self.peek() == "/":
@@ -164,7 +164,7 @@ class Lexer(LexerBase):
         Handles compound tokens, other than reserved words or identifiers.
 
         :param c: character
-        :return: Token
+        :return: token
         """
         if self.tok_str == "":
             if self.is_cmpnd():
@@ -184,7 +184,7 @@ class Lexer(LexerBase):
         Handles the emission of string literals.
 
         :param c: 
-        :return: Token
+        :return: token
         """
         if self.tok_str == "":
             self.tok_str += c
@@ -203,7 +203,7 @@ class Lexer(LexerBase):
         """
         Main lexing function.
 
-        :return: Token
+        :return: token
         """
         while not self.eof:
             if self.current() == " ":

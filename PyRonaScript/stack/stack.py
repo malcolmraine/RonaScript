@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 File: stack.py
-Description: Stack implementation such that the object store is protected.
+Description: stack implementation such that the object store is protected.
 Author: Malcolm Hall
 Version: 1
 

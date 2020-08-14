@@ -28,9 +28,9 @@ SOFTWARE.
 
 import difflib
 
-from Lexer import Lexer
-from Parser.ast_nodes import *
-from Parser import parser
+from lexer import Lexer
+from parser.ast_nodes import *
+from parser import Parser
 
 lex = Lexer()
 lex.load_file("example.rn")
@@ -38,7 +38,7 @@ lex.load_tokens()
 # while not lex.eof:
 #     lex.get_token()
 
-p = parser.Parser()
+p = Parser()
 p.token_buf = lex.tokens
 p.parse()
 

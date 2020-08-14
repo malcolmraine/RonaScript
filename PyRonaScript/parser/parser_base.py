@@ -26,7 +26,7 @@ SOFTWARE.
 """
 
 from .tree import Tree
-from Token.tokens import Token
+from token.tokens import Token
 
 
 class ParserBase(object):
@@ -52,7 +52,7 @@ class ParserBase(object):
         """
         Gets the last token in the buffer.
 
-        :return: Token object
+        :return: token object
         """
         if self.token_idx > 0:
             return self.token_buf[self.token_idx - 1]
@@ -63,7 +63,7 @@ class ParserBase(object):
         """
         Gets the current token in the buffer.
 
-        :return: Token object
+        :return: token object
         """
         return self.token_buf[self.token_idx]
 
@@ -71,7 +71,7 @@ class ParserBase(object):
         """
         Gets the next token in the buffer.
 
-        :return: Token object
+        :return: token object
         """
         if self.token_idx < (len(self.token_buf) - 1):
             return self.token_buf[self.token_idx + 1]
