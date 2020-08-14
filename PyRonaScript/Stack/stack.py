@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 File: stack.py
-Description:
+Description: Stack implementation such that the object store is protected.
 Author: Malcolm Hall
 Version: 1
 
@@ -74,6 +74,19 @@ class Stack(object):
         """
         return self._obj_store.pop()
 
+    def clear(self) -> None:
+        """
+        Clears the stack so that it is empty
+
+        :return: No return value
+        """
+        self._obj_store.clear()
+
     def top(self):
+        """
+        Returns the item at the top of the stack
+
+        :return:
+        """
         return self._obj_store[-1]
 
