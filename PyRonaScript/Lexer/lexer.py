@@ -26,7 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from Lexer.tokens import Token, TokenType
+from Token import Token, TokenType, token_sets
 from cpp_helpers import *
 from .lexer_base import LexerBase
 
@@ -81,42 +81,6 @@ SCOPING:
 class Lexer(LexerBase):
     def __init__(self):
         super().__init__()
-        self.reserved_words = [
-            "float",
-            "string",
-            "alias",
-            "is"
-            "list",
-            "int",
-            "bool",
-            "void",
-            "require",
-            "class",
-            "function" "var",
-            "return",
-            "null",
-        ]
-        self.compounds = [
-            "++",
-            "+=",
-            "--",
-            "-=",
-            "&&",
-            "%=",
-            "||",
-            "**",
-            "&=",
-            "|=",
-            "/=",
-            "*=",
-            "~=",
-            "^=",
-            "!=",
-            "->",
-            ">=",
-            "<=",
-            "[]",
-        ]
         self.ignore_comments = True
 
     def emit(self, token, n=1):
@@ -139,7 +103,7 @@ class Lexer(LexerBase):
 
         :return:
         """
-        return in_list(self.get_cmpnd_candidate(), self.compounds)
+        return in_list(self.get_cmpnd_candidate(), token_sets.RESERVED_WORDS)
 
     def get_cmpnd_candidate(self):
         """
