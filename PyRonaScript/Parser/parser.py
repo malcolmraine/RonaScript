@@ -29,75 +29,19 @@ SOFTWARE.
 from Stack.stack import Stack
 from .tree import Tree
 from .ast_nodes import *
+from .parser_base import ParserBase
 from Lexer.tokens import TokenType
 from Lexer.tokens import Token
 
-"""
 
-Expect - what token do we expect next?
-Await - What token are we expecting to change scope or state (this should probably be a Stack)
-
-HANDLERS:
- - require declaration
- - function declaration
- - class creation
- - variable declaration
- - Binary expressions
- 
-"""
-
-
-class Parser(object):
+class Parser(ParserBase):
     def __init__(self):
-        self.ast: Tree = Tree()
+        super().__init__()
+
         self.ast.root = Scope()
-        self.scope_stack: Stack = Stack()  # Stack to keep track of scope changes
         self.paran_stack: Stack = Stack()  # Stack to keep track of matching parantheses
-        self.current_node = self.ast.root
         self.current_scope: Scope = self.ast.root
         self.scope_parent: Scope = self.ast.root
-        self.token_buf: list = []
-        self.token_idx: int = 0
-        self.f = 0
-
-    def adv_buf(self, n=1):
-        """
-
-        :param n:
-        :return:
-        """
-        for i in range(n):
-            if self.token_idx < (len(self.token_buf) - 1):
-                self.token_idx += 1
-            else:
-                self.token_idx = self.token_idx
-
-    def lookback(self) -> Token:
-        """
-
-        :return:
-        """
-        if self.token_idx > 0:
-            return self.token_buf[self.token_idx - 1]
-        else:
-            return self.token_buf[0]
-
-    def current(self) -> Token:
-        """
-
-        :return:
-        """
-        return self.token_buf[self.token_idx]
-
-    def peek(self) -> Token:
-        """
-
-        :return:
-        """
-        if self.token_idx < (len(self.token_buf) - 1):
-            return self.token_buf[self.token_idx + 1]
-        else:
-            return self.token_buf[-1]
 
     # Handlers
     def require(self):
@@ -129,7 +73,7 @@ class Parser(object):
         return node
 
     def func_qualifier(self):
-        valid_qualifiers = ["construct", "destruct", "public", "private", "static"]
+        valid_qualifiers = ["construct", "destruct", "public", "protected", "private", "static"]
         out = []
 
         while self.current() in valid_qualifiers:
@@ -167,7 +111,8 @@ class Parser(object):
         self.adv_buf()
         node.scope = self.scope()
 
-    def expr(self, stop_tok=None):
+    def expr(self, stop_tok=None, paran_stack=Stack()):
+        p_stack = paran_stack
         expr_stack: Stack = Stack()
         expr_stack.push(Expr())
 
@@ -189,10 +134,16 @@ class Parser(object):
 
             elif self.current().token == TokenType.R_PARAN:
                 expr_stack.push(Expr())
+                p_stack.push(1)
                 self.adv_buf()
 
             elif self.current().token == TokenType.L_PARAN:
                 node = expr_stack.pop()
+
+                if p_stack.empty():
+                    return node
+                else:
+                    p_stack.pop()
 
                 # Check if the stack is empty and return the last popped node
                 # if it is. Redundant parentheses can cause this condition so
@@ -202,7 +153,7 @@ class Parser(object):
                     return node
 
                 # Remove any redundant expressions
-                if isinstance(expr_stack.last(), Expr):
+                if isinstance(expr_stack.top(), Expr):
                     if expr_stack.size() == 1:
                         self.adv_buf()
                         t_node = expr_stack.pop()
@@ -211,8 +162,8 @@ class Parser(object):
                     else:
                         expr_stack.pop()
 
-                if isinstance(expr_stack.last(), Expr):
-                    if expr_stack.last().expr is None:
+                if isinstance(expr_stack.top(), Expr):
+                    if expr_stack.top().expr is None:
                         t_node = expr_stack.pop()
 
                         if expr_stack.empty():
@@ -221,8 +172,8 @@ class Parser(object):
                             t_node.expr = node
                             expr_stack.push(t_node)
 
-                elif isinstance(expr_stack.last(), BinaryExpr):
-                    if expr_stack.last().right is None:
+                elif isinstance(expr_stack.top(), BinaryExpr):
+                    if expr_stack.top().right is None:
                         t_node = expr_stack.pop()
                         t_node.right = node
 
@@ -230,7 +181,7 @@ class Parser(object):
                             # If the binary expression is simply the child of another expression
                             # we can get rid of the parent expression, replacing it with the binary
                             # expression
-                            if isinstance(expr_stack.last(), Expr):
+                            if isinstance(expr_stack.top(), Expr):
                                 expr_stack.pop()
                         except IndexError:
                             ...
@@ -253,7 +204,7 @@ class Parser(object):
                     expr_stack.push(node)
 
                 else:
-                    if isinstance(expr_stack.last(), BinaryExpr):
+                    if isinstance(expr_stack.top(), BinaryExpr):
                         node = expr_stack.pop()
                         node.right = self.current().lexeme
                         expr_stack.push(node)
@@ -271,7 +222,7 @@ class Parser(object):
                 else:
                     literal_tok = self.current().lexeme
 
-                if isinstance(expr_stack.last(), BinaryExpr):
+                if isinstance(expr_stack.top(), BinaryExpr):
                     node = expr_stack.pop()
                     node.right = literal_tok
                     expr_stack.push(node)
@@ -290,42 +241,32 @@ class Parser(object):
                 self.adv_buf()
 
             elif self.current().is_unary_op():
-                node = UnaryExpr()
-                node.op = self.current().lexeme
+                self.unary_expr(expr_stack)
 
-                if self.lookback().token == TokenType.IDENTIFIER:
-                    if expr_stack.last() == self.lookback().lexeme:
-                        node.id = expr_stack.pop()
-                        self.adv_buf()
+    def unary_expr(self, expr_stack: Stack):
+        node = UnaryExpr()
+        node.op = self.current().lexeme
 
-                elif self.peek().token == TokenType.IDENTIFIER:
-                    node.id = self.peek().lexeme
-                    self.adv_buf(2)
+        if self.lookback().token == TokenType.IDENTIFIER:
+            if expr_stack.top() == self.lookback().lexeme:
+                node.id = expr_stack.pop()
+                self.adv_buf()
 
-                elif self.peek().token == TokenType.R_PARAN:
-                    self.adv_buf()
-                    node.id = self.expr()
-                    self.token_idx -= 1
+        elif self.peek().token == TokenType.IDENTIFIER:
+            node.id = self.peek().lexeme
+            self.adv_buf(2)
 
-                if isinstance(expr_stack.last(), BinaryExpr):
-                    t_node = expr_stack.pop()
-                    t_node.right = node
-                    expr_stack.push(t_node)
-                else:
-                    expr_stack.push(node)
+        elif self.peek().token == TokenType.R_PARAN:
+            self.adv_buf()
+            node.id = self.expr()
+            self.token_idx -= 1
 
-    # def unary_expr(self):
-    #     node = UnaryExpr()
-    #
-    #     if self.current().is_unary_op():
-    #         node.op = self.current().tok
-    #         self.adv_buf()
-    #         node.id = self.current().tok
-    #     else:
-    #         node.id = self.current().tok
-    #         self.adv_buf()
-    #         node.op = self.current().tok
-    #     return node
+        if isinstance(expr_stack.top(), BinaryExpr):
+            t_node = expr_stack.pop()
+            t_node.right = node
+            expr_stack.push(t_node)
+        else:
+            expr_stack.push(node)
 
     def binary_expr(self):
         node = BinaryExpr()
@@ -362,14 +303,16 @@ class Parser(object):
         node = IfStmt()
         self.adv_buf()
 
-        if self.current().token == TokenType.L_PARAN:
+        if self.current().token == TokenType.R_PARAN:
             node.test = self.expr()
             node.consequent = self.scope()
 
             if self.current().token == TokenType.ELIF:
                 node.alternative = self.elif_stmt()
+
             elif self.current().token == TokenType.ELSE:
                 node.alternative = self.else_stmt()
+
             else:
                 node.alternative = None
 
@@ -379,7 +322,7 @@ class Parser(object):
         node = ElifStmt()
         self.adv_buf()
 
-        if self.current().token == TokenType.L_PARAN:
+        if self.current().token == TokenType.R_PARAN:
             node.test = self.expr()
             node.consequent = self.scope()
 
@@ -399,34 +342,31 @@ class Parser(object):
         return node
 
     def block(self):
-        ...
+        node = Block()
+
+        return node
 
     def scope(self):
         node = Scope()
+        node.block = Block()
+        self.convert_scope(node)
+        self.adv_buf()
+        self.parse()
 
         return node
 
     def func_call(self):
         node = FuncCall()
         node.id = self.current().lexeme
-        #print(node.id)
-        #print("BREAK")
-
         self.adv_buf(1)
 
         if self.current().token == TokenType.R_PARAN:
             self.adv_buf()
 
-        while self.current().token != TokenType.L_PARAN:
-            # if self.current().type == TokenType.VAR:
-            #self.adv_buf()
-            #print("BEFORE ", self.current(), self.peek())
+        while self.current().token not in [TokenType.L_PARAN, TokenType.SEMICOLON]:
             node.args.append(self.expr(','))
-            print("AFTER ", self.current(), self.peek())
-            #self.adv_buf(1)
-            print("CURRENT ", self.current())
 
-        print(node.args)
+        self.adv_buf()
         return node
 
     def scope_method_call(self):
@@ -480,22 +420,30 @@ class Parser(object):
 
         return node
 
+    def revert_scope(self):
+        if self.current_scope.parent_scope is not None:
+            self.current_scope = self.current_scope.parent_scope
+
+    def convert_scope(self, scope):
+        scope.parent_scope = self.current_scope
+        self.current_scope = scope
+
     def parse(self):
         while self.token_idx < len(self.token_buf) - 1:
+
             if self.current().token == TokenType.COMMENT:
                 self.adv_buf()
 
             elif self.current().token == TokenType.REQUIRE:
                 self.current_scope.add_subtree(self.require())
 
-            elif self.current().token == TokenType.R_BRACE:
-                self.current_scope = self.current_scope.parent_scope
-
             elif self.current().token == TokenType.L_BRACE:
+                self.revert_scope()
+                self.adv_buf()
+
+            elif self.current().token == TokenType.R_BRACE:
                 new_scope = self.scope()
                 self.current_scope.add_subtree(new_scope)
-                new_scope.parent_scope = self.current_scope
-                self.current_scope = new_scope
 
             elif self.current().token == TokenType.VAR:
                 self.current_scope.add_subtree(self.var_decl())
@@ -517,3 +465,12 @@ class Parser(object):
 
             elif self.current().token == TokenType.IDENTIFIER:
                 ...
+
+            elif self.current().token == TokenType.IF:
+                self.current_scope.add_subtree(self.if_stmt())
+
+            elif self.current().token == TokenType.ELIF:
+                self.current_scope.add_subtree(self.elif_stmt())
+
+            elif self.current().token == TokenType.ELSE:
+                self.current_scope.add_subtree(self.else_stmt())
