@@ -36,7 +36,7 @@ class AstNode(object):
         ...
         
     @staticmethod
-    def get_tab_str():
+    def tab_str():
         global tab_lvl
 
         if tab_lvl == 0:
@@ -65,18 +65,18 @@ class BinaryExpr(AstNode):
     def __str__(self):
         global tab_lvl
         
-        string = f"{self.get_tab_str()}BinaryExpr( {self.op} )\n"
+        string = f"{self.tab_str()}BinaryExpr( {self.op} )\n"
         self.increment_lvl()
 
         if isinstance(self.left, (UnaryExpr, BinaryExpr, Expr, IndexedExpr)):
             string += str(self.left)
         else:
-            string += f"{self.get_tab_str()}Expr( {self.left} )\n"
+            string += f"{self.tab_str()}Expr( {self.left} )\n"
 
         if isinstance(self.right, (UnaryExpr, BinaryExpr, Expr, IndexedExpr)):
             string += str(self.right)
         else:
-            string += f"{self.get_tab_str()}Expr( {self.right} )\n"
+            string += f"{self.tab_str()}Expr( {self.right} )\n"
 
         self.decrement_lvl()
         
@@ -92,11 +92,11 @@ class UnaryExpr(AstNode):
     def __str__(self):
         global tab_lvl
         
-        string = f"{self.get_tab_str()}UnaryExpr( {self.op} )\n"
+        string = f"{self.tab_str()}UnaryExpr( {self.op} )\n"
         self.increment_lvl()
 
         if isinstance(self.id, str):
-            string += f"{self.get_tab_str()}Expr( {self.id} )\n"
+            string += f"{self.tab_str()}Expr( {self.id} )\n"
         else:
             string += f"{self.id}"
         self.decrement_lvl()
@@ -107,11 +107,12 @@ class Expr(AstNode):
     def __init__(self):
         super().__init__()
         self.expr = None
+        self.is_literal = False
         
     def __str__(self):
         global tab_lvl
         
-        string = f"{self.get_tab_str()}Expr( )\n"
+        string = f"{self.tab_str()}Expr( )\n"
         self.increment_lvl()
         string += str(self.expr)
         self.decrement_lvl()
@@ -124,20 +125,20 @@ class IndexedExpr(Expr):
         self.idx = None
         
     def __str__(self):
-        string = f"{self.get_tab_str()}IndexedExpr( )\n"
+        string = f"{self.tab_str()}IndexedExpr( )\n"
         self.increment_lvl()
 
         if isinstance(self.expr, (Expr, BinaryExpr, UnaryExpr)):
             string += str(self.expr)
         else:
-            string += f"{self.get_tab_str()}Expr( {self.expr} )\n"
+            string += f"{self.tab_str()}Expr( {self.expr} )\n"
 
         if isinstance(self.idx, (Expr, BinaryExpr, UnaryExpr)):
             self.increment_lvl()
-            string += f"{self.get_tab_str()}Index( )\n" + str(self.idx)
+            string += f"{self.tab_str()}Index( )\n" + str(self.idx)
             self.decrement_lvl()
         else:
-            string += f"{self.get_tab_str()}Index( {self.idx} )\n"
+            string += f"{self.tab_str()}Index( {self.idx} )\n"
 
         self.decrement_lvl()
         return string
@@ -149,7 +150,7 @@ class Require(AstNode):
         self.source = None
         
     def __str__(self):
-        string = f"{self.get_tab_str()}Require( {self.source} )\n"
+        string = f"{self.tab_str()}Require( {self.source} )\n"
         return string
 
 
@@ -166,7 +167,7 @@ class FuncQualifier(AstNode):
         self.value = None
 
     def __str__(self):
-        return f"{self.get_tab_str()}FuncQualifier( {self.value} )\n"
+        return f"{self.tab_str()}FuncQualifier( {self.value} )\n"
 
 
 class BreakStmt(AstNode):
@@ -201,10 +202,46 @@ class IfStmt(AstNode):
         self.consequent: Scope = None
         self.alternative: ElifStmt or ElseStmt = None
 
+    def __str__(self):
+        string = f"{self.tab_str()}IfStmt( )\n"
+        self.increment_lvl()
+        string += f"{self.tab_str()}Test( )\n"
+        self.increment_lvl()
+        string += str(self.test)
+        self.decrement_lvl()
+
+        string += f"{self.tab_str()}Consequent( )\n"
+        self.increment_lvl()
+        string += str(self.consequent)
+        self.decrement_lvl()
+
+        if self.alternative is not None:
+            string += str(self.alternative)
+
+        return string
+
 
 class ElifStmt(IfStmt):
     def __init__(self):
         super().__init__()
+
+    def __str__(self):
+        string = f"{self.tab_str()}ElifStmt( )\n"
+        self.increment_lvl()
+        string += f"{self.tab_str()}Test( )\n"
+        self.increment_lvl()
+        string += str(self.test)
+        self.decrement_lvl()
+
+        string += f"{self.tab_str()}Consequent( )\n"
+        self.increment_lvl()
+        string += str(self.consequent)
+        self.decrement_lvl()
+
+        if self.alternative is not None:
+            string += str(self.alternative)
+
+        return string
 
 
 class ElseStmt(AstNode):
@@ -212,11 +249,15 @@ class ElseStmt(AstNode):
         super().__init__()
         self.scope: Scope = None
 
+    def __str__(self):
+        string = f"{self.tab_str()}ElseStmt( )\n"
+        self.increment_lvl()
+        string += f"{self.tab_str()}Consequent( )\n"
+        self.increment_lvl()
+        string += str(self.scope)
+        self.decrement_lvl()
 
-class ConditionalBlock(AstNode):
-    def __init__(self):
-        super().__init__()
-        self.stmt: IfStmt = None
+        return string
 
 
 class Block(AstNode):
@@ -225,7 +266,7 @@ class Block(AstNode):
         self.children: list = []
         
     def __str__(self):
-        string = f"{self.get_tab_str()}Block( )\n"
+        string = f"{self.tab_str()}Block( )\n"
         
         for child in self.children:
             self.increment_lvl()
@@ -245,7 +286,7 @@ class Scope(AstNode):
         self.block.children.append(root_node)
         
     def __str__(self):
-        string = f"{self.get_tab_str()}Scope( )\n"
+        string = f"{self.tab_str()}Scope( )\n"
         self.increment_lvl()
         string += str(self.block)
         return string
@@ -259,12 +300,12 @@ class VarDecl(AstNode):
         self.init_value = None
         
     def __str__(self):
-        string = f"{self.get_tab_str()}VarDecl( {self.type} , {self.id} )\n"
+        string = f"{self.tab_str()}VarDecl( {self.type} , {self.id} )\n"
 
         if self.init_value is not None:
             self.increment_lvl()
             if isinstance(self.init_value, (int, float, str)):
-                string += f"{self.get_tab_str()}Expr( {self.init_value} )\n"
+                string += f"{self.tab_str()}Expr( {self.init_value} )\n"
             else:
                 string += str(self.init_value)
             self.decrement_lvl()
@@ -278,11 +319,19 @@ class FuncDecl(AstNode):
         self.qualifiers = []
         self.id = None
         self.args: list = []
-        self.return_type = None
+        self.type = None
         self.scope: Scope = None
 
     def __str__(self):
-        ...
+        string = f"{self.tab_str()}FuncDecl( {self.type} , {self.id} )\n"
+
+        self.increment_lvl()
+        string += f"{self.tab_str()}Qualifiers( {self.qualifiers} )\n"
+        string += f"{self.tab_str()}Arguments( {self.args} )\n"
+        string += f"{self.scope}"
+        self.decrement_lvl()
+
+        return string
 
 
 class ClassDecl(AstNode):
@@ -290,6 +339,14 @@ class ClassDecl(AstNode):
         super().__init__()
         self.id = None
         self.scope: Scope = None
+
+    def __str__(self):
+        string = f"{self.tab_str()}ClassDecl( {self.id} )\n"
+        self.increment_lvl()
+        string += str(self.scope)
+        self.decrement_lvl()
+
+        return string
 
 
 class FuncCall(AstNode):
@@ -299,10 +356,17 @@ class FuncCall(AstNode):
         self.args: list = []
 
     def __str__(self):
-        string = f"{self.get_tab_str()}FuncCall( {self.id} )\n"
+        string = f"{self.tab_str()}FuncCall( {self.id} )\n"
+
+        self.increment_lvl()
 
         for arg in self.args:
-            string += arg
+            if isinstance(arg, (int, float, str)):
+                string += f"{self.tab_str()}Expr( {arg} )\n"
+            else:
+                string += str(arg)
+
+        self.decrement_lvl()
 
         return string
 
@@ -327,6 +391,9 @@ class WhileLoop(AstNode):
         self.test: Expr = None
         self.scope: Scope = None
 
+    def __str__(self):
+        string = f"{self.tab_str()}"
+
 
 class ForLoop(AstNode):
     def __init__(self):
@@ -344,5 +411,5 @@ class AliasDecl(AstNode):
         self.base_id = None
 
     def __str__(self):
-        string = f"{self.get_tab_str()}AliasDecl( {self.base_id} -> {self.alias_id} )"
+        string = f"{self.tab_str()}AliasDecl( {self.base_id} -> {self.alias_id} )"
         return string
