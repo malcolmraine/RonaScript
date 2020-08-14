@@ -81,14 +81,15 @@ SCOPING:
 class Lexer(LexerBase):
     def __init__(self):
         super().__init__()
-        self.ignore_comments = True
+        self.ignore_comments: bool = True
 
-    def emit(self, token, n=1):
+    def emit(self, token: Token or str, n=1) -> Token:
         """
+        Verifies token formatting, pushes onto token stack, and returns the token.
 
-        :param token:
-        :param n:
-        :return:
+        :param token: Token to be emitted.
+        :param n: Number of buffer advancements to make.
+        :return: Token
         """
         self.tok_str = ""
         self.adv_buf(n)
@@ -98,44 +99,49 @@ class Lexer(LexerBase):
             self.tokens.append(Token(token))
         return self.tokens[-1]
 
-    def is_cmpnd(self):
+    def is_cmpnd(self) -> bool:
         """
+        Checks whether the next sequence of characters represents a compound.
 
-        :return:
+        :return: Boolean indicating whether a compound is present.
         """
         return in_list(self.get_cmpnd_candidate(), token_sets.RESERVED_WORDS)
 
-    def get_cmpnd_candidate(self):
+    def get_cmpnd_candidate(self) -> str:
         """
+        Gets a string containing the current and next characters in the buffer.
 
-        :return:
+        :return: string
         """
         return self.current() + self.peek()
 
-    def reserved_word_handler(self, token):
+    def reserved_word_handler(self, lexeme) -> Token:
         """
+        Handles reserved word emission.
 
-        :param token:
-        :return:
+        :param lexeme: word to be emitted as a token.
+        :return: Token
         """
-        return self.emit(token, 0)
+        return self.emit(lexeme, 0)
 
-    def default_handler(self, token):
+    def default_handler(self, c) -> Token:
         """
+        Default emission handler.
 
-        :param token:
-        :return:
+        :param c: character
+        :return: Token
         """
         if self.tok_str == "":
-            return self.emit(token)
+            return self.emit(c)
         else:
             return self.emit(self.tok_str, 0)
 
-    def comment_handler(self, token):
+    def comment_handler(self, c) -> Token:
         """
+        Comment emission handler.
 
-        :param token:
-        :return:
+        :param c: character
+        :return: Token
         """
         if self.tok_str == "":
             if self.peek() == "/":
@@ -153,33 +159,35 @@ class Lexer(LexerBase):
         else:
             return self.emit(self.tok_str)
 
-    def cmpnd_handler(self, token):
+    def cmpnd_handler(self, c: str) -> Token:
         """
+        Handles compound tokens, other than reserved words or identifiers.
 
-        :param token:
-        :return:
+        :param c: character
+        :return: Token
         """
         if self.tok_str == "":
             if self.is_cmpnd():
                 return self.emit(self.get_cmpnd_candidate(), 2)
 
-            elif token == "[" and self.peek() == "]":
+            elif c == "[" and self.peek() == "]":
                 return self.emit("[]", 2)
 
             else:
-                return self.emit(token)
+                return self.emit(c)
 
         else:
             return self.emit(self.tok_str, 0)
 
-    def string_literal_handler(self, token):
+    def string_literal_handler(self, c: str) -> Token:
         """
+        Handles the emission of string literals.
 
-        :param token:
-        :return:
+        :param c: 
+        :return: Token
         """
         if self.tok_str == "":
-            self.tok_str += token
+            self.tok_str += c
             self.adv_buf()
             while self.current() != '"':
                 self.tok_str += self.current()
@@ -191,10 +199,11 @@ class Lexer(LexerBase):
         else:
             return self.emit(self.tok_str)
 
-    def get_token(self):
+    def get_token(self) -> Token:
         """
+        Main lexing function.
 
-        :return:
+        :return: Token
         """
         while not self.eof:
             if self.current() == " ":
