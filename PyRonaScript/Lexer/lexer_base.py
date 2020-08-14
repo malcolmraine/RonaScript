@@ -47,7 +47,7 @@ class LexerBase(object):
             except:
                 pass
 
-    def load_file(self, file) -> None:
+    def load_file(self, file: str) -> None:
         """
         Load a file into the lexer.
 
