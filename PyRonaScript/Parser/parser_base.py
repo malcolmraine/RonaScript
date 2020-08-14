@@ -26,7 +26,7 @@ SOFTWARE.
 """
 
 from .tree import Tree
-from Lexer.tokens import Token
+from Token.tokens import Token
 
 
 class ParserBase(object):

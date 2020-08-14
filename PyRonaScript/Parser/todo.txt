@@ -1,6 +1,19 @@
 
+scopes
+    - Scope bodies
+    - identification
+    - reversion and conversion between scopes
 
 EXPRESSIONS:
-    - function calls
+    - function calls - IN PROGRESS
     - class property accessors
     - class method calls
+
+if/elif/else statements
+    - Need to figure out how to handle ELIF/ELSE statements
+
+class declarations
+
+function declarations
+
+

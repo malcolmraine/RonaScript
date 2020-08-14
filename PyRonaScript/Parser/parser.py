@@ -27,11 +27,9 @@ SOFTWARE.
 """
 
 from Stack.stack import Stack
-from .tree import Tree
 from .ast_nodes import *
 from .parser_base import ParserBase
-from Lexer.tokens import TokenType
-from Lexer.tokens import Token
+from Token import TokenType
 
 
 class Parser(ParserBase):
