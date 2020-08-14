@@ -70,7 +70,7 @@ class   CLASS
 """
 
 from .token_type import TokenType
-from . import token_sets
+from . import lexeme_sets
 from .token_map import TOKEN_MAP
 
 
@@ -108,7 +108,7 @@ class Token(object):
 
         :return: boolean
         """
-        return self.lexeme in token_sets.BINARY_OPS
+        return self.lexeme in lexeme_sets.BINARY_OPS
 
     def is_unary_op(self) -> bool:
         """
@@ -116,7 +116,7 @@ class Token(object):
 
         :return: boolean
         """
-        return self.lexeme in token_sets.UNARY_OPS
+        return self.lexeme in lexeme_sets.UNARY_OPS
 
     def is_type(self) -> bool:
         """

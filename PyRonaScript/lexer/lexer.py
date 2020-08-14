@@ -26,7 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from token import Token, TokenType, token_sets
+from token import Token, TokenType, lexeme_sets
 from cpp_helpers import *
 from .lexer_base import LexerBase
 
@@ -105,7 +105,7 @@ class Lexer(LexerBase):
 
         :return: Boolean indicating whether a compound is present.
         """
-        return in_list(self.get_cmpnd_candidate(), token_sets.RESERVED_WORDS)
+        return self.get_cmpnd_candidate() in lexeme_sets.RESERVED_WORDS
 
     def get_cmpnd_candidate(self) -> str:
         """

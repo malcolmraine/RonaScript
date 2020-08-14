@@ -26,6 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+
 def in_list(ch, l) -> bool:
     for n in range(len(l)):
         if ch == l[n]:
@@ -33,8 +34,8 @@ def in_list(ch, l) -> bool:
     return False
 
 
-def strip_quotes(str):
-    return str[1:-1]
+def strip_quotes(s):
+    return s[1:-1]
 
 
 def tabs(n):

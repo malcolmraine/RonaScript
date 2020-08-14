@@ -26,7 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from stack.stack import Stack
+from stack import Stack
 from .ast_nodes import *
 from .parser_base import ParserBase
 from token import TokenType
@@ -35,11 +35,9 @@ from token import TokenType
 class Parser(ParserBase):
     def __init__(self):
         super().__init__()
-
         self.ast.root = Scope()
-        self.paran_stack: Stack = Stack()  # stack to keep track of matching parantheses
         self.current_scope: Scope = self.ast.root
-        self.scope_parent: Scope = self.ast.root
+        self.parent_scope: Scope = self.ast.root
 
     # Handlers
     def require(self):
