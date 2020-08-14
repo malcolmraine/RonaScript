@@ -35,11 +35,12 @@ class ParserBase(object):
         self.token_idx: int = 0
         self.ast: Tree = Tree()
 
-    def adv_buf(self, n=1):
+    def adv_buf(self, n=1) -> None:
         """
+        Advances the token buffer by n tokens.
 
-        :param n:
-        :return:
+        :param n: Number of advancements to make.
+        :return: No return value.
         """
         for i in range(n):
             if self.token_idx < (len(self.token_buf) - 1):
@@ -49,8 +50,9 @@ class ParserBase(object):
 
     def lookback(self) -> Token:
         """
+        Gets the last token in the buffer.
 
-        :return:
+        :return: Token object
         """
         if self.token_idx > 0:
             return self.token_buf[self.token_idx - 1]
@@ -59,15 +61,17 @@ class ParserBase(object):
 
     def current(self) -> Token:
         """
+        Gets the current token in the buffer.
 
-        :return:
+        :return: Token object
         """
         return self.token_buf[self.token_idx]
 
     def peek(self) -> Token:
         """
+        Gets the next token in the buffer.
 
-        :return:
+        :return: Token object
         """
         if self.token_idx < (len(self.token_buf) - 1):
             return self.token_buf[self.token_idx + 1]
