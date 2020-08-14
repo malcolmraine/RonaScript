@@ -29,16 +29,17 @@ SOFTWARE.
 
 class LexerBase(object):
     def __init__(self):
-        self.tokens = []
+        self.tokens: list = []
         self.file = None
-        self.buf = ["", "", ""]
-        self.tok_str = ""
-        self.eof = False
+        self.buf: list = ["", "", ""]
+        self.tok_str: str = ""
+        self.eof: bool = False
 
-    def __del__(self):
+    def __del__(self) -> None:
         """
+        Overrides default __del__ method to make sure file gets closed.
 
-        :return:
+        :return: No return value.
         """
         if self.file is not None:
             try:
@@ -46,22 +47,24 @@ class LexerBase(object):
             except:
                 pass
 
-    def load_file(self, file):
+    def load_file(self, file) -> None:
         """
+        Load a file into the lexer.
 
-        :param file:
-        :return:
+        :param file: File to be loaded.
+        :return: No return value.
         """
         self.file = open(file, "r")
         self.buf[0] = ""
         self.buf[1] = self.file.read(1)
         self.buf[2] = self.file.read(1)
 
-    def adv_buf(self, n=1):
+    def adv_buf(self, n=1) -> None:
         """
+        Advance the buffer by 1 or more characters.
 
-        :param n:
-        :return:
+        :param n: Number of advancements to make.
+        :return: No return value
         """
         for i in range(n):
             self.buf[0] = self.buf[1]
@@ -72,23 +75,26 @@ class LexerBase(object):
         if self.current() == "\0" or self.current() == "":
             self.eof = True
 
-    def peek(self):
+    def peek(self) -> str:
         """
+        Get the next character.
 
-        :return:
+        :return: string containing character
         """
         return self.buf[2]
 
-    def current(self):
+    def current(self) -> str:
         """
+        Get the current character.
 
-        :return:
+        :return: string containing character
         """
         return self.buf[1]
 
-    def lookback(self):
+    def lookback(self) -> str:
         """
+        Get the previous character.
 
-        :return:
+        :return: string containing character
         """
         return self.buf[0]
