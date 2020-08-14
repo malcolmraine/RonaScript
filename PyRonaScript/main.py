@@ -28,11 +28,11 @@ SOFTWARE.
 
 import difflib
 
-from Lexer import lexer
+from Lexer import Lexer
 from Parser.ast_nodes import *
 from Parser import parser
 
-lex = lexer.Lexer()
+lex = Lexer()
 lex.load_file("example.rn")
 lex.load_tokens()
 # while not lex.eof:

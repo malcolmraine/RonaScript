@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 File: lexer_base.py
 Description:

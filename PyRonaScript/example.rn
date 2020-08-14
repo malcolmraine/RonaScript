@@ -6,22 +6,9 @@
 require "file1.rn";
 require "file2.rn";
 
-/**
- * This is a block comment!
- */
 
-// Simple expression example
-var x: int = called();
-
-var a: int = ++x + !(x + 1);
-
-// Getting more complicated
-var y: int = (8 * 9) + 1 + (2 + 3);
-
-// Heck yeah
-var n: int = y[3];
-var z: int = ((2 * y[(4 + 6)] + (8 / (4 + 9))));
-
-var test: float = 1.0 + 5;
-
-alias IntegerType_t is int;
+if (x > 9) {
+    var y: int = 0;
+} elif (x < 9) {
+    var y: int = 1;
+}

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 File: __init__.py
 Description:
@@ -26,4 +25,5 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .parser import *
+
+from .stack import Stack

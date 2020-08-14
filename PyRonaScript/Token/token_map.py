@@ -27,7 +27,7 @@ SOFTWARE.
 
 from .token_type import TokenType
 
-TOKEN_MAP = {
+TOKEN_MAP: dict = {
     "{": TokenType.L_BRACE,
     "}": TokenType.R_BRACE,
     "(": TokenType.R_PARAN,

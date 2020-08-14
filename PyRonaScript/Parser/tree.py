@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 File: tree.py
 Description:
