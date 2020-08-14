@@ -26,10 +26,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+
 class Stack(object):
     def __init__(self, type_enforcement=None):
-        self._obj_store = []
+        self._obj_store: list = []
         self.enforcement = type_enforcement
+
+    def __str__(self):
+        return str(self._obj_store)
 
     def size(self) -> int:
         """
@@ -70,6 +74,6 @@ class Stack(object):
         """
         return self._obj_store.pop()
 
-    def last(self):
+    def top(self):
         return self._obj_store[-1]
 
