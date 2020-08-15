@@ -533,8 +533,9 @@ class Parser(ParserBase):
 
     def parse(self) -> None:
         """
+        Main parsing function.
 
-        :return:
+        :return: No return value.
         """
         while self.token_idx < len(self.token_buf) - 1:
 
