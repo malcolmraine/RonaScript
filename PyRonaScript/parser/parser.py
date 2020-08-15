@@ -30,6 +30,8 @@ from stack import Stack
 from .ast_nodes import *
 from .parser_base import ParserBase
 from token import TokenType
+from uuid import uuid4
+import os
 
 
 class Parser(ParserBase):
@@ -45,13 +47,13 @@ class Parser(ParserBase):
 
         :return:
         """
-        node = Require()
+        node: AstNode = Require()
         node.source = self.peek().lexeme
         node.parent = self.current_scope
         self.adv_buf(2)
         return node
 
-    def var_decl(self):
+    def var_decl(self) -> AstNode:
         """
 
         :return:
@@ -68,7 +70,11 @@ class Parser(ParserBase):
             node.init_value = self.expr()
         return node
 
-    def func_qualifier(self):
+    def func_qualifier(self) -> list:
+        """
+
+        :return:
+        """
         valid_qualifiers = ["construct", "destruct", "public", "protected", "private", "static"]
         out = []
 
@@ -78,7 +84,7 @@ class Parser(ParserBase):
 
         return out
 
-    def func_decl(self):
+    def func_decl(self) -> FuncDecl:
         """
 
         :return:
@@ -96,7 +102,7 @@ class Parser(ParserBase):
 
         return node
 
-    def class_decl(self):
+    def class_decl(self) -> ClassDecl:
         """
 
         :return:
@@ -107,7 +113,15 @@ class Parser(ParserBase):
         self.adv_buf()
         node.scope = self.scope()
 
-    def expr(self, stop_tok=None, paran_stack=Stack()):
+        return node
+
+    def expr(self, stop_tok=None, paran_stack=Stack()) -> Expr:
+        """
+
+        :param stop_tok:
+        :param paran_stack:
+        :return:
+        """
         p_stack = paran_stack
         expr_stack: Stack = Stack()
         expr_stack.push(Expr())
@@ -239,7 +253,12 @@ class Parser(ParserBase):
             elif self.current().is_unary_op():
                 self.unary_expr(expr_stack)
 
-    def unary_expr(self, expr_stack: Stack):
+    def unary_expr(self, expr_stack: Stack) -> None:
+        """
+
+        :param expr_stack:
+        :return:
+        """
         node = UnaryExpr()
         node.op = self.current().lexeme
 
@@ -264,7 +283,11 @@ class Parser(ParserBase):
         else:
             expr_stack.push(node)
 
-    def binary_expr(self):
+    def binary_expr(self) -> BinaryExpr:
+        """
+
+        :return:
+        """
         node = BinaryExpr()
         node.left = Expr()
         self.adv_buf()
@@ -272,22 +295,42 @@ class Parser(ParserBase):
 
         return node
 
-    def arg_decl(self):
+    def arg_decl(self) -> ArgDecl:
+        """
+
+        :return:
+        """
         ...
 
-    def break_stmt(self):
+    def break_stmt(self) -> BreakStmt:
+        """
+
+        :return:
+        """
         return BreakStmt()
 
-    def flow_stmt(self):
+    def flow_stmt(self) -> FlowStmt:
+        """
+
+        :return:
+        """
         return FlowStmt()
 
-    def return_stmt(self):
+    def return_stmt(self) -> ReturnStmt:
+        """
+
+        :return:
+        """
         node = ReturnStmt()
         node.expr = self.expr()
 
         return node
 
-    def assignment_stmt(self):
+    def assignment_stmt(self) -> AssignmentStmt:
+        """
+
+        :return:
+        """
         node = AssignmentStmt()
         node.id = self.current()
         self.adv_buf(2)
@@ -295,7 +338,11 @@ class Parser(ParserBase):
 
         return node
 
-    def if_stmt(self):
+    def if_stmt(self) -> IfStmt:
+        """
+
+        :return:
+        """
         node = IfStmt()
         self.adv_buf()
 
@@ -314,7 +361,11 @@ class Parser(ParserBase):
 
         return node
 
-    def elif_stmt(self):
+    def elif_stmt(self) -> ElifStmt:
+        """
+
+        :return:
+        """
         node = ElifStmt()
         self.adv_buf()
 
@@ -331,18 +382,30 @@ class Parser(ParserBase):
 
         return node
 
-    def else_stmt(self):
-        self.adv_buf()
-        node = self.scope()
+    def else_stmt(self) -> ElseStmt:
+        """
+
+        :return:
+        """
+        node = ElseStmt()
+        node.scope = self.scope()
 
         return node
 
-    def block(self):
+    def block(self) -> Block:
+        """
+
+        :return:
+        """
         node = Block()
 
         return node
 
-    def scope(self):
+    def scope(self) -> Scope:
+        """
+
+        :return:
+        """
         node = Scope()
         node.block = Block()
         self.convert_scope(node)
@@ -351,7 +414,11 @@ class Parser(ParserBase):
 
         return node
 
-    def func_call(self):
+    def func_call(self) -> FuncCall:
+        """
+
+        :return:
+        """
         node = FuncCall()
         node.id = self.current().lexeme
         self.adv_buf(1)
@@ -365,7 +432,11 @@ class Parser(ParserBase):
         self.adv_buf()
         return node
 
-    def scope_method_call(self):
+    def scope_method_call(self) -> ScopeMethodCall:
+        """
+
+        :return:
+        """
         node = ScopeMethodCall()
         node.accessor = self.current().lexeme
         self.adv_buf(2)
@@ -373,7 +444,11 @@ class Parser(ParserBase):
 
         return node
 
-    def scope_var_access(self):
+    def scope_var_access(self) -> ScopeVarAccess:
+        """
+
+        :return:
+        """
         node = ScopeVarAccess()
         node.accessor = self.current().lexeme
         self.adv_buf(2)
@@ -381,14 +456,18 @@ class Parser(ParserBase):
 
         return node
 
-    def while_loop(self):
+    def while_loop(self) -> WhileLoop:
+        """
+
+        :return:
+        """
         node = WhileLoop()
         node.test = self.expr()
         node.scope = self.scope()
 
         return node
 
-    def for_loop(self):
+    def for_loop(self) -> ForLoop:
         """
 
         :return:
@@ -401,7 +480,11 @@ class Parser(ParserBase):
 
         return node
 
-    def alias_decl(self):
+    def alias_decl(self) -> AliasDecl:
+        """
+
+        :return:
+        """
         node = AliasDecl()
         self.adv_buf()
         node.alias_id = self.current().lexeme
@@ -416,15 +499,43 @@ class Parser(ParserBase):
 
         return node
 
-    def revert_scope(self):
+    def revert_scope(self) -> None:
+        """
+        Changes the current scope to the parent scope.
+
+        :return: No return value.
+        """
         if self.current_scope.parent_scope is not None:
             self.current_scope = self.current_scope.parent_scope
 
-    def convert_scope(self, scope):
+    def convert_scope(self, scope: Scope) -> None:
+        """
+        Changes the current scope to a new scope and the parent scope to the current scope.
+
+        :param scope: New scope to change to.
+        :return: No return value.
+        """
         scope.parent_scope = self.current_scope
         self.current_scope = scope
 
-    def parse(self):
+    def dump_ast(self, name=uuid4()) -> str:
+        """
+        Dumps the AST to a file.
+
+        :return: Absolute path to AST dump file.
+        """
+        file_name: str = f"{name}.ast"
+
+        with open(file_name, 'w') as file:
+            file.write(str(self.ast.root))
+
+        return file_name
+
+    def parse(self) -> None:
+        """
+
+        :return:
+        """
         while self.token_idx < len(self.token_buf) - 1:
 
             if self.current().token == TokenType.COMMENT:
