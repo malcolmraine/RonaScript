@@ -48,7 +48,7 @@ class LexerBase(object):
 
     def load_file(self, file: str) -> None:
         """
-        Load a file into the lexer.
+        Load a file into the rona_lexer.
 
         :param file: File to be loaded.
         :return: No return value.

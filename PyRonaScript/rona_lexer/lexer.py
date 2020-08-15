@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-File: lexer.py
+File: rona_lexer.py
 Description:
 Author: Malcolm Hall
 Version: 1
@@ -26,7 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from token import Token, TokenType, lexeme_sets
+from rona_token import Token, TokenType, lexeme_sets
 from cpp_helpers import *
 from .lexer_base import LexerBase
 
@@ -35,7 +35,7 @@ from .lexer_base import LexerBase
 FILE FORMATS:
     - *.rn Source code file
     - *.rnc Compiled byte code file
-        * running a byte code file will skip the lexer, parser, and code generation stages, 
+        * running a byte code file will skip the rona_lexer, rona_parser, and code generation stages, 
             jumping directly to the runtime stage
 HANDLERS:
     - string literals
@@ -52,7 +52,7 @@ PARSER NOTES:
     - objects can have an associated type (function, var, etc)
     - scope state will need to have transition functions
     - need scope cleanup function 
-    - should have an expect() function to predict the next token
+    - should have an expect() function to predict the next rona_token
         * raise exception if prediction is wrong
     - Object classification, object table creation, scoping, import files list, 
     
@@ -85,11 +85,11 @@ class Lexer(LexerBase):
 
     def emit(self, token: Token or str, n=1) -> Token:
         """
-        Verifies token formatting, pushes onto token stack, and returns the token.
+        Verifies rona_token formatting, pushes onto rona_token rona_stack, and returns the rona_token.
 
-        :param token: token to be emitted.
+        :param token: rona_token to be emitted.
         :param n: Number of buffer advancements to make.
-        :return: token
+        :return: rona_token
         """
         self.tok_str = ""
         self.adv_buf(n)
@@ -119,8 +119,8 @@ class Lexer(LexerBase):
         """
         Handles reserved word emission.
 
-        :param lexeme: word to be emitted as a token.
-        :return: token
+        :param lexeme: word to be emitted as a rona_token.
+        :return: rona_token
         """
         return self.emit(lexeme, 0)
 
@@ -129,7 +129,7 @@ class Lexer(LexerBase):
         Default emission handler.
 
         :param c: character
-        :return: token
+        :return: rona_token
         """
         if self.tok_str == "":
             return self.emit(c)
@@ -141,7 +141,7 @@ class Lexer(LexerBase):
         Comment emission handler.
 
         :param c: character
-        :return: token
+        :return: rona_token
         """
         if self.tok_str == "":
             if self.peek() == "/":
@@ -164,7 +164,7 @@ class Lexer(LexerBase):
         Handles compound tokens, other than reserved words or identifiers.
 
         :param c: character
-        :return: token
+        :return: rona_token
         """
         if self.tok_str == "":
             if self.is_cmpnd():
@@ -184,7 +184,7 @@ class Lexer(LexerBase):
         Handles the emission of string literals.
 
         :param c: 
-        :return: token
+        :return: rona_token
         """
         if self.tok_str == "":
             self.tok_str += c
@@ -203,7 +203,7 @@ class Lexer(LexerBase):
         """
         Main lexing function.
 
-        :return: token
+        :return: rona_token
         """
         while not self.eof:
             if self.current() == " ":

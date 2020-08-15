@@ -6,9 +6,25 @@
 require "file1.rn";
 require "file2.rn";
 
+var x: int = 8;
 
 if (x > 9) {
     var y: int = 0;
 } elif (x < 9) {
     var y: int = 1;
+} else {
+    var y: int = 9;
+    x = y;
+}
+
+//var test: string = "Test";
+
+
+if (a > 5) {
+    var y: int = 0;
+} elif (a < 9) {
+    var z: int = 1;
+} else {
+    var z int = 9;
+    x = z;
 }

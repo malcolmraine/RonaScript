@@ -29,8 +29,8 @@ from enum import Enum, unique, auto
 
 
 class TokenType(Enum):
-    R_BRACE = auto()        # {
-    L_BRACE = auto()        # }
+    L_BRACE = auto()        # {
+    R_BRACE = auto()        # }
     R_PARAN = auto()        # (
     L_PARAN = auto()        # )
     R_BRACK = auto()        # [

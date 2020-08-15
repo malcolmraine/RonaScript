@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
-File: stack.py
-Description: stack implementation such that the object store is protected.
+File: rona_stack.py
+Description: rona_stack implementation such that the object store is protected.
 Author: Malcolm Hall
 Version: 1
 
@@ -37,7 +37,7 @@ class Stack(object):
 
     def size(self) -> int:
         """
-        Returns the current size of the stack
+        Returns the current size of the rona_stack
 
         :return: int
         """
@@ -45,7 +45,7 @@ class Stack(object):
 
     def empty(self) -> bool:
         """
-        Checks whether the stack is empty
+        Checks whether the rona_stack is empty
 
         :return:
         """
@@ -53,7 +53,7 @@ class Stack(object):
 
     def push(self, obj) -> None:
         """
-        Push an object onto the stack
+        Push an object onto the rona_stack
 
         :param obj: object to push
         :return: None
@@ -62,13 +62,13 @@ class Stack(object):
             if isinstance(obj, self.enforcement):
                 self._obj_store.append(obj)
             else:
-                raise Exception("Illegal object type for this stack!")
+                raise Exception("Illegal object type for this rona_stack!")
         else:
             self._obj_store.append(obj)
 
     def pop(self):
         """
-        Pop an object off the top of the stack
+        Pop an object off the top of the rona_stack
 
         :return: object
         """
@@ -76,7 +76,7 @@ class Stack(object):
 
     def clear(self) -> None:
         """
-        Clears the stack so that it is empty
+        Clears the rona_stack so that it is empty
 
         :return: No return value
         """
@@ -84,7 +84,7 @@ class Stack(object):
 
     def top(self):
         """
-        Returns the item at the top of the stack
+        Returns the item at the top of the rona_stack
 
         :return:
         """

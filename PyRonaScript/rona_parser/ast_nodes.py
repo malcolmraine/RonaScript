@@ -194,6 +194,18 @@ class AssignmentStmt(AstNode):
         self.id = None
         self.expr: Expr = None
 
+    def __str__(self):
+        string = f"{self.tab_str()}AssignmentStmt( {self.id} )\n"
+        self.increment_lvl()
+        print(self.expr)
+
+        if isinstance(self.expr, (int, float, str)):
+            string += f"{self.tab_str()}Expr( {self.expr} )\n"
+        else:
+            string += str(self.expr)
+
+        return string
+
 
 class IfStmt(AstNode):
     def __init__(self):
@@ -216,6 +228,8 @@ class IfStmt(AstNode):
         self.decrement_lvl()
 
         if self.alternative is not None:
+            string += f"{self.tab_str()}Alternative( )\n"
+            self.increment_lvl()
             string += str(self.alternative)
 
         return string
@@ -239,6 +253,8 @@ class ElifStmt(IfStmt):
         self.decrement_lvl()
 
         if self.alternative is not None:
+            string += f"{self.tab_str()}Alternative( )\n"
+            self.increment_lvl()
             string += str(self.alternative)
 
         return string

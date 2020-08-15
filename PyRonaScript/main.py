@@ -28,9 +28,9 @@ SOFTWARE.
 
 import difflib
 
-from lexer import Lexer
-from parser.ast_nodes import *
-from parser import Parser
+from rona_lexer import Lexer
+from rona_parser.ast_nodes import *
+from rona_parser import Parser
 
 lex = Lexer()
 lex.load_file("example.rn")

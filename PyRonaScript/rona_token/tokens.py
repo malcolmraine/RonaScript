@@ -96,7 +96,7 @@ class Token(object):
 
     def is_literal(self) -> bool:
         """
-        Returns whether or not the token is a literal value.
+        Returns whether or not the rona_token is a literal value.
 
         :return: boolean
         """
@@ -104,7 +104,7 @@ class Token(object):
 
     def is_binary_op(self) -> bool:
         """
-        Returns whether the token is a binary operator.
+        Returns whether the rona_token is a binary operator.
 
         :return: boolean
         """
@@ -112,7 +112,7 @@ class Token(object):
 
     def is_unary_op(self) -> bool:
         """
-        Returns whether the token is a unary operator.
+        Returns whether the rona_token is a unary operator.
 
         :return: boolean
         """
@@ -120,7 +120,7 @@ class Token(object):
 
     def is_type(self) -> bool:
         """
-        Returns whether the token is a possible type name.
+        Returns whether the rona_token is a possible type name.
 
         :return: boolean
         """

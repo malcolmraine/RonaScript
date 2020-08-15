@@ -28,8 +28,8 @@ SOFTWARE.
 from .token_type import TokenType
 
 TOKEN_MAP: dict = {
-    "{": TokenType.L_BRACE,
-    "}": TokenType.R_BRACE,
+    "{": TokenType.R_BRACE,
+    "}": TokenType.L_BRACE,
     "(": TokenType.R_PARAN,
     ")": TokenType.L_PARAN,
     "[": TokenType.R_BRACK,

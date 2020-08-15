@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-File: parser.py
+File: rona_parser.py
 Description:
 Author: Malcolm Hall
 Version: 1
@@ -26,10 +26,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from stack import Stack
+from rona_stack import Stack
 from .ast_nodes import *
 from .parser_base import ParserBase
-from token import TokenType
+from rona_token import TokenType
 from uuid import uuid4
 import os
 
@@ -128,7 +128,7 @@ class Parser(ParserBase):
 
         while not expr_stack.empty():
             if (
-                self.current().token in [TokenType.L_BRACE, TokenType.SEMICOLON]
+                self.current().token in [TokenType.R_BRACE, TokenType.SEMICOLON]
                 or self.current().lexeme == stop_tok
             ):
 
@@ -155,7 +155,7 @@ class Parser(ParserBase):
                 else:
                     p_stack.pop()
 
-                # Check if the stack is empty and return the last popped node
+                # Check if the rona_stack is empty and return the last popped node
                 # if it is. Redundant parentheses can cause this condition so
                 # we need to check before proceeding.
                 if expr_stack.empty():
@@ -332,9 +332,10 @@ class Parser(ParserBase):
         :return:
         """
         node = AssignmentStmt()
-        node.id = self.current()
+        node.id = self.current().lexeme
         self.adv_buf(2)
         node.expr = self.expr()
+        #print(node.expr)
 
         return node
 
@@ -347,14 +348,19 @@ class Parser(ParserBase):
         self.adv_buf()
 
         if self.current().token == TokenType.R_PARAN:
+            self.adv_buf()
             node.test = self.expr()
             node.consequent = self.scope()
+
+            if self.current().token == TokenType.L_BRACE:
+                self.adv_buf()
 
             if self.current().token == TokenType.ELIF:
                 node.alternative = self.elif_stmt()
 
             elif self.current().token == TokenType.ELSE:
                 node.alternative = self.else_stmt()
+                #print(self.current())
 
             else:
                 node.alternative = None
@@ -370,13 +376,16 @@ class Parser(ParserBase):
         self.adv_buf()
 
         if self.current().token == TokenType.R_PARAN:
+            self.adv_buf()
             node.test = self.expr()
             node.consequent = self.scope()
 
             if self.current().token == TokenType.ELIF:
                 node.alternative = self.elif_stmt()
+
             elif self.current().token == TokenType.ELSE:
                 node.alternative = self.else_stmt()
+
             else:
                 node.alternative = None
 
@@ -388,7 +397,11 @@ class Parser(ParserBase):
         :return:
         """
         node = ElseStmt()
+        self.adv_buf(1)
+        #print(self.token_buf[self.token_idx:])
         node.scope = self.scope()
+
+        #print(node.scope)
 
         return node
 
@@ -399,8 +412,12 @@ class Parser(ParserBase):
         """
         node = Scope()
         self.convert_scope(node)
+
+        print("A", self.lookback(), self.current(), self.peek())
         self.adv_buf()
         self.parse()
+        print("B", self.lookback(), self.current(), self.peek())
+        #print("HERE ", self.current())
 
         return node
 
@@ -536,13 +553,15 @@ class Parser(ParserBase):
             elif self.current().token == TokenType.REQUIRE:
                 self.current_scope.add_subtree(self.require())
 
-            elif self.current().token == TokenType.L_BRACE:
-                self.revert_scope()
-                self.adv_buf()
-
             elif self.current().token == TokenType.R_BRACE:
                 new_scope = self.scope()
                 self.current_scope.add_subtree(new_scope)
+
+            elif self.current().token == TokenType.L_BRACE:
+                print("LKJSDFSDLFK")
+                self.revert_scope()
+                self.adv_buf()
+                return
 
             elif self.current().token == TokenType.VAR:
                 self.current_scope.add_subtree(self.var_decl())
@@ -563,15 +582,24 @@ class Parser(ParserBase):
                 self.current_scope.add_subtree(self.class_decl())
 
             elif self.current().token == TokenType.IDENTIFIER:
-                # TODO: handle variable assignment
-                # TODO: handle standalone function calls.
-                ...
+                if self.peek().token == TokenType.EQUAL:
+                    self.current_scope.add_subtree(self.assignment_stmt())
+
+                elif self.peek().token == TokenType.R_PARAN:
+                    self.adv_buf()
+                    self.current_scope.add_subtree(self.func_call())
 
             elif self.current().token == TokenType.IF:
                 self.current_scope.add_subtree(self.if_stmt())
 
             elif self.current().token == TokenType.ELIF:
-                self.current_scope.add_subtree(self.elif_stmt())
+                # If we hit an ELIF statement here, that means we were
+                # parsing the scope of an IF statement so we need to
+                # leave this function and go back to the IF statement.
+                return
 
             elif self.current().token == TokenType.ELSE:
-                self.current_scope.add_subtree(self.else_stmt())
+                # If we hit an ELSE statement here, that means we were
+                # parsing the scope of an IF statement so we need to
+                # leave this function and go back to the ELIF statement.
+                return
