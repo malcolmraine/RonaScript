@@ -392,22 +392,12 @@ class Parser(ParserBase):
 
         return node
 
-    def block(self) -> Block:
-        """
-
-        :return:
-        """
-        node = Block()
-
-        return node
-
     def scope(self) -> Scope:
         """
 
         :return:
         """
         node = Scope()
-        node.block = Block()
         self.convert_scope(node)
         self.adv_buf()
         self.parse()
@@ -482,8 +472,9 @@ class Parser(ParserBase):
 
     def alias_decl(self) -> AliasDecl:
         """
+        Handles name alias declarations.
 
-        :return:
+        :return: AliasDecl node.
         """
         node = AliasDecl()
         self.adv_buf()
@@ -572,6 +563,8 @@ class Parser(ParserBase):
                 self.current_scope.add_subtree(self.class_decl())
 
             elif self.current().token == TokenType.IDENTIFIER:
+                # TODO: handle variable assignment
+                # TODO: handle standalone function calls.
                 ...
 
             elif self.current().token == TokenType.IF:

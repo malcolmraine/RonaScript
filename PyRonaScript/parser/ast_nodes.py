@@ -260,35 +260,23 @@ class ElseStmt(AstNode):
         return string
 
 
-class Block(AstNode):
+class Scope(AstNode):
     def __init__(self):
         super().__init__()
         self.children: list = []
+        self.parent_scope: Scope = None
+
+    def add_subtree(self, root_node):
+        self.children.append(root_node)
         
     def __str__(self):
-        string = f"{self.tab_str()}Block( )\n"
-        
+        string = f"{self.tab_str()}Scope( )\n"
+
         for child in self.children:
             self.increment_lvl()
             string += str(child)
             self.decrement_lvl()
-        
-        return string
 
-
-class Scope(AstNode):
-    def __init__(self):
-        super().__init__()
-        self.block: Block = Block()
-        self.parent_scope: Scope = None
-
-    def add_subtree(self, root_node):
-        self.block.children.append(root_node)
-        
-    def __str__(self):
-        string = f"{self.tab_str()}Scope( )\n"
-        self.increment_lvl()
-        string += str(self.block)
         return string
 
 
