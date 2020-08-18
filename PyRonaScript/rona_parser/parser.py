@@ -31,7 +31,6 @@ from .ast_nodes import *
 from .parser_base import ParserBase
 from rona_token import TokenType
 from uuid import uuid4
-import os
 
 
 class Parser(ParserBase):
@@ -41,7 +40,6 @@ class Parser(ParserBase):
         self.current_scope: Scope = self.ast.root
         self.parent_scope: Scope = self.ast.root
 
-    # Handlers
     def require(self):
         """
 
@@ -335,7 +333,6 @@ class Parser(ParserBase):
         node.id = self.current().lexeme
         self.adv_buf(2)
         node.expr = self.expr()
-        #print(node.expr)
 
         return node
 
@@ -350,6 +347,10 @@ class Parser(ParserBase):
         if self.current().token == TokenType.R_PARAN:
             self.adv_buf()
             node.test = self.expr()
+
+            if self.current().token == TokenType.R_BRACE:
+                self.adv_buf()
+
             node.consequent = self.scope()
 
             if self.current().token == TokenType.L_BRACE:
@@ -360,8 +361,6 @@ class Parser(ParserBase):
 
             elif self.current().token == TokenType.ELSE:
                 node.alternative = self.else_stmt()
-                #print(self.current())
-
             else:
                 node.alternative = None
 
@@ -378,6 +377,10 @@ class Parser(ParserBase):
         if self.current().token == TokenType.R_PARAN:
             self.adv_buf()
             node.test = self.expr()
+
+            if self.current().token == TokenType.R_BRACE:
+                self.adv_buf()
+
             node.consequent = self.scope()
 
             if self.current().token == TokenType.ELIF:
@@ -398,10 +401,7 @@ class Parser(ParserBase):
         """
         node = ElseStmt()
         self.adv_buf(1)
-        #print(self.token_buf[self.token_idx:])
         node.scope = self.scope()
-
-        #print(node.scope)
 
         return node
 
@@ -412,12 +412,12 @@ class Parser(ParserBase):
         """
         node = Scope()
         self.convert_scope(node)
-
-        print("A", self.lookback(), self.current(), self.peek())
         self.adv_buf()
+
+        if self.current().token == TokenType.R_BRACE:
+            self.adv_buf()
+
         self.parse()
-        print("B", self.lookback(), self.current(), self.peek())
-        #print("HERE ", self.current())
 
         return node
 
@@ -558,7 +558,6 @@ class Parser(ParserBase):
                 self.current_scope.add_subtree(new_scope)
 
             elif self.current().token == TokenType.L_BRACE:
-                print("LKJSDFSDLFK")
                 self.revert_scope()
                 self.adv_buf()
                 return
