@@ -33,6 +33,9 @@ class LexerBase(object):
         self.buf: list = ["", "", ""]
         self.tok_str: str = ""
         self.eof: bool = False
+        self.line_cnt = 1
+        self.char_cnt = 1
+        self.line_char_cnt = 1
 
     def __del__(self) -> None:
         """
@@ -70,6 +73,12 @@ class LexerBase(object):
             self.buf[1] = self.buf[2]
             ch = self.file.read(1)
             self.buf[2] = ch
+            self.char_cnt += 1
+            self.line_char_cnt += 1
+
+        if self.current() == '\n':
+            self.line_cnt += 1
+            self.line_char_cnt = 1
 
         if self.current() == "\0" or self.current() == "":
             self.eof = True
