@@ -28,31 +28,44 @@ SOFTWARE.
 
 from cpp_helpers import tabs
 
-tab_lvl = 0
+_tab_lvl = 0
 
 
 class AstNode(object):
     def __init__(self):
         ...
-        
+
     @staticmethod
     def tab_str():
-        global tab_lvl
+        global _tab_lvl
 
-        if tab_lvl == 0:
-            return "\t" * tab_lvl
+        if _tab_lvl == 0:
+            return "\t" * _tab_lvl
         else:
-            return "|\t" * tab_lvl
+            return "|\t" * _tab_lvl
 
     @staticmethod
     def increment_lvl():
-        global tab_lvl
-        tab_lvl += 1
+        """
+        Increments the global tab level for printing purposes
+
+        :return: No return value
+        """
+        global _tab_lvl
+        _tab_lvl += 1
 
     @staticmethod
     def decrement_lvl():
-        global tab_lvl
-        tab_lvl -= 1
+        """
+        Decrements the global tab level for printing purposes
+
+        :return: No return value
+        """
+        global _tab_lvl
+        _tab_lvl -= 1
+
+    def class_name(self):
+        return type(self).__name__
 
 
 class BinaryExpr(AstNode):
