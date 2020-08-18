@@ -27,13 +27,19 @@ SOFTWARE.
 """
 
 from cpp_helpers import tabs
+from .ast_graph import AstGraph
 
 _tab_lvl = 0
+graph_visual = AstGraph()
+current_parent = graph_visual.name
 
 
 class AstNode(object):
+    instance_num = 0
+
     def __init__(self):
-        ...
+        self.parent = None
+        self.instance_num += 1
 
     @staticmethod
     def tab_str():
@@ -45,27 +51,27 @@ class AstNode(object):
             return "|\t" * _tab_lvl
 
     @staticmethod
-    def increment_lvl():
+    def increment_lvl(n=1):
         """
         Increments the global tab level for printing purposes
 
         :return: No return value
         """
         global _tab_lvl
-        _tab_lvl += 1
+        _tab_lvl += n
 
     @staticmethod
-    def decrement_lvl():
+    def decrement_lvl(n=1):
         """
         Decrements the global tab level for printing purposes
 
         :return: No return value
         """
         global _tab_lvl
-        _tab_lvl -= 1
+        _tab_lvl -= n
 
     def class_name(self):
-        return type(self).__name__
+        return f"{type(self).__name__}_{self.instance_num}"
 
 
 class BinaryExpr(AstNode):
@@ -76,7 +82,7 @@ class BinaryExpr(AstNode):
         self.right = None
 
     def __str__(self):
-        global tab_lvl
+        global _tab_lvl
         
         string = f"{self.tab_str()}BinaryExpr( {self.op} )\n"
         self.increment_lvl()
@@ -103,8 +109,6 @@ class UnaryExpr(AstNode):
         self.id = None
 
     def __str__(self):
-        global tab_lvl
-        
         string = f"{self.tab_str()}UnaryExpr( {self.op} )\n"
         self.increment_lvl()
 
@@ -123,8 +127,6 @@ class Expr(AstNode):
         self.is_literal = False
         
     def __str__(self):
-        global tab_lvl
-        
         string = f"{self.tab_str()}Expr( )\n"
         self.increment_lvl()
         string += str(self.expr)
@@ -210,12 +212,13 @@ class AssignmentStmt(AstNode):
     def __str__(self):
         string = f"{self.tab_str()}AssignmentStmt( {self.id} )\n"
         self.increment_lvl()
-        print(self.expr)
 
         if isinstance(self.expr, (int, float, str)):
             string += f"{self.tab_str()}Expr( {self.expr} )\n"
         else:
             string += str(self.expr)
+
+        self.decrement_lvl()
 
         return string
 
@@ -233,7 +236,7 @@ class IfStmt(AstNode):
         string += f"{self.tab_str()}Test( )\n"
         self.increment_lvl()
         string += str(self.test)
-        self.decrement_lvl()
+        self.decrement_lvl(2)
 
         string += f"{self.tab_str()}Consequent( )\n"
         self.increment_lvl()
@@ -244,6 +247,7 @@ class IfStmt(AstNode):
             string += f"{self.tab_str()}Alternative( )\n"
             self.increment_lvl()
             string += str(self.alternative)
+            self.decrement_lvl()
 
         return string
 
@@ -258,7 +262,7 @@ class ElifStmt(IfStmt):
         string += f"{self.tab_str()}Test( )\n"
         self.increment_lvl()
         string += str(self.test)
-        self.decrement_lvl()
+        self.decrement_lvl(2)
 
         string += f"{self.tab_str()}Consequent( )\n"
         self.increment_lvl()
@@ -269,6 +273,7 @@ class ElifStmt(IfStmt):
             string += f"{self.tab_str()}Alternative( )\n"
             self.increment_lvl()
             string += str(self.alternative)
+            self.decrement_lvl()
 
         return string
 
@@ -284,7 +289,7 @@ class ElseStmt(AstNode):
         string += f"{self.tab_str()}Consequent( )\n"
         self.increment_lvl()
         string += str(self.scope)
-        self.decrement_lvl()
+        self.decrement_lvl(2)
 
         return string
 
