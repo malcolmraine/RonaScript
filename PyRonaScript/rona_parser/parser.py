@@ -331,8 +331,44 @@ class Parser(ParserBase):
         """
         node = AssignmentStmt()
         node.id = self.current().lexeme
-        self.adv_buf(2)
-        node.expr = self.expr()
+
+        self.adv_buf()
+
+        if self.current().is_compound():
+            b_node = BinaryExpr()
+            b_node.left = node.id
+
+            if self.current().token == TokenType.PLUS_EQUAL:
+                b_node.op = '+'
+
+            elif self.current().token == TokenType.MINUS_EQUAL:
+                b_node.op = '-'
+
+            elif self.current().token == TokenType.STAR_EQUAL:
+                b_node.op = '*'
+
+            elif self.current().token == TokenType.SLASH_EQUAL:
+                b_node.op = '/'
+
+            elif self.current().token == TokenType.AMPER_EQUAL:
+                b_node.op = '&'
+
+            elif self.current().token == TokenType.BAR_EQUAL:
+                b_node.op = '|'
+
+            elif self.current().token == TokenType.XOREQ:
+                b_node.op = '^'
+
+            elif self.current().token == TokenType.PERCENT_EQUAL:
+                b_node.op = '%'
+
+            self.adv_buf()
+            b_node.right = self.expr()
+            node.expr = b_node
+
+        else:
+            self.adv_buf()
+            node.expr = self.expr()
 
         return node
 
@@ -469,7 +505,10 @@ class Parser(ParserBase):
         :return:
         """
         node = WhileLoop()
+        self.adv_buf(2)
+        print(self.current())
         node.test = self.expr()
+        print(node.test)
         node.scope = self.scope()
 
         return node
@@ -581,7 +620,8 @@ class Parser(ParserBase):
                 self.current_scope.add_subtree(self.class_decl())
 
             elif self.current().token == TokenType.IDENTIFIER:
-                if self.peek().token == TokenType.EQUAL:
+                if self.peek().token == TokenType.EQUAL or self.peek().is_compound():
+
                     self.current_scope.add_subtree(self.assignment_stmt())
 
                 elif self.peek().token == TokenType.R_PARAN:
@@ -602,3 +642,9 @@ class Parser(ParserBase):
                 # parsing the scope of an IF statement so we need to
                 # leave this function and go back to the ELIF statement.
                 return
+
+            elif self.current().token == TokenType.WHILE:
+                self.current_scope.add_subtree(self.while_loop())
+
+            elif self.current().token == TokenType.FOR:
+                self.current_scope.add_subtree(self.for_loop())

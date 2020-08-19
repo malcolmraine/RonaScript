@@ -93,10 +93,14 @@ class Lexer(LexerBase):
         """
         self.tok_str = ""
         self.adv_buf(n)
+
         if isinstance(token, Token):
             self.tokens.append(token)
+
         else:
             self.tokens.append(Token(token))
+
+        self.tokens[-1].file_pos = self.get_file_pos()
         return self.tokens[-1]
 
     def is_cmpnd(self) -> bool:
@@ -105,7 +109,7 @@ class Lexer(LexerBase):
 
         :return: Boolean indicating whether a compound is present.
         """
-        return self.get_cmpnd_candidate() in lexeme_sets.RESERVED_WORDS
+        return self.get_cmpnd_candidate() in lexeme_sets.COMPOUNDS
 
     def get_cmpnd_candidate(self) -> str:
         """

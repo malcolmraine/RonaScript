@@ -40,6 +40,7 @@ class AstNode(object):
     def __init__(self):
         self.parent = None
         self.instance_num += 1
+        self.file_pos = ()
 
     @staticmethod
     def tab_str():
@@ -414,7 +415,17 @@ class WhileLoop(AstNode):
         self.scope: Scope = None
 
     def __str__(self):
-        string = f"{self.tab_str()}"
+        string = f"{self.tab_str()}WhileLoop( )\n"
+        self.increment_lvl()
+        string += f"{self.tab_str()}Test( )\n"
+        self.increment_lvl()
+        string += f"{self.tab_str()}{self.test}\n"
+        self.decrement_lvl()
+        self.increment_lvl()
+        string += f"{self.tab_str()}{self.scope}\n"
+        self.decrement_lvl(2)
+
+        return string
 
 
 class ForLoop(AstNode):

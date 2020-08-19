@@ -77,6 +77,7 @@ from .token_map import TOKEN_MAP
 class Token(object):
     def __init__(self, lexeme, tok_type=TokenType.UNDEFINED):
         self.lexeme: str = lexeme
+        self.file_pos: tuple = ()
 
         if tok_type == TokenType.UNDEFINED:
             if self.lexeme in TOKEN_MAP:
@@ -125,3 +126,11 @@ class Token(object):
         :return: boolean
         """
         return self.token in {TokenType.STRING, TokenType.FLOAT, TokenType.INT, TokenType.LIST, TokenType.IDENTIFIER}
+
+    def is_compound(self) -> bool:
+        """
+        Returns whether the token is a possible compound symbol.
+
+        :return:
+        """
+        return self.lexeme in lexeme_sets.COMPOUNDS

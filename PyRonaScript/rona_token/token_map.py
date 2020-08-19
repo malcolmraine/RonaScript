@@ -92,5 +92,7 @@ TOKEN_MAP: dict = {
     "elif": TokenType.ELIF,
     "else": TokenType.ELSE,
     "is": TokenType.IS,
-    "alias": TokenType.ALIAS
+    "alias": TokenType.ALIAS,
+    "while": TokenType.WHILE,
+    "for": TokenType.FOR,
 }

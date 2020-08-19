@@ -49,6 +49,9 @@ class LexerBase(object):
             except:
                 pass
 
+    def get_file_pos(self) -> tuple:
+        return self.line_cnt, self.char_cnt, self.line_char_cnt
+
     def load_file(self, file: str) -> None:
         """
         Load a file into the rona_lexer.

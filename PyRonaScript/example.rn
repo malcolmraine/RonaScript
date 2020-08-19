@@ -6,25 +6,35 @@
 require "file1.rn";
 require "file2.rn";
 
-var x: int = 8;
-
-if (x > 9) {
-    var y: int = 0;
-} elif (x < 9) {
-    var y: int = 1;
-} else {
-    var y: int = 9;
-    x = y;
-}
-
-//var test: string = "Test";
-
-
-if (a > 5) {
-    var y: int = 0;
-} elif (a < 9) {
-    var z: int = 1;
-} else {
-    var z int = 9;
-    x = z;
-}
+x += 3;
+x -= 3;
+x &= 3;
+x *= 3;
+x |= 3;
+x ~= 3;
+//x %= 3;
+//x /= 3;
+//x += 3;
+//var x: int = 8;
+//
+//if (x > 9) {
+//    var y: int = 0;
+//} elif (x < 9) {
+//    var y: int = 1;
+//} else {
+//    var y: int = 9;
+//    x = y;
+//}
+//
+//var a: int = 9;
+//
+//if (a > 9) {
+//    var b: int = 0;
+//} elif (a < 9) {
+//    var b: int = 1;
+//} else {
+//    var b: int = 9;
+//    a = b;
+//}
+//
+//var a: int = 9;

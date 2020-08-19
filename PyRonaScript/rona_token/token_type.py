@@ -97,6 +97,8 @@ class TokenType(Enum):
     ELSE = auto()           # else
     IS = auto()             # is
     ALIAS = auto()          # alias
+    WHILE = auto()          # while
+    FOR = auto()            # for
     INT_LITERAL = auto()
     FLOAT_LITERAL = auto()
     EOF = auto()
