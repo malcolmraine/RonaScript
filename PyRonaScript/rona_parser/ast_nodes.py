@@ -436,6 +436,25 @@ class ForLoop(AstNode):
         self.advance_expr: Expr = None
         self.scope: Scope = None
 
+    def __str__(self):
+        string = f"{self.tab_str()}ForLoop( )\n"
+        self.increment_lvl()
+        string += f"{self.tab_str()}InitVar( )\n"
+        self.increment_lvl()
+        string += str(self.init_var)
+        self.decrement_lvl()
+        string += f"{self.tab_str()}Test( )\n"
+        self.increment_lvl()
+        string += str(self.test)
+        self.decrement_lvl()
+        string += f"{self.tab_str()}Advance( )\n"
+        self.increment_lvl()
+        string += str(self.advance_expr)
+        self.decrement_lvl()
+        string += str(self.scope)
+
+        return string
+
 
 class AliasDecl(AstNode):
     def __init__(self):

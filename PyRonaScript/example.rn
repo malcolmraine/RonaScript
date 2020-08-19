@@ -6,12 +6,22 @@
 require "file1.rn";
 require "file2.rn";
 
-x += 3;
-x -= 3;
-x &= 3;
-x *= 3;
-x |= 3;
-x ~= 3;
+for (var x: int = 0; x < 10; x++) {
+    x /= 4;
+    var y: int = 9;
+
+    if (y < 7) {
+        x = 9;
+
+        for (var z: int = 0; z < x; z++) {
+
+        }
+
+    }
+
+//    while (x != 6) {
+//    }
+}
 //x %= 3;
 //x /= 3;
 //x += 3;

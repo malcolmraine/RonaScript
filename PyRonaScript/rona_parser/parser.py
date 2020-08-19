@@ -519,9 +519,22 @@ class Parser(ParserBase):
         :return:
         """
         node = ForLoop()
+        self.adv_buf(2)
         node.init_var = self.var_decl()
+
+        if self.current().token == TokenType.SEMICOLON:
+            self.adv_buf()
+
         node.test = self.expr()
+
+        if self.current().token == TokenType.SEMICOLON:
+            self.adv_buf()
+
         node.advance_expr = self.expr()
+
+        if self.current().token == TokenType.L_PARAN:
+            self.adv_buf()
+
         node.scope = self.scope()
 
         return node
@@ -639,8 +652,8 @@ class Parser(ParserBase):
 
             elif self.current().token == TokenType.ELSE:
                 # If we hit an ELSE statement here, that means we were
-                # parsing the scope of an IF statement so we need to
-                # leave this function and go back to the ELIF statement.
+                # parsing the scope of an IF  or ELIF statement so we need to
+                # leave this function and go back to that statement.
                 return
 
             elif self.current().token == TokenType.WHILE:
