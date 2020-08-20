@@ -14,40 +14,9 @@ for (var x: int = 0; x < 10; x++) {
         x = 9;
 
         for (var z: int = 0; z < x; z++) {
-//            while (z != 8) {
-//
-//            }
+            var a: int;
+            var b: int;
             break;
         }
 
     }
-
-//    while (x != 6) {
-//    }
-}
-//x %= 3;
-//x /= 3;
-//x += 3;
-//var x: int = 8;
-//
-//if (x > 9) {
-//    var y: int = 0;
-//} elif (x < 9) {
-//    var y: int = 1;
-//} else {
-//    var y: int = 9;
-//    x = y;
-//}
-//
-//var a: int = 9;
-//
-//if (a > 9) {
-//    var b: int = 0;
-//} elif (a < 9) {
-//    var b: int = 1;
-//} else {
-//    var b: int = 9;
-//    a = b;
-//}
-//
-//var a: int = 9;

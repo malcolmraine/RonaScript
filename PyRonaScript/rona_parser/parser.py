@@ -406,6 +406,9 @@ class Parser(ParserBase):
             else:
                 node.alternative = None
 
+        if self.current().token == TokenType.SEMICOLON:
+            self.adv_buf()
+
         return node
 
     def elif_stmt(self) -> ElifStmt:
