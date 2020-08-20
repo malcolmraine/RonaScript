@@ -16,4 +16,6 @@ class declarations
 
 function declarations
 
+add UUID fail safes (checking if UUID is already used)
+
 

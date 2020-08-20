@@ -26,16 +26,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from cpp_helpers import tabs
+from uuid import uuid4
 from .ast_graph import AstGraph
 
-_tab_lvl = 0
+_tab_lvl: int = 0
 graph_visual = AstGraph()
 current_parent = graph_visual.name
 
 
 class AstNode(object):
-    instance_num = 0
+    instance_num: int = 0
 
     def __init__(self):
         self.parent = None
@@ -43,7 +43,12 @@ class AstNode(object):
         self.file_pos = ()
 
     @staticmethod
-    def tab_str():
+    def tab_str() -> str:
+        """
+        Gets the correct sized tab string for printing the AST nodes.
+
+        :return: String containing only \t characters.
+        """
         global _tab_lvl
 
         if _tab_lvl == 0:
@@ -52,7 +57,7 @@ class AstNode(object):
             return "|\t" * _tab_lvl
 
     @staticmethod
-    def increment_lvl(n=1):
+    def increment_lvl(n=1) -> None:
         """
         Increments the global tab level for printing purposes
 
@@ -62,7 +67,7 @@ class AstNode(object):
         _tab_lvl += n
 
     @staticmethod
-    def decrement_lvl(n=1):
+    def decrement_lvl(n=1) -> None:
         """
         Decrements the global tab level for printing purposes
 
@@ -189,26 +194,31 @@ class FuncQualifier(AstNode):
 class BreakStmt(AstNode):
     def __init__(self):
         super().__init__()
-        self.scope = None
+        self.scope_id = None
+
+    def __str__(self):
+        return f"{self.tab_str()}BreakStmt( {self.scope_id} )\n"
 
 
 class FlowStmt(AstNode):
     def __init__(self):
         super().__init__()
         self.id = None
+        self.scope_id = None
 
 
 class ReturnStmt(AstNode):
     def __init__(self):
         super().__init__()
-        self.expr: Expr = None
+        self.expr: Expr or None = None
+        self.scope_id = None
 
 
 class AssignmentStmt(AstNode):
     def __init__(self):
         super().__init__()
         self.id = None
-        self.expr: Expr = None
+        self.expr: Expr or None = None
 
     def __str__(self):
         string = f"{self.tab_str()}AssignmentStmt( {self.id} )\n"
@@ -227,8 +237,8 @@ class AssignmentStmt(AstNode):
 class IfStmt(AstNode):
     def __init__(self):
         super().__init__()
-        self.test: Expr = None
-        self.consequent: Scope = None
+        self.test: Expr or None = None
+        self.consequent: Scope or None = None
         self.alternative: ElifStmt or ElseStmt = None
 
     def __str__(self):
@@ -282,7 +292,7 @@ class ElifStmt(IfStmt):
 class ElseStmt(AstNode):
     def __init__(self):
         super().__init__()
-        self.scope: Scope = None
+        self.scope: Scope or None = None
 
     def __str__(self):
         string = f"{self.tab_str()}ElseStmt( )\n"
@@ -299,13 +309,14 @@ class Scope(AstNode):
     def __init__(self):
         super().__init__()
         self.children: list = []
-        self.parent_scope: Scope = None
+        self.parent_scope: Scope or None = None
+        self.id = uuid4()
 
     def add_subtree(self, root_node):
         self.children.append(root_node)
         
     def __str__(self):
-        string = f"{self.tab_str()}Scope( )\n"
+        string = f"{self.tab_str()}Scope( {self.id} )\n"
 
         for child in self.children:
             self.increment_lvl()
@@ -343,7 +354,7 @@ class FuncDecl(AstNode):
         self.id = None
         self.args: list = []
         self.type = None
-        self.scope: Scope = None
+        self.scope: Scope or None = None
 
     def __str__(self):
         string = f"{self.tab_str()}FuncDecl( {self.type} , {self.id} )\n"
@@ -361,7 +372,7 @@ class ClassDecl(AstNode):
     def __init__(self):
         super().__init__()
         self.id = None
-        self.scope: Scope = None
+        self.scope: Scope or None = None
 
     def __str__(self):
         string = f"{self.tab_str()}ClassDecl( {self.id} )\n"
@@ -398,21 +409,21 @@ class ScopeMethodCall(AstNode):
     def __init__(self):
         super().__init__()
         self.accessor = None
-        self.func_call: FuncCall = None
+        self.func_call: FuncCall or None = None
 
 
 class ScopeVarAccess(AstNode):
     def __init__(self):
         super().__init__()
-        self.accessor = None
+        self.scope_id = None
         self.var = None
 
 
 class WhileLoop(AstNode):
     def __init__(self):
         super().__init__()
-        self.test: Expr = None
-        self.scope: Scope = None
+        self.test: Expr or None = None
+        self.scope: Scope or None = None
 
     def __str__(self):
         string = f"{self.tab_str()}WhileLoop( )\n"
@@ -431,10 +442,10 @@ class WhileLoop(AstNode):
 class ForLoop(AstNode):
     def __init__(self):
         super().__init__()
-        self.init_var: VarDecl = None
-        self.test: Expr = None
-        self.advance_expr: Expr = None
-        self.scope: Scope = None
+        self.init_var: VarDecl or None = None
+        self.test: Expr or None = None
+        self.advance_expr: Expr or None = None
+        self.scope: Scope or None = None
 
     def __str__(self):
         string = f"{self.tab_str()}ForLoop( )\n"

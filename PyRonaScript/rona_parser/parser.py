@@ -244,6 +244,7 @@ class Parser(ParserBase):
             elif self.current().is_binary_op():
                 node = BinaryExpr()
                 node.left = expr_stack.pop()
+
                 node.op = self.current().lexeme
                 expr_stack.push(node)
                 self.adv_buf()
@@ -305,7 +306,11 @@ class Parser(ParserBase):
 
         :return:
         """
-        return BreakStmt()
+        self.adv_buf(2)
+        node = BreakStmt()
+        node.scope_id = self.current_scope.id
+
+        return node
 
     def flow_stmt(self) -> FlowStmt:
         """
@@ -321,6 +326,7 @@ class Parser(ParserBase):
         """
         node = ReturnStmt()
         node.expr = self.expr()
+        node.scope_id = self.current_scope.id
 
         return node
 
@@ -443,8 +449,9 @@ class Parser(ParserBase):
 
     def scope(self) -> Scope:
         """
+        Handles new scopes.
 
-        :return:
+        :return: Scope AST node
         """
         node = Scope()
         self.convert_scope(node)
@@ -459,8 +466,9 @@ class Parser(ParserBase):
 
     def func_call(self) -> FuncCall:
         """
+        Handles function call expressions.
 
-        :return:
+        :return: FuncCall AST node
         """
         node = FuncCall()
         node.id = self.current().lexeme
@@ -493,7 +501,7 @@ class Parser(ParserBase):
         :return:
         """
         node = ScopeVarAccess()
-        node.accessor = self.current().lexeme
+        node.scope_id = self.current().lexeme
         self.adv_buf(2)
         node.var = self.current().lexeme
 
@@ -505,9 +513,14 @@ class Parser(ParserBase):
         :return:
         """
         node = WhileLoop()
-        self.adv_buf(2)
-        print(self.current())
-        node.test = self.expr()
+
+        if self.current().token == TokenType.WHILE:
+            self.adv_buf()
+
+        if self.current().token == TokenType.R_PARAN:
+            self.adv_buf()
+            node.test = self.expr()
+
         print(node.test)
         node.scope = self.scope()
 
@@ -628,6 +641,9 @@ class Parser(ParserBase):
 
             elif self.current().token == TokenType.RETURN:
                 self.current_scope.add_subtree(self.return_stmt())
+
+            elif self.current().token == TokenType.BREAK:
+                self.current_scope.add_subtree(self.break_stmt())
 
             elif self.current().token == TokenType.CLASS:
                 self.current_scope.add_subtree(self.class_decl())

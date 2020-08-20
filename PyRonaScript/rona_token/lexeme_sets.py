@@ -40,6 +40,7 @@ RESERVED_WORDS: set = {
     "function" "var",
     "return",
     "null",
+    "break",
 }
 
 COMPOUNDS: set = {
@@ -64,6 +65,26 @@ COMPOUNDS: set = {
     "[]",
 }
 
+ASSIGNMENT_OPERATORS = {
+    "+=",
+    "--",
+    "-=",
+    "%=",
+    "&=",
+    "|=",
+    "/=",
+    "*=",
+    "~=",
+    "^=",
+    "!=",
+}
+
+COMPARISON_OPERATORS = {
+    ">=",
+    "<=",
+    "!=",
+}
+
 UNARY_OPS: set = {
     "++",
     "--",
@@ -86,6 +107,7 @@ BINARY_OPS: set = {
     "&&",
     "|",
     "||",
+    "!="
     "^",
     "/",
     "%",

@@ -14,7 +14,10 @@ for (var x: int = 0; x < 10; x++) {
         x = 9;
 
         for (var z: int = 0; z < x; z++) {
-
+//            while (z != 8) {
+//
+//            }
+            break;
         }
 
     }

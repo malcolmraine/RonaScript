@@ -84,6 +84,7 @@ TOKEN_MAP: dict = {
     "func": TokenType.FUNCTION,
     "require": TokenType.REQUIRE,
     "return": TokenType.RETURN,
+    "break": TokenType.BREAK,
     "void": TokenType.VOID,
     "null": TokenType.NULL,
     "construct": TokenType.CONSTRUCT,

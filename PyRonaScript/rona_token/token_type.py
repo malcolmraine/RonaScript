@@ -77,6 +77,7 @@ class TokenType(Enum):
     VAR = auto()            # var
     REQUIRE = auto()        # require
     RETURN = auto()         # return
+    BREAK = auto()          # break
     VOID = auto()           # void
     STRING_LITERAL = auto()
     DBL_STAR = auto()       # **

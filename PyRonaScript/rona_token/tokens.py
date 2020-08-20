@@ -134,3 +134,6 @@ class Token(object):
         :return:
         """
         return self.lexeme in lexeme_sets.COMPOUNDS
+
+    def is_comparison_op(self) -> bool:
+        return self.lexeme in lexeme_sets.COMPARISON_OPERATORS
