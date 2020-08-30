@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 File: ast_nodes.py
 Description:
@@ -181,6 +180,11 @@ class ArgDecl(AstNode):
         self.id = None
         self.type = None
 
+    def __str__(self):
+        string = f"{self.tab_str()}ArgDecl( {self.id}, {self.type} )\n"
+
+        return string
+
 
 class FuncQualifier(AstNode):
     def __init__(self):
@@ -194,24 +198,24 @@ class FuncQualifier(AstNode):
 class BreakStmt(AstNode):
     def __init__(self):
         super().__init__()
-        self.scope_id = None
+        self.scope_uuid = None
 
     def __str__(self):
-        return f"{self.tab_str()}BreakStmt( {self.scope_id} )\n"
+        return f"{self.tab_str()}BreakStmt( {self.scope_uuid} )\n"
 
 
 class FlowStmt(AstNode):
     def __init__(self):
         super().__init__()
         self.id = None
-        self.scope_id = None
+        self.scope_uuid = None
 
 
 class ReturnStmt(AstNode):
     def __init__(self):
         super().__init__()
         self.expr: Expr or None = None
-        self.scope_id = None
+        self.scope_uuid = None
 
 
 class AssignmentStmt(AstNode):
@@ -310,13 +314,13 @@ class Scope(AstNode):
         super().__init__()
         self.children: list = []
         self.parent_scope: Scope or None = None
-        self.id = uuid4()
+        self.uuid = uuid4()
 
     def add_subtree(self, root_node):
         self.children.append(root_node)
         
     def __str__(self):
-        string = f"{self.tab_str()}Scope( {self.id} )\n"
+        string = f"{self.tab_str()}Scope( {self.uuid} )\n"
 
         for child in self.children:
             self.increment_lvl()
@@ -330,11 +334,12 @@ class VarDecl(AstNode):
     def __init__(self):
         super().__init__()
         self.id = None
+        self.uuid = uuid4()
         self.type = None
         self.init_value = None
         
     def __str__(self):
-        string = f"{self.tab_str()}VarDecl( {self.type} , {self.id} )\n"
+        string = f"{self.tab_str()}VarDecl( {self.type} , {self.id}, {self.uuid} )\n"
 
         if self.init_value is not None:
             self.increment_lvl()
@@ -352,6 +357,7 @@ class FuncDecl(AstNode):
         super().__init__()
         self.qualifiers = []
         self.id = None
+        self.uuid = uuid4()
         self.args: list = []
         self.type = None
         self.scope: Scope or None = None
@@ -361,7 +367,12 @@ class FuncDecl(AstNode):
 
         self.increment_lvl()
         string += f"{self.tab_str()}Qualifiers( {self.qualifiers} )\n"
-        string += f"{self.tab_str()}Arguments( {self.args} )\n"
+        string += f"{self.tab_str()}Arguments( )\n"
+        self.increment_lvl()
+
+        for arg in self.args:
+            string += str(arg)
+
         string += f"{self.scope}"
         self.decrement_lvl()
 
@@ -372,6 +383,7 @@ class ClassDecl(AstNode):
     def __init__(self):
         super().__init__()
         self.id = None
+        self.uuid = uuid4()
         self.scope: Scope or None = None
 
     def __str__(self):
@@ -391,7 +403,6 @@ class FuncCall(AstNode):
 
     def __str__(self):
         string = f"{self.tab_str()}FuncCall( {self.id} )\n"
-
         self.increment_lvl()
 
         for arg in self.args:
@@ -415,7 +426,7 @@ class ScopeMethodCall(AstNode):
 class ScopeVarAccess(AstNode):
     def __init__(self):
         super().__init__()
-        self.scope_id = None
+        self.scope_uuid = None
         self.var = None
 
 
@@ -430,10 +441,9 @@ class WhileLoop(AstNode):
         self.increment_lvl()
         string += f"{self.tab_str()}Test( )\n"
         self.increment_lvl()
-        string += f"{self.tab_str()}{self.test}\n"
+        string += f"{self.test}"
         self.decrement_lvl()
-        self.increment_lvl()
-        string += f"{self.tab_str()}{self.scope}\n"
+        string += f"{self.scope}"
         self.decrement_lvl(2)
 
         return string

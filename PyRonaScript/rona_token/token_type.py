@@ -92,6 +92,10 @@ class TokenType(Enum):
     TILDE = auto()          # ~
     CONSTRUCT = auto()      # construct
     DESTRUCT = auto()       # destruct
+    PUBLIC = auto()         # public
+    PRIVATE = auto()        # private
+    PROTECTED = auto()      # protected
+    STATIC = auto()         # static
     R_ARROW = auto()        # ->
     IF = auto()             # if
     ELIF = auto()           # elif

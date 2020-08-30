@@ -3,20 +3,25 @@
 ***************************************************/
 
 // Here we are importing our dependencies
-require "file1.rn";
-require "file2.rn";
+//require "file1.rn";
+//require "file2.rn";
 
-for (var x: int = 0; x < 10; x++) {
-    x /= 4;
-    var y: int = 9;
+//while (u < 19) {
+//    x /= 4;
+//    var y: int = 9;
+//
+//    if (y < 7) {
+//        x = 9;
+//
+//        for (var z: int = 0; z < x; z++) {
+//            var a: int;
+//            var b: int;
+//            x = 9;
+//            break;
+//        }
+//
+//    }
 
-    if (y < 7) {
-        x = 9;
+func protected test(var x: float): void {
 
-        for (var z: int = 0; z < x; z++) {
-            var a: int;
-            var b: int;
-            break;
-        }
-
-    }
+}

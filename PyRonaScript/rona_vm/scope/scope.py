@@ -8,7 +8,7 @@ class Scope(object):
         self.functions = {}
         self.scopes = []
 
-    def create_var(self, name, var_type=None):
+    def create_var(self, name, var_type=None, uuid=None):
         ...
 
     def create_func(self, name, body):

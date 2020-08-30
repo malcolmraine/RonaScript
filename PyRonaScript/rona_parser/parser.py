@@ -40,6 +40,10 @@ class Parser(ParserBase):
         self.current_scope: Scope = self.ast.root
         self.parent_scope: Scope = self.ast.root
 
+    def conditional_buf_adv(self, a, b):
+        if a == b:
+            self.adv_buf()
+
     def require(self):
         """
 
@@ -73,11 +77,18 @@ class Parser(ParserBase):
 
         :return:
         """
-        valid_qualifiers = ["construct", "destruct", "public", "protected", "private", "static"]
+        valid_qualifiers = [
+            TokenType.CONSTRUCT,
+            TokenType.DESTRUCT,
+            TokenType.PUBLIC,
+            TokenType.PROTECTED,
+            TokenType.PRIVATE,
+            TokenType.STATIC
+        ]
         out = []
 
-        while self.current() in valid_qualifiers:
-            out.append(self.current())
+        while self.current().token in valid_qualifiers:
+            out.append(self.current().lexeme)
             self.adv_buf()
 
         return out
@@ -88,15 +99,64 @@ class Parser(ParserBase):
         :return:
         """
         node = FuncDecl()
+        self.adv_buf()
+
         node.qualifiers = self.func_qualifier()
-        node.id = self.current()
+        node.id = self.current().lexeme
         self.adv_buf()
 
-        while self.current().token != TokenType.R_PARAN:
-            node.args.append(self.expr())
+        self.conditional_buf_adv(self.current().token, TokenType.R_PARAN)
+        print(self.current())
 
-        self.adv_buf()
+        while self.current().token != TokenType.L_PARAN:
+            arg = self.arg_decl()
+            if arg is not None:
+                node.args.append(arg)
+            else:
+                break
+            print(self.current())
+
+        self.conditional_buf_adv(self.current().token, TokenType.L_PARAN)
+
+        if self.current() == TokenType.COLON:
+            self.adv_buf()
+            node.type = self.current().lexeme
+            self.adv_buf()
+        else:
+            node.type = 'void'
+
         node.scope = self.scope()
+
+        return node
+
+    def arg_decl(self):
+        print("test")
+        node = ArgDecl()
+
+        self.conditional_buf_adv(self.current().token, TokenType.VAR)
+
+        if self.current().token == TokenType.IDENTIFIER:
+            node.id = self.current().lexeme
+            self.adv_buf()
+
+        self.conditional_buf_adv(self.current().token, TokenType.COLON)
+
+        if self.current().is_type():
+            node.type = self.current().lexeme
+            self.adv_buf()
+
+        self.conditional_buf_adv(self.current().token, TokenType.COMMA)
+
+        # while self.current().token not in [TokenType.L_PARAN, TokenType.COMMA]:
+        #     self.conditional_buf_adv(self.current().token, TokenType.R_PARAN)
+        #
+        #     if self.current().token == TokenType.VAR:
+        #         self.adv_buf()
+        #         node.id = self.current().lexeme
+        #         self.adv_buf()
+        #         node.type = self.current().lexeme
+        # print(node)
+        # self.adv_buf()
 
         return node
 
@@ -284,8 +344,9 @@ class Parser(ParserBase):
 
     def binary_expr(self) -> BinaryExpr:
         """
+        Handles binary expressions.
 
-        :return:
+        :return: BinaryExpr AST node.
         """
         node = BinaryExpr()
         node.left = Expr()
@@ -303,12 +364,14 @@ class Parser(ParserBase):
 
     def break_stmt(self) -> BreakStmt:
         """
+        Handles break statements.
 
         :return:
         """
         self.adv_buf(2)
         node = BreakStmt()
-        node.scope_id = self.current_scope.id
+        node.scope_uuid = self.current_scope.uuid
+        self.conditional_buf_adv(self.current().token, TokenType.SEMICOLON)
 
         return node
 
@@ -326,7 +389,7 @@ class Parser(ParserBase):
         """
         node = ReturnStmt()
         node.expr = self.expr()
-        node.scope_id = self.current_scope.id
+        node.scope_uuid = self.current_scope.uuid
 
         return node
 
@@ -336,38 +399,17 @@ class Parser(ParserBase):
         :return:
         """
         node = AssignmentStmt()
-        node.id = self.current().lexeme
 
+        if self.current().token == TokenType.EQUAL:
+            self.adv_buf()
+
+        node.id = self.current().lexeme
         self.adv_buf()
 
         if self.current().is_compound():
             b_node = BinaryExpr()
             b_node.left = node.id
-
-            if self.current().token == TokenType.PLUS_EQUAL:
-                b_node.op = '+'
-
-            elif self.current().token == TokenType.MINUS_EQUAL:
-                b_node.op = '-'
-
-            elif self.current().token == TokenType.STAR_EQUAL:
-                b_node.op = '*'
-
-            elif self.current().token == TokenType.SLASH_EQUAL:
-                b_node.op = '/'
-
-            elif self.current().token == TokenType.AMPER_EQUAL:
-                b_node.op = '&'
-
-            elif self.current().token == TokenType.BAR_EQUAL:
-                b_node.op = '|'
-
-            elif self.current().token == TokenType.XOREQ:
-                b_node.op = '^'
-
-            elif self.current().token == TokenType.PERCENT_EQUAL:
-                b_node.op = '%'
-
+            b_node.op = self.current().lexeme[0]
             self.adv_buf()
             b_node.right = self.expr()
             node.expr = b_node
@@ -375,6 +417,7 @@ class Parser(ParserBase):
         else:
             self.adv_buf()
             node.expr = self.expr()
+            self.conditional_buf_adv(self.current().token, TokenType.SEMICOLON)
 
         return node
 
@@ -406,8 +449,7 @@ class Parser(ParserBase):
             else:
                 node.alternative = None
 
-        if self.current().token == TokenType.SEMICOLON:
-            self.adv_buf()
+        self.conditional_buf_adv(self.current().token, TokenType.SEMICOLON)
 
         return node
 
@@ -504,7 +546,7 @@ class Parser(ParserBase):
         :return:
         """
         node = ScopeVarAccess()
-        node.scope_id = self.current().lexeme
+        node.scope_uuid = self.current().lexeme
         self.adv_buf(2)
         node.var = self.current().lexeme
 
@@ -524,7 +566,6 @@ class Parser(ParserBase):
             self.adv_buf()
             node.test = self.expr()
 
-        print(node.test)
         node.scope = self.scope()
 
         return node
@@ -538,14 +579,9 @@ class Parser(ParserBase):
         self.adv_buf(2)
         node.init_var = self.var_decl()
 
-        if self.current().token == TokenType.SEMICOLON:
-            self.adv_buf()
-
+        self.conditional_buf_adv(self.current().token, TokenType.SEMICOLON)
         node.test = self.expr()
-
-        if self.current().token == TokenType.SEMICOLON:
-            self.adv_buf()
-
+        self.conditional_buf_adv(self.current().token, TokenType.SEMICOLON)
         node.advance_expr = self.expr()
 
         if self.current().token == TokenType.L_PARAN:
@@ -633,8 +669,7 @@ class Parser(ParserBase):
             elif self.current().token == TokenType.VAR:
                 self.current_scope.add_subtree(self.var_decl())
 
-                if self.current().token == TokenType.SEMICOLON:
-                    self.adv_buf()
+                self.conditional_buf_adv(self.current().token, TokenType.SEMICOLON)
 
             elif self.current().token == TokenType.ALIAS:
                 self.current_scope.add_subtree(self.alias_decl())
@@ -653,7 +688,6 @@ class Parser(ParserBase):
 
             elif self.current().token == TokenType.IDENTIFIER:
                 if self.peek().token == TokenType.EQUAL or self.peek().is_compound():
-
                     self.current_scope.add_subtree(self.assignment_stmt())
 
                 elif self.peek().token == TokenType.R_PARAN:

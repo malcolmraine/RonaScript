@@ -9,13 +9,11 @@ EXPRESSIONS:
     - class property accessors
     - class method calls
 
-if/elif/else statements
-    - Need to figure out how to handle ELIF/ELSE statements
-
 class declarations
 
 function declarations
 
 add UUID fail safes (checking if UUID is already used)
 
+associating break statement uuid with closest loop scope uuid
 

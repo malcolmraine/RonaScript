@@ -1,5 +1,5 @@
 """
-File: lexeme_sets.py
+File: checker.py
 Description:
 Author: Malcolm Hall
 Version: 1
@@ -25,96 +25,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from rona_token import lexeme_sets
+from rona_token import token_map
+from rona_token import token_type
+from .ast_graph import *
 
-RESERVED_WORDS: set = {
-    "float",
-    "string",
-    "alias",
-    "is"
-    "list",
-    "int",
-    "bool",
-    "void",
-    "require",
-    "class",
-    "function",
-    "var",
-    "public",
-    "private",
-    "protected",
-    "static"
-    "return",
-    "null",
-    "break",
-}
 
-COMPOUNDS: set = {
-    "++",
-    "+=",
-    "--",
-    "-=",
-    "&&",
-    "%=",
-    "||",
-    "**",
-    "&=",
-    "|=",
-    "/=",
-    "*=",
-    "~=",
-    "^=",
-    "!=",
-    "->",
-    ">=",
-    "<=",
-    "[]",
-}
+class AstChecker(object):
+    def is_valid_type(self):
+        ...
 
-ASSIGNMENT_OPERATORS = {
-    "+=",
-    "--",
-    "-=",
-    "%=",
-    "&=",
-    "|=",
-    "/=",
-    "*=",
-    "~=",
-    "^=",
-    "!=",
-}
-
-COMPARISON_OPERATORS = {
-    ">=",
-    "<=",
-    "!=",
-}
-
-UNARY_OPS: set = {
-    "++",
-    "--",
-    "**",
-    "!",
-    "~",
-    "-",
-    "+",
-}
-
-BINARY_OPS: set = {
-    "+",
-    "-",
-    "==",
-    "<",
-    ">",
-    "<=",
-    ">=",
-    "&",
-    "&&",
-    "|",
-    "||",
-    "!="
-    "^",
-    "/",
-    "%",
-    "*",
-}
+    def is_valid_binary_expr(self):
+        ...
