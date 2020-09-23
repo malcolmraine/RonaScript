@@ -38,6 +38,8 @@ RESERVED_WORDS: set = {
     "require",
     "class",
     "function",
+    "construct",
+    "destruct",
     "var",
     "public",
     "private",

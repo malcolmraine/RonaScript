@@ -104,21 +104,32 @@ class Parser(ParserBase):
         node.qualifiers = self.func_qualifier()
         node.id = self.current().lexeme
         self.adv_buf()
-
         self.conditional_buf_adv(self.current().token, TokenType.R_PARAN)
-        print(self.current())
 
         while self.current().token != TokenType.L_PARAN:
-            arg = self.arg_decl()
+            arg = ArgDecl()
+
+            self.conditional_buf_adv(self.current().token, TokenType.VAR)
+
+            if self.current().token == TokenType.NAME:
+                arg.id = self.current().lexeme
+                self.adv_buf()
+
+            self.conditional_buf_adv(self.current().token, TokenType.COLON)
+
+            if self.current().is_type():
+                arg.type = self.current().lexeme
+                self.adv_buf()
+
+            self.conditional_buf_adv(self.current().token, TokenType.COMMA)
             if arg is not None:
                 node.args.append(arg)
             else:
                 break
-            print(self.current())
 
         self.conditional_buf_adv(self.current().token, TokenType.L_PARAN)
 
-        if self.current() == TokenType.COLON:
+        if self.current().token == TokenType.COLON:
             self.adv_buf()
             node.type = self.current().lexeme
             self.adv_buf()
@@ -129,13 +140,12 @@ class Parser(ParserBase):
 
         return node
 
-    def arg_decl(self):
-        print("test")
+    def arg_decl(self) -> ArgDecl:
         node = ArgDecl()
 
         self.conditional_buf_adv(self.current().token, TokenType.VAR)
 
-        if self.current().token == TokenType.IDENTIFIER:
+        if self.current().token == TokenType.NAME:
             node.id = self.current().lexeme
             self.adv_buf()
 
@@ -167,7 +177,7 @@ class Parser(ParserBase):
         """
         node = ClassDecl()
         self.adv_buf()
-        node.id = self.current()
+        node.id = self.current().lexeme
         self.adv_buf()
         node.scope = self.scope()
 
@@ -258,7 +268,7 @@ class Parser(ParserBase):
 
                 self.adv_buf()
 
-            elif self.current().token == TokenType.IDENTIFIER:
+            elif self.current().token == TokenType.NAME:
                 if self.peek().token == TokenType.R_PARAN:
                     node = self.func_call()
                     expr_stack.push(node)
@@ -321,12 +331,12 @@ class Parser(ParserBase):
         node = UnaryExpr()
         node.op = self.current().lexeme
 
-        if self.lookback().token == TokenType.IDENTIFIER:
+        if self.lookback().token == TokenType.NAME:
             if expr_stack.top() == self.lookback().lexeme:
                 node.id = expr_stack.pop()
                 self.adv_buf()
 
-        elif self.peek().token == TokenType.IDENTIFIER:
+        elif self.peek().token == TokenType.NAME:
             node.id = self.peek().lexeme
             self.adv_buf(2)
 
@@ -686,7 +696,7 @@ class Parser(ParserBase):
             elif self.current().token == TokenType.CLASS:
                 self.current_scope.add_subtree(self.class_decl())
 
-            elif self.current().token == TokenType.IDENTIFIER:
+            elif self.current().token == TokenType.NAME:
                 if self.peek().token == TokenType.EQUAL or self.peek().is_compound():
                     self.current_scope.add_subtree(self.assignment_stmt())
 

@@ -151,15 +151,23 @@ class Lexer(LexerBase):
             if self.peek() == "/":
                 while self.current() != "\n":
                     self.tok_str += self.current()
-                    self.adv_buf()
-            else:
-                while (self.current() + self.peek()) != "*/":
+                    self.adv_buf(2)
+                return self.emit(Token(self.tok_str, TokenType.COMMENT))
+            elif self.peek() == '*':
+                idx = 0
+                while (self.current() + self.peek()) != "*/" and not self.eof:
+                    idx += 1
                     self.tok_str += self.current()
                     self.adv_buf()
+                print("BREAK")
                 self.tok_str += self.current()
                 self.adv_buf()
                 self.tok_str += self.current()
-            return self.emit(Token(self.tok_str, TokenType.COMMENT))
+                print("HERE")
+                return self.emit(Token(self.tok_str, TokenType.COMMENT))
+            else:
+                 # Throw error
+                ...
         else:
             return self.emit(self.tok_str)
 
@@ -173,13 +181,8 @@ class Lexer(LexerBase):
         if self.tok_str == "":
             if self.is_cmpnd():
                 return self.emit(self.get_cmpnd_candidate(), 2)
-
-            elif c == "[" and self.peek() == "]":
-                return self.emit("[]", 2)
-
             else:
                 return self.emit(c)
-
         else:
             return self.emit(self.tok_str, 0)
 
@@ -193,6 +196,7 @@ class Lexer(LexerBase):
         if self.tok_str == "":
             self.tok_str += c
             self.adv_buf()
+
             while self.current() != '"':
                 self.tok_str += self.current()
                 self.adv_buf()
@@ -209,6 +213,7 @@ class Lexer(LexerBase):
 
         :return: rona_token
         """
+
         while not self.eof:
             if self.current() == " ":
                 if self.tok_str != "":
@@ -242,8 +247,11 @@ class Lexer(LexerBase):
                 return self.default_handler(self.current())
 
             elif self.current() == "/":
-                if self.peek() == "*" or self.peek() == "/":
-                    return self.comment_handler(self.current())
+                if self.peek() == '*':
+                    obj = self.comment_handler(self.current())
+                    print(self.tokens[-1])
+                    print("SOFIJSLDKFJSLF")
+                    return obj
                 else:
                     return self.cmpnd_handler(self.current())
 
@@ -281,7 +289,10 @@ class Lexer(LexerBase):
                 return self.default_handler(self.current())
 
             elif self.current() == "/":
-                return self.comment_handler(self.current())
+                if self.peek() in ['/', '*']:
+                    return self.comment_handler(self.current())
+                else:
+                    return self.cmpnd_handler(self.current())
 
             elif self.current() == "=":
                 return self.cmpnd_handler(self.current())

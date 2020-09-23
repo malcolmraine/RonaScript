@@ -88,7 +88,7 @@ class Token(object):
                 elif self.lexeme.replace('.', '').isnumeric():
                     self.token = TokenType.FLOAT_LITERAL
                 else:
-                    self.token = TokenType.IDENTIFIER
+                    self.token = TokenType.NAME
         else:
             self.token = tok_type
 
@@ -125,7 +125,7 @@ class Token(object):
 
         :return: boolean
         """
-        return self.token in {TokenType.STRING, TokenType.FLOAT, TokenType.INT, TokenType.LIST, TokenType.IDENTIFIER}
+        return self.token in {TokenType.STRING, TokenType.FLOAT, TokenType.INT, TokenType.LIST, TokenType.NAME}
 
     def is_compound(self) -> bool:
         """

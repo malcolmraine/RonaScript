@@ -65,7 +65,7 @@ class TokenType(Enum):
     STRING = auto()         # string
     LIST = auto()           # list
     CLASS = auto()          # class
-    IDENTIFIER = auto()
+    NAME = auto()
     SLASH_EQUAL = auto()    # /=
     MINUS_EQUAL = auto()    # -=
     PLUS_EQUAL = auto()     # +=
