@@ -1,5 +1,5 @@
 # RonaScript
-RonaScript is a statically typed, object oriented, scripting language inspired by PHP, Python, JS, and more.
+RonaScript is a statically typed, object oriented, scripting language.
 
 ## Features
 * Identifier aliasing
