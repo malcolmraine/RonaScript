@@ -46,6 +46,12 @@ WhileLoop::~WhileLoop() {
  * @brief
  * @return
  */
-std::string WhileLoop::to_string() {
-    return AstNode::to_string();
+std::string WhileLoop::to_string(bool nl) {
+    std::string output = make_tab_str() + "WhileLoop( )\n";
+    this->test->nest_lvl = this->nest_lvl + 1;
+    this->scope->nest_lvl = this->nest_lvl + 1;
+    output += this->test->to_string();
+    output += this->scope->to_string();
+
+    return output;
 }

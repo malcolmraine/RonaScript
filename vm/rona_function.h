@@ -36,23 +36,18 @@
 #include "rona_type.h"
 
 class Scope;
-
 class RonaObject;
 
 class RonaFunction {
 public:
     RonaFunction();
     ~RonaFunction();
-    void delete_reference();
-    void add_reference();
-    int references();
 
-    std::vector<RonaObject *> args;
-    Scope *parent_scope = nullptr;
+    std::vector<std::pair<RonaObject *, RonaType_t>> args;
     Scope *scope = nullptr;
     long i_start = -1;
     long i_cnt = -1;
-    RonaType_t ret_type = RONA_NULL;
+    RonaType_t ret_type = RN_TYPE_NULL;
 };
 
 

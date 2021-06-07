@@ -31,15 +31,28 @@
 #include <vector>
 #include "NodeType.h"
 #include "AstNode.h"
+#include "ClassDecl.h"
+#include "VarDecl.h"
+#include "FuncDecl.h"
+
+class ClassDecl;
+
+class FuncDecl;
 
 class ScopeNode : public AstNode {
 public:
     ScopeNode();
     ~ScopeNode();
-    std::string to_string() override;
-    void add_subtree(AstNode *subtree, bool is_class_decl = false);
+    std::string to_string(bool nl = true) override;
+    void add_subtree(AstNode *subtree, bool hoist = false);
+    void add_class_decl(ClassDecl *class_decl);
+    void add_var_decl(VarDecl *var_decl);
+    void add_func_decl(FuncDecl *func_decl);
 
-    std::vector<AstNode *> children;
+    std::vector<AstNode *> children;        // All other scope children
+    std::vector<VarDecl *> var_decls;       // Variable declarations
+    std::vector<ClassDecl *> class_decls;   // Class declarations
+    std::vector<FuncDecl *> func_decls;     // Function declarations
     ScopeNode *parent = nullptr;
 };
 

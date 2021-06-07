@@ -45,6 +45,10 @@ AssignmentStmt::~AssignmentStmt() {
  * @brief
  * @return
  */
-std::string AssignmentStmt::to_string() {
-    return std::string();
+std::string AssignmentStmt::to_string(bool nl) {
+    std::string output = make_tab_str() + "AssignmentStmt( " + this->id->value + " )\n";
+    this->expr->nest_lvl = this->nest_lvl + 1;
+    output += this->expr->to_string();
+
+    return output;
 }

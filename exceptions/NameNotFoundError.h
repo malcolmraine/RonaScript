@@ -30,8 +30,11 @@
 
 #include "BaseException.h"
 
-class NameNotFoundError : protected BaseException {
-
+class NameNotFoundError : public BaseException {
+protected:
+    std::string message_;
+public:
+    explicit NameNotFoundError(const std::string &name, const std::string &message = "");
 };
 
 

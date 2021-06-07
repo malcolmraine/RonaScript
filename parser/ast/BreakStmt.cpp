@@ -35,6 +35,6 @@ BreakStmt::~BreakStmt() {
 
 }
 
-std::string BreakStmt::to_string() {
-    return AstNode::to_string();
+std::string BreakStmt::to_string(bool nl) {
+    return make_tab_str() + "BreakStmt( )\n";
 }

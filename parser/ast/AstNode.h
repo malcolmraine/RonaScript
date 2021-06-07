@@ -40,7 +40,7 @@ public:
 
     ~AstNode() = default;
 
-    virtual std::string to_string();
+    virtual std::string to_string(bool nl = true);
 
     FilePos_t file_pos;
     NodeType_t node_type = DEFAULT;

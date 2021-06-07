@@ -37,10 +37,8 @@
 class ReturnStmt : public AstNode {
 public:
     ReturnStmt();
-
     ~ReturnStmt();
-
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     AstNode *expr = nullptr;
 };

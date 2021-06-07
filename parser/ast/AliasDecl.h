@@ -32,15 +32,20 @@
 #include "AstNode.h"
 #include "Name.h"
 
+enum AliasType {
+    NAME_ALIAS,
+    TYPE_ALIAS
+};
+
 class AliasDecl : public AstNode {
 public:
     AliasDecl();
     ~AliasDecl();
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     Name *base_name = nullptr;
     Name *alias_name = nullptr;
+    AliasType alias_type;
 };
-
 
 #endif //RONASCRIPT_ALIASDECL_H

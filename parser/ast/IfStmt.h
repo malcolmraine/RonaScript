@@ -35,7 +35,7 @@ class IfStmt : public AstNode {
 public:
     IfStmt();
     ~IfStmt();
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     AstNode *test = nullptr;
     AstNode *consequent = nullptr;

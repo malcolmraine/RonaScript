@@ -27,17 +27,6 @@
 
 #ifndef RONASCRIPT_TOKEN_TYPE_H
 #define RONASCRIPT_TOKEN_TYPE_H
-//
-//namespace TokenClass {
-//    enum TokenClass_t {
-//        UNDEFINED,
-//        NAME,
-//        OPERATOR,
-//        LITERAL,
-//        DELIMITER,
-//    };
-//}
-
 
 namespace TokenType {
     enum TokenType_t {
@@ -73,11 +62,13 @@ namespace TokenType {
         NOT_EQUAL,      // !=
         DBL_AMPER,      // &&
         DBL_BAR,        // ||
+        DBL_COLON,      // ::
         FLOAT,          // float
         INT,            // int
         STRING,         // string
         ARRAY,           // list
         CLASS,          // class
+        CALLABLE,
         NAME,
         SLASH_EQUAL,    // /=
         MINUS_EQUAL,    // -=
@@ -86,8 +77,17 @@ namespace TokenType {
         AMPER_EQUAL,    // &=
         BAR_EQUAL,      // |=
         STAR_EQUAL,     // *=
-        FUNCTION,       // func
+        DBL_R_CARAT,    // >>
+        DBL_L_CARAT,    // <<
+        FUNC,       // func
         VAR,            // var
+        CONST,          // const
+        PUBLIC,
+        PROTECTED,
+        PRIVATE,
+        STATIC,
+        LITERAL,    // Indicates always pass by value
+        REFERENCE,  // Indicates always pass by reference
         REQUIRE,        // require
         RETURN,         // return
         BREAK,          // break
@@ -105,10 +105,6 @@ namespace TokenType {
         TILDE,          // ~
         CONSTRUCT,      // construct
         DESTRUCT,       // destruct
-        PUBLIC,         // public
-        PRIVATE,        // private
-        PROTECTED,      // protected
-        STATIC,         // static
         R_ARROW,        // ->
         IF,             // if
         ELIF,           // elif
@@ -119,7 +115,12 @@ namespace TokenType {
         FOR,            // for
         INT_LITERAL,
         FLOAT_LITERAL,
+        BOOL_LITERAL,
+        CONTINUE,
         OBJECT,
+        TYPE,
+        TRY,
+        CATCH
     };
 }
 

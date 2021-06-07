@@ -48,6 +48,16 @@ ForLoop::~ForLoop() {
  * @brief
  * @return
  */
-std::string ForLoop::to_string() {
-    return AstNode::to_string();
+std::string ForLoop::to_string(bool nl) {
+    std::string output = make_tab_str() + "ForLoop( )\n";
+    this->init->nest_lvl = this->nest_lvl + 1;
+    this->test->nest_lvl = this->nest_lvl + 1;
+    this->update->nest_lvl = this->nest_lvl + 1;
+    this->scope->nest_lvl = this->nest_lvl + 1;
+    output += this->init->to_string();
+    output += this->test->to_string();
+    output += this->update->to_string();
+    output += this->scope->to_string();
+
+    return output;
 }

@@ -26,7 +26,6 @@
 *******************************************************************************/
 
 #include "Name.h"
-
 #include <utility>
 
 /******************************************************************************
@@ -54,6 +53,12 @@ Name::~Name() = default;
  * @brief
  * @return
  */
-std::string Name::to_string() {
-    return "Name( " + this->value + " )";
+std::string Name::to_string(bool nl) {
+    std::string output = make_tab_str() + "Name( " + this->value + " )";
+
+    if (nl) {
+        output += "\n";
+    }
+
+    return output;
 }

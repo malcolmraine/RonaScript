@@ -38,7 +38,7 @@ class ForLoop : public AstNode {
 public:
     ForLoop();
     ~ForLoop();
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     VarDecl *init = nullptr;
     AstNode *test = nullptr;

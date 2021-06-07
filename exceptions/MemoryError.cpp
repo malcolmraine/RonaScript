@@ -26,3 +26,7 @@
 *******************************************************************************/
 
 #include "MemoryError.h"
+
+MemoryError::MemoryError(const std::string &message) {
+    message_ = formatted_msg("MemoryError: " + message);
+}

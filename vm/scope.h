@@ -35,32 +35,32 @@
 #include "rona_object.h"
 #include "rona_function.h"
 #include "rona_class.h"
+#include "rona_class_decl.h"
+#include "memory_interface.h"
 
 class RonaObject;
-
 class Memory;
-
+class MemoryInterface;
 class RonaFunction;
-
+class RonaClassDecl;
 
 class Scope {
 public:
     Scope();
     ~Scope();
-    RonaObject *get_obj(RonaObject *id);
-    bool set(RonaObject *id, RonaObject *value, bool by_reference = false);
+    RonaObject *get(RonaObject *id);
+    bool set(RonaObject *id, RonaObject *value);
     RonaObject *make_var(RonaObject *id, RonaType_t type);
     void set_parent_scope(Scope *scope);
-    RonaObject *pop_from_stack();
     void cleanup();
-    void delete_rona_object(RonaObject *obj);
-    void reset();
+    void remove(RonaObject *obj);
+    RonaObject *pop_from_stack();
 
-    Memory *memory = nullptr;
-    std::vector<RonaObject *> global_mem_idx; // Stores pointers to all active variables in this or lower level scopes
+    MemoryInterface *mem_if;
     Scope *parent = nullptr;
     std::vector<RonaObject *> stack;
+    std::vector<RonaObject*> exceptions;
+    int scope_lvl = 0;
 };
-
 
 #endif //RONASCRIPT_SCOPE_H

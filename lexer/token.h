@@ -31,12 +31,10 @@
 #include <string>
 #include "token_type.h"
 
-
 struct FilePos_t {
     int line_num = -1;
     int char_num = -1;
 };
-
 
 class Token {
 public:
@@ -48,11 +46,10 @@ public:
     bool is_cmpnd_op();
     bool is_operator();
     bool is_type();
-    bool is_reserved_word();
+    bool is_qualifier();
     std::string to_string();
 
     TokenType::TokenType_t tok_type = TokenType::UNDEFINED;
-    //TokenClass::TokenClass_t tok_cls = TokenClass::UNDEFINED;
     std::string lexeme;
     FilePos_t file_pos;
 };

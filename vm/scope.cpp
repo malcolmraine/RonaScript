@@ -25,22 +25,35 @@
 * SOFTWARE.
 *******************************************************************************/
 
-#include "scope.h"
 
+#include "scope.h"
+#include "../exceptions/NameNotFoundError.h"
+#include <iostream>
+
+/******************************************************************************
+ * @brief
+ * @return
+ */
+RonaObject *Scope::pop_from_stack() {
+    RonaObject *obj = this->stack.back();
+    this->stack.pop_back();
+
+    return obj;
+}
 
 /******************************************************************************
  * @brief
  */
 Scope::Scope() {
-    this->memory = new Memory();
-
+    this->mem_if = new MemoryInterface();
 }
 
 /******************************************************************************
  * @brief
  */
 Scope::~Scope() {
-    cleanup();
+    this->parent = nullptr;
+    delete this->mem_if;
 }
 
 /******************************************************************************
@@ -48,16 +61,38 @@ Scope::~Scope() {
  * @param id
  * @return
  */
-RonaObject *Scope::get_obj(RonaObject *id) {
-    if (this->memory->exists(id)) {
-        return this->memory->get(id);
-    } else {
-        if (this->parent == nullptr) {
-            // Raise exception
-            throw std::exception();
+RonaObject *Scope::get(RonaObject *id) {
+    std::string delimiter = "->";
+
+    if (id->to_string().find(delimiter) == std::string::npos) {
+        if (this->mem_if->exists(id)) {
+            return this->mem_if->get(id);
+        } else if (this->parent != nullptr) {
+            return this->parent->get(id);
         } else {
-            return this->parent->get_obj(id);
+            //return nullptr;
+            throw NameNotFoundError(id->to_string());
         }
+    } else {
+        std::string s = id->to_string();
+        size_t pos = 0;
+        std::vector<std::string> tokens;
+        while ((pos = s.find(delimiter)) != std::string::npos) {
+            std::string token = s.substr(0, pos);
+            tokens.emplace_back(token);
+            s.erase(0, pos + delimiter.length());
+        }
+        tokens.emplace_back(s);
+
+        MemoryInterface *memoryInterface = this->mem_if;
+        for (int i = 0; i < tokens.size() - 1; i++) {
+            memoryInterface = std::get<RonaClass*>(memoryInterface->sym_tbl[tokens[i]]->data[0])->scope->mem_if;
+        }
+
+        RonaObject *final_id = this->mem_if->memory->obj_malloc();
+        final_id->data.emplace_back(tokens[tokens.size() - 1]);
+
+        return memoryInterface->sym_tbl[tokens[tokens.size() - 1]];
     }
 }
 
@@ -65,22 +100,51 @@ RonaObject *Scope::get_obj(RonaObject *id) {
  * @brief
  * @param id
  * @param value
- * @param by_reference
  * @return
  */
-bool Scope::set(RonaObject *id, RonaObject *value, bool by_reference) {
-    if (this->memory->exists(id)) {
-        this->memory->set_var(id, value);
-    } else {
-        if (this->parent == nullptr) {
-            // Raise exception
-            throw std::exception();
-        } else {
-            this->parent->set(id, value, value->type() == RONA_ARRAY || value->type() == RONA_CLASS);;
-        }
-    }
+bool Scope::set(RonaObject *id, RonaObject *value) {
+    std::string delimiter = "->";
 
-    return true;
+    if (id->to_string().find(delimiter) == std::string::npos) {
+        if (this->mem_if->exists(id)) {
+            this->mem_if->set(id, value);
+            return true;
+        } else if (this->parent != nullptr) {
+            this->parent->set(id, value);
+            return true;
+        } else {
+            //return false;
+            throw NameNotFoundError(id->to_string());
+        }
+    } else {
+        std::string s = id->to_string();
+        size_t pos = 0;
+        std::vector<std::string> tokens;
+        while ((pos = s.find(delimiter)) != std::string::npos) {
+            std::string token = s.substr(0, pos);
+            std::cout << token << std::endl;
+            tokens.emplace_back(token);
+            s.erase(0, pos + delimiter.length());
+        }
+        tokens.emplace_back(s);
+
+        MemoryInterface *memoryInterface = this->mem_if;
+        for (int i = 0; i < tokens.size() - 1; i++) {
+            memoryInterface = std::get<RonaClass*>(memoryInterface->sym_tbl[tokens[i]]->data[0])->scope->mem_if;
+        }
+
+        RonaObject *final_id = this->mem_if->memory->obj_malloc();
+        final_id->data.emplace_back(tokens[tokens.size() - 1]);
+
+        RonaObject *obj = memoryInterface->sym_tbl[tokens[tokens.size() - 1]];
+
+        if (obj->data.empty()) {
+            obj->data.emplace_back(value->data[0]);
+        } else {
+            obj->data[0] = value->data[0];
+        }
+        return true;
+    }
 }
 
 /******************************************************************************
@@ -90,15 +154,7 @@ bool Scope::set(RonaObject *id, RonaObject *value, bool by_reference) {
  * @return
  */
 RonaObject *Scope::make_var(RonaObject *id, RonaType_t type) {
-    auto *var = new RonaObject(type);
-    this->memory->set_var(id, var);
-    this->global_mem_idx.emplace_back(var);
-
-//    if (parent != nullptr) {
-//        parent->global_mem_idx.emplace_back(var);
-//    }
-
-    return var;
+    return nullptr;
 }
 
 /******************************************************************************
@@ -106,87 +162,20 @@ RonaObject *Scope::make_var(RonaObject *id, RonaType_t type) {
  * @param scope
  */
 void Scope::set_parent_scope(Scope *scope) {
-    this->parent = scope;
+
 }
 
 /******************************************************************************
- * @brief Garbage collection
+ * @brief
  */
 void Scope::cleanup() {
-    // Cleanup the memory index
-    for (auto &i : global_mem_idx) {
-        Memory::collect(i);
 
-        if (i->get_reference_cnt() == 0) {
-            //Memory::collect(i);
-        } else {
-            // Move the reference to the parent index to be dealt with later
-            if (std::find(this->global_mem_idx.begin(), this->global_mem_idx.end(), i) != this->global_mem_idx.end()) {
-                this->parent->global_mem_idx.emplace_back(i);
-            }
-        }
-    }
-
-    this->global_mem_idx.clear();
-
-    // Cleanup the stack
-//    for (auto & i : stack) {
-//        Memory::collect(i);
-//
-//        if (i->get_reference_cnt() == 0) {
-//            //Memory::collect(i);
-//        } else {
-//            // Move the reference to the parent index to be dealt with later
-//            if (std::find(global_mem_idx.begin(), global_mem_idx.end(), i) != global_mem_idx.end()) {
-//                parent->global_mem_idx.emplace_back(i);
-//            }
-//        }
-//    }
-//
-//    stack.clear();
-//    memory->cleanup();
-
-    //delete memory;
 }
 
 /******************************************************************************
  * @brief
  * @param obj
  */
-void Scope::delete_rona_object(RonaObject *obj) {
-    if (obj->type() == RONA_ARRAY) {
-        for (auto &i : obj->data) {
-            delete_rona_object(std::get<RonaObject *>(i));
-        }
-    } else {
-        Memory::collect(obj);
-    }
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-RonaObject *Scope::pop_from_stack() {
-    RonaObject *a = this->stack.back();
-    this->stack.pop_back();
-
-    return a;
-}
-
-/******************************************************************************
- * @brief
- */
-void Scope::reset() {
+void Scope::remove(RonaObject *obj) {
 
 }
-
-
-
-
-
-
-
-
-
-

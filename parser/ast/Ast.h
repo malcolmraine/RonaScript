@@ -30,6 +30,8 @@
 
 #include "AstNode.h"
 #include "ScopeNode.h"
+#include "module.h"
+#include <map>
 
 class Ast {
 public:
@@ -37,6 +39,7 @@ public:
     ~Ast();
     void optimize();
 
+    std::map<std::string, Module *> modules;
     ScopeNode *root = nullptr;
 };
 

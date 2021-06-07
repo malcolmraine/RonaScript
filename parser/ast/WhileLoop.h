@@ -37,10 +37,8 @@
 class WhileLoop : public AstNode {
 public:
     WhileLoop();
-
     ~WhileLoop();
-
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     AstNode *test = nullptr;
     ScopeNode *scope = nullptr;

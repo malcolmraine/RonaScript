@@ -31,16 +31,15 @@
 #include <vector>
 #include <string>
 #include "AstNode.h"
+#include "Name.h"
 
 class FuncCall : public AstNode {
 public:
     FuncCall();
-
     ~FuncCall();
+    std::string to_string(bool nl = true) override;
 
-    std::string to_string() override;
-
-    std::string id;
+    Name *id = nullptr;
     std::vector<AstNode *> args;
 };
 

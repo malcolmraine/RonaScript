@@ -24,8 +24,9 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 *******************************************************************************/
-
+#include <iostream>
 #include "BinaryExpr.h"
+#include "Name.h"
 
 /******************************************************************************
  * @brief
@@ -46,8 +47,8 @@ BinaryExpr::~BinaryExpr() {
  * @brief
  * @return
  */
-std::string BinaryExpr::to_string() {
-    std::string outp_str = "BinaryExpr( " + this->op + " )\n";
+std::string BinaryExpr::to_string(bool nl) {
+    std::string outp_str = make_tab_str() + "BinaryExpr( " + this->op + " )\n";
     this->left->nest_lvl = this->nest_lvl + 1;
     this->right->nest_lvl = this->nest_lvl + 1;
     outp_str += this->left->to_string() + this->right->to_string();

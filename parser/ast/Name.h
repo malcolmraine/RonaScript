@@ -38,7 +38,7 @@ public:
     Name();
     explicit Name(std::string name);
     ~Name();
-    std::string to_string() override;
+    std::string to_string(bool nl = true);
 
     std::string value;
 };

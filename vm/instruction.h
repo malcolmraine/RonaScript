@@ -36,50 +36,19 @@
 
 class RonaObject;
 
-
 class Instruction {
 public:
     Instruction();
-    Instruction(OpCode_t op);
+    explicit Instruction(OpCode_t op);
     Instruction(OpCode_t op, RonaObject *operand1);
     Instruction(OpCode_t op, RonaObject *operand1, RonaObject *operand2);
     Instruction(OpCode_t op, RonaObject *operand1, RonaObject *operand2, RonaObject *operand3);
+    Instruction(OpCode_t op, RonaObject *operand1, RonaObject *operand2, RonaObject *operand3, RonaObject *operand4);
     ~Instruction();
-    static Instruction *make_jmp(long rel_idx);
-    static Instruction *make_ctx(bool begin);
-    static Instruction *make_cmp(long rel_idx);
-    static Instruction *make_mov(std::string id, long offset);
-    static Instruction *make_ldv(std::string id, long offset);
-    static Instruction *make_ldl(std::string value);
-    static Instruction *make_ldl(long value);
-    static Instruction *make_ldl(double value);
-    static Instruction *make_ldl(bool value);
-    static Instruction *make_add();
-    static Instruction *make_sub();
-    static Instruction *make_mul();
-    static Instruction *make_div();
-    static Instruction *make_mod();
-    static Instruction *make_gte();
-    static Instruction *make_lte();
-    static Instruction *make_gt();
-    static Instruction *make_lt();
-    static Instruction *make_eq();
-    static Instruction *make_als(std::string base, std::string alias);
-    static Instruction *make_ldf(const std::string &id, long arg_cnt);
-    static Instruction *make_and();
-    static Instruction *make_or();
-    static Instruction *make_xor();
-    static Instruction *make_inv();
-    static Instruction *make_not();
-    static Instruction *make_lsh();
-    static Instruction *make_rsh();
-    static Instruction *make_pop();
-    static Instruction *make_nop();
-    static Instruction *make_del(std::string id);
+    std::string to_string();
 
     OpCode_t opcode;
     std::vector<RonaObject *> operands;
 };
-
 
 #endif //RONASCRIPT_INSTRUCTION_H

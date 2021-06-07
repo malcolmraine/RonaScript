@@ -46,14 +46,24 @@ IntLiteral::IntLiteral(long value) {
 /******************************************************************************
  * @brief
  */
-IntLiteral::~IntLiteral() {
-
-}
+IntLiteral::~IntLiteral() = default;
 
 /******************************************************************************
  * @brief
  * @return
  */
-std::string IntLiteral::to_string() {
-    return AstNode::to_string();
+std::string IntLiteral::to_string(bool nl) {
+    return make_tab_str() + "IntLiteral( " + std::to_string(this->data) + " )\n";
+}
+
+IntLiteral::IntLiteral(bool value) {
+
+}
+
+IntLiteral::IntLiteral(double value) {
+
+}
+
+IntLiteral::IntLiteral(const std::string &value) {
+
 }

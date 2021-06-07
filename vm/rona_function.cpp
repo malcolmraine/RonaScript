@@ -31,12 +31,12 @@
  * @brief
  */
 RonaFunction::RonaFunction() {
-    this->scope = new Scope();
+
 }
 
 /******************************************************************************
  * @brief
  */
 RonaFunction::~RonaFunction() {
-    this->scope->cleanup();
+
 }

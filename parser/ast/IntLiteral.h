@@ -34,8 +34,11 @@ class IntLiteral : public AstNode {
 public:
     IntLiteral();
     explicit IntLiteral(long value);
+    explicit IntLiteral(bool value);
+    explicit IntLiteral(double value);
+    explicit IntLiteral(const std::string &value);
     ~IntLiteral();
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     long data;
 };

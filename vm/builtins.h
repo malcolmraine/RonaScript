@@ -35,19 +35,62 @@
 #include <vector>
 #include "scope.h"
 #include "iostream"
+#include <typeinfo>
+#include <typeindex>
+#include <cassert>
 
-// Declarations
-void call_builtin_function(Scope *scope, RonaObject *id, const std::vector<RonaObject *> &args);
-void rn_builtin_println(Scope *scope, std::vector<RonaObject *> args);
-void rn_builtin_print(Scope *scope, std::vector<RonaObject *> args);
-void rn_builtin_call(Scope *scope, std::vector<RonaObject *> args);
-void rn_builtin_sys(Scope *scope, std::vector<RonaObject *> args);
-void rn_builtin_exit(Scope *scope, std::vector<RonaObject *> args);
-void rn_builtin_open(Scope *scope, std::vector<RonaObject *> args);
-void rn_builtin_read(Scope *scope, std::vector<RonaObject *> args);
-void rn_builtin_write(Scope *scope, std::vector<RonaObject *> args);
-void rn_builtin_sum(Scope *scope, std::vector<RonaObject *> args);
-void rn_builtin_pow(Scope *scope, std::vector<RonaObject *> args);
 
+// https://stackoverflow.com/a/2137056
+// every function pointer will be stored as this type
+typedef void (*voidFunctionType)();
+
+struct Interface {
+    std::map<std::string, voidFunctionType> m1;
+
+    template<typename T>
+    void insert(const std::string& s1, T f1){
+        auto tt = std::type_index(typeid(f1));
+        m1.insert(std::make_pair(s1, (voidFunctionType)f1));
+    }
+
+    template<typename... Args>
+    RonaObject * searchAndCall(const std::string& s1, Args&&... args){
+        auto mapIter = m1.find(s1);
+        auto typeCastedFun = (RonaObject *(*)(Args ...))(mapIter->second);
+
+        return typeCastedFun(std::forward<Args>(args)...);
+    }
+};
+
+class BuiltinMethodManager {
+public:
+    BuiltinMethodManager();
+    ~BuiltinMethodManager();
+    bool exists(RonaObject * id);
+    RonaObject * call_builtin_function(RonaObject *id, const std::vector<RonaObject *> &args);
+protected:
+    Interface interface;
+};
+
+
+// Builtins
+void call_builtin_function(RonaObject *id, const std::vector<RonaObject *> &args);
+RonaObject *rn_builtin_println(std::vector<RonaObject *> args);
+RonaObject *rn_builtin_print(std::vector<RonaObject *> args);
+RonaObject *rn_builtin_call(std::vector<RonaObject *> args);
+RonaObject *rn_builtin_open(std::vector<RonaObject *> args);
+RonaObject *rn_builtin_read(std::vector<RonaObject *> args);
+RonaObject *rn_builtin_write(std::vector<RonaObject *> args);
+RonaObject *rn_builtin_sum(std::vector<RonaObject *> args);
+RonaObject *rn_builtin_pow(std::vector<RonaObject *> args);
+
+RonaObject *rn_builtin_clear(std::vector<RonaObject *> args);
+RonaObject *rn_builtin_count(std::vector<RonaObject *> args);
+
+// Sys methods
+RonaObject *rn_builtin_sys_exec(std::vector<RonaObject *> args);
+
+// Runtime methods
+RonaObject *rn_builtin_throw(std::vector<RonaObject *> args);
 
 #endif //RONASCRIPT_BUILTINS_H

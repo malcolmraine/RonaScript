@@ -32,6 +32,7 @@
  */
 AliasDecl::AliasDecl() {
     this->node_type = ALIAS_DECL;
+
 }
 
 /******************************************************************************
@@ -46,6 +47,11 @@ AliasDecl::~AliasDecl() {
  * @brief
  * @return
  */
-std::string AliasDecl::to_string() {
-    return "AliasDecl( " + this->alias_name->value + " -> " + this->base_name->value + " )\n";
+std::string AliasDecl::to_string(bool nl) {
+    std::string output = make_tab_str() + "AliasDecl( " + this->alias_name->value + " -> " + this->base_name->value;
+    output += ", ";
+    output += (this->alias_type == NAME_ALIAS ? "NAME_ALIAS" : "TYPE_ALIAS");
+    output += " )\n";
+
+    return output;
 }

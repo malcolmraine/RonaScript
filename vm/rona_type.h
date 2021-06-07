@@ -32,17 +32,18 @@
 #include <string>
 
 enum RonaType_t {
-    RONA_INT,
-    RONA_FLOAT,
-    RONA_ARRAY,
-    RONA_STRING,
-    RONA_BOOL,
-    RONA_CLASS,
-    RONA_CLASS_CONSTRUCTOR,
-    RONA_NULL,
-    RONA_FUNCTION,
+    RN_TYPE_INT,
+    RN_TYPE_FLOAT,
+    RN_TYPE_ARRAY,
+    RN_TYPE_STRING,
+    RN_TYPE_BOOL,
+    RN_TYPE_CLASS,
+    RN_TYPE_CLASS_CONSTRUCTOR,
+    RN_TYPE_NULL,
+    RN_TYPE_FUNCTION,
+    RN_TYPE_CALLABLE,
+    RN_TYPE_ANY
 };
-
 
 RonaType_t get_type(std::string type);
 std::string get_type_as_string(RonaType_t type);

@@ -33,95 +33,85 @@
 #include "rona_function.h"
 #include "rona_type.h"
 #include "builtins.h"
+#include "rona_module.h"
+#include "memory.h"
 
 class Scope;
 
 class VirtualMachine {
 public:
     VirtualMachine();
-
     ~VirtualMachine();
-
     void run();
-
     void execute(Instruction *instruction);
 
     // All operation method work on the current scope
-    void op_add();
+    void op_binary_add();
+    void op_binary_sub();
+    void op_binary_mul();
+    void op_binary_div();
+    void op_binary_mod();
+    void op_binary_gte();
+    void op_binary_lte();
+    void op_binary_gt();
+    void op_binary_lt();
+    void op_binary_eq();
+    void op_binary_rsh();
+    void op_binary_lsh();
+    void op_binary_or();
+    void op_binary_xor();
+    void op_binary_and();
+    void op_binary_power();
+    void op_logical_or();
+    void op_logical_and();
+    void op_unary_decrement();
+    void op_unary_increment();
+    void op_store();
+    void op_load_literal();
+    void op_load_null();
+    void op_load_var();
+    RonaObject* call_func_by_name(RonaObject *id, int arg_cnt);
+    void op_call_func();
+    void run_in_scope(Scope* scope, long i_start, long i_end);
+    void op_make_var();
+    void op_make_class();
+    void op_make_func();
+    void op_create_context();
+    void op_destroy_context();
+    void op_delete();
+    void op_pop();
+    void op_make_alias();
+    void op_unary_not();
+    void op_break();
+    void op_continue();
+    void unary_invert();
+    void op_nop();
+    void op_jump();
+    void op_compare();
+    void op_make_module();
+    void op_exit();
+    void op_make_const();
+    void op_array_store();
+    void op_array_access();
+    void op_make_arg();
+    void op_build_array();
+    void gc_mark();
+    Scope *make_scope();
+    void delete_scope(Scope *scope);
 
-    void op_sub();
-
-    void op_mul();
-
-    void op_div();
-
-    void op_mod();
-
-    void op_gte();
-
-    void op_lte();
-
-    void op_gt();
-
-    void op_lt();
-
-    void op_eq();
-
-    void op_mov();
-
-    void op_ldl();
-
-    void op_ldv();
-
-    void op_ldf();
-
-    void op_mkv();
-
-    void op_mkc();
-
-    void op_mkf();
-
-    void op_ctx();
-
-    void op_rsh();
-
-    void op_lsh();
-
-    void op_or();
-
-    void op_xor();
-
-    void op_and();
-
-    void op_del();
-
-    static void delete_operands(RonaObject *a);
-
-    static void delete_operands(RonaObject *a, RonaObject *b);
-
-    static void delete_operands(RonaObject *a, RonaObject *b, RonaObject *c);
-
-    static void delete_operands(RonaObject *a, RonaObject *b, RonaObject *c, RonaObject *d);
-
-    static void delete_operands(RonaObject *a, RonaObject *b, RonaObject *c, RonaObject *d, RonaObject *e);
-
-    bool is_builtin_func(RonaObject *id);
-
-    void run_in_scope(Scope *scope, long i_start, long i_end);
-
-    void cleanup() const;
-
-    void load_instruction(Instruction *instruction);
-
+    Memory* memory = nullptr;
+    BuiltinMethodManager builtinMethodManager;
+    bool exit_flag = false;
+    int exit_code = 0;
     Scope *global_scope = nullptr;  // Topmost parent scope
-//    std::vector<Scope*> child_scopes;
+    std::vector<Scope*> child_scopes;
     Scope *curr_scope = nullptr; // Current working scope
+    std::map<std::string, RonaModule *> modules;
     std::vector<Instruction *> instructions;
+    std::map<std::string, std::string> alias_tbl;
     long i_idx = 0;  // Current instruction index
     long i_cnt = 0;  // Number of instructions
-    long last_cleanup_idx = 0; // Last instruction index that cleanup was run
-    long cleanup_intvl = 100; // Cleanup interval (number of instructions between cleanup cycles)
-
+    RonaObject *cls_construct_method_name = nullptr;
 };
 
 

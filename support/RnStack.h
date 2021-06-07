@@ -51,9 +51,7 @@ protected:
 };
 
 template<class T>
-RnStack<T>::RnStack() {
-
-}
+RnStack<T>::RnStack() = default;
 
 template<class T>
 RnStack<T>::~RnStack() {

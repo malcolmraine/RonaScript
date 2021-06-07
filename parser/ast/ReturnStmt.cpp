@@ -45,6 +45,13 @@ ReturnStmt::~ReturnStmt() {
  * @brief
  * @return
  */
-std::string ReturnStmt::to_string() {
-    return AstNode::to_string();
+std::string ReturnStmt::to_string(bool nl) {
+    std::string output = make_tab_str() + "Return( )\n";
+
+    if (this->expr != nullptr) {
+        this->expr->nest_lvl = this->nest_lvl + 1;
+        output += this->expr->to_string();
+    }
+
+    return output;
 }

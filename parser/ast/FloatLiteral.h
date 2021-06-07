@@ -35,8 +35,10 @@ class FloatLiteral : public AstNode {
 public:
     FloatLiteral();
     explicit FloatLiteral(double value);
+    explicit FloatLiteral(bool value);
+    explicit FloatLiteral(const std::string &value);
     ~FloatLiteral();
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     double data = 0.0;
 };

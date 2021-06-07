@@ -34,12 +34,10 @@
 class ArgDecl : public AstNode {
 public:
     ArgDecl();
-
     ~ArgDecl();
+    std::string to_string(bool nl = true) override;
 
-    std::string to_string() override;
-
-    Name *id;
+    Name *id{};
     std::string type;
 };
 

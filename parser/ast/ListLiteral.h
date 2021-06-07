@@ -35,10 +35,8 @@
 class ListLiteral : public AstNode {
 public:
     ListLiteral();
-
     ~ListLiteral();
-
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     std::vector<AstNode *> items;
 };

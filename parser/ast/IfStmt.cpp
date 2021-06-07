@@ -47,6 +47,21 @@ IfStmt::~IfStmt() {
  * @brief
  * @return
  */
-std::string IfStmt::to_string() {
-    return AstNode::to_string();
+std::string IfStmt::to_string(bool nl) {
+    std::string output = make_tab_str() + "IfStmt( )\n";
+    output += make_tab_str() + "\tTest( )\n";
+    this->test->nest_lvl = this->nest_lvl + 1;
+    output += this->test->to_string();
+
+    output += make_tab_str() + "\tConsequent( )\n";
+    this->consequent->nest_lvl = this->nest_lvl + 1;
+    output += this->consequent->to_string();
+
+    if (this->alternative != nullptr) {
+        output += make_tab_str() + "\tAlternative( )\n";
+        this->alternative->nest_lvl = this->nest_lvl + 1;
+        output += this->alternative->to_string();
+    }
+
+    return output;
 }

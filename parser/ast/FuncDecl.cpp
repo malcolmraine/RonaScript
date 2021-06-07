@@ -45,6 +45,18 @@ FuncDecl::~FuncDecl() {
  * @brief
  * @return
  */
-std::string FuncDecl::to_string() {
-    return AstNode::to_string();
+std::string FuncDecl::to_string(bool nl) {
+    std::string output = make_tab_str() + "FuncDecl( " + this->id + ", " + this->type + " )\n";
+
+    for (auto &arg : this->args) {
+        arg->nest_lvl = this->nest_lvl + 1;
+        output += arg->to_string();
+    }
+
+    if (this->scope != nullptr) {
+        this->scope->nest_lvl = this->nest_lvl + 1;
+        output += this->scope->to_string();
+    }
+
+    return output;
 }

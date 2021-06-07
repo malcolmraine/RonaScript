@@ -36,11 +36,12 @@ enum NodeType_t {
     FOR_LOOP,
     CLASS_DECL,
     EXPR,
-    FLOW_STMT,
+    CONTINUE_STMT,
     FUNC_CALL,
     FUNC_DECL,
     LIST_LITERAL,
     STRING_LITERAL,
+    BOOL_LITERAL,
     FLOAT_LITERAL,
     INT_LITERAL,
     REQUIRE,
@@ -55,6 +56,7 @@ enum NodeType_t {
     SCOPE,
     BREAK_STMT,
     NAME,
+    MODULE,
     DEFAULT,
 };
 

@@ -29,20 +29,22 @@
 #define RONASCRIPT_VARDECL_H
 
 #include <string>
+#include <vector>
 #include "AstNode.h"
 #include "Expr.h"
+#include "../../lexer/token.h"
 
 class VarDecl : public AstNode {
 public:
     VarDecl();
-
     ~VarDecl();
-
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     std::string id;
     std::string type;
+    std::vector<Token *> qualifiers;
     AstNode *init_value = nullptr;
+    bool is_const = false;
 };
 
 

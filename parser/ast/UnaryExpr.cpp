@@ -38,13 +38,16 @@ UnaryExpr::UnaryExpr() {
  * @brief
  */
 UnaryExpr::~UnaryExpr() {
-    delete this->id;
+    delete this->expr;
 }
 
 /******************************************************************************
  * @brief
  * @return
  */
-std::string UnaryExpr::to_string() {
-    return AstNode::to_string();
+std::string UnaryExpr::to_string(bool nl) {
+    std::string output = make_tab_str() + "UnaryExpr( " + this->op + ", " + this->expr->to_string(false) + " )\n";
+    this->expr->nest_lvl = this->nest_lvl + 1;
+
+    return output;
 }

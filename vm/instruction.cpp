@@ -25,9 +25,8 @@
 * SOFTWARE.
 *******************************************************************************/
 
-#include "instruction.h"
-
 #include <utility>
+#include "instruction.h"
 
 /******************************************************************************
  * @brief
@@ -82,6 +81,21 @@ Instruction::Instruction(OpCode_t op, RonaObject *operand1, RonaObject *operand2
 
 /******************************************************************************
  * @brief
+ * @param opcode
+ * @param operand1
+ * @param operand2
+ * @param operand3
+ */
+Instruction::Instruction(OpCode_t op, RonaObject *operand1, RonaObject *operand2, RonaObject *operand3, RonaObject *operand4) {
+    this->opcode = op;
+    this->operands.emplace_back(operand1);
+    this->operands.emplace_back(operand2);
+    this->operands.emplace_back(operand3);
+    this->operands.emplace_back(operand4);
+}
+
+/******************************************************************************
+ * @brief
  */
 Instruction::~Instruction() {
     for (auto &operand : this->operands) {
@@ -91,279 +105,170 @@ Instruction::~Instruction() {
 
 /******************************************************************************
  * @brief
- * @param rel_idx
  * @return
  */
-Instruction *Instruction::make_jmp(long rel_idx) {
-    return new Instruction(OP_JMP, new RonaObject(rel_idx));
-}
+std::string Instruction::to_string() {
+    std::string output;
 
-/******************************************************************************
- * @brief
- * @param begin
- * @return
- */
-Instruction *Instruction::make_ctx(bool begin) {
-    return new Instruction(
-            OP_CTX,
-            new RonaObject(static_cast<long>(begin ? 1 : 0))
-    );
-}
+    switch (this->opcode) {
+        case OP_BINARY_ADD:
+            output += "OP_BINARY_ADD";
+            break;
+        case OP_BINARY_SUB:
+            output += "OP_BINARY_SUB";
+            break;
+        case OP_BINARY_MUL:
+            output += "OP_BINARY_MUL";
+            break;
+        case OP_BINARY_DIV:
+            output += "OP_BINARY_DIV";
+            break;
+        case OP_BINARY_MOD:
+            output += "OP_BINARY_MOD";
+            break;
+        case OP_BINARY_GTE:
+            output += "OP_BINARY_GTE";
+            break;
+        case OP_BINARY_LTE:
+            output += "OP_BINARY_LTE";
+            break;
+        case OP_BINARY_GT:
+            output += "OP_BINARY_GT";
+            break;
+        case OP_BINARY_LT:
+            output += "OP_BINARY_LT";
+            break;
+        case OP_BINARY_EQ:
+            output += "OP_BINARY_EQ";
+            break;
+        case OP_BINARY_POWER:
+            output += "OP_BINARY_POWER";
+            break;
+        case OP_BINARY_RSH:
+            output += "OP_BINARY_RSH";
+            break;
+        case OP_BINARY_LSH:
+            output += "OP_BINARY_LSH";
+            break;
+        case OP_BINARY_OR:
+            output += "OP_BINARY_OR";
+            break;
+        case OP_BINARY_XOR:
+            output += "OP_BINARY_XOR";
+            break;
+        case OP_BINARY_AND:
+            output += "OP_BINARY_AND";
+            break;
+        case OP_STORE:
+            output += "OP_STORE";
+            break;
+        case OP_POP:
+            output += "OP_POP";
+            break;
+        case OP_UNARY_NOT:
+            output += "OP_UNARY_NOT";
+            break;
+        case OP_BREAK:
+            output += "OP_BREAK";
+            break;
+        case OP_CONTINUE:
+            output += "OP_CONTINUE";
+            break;
+        case OP_TRY_CONTEXT:
+            output += "OP_TRY_CONTEXT";
+            break;
+        case OP_UNARY_INVERT:
+            output += "OP_UNARY_INVERT";
+            break;
+        case OP_UNARY_DECREMENT:
+            output += "OP_UNARY_DECREMENT";
+            break;
+        case OP_UNARY_INCREMENT:
+            output += "OP_UNARY_INCREMENT";
+            break;
+        case OP_RETURN:
+            output += "OP_RETURN";
+            break;
+        case OP_LOAD_LITERAL:
+            output += "OP_LOAD_LITERAL";
+            break;
+        case OP_LOAD_VAR:
+            output += "OP_LOAD_VAR";
+            break;
+        case OP_CALL_FUNC:
+            output += "OP_CALL_FUNC";
+            break;
+        case OP_MAKE_CONST:
+            output += "OP_MAKE_CONST";
+            break;
+        case OP_MAKE_VAR:
+            output += "OP_MAKE_VAR";
+            break;
+        case OP_MAKE_CLASS:
+            output += "OP_MAKE_CLASS";
+            break;
+        case OP_MAKE_FUNC:
+            output += "OP_MAKE_FUNC";
+            break;
+        case OP_MAKE_MODULE:
+            output += "OP_MAKE_MODULE";
+            break;
+        case OP_CREATE_CONTEXT:
+            output += "OP_CREATE_CONTEXT";
+            break;
+        case OP_DESTROY_CONTEXT:
+            output += "OP_DESTROY_CONTEXT";
+            break;
+        case OP_DELETE:
+            output += "OP_DELETE";
+            break;
+        case OP_NOP:
+            output += "OP_NOP";
+            break;
+        case OP_JUMP:
+            output += "OP_JUMP";
+            break;
+        case OP_COMPARE:
+            output += "OP_COMPARE";
+            break;
+        case OP_EXIT:
+            output += "OP_EXIT";
+            break;
+        case OP_ARRAY_STORE:
+            output += "OP_ARRAY_STORE";
+            break;
+        case OP_ARRAY_ACCESS:
+            output += "OP_ARRAY_ACCESS";
+            break;
+        case OP_MAKE_ARG:
+            output += "OP_MAKE_ARG";
+            break;
+        case OP_BUILD_ARRAY:
+            output += "OP_BUILD_ARRAY";
+            break;
+        case OP_LOGICAL_OR:
+            output += "OP_LOGICAL_OR";
+            break;
+        case OP_LOGICAL_AND:
+            output += "OP_LOGICAL_AND";
+            break;
+        case OP_LOAD_NULL:
+            output += "OP_LOAD_NULL";
+            break;
+        case OP_MAKE_ALIAS:
+            output += "OP_MAKE_ALIAS";
+            break;
+    }
 
-/******************************************************************************
- * @brief
- * @param rel_idx
- * @return
- */
-Instruction *Instruction::make_cmp(long rel_idx) {
-    return new Instruction(OP_CMP, new RonaObject(rel_idx));
-}
+    output = "\033[33m" + output + "\033[0m";
 
-/******************************************************************************
- * @brief
- * @param id
- * @param offset
- * @return
- */
-Instruction *Instruction::make_mov(std::string id, long offset) {
-    return new Instruction(
-            OP_MOV,
-            new RonaObject(std::move(id)),
-            new RonaObject(offset)
-    );
-}
+    for (auto &operand : this->operands) {
+        if (operand->data.empty()) {
+            output += "  " + get_type_as_string(operand->type());
+        } else {
+            output += "  " + operand->to_string();
+        }
+    }
 
-/******************************************************************************
- * @brief
- * @param id
- * @param offset
- * @return
- */
-Instruction *Instruction::make_ldv(std::string id, long offset) {
-    return new Instruction(
-            OP_LDV,
-            new RonaObject(std::move(id)),
-            new RonaObject(offset)
-    );
-}
-
-/******************************************************************************
- * @brief
- * @param value
- * @return
- */
-Instruction *Instruction::make_ldl(std::string value) {
-    return new Instruction(OP_LDL, new RonaObject(std::move(value)));
-}
-
-/******************************************************************************
- * @brief
- * @param value
- * @return
- */
-Instruction *Instruction::make_ldl(long value) {
-    return new Instruction(OP_LDL, new RonaObject(value));
-}
-
-/******************************************************************************
- * @brief
- * @param value
- * @return
- */
-Instruction *Instruction::make_ldl(double value) {
-    return new Instruction(OP_LDL, new RonaObject(value));
-}
-
-/******************************************************************************
- * @brief
- * @param value
- * @return
- */
-Instruction *Instruction::make_ldl(bool value) {
-    return new Instruction(OP_LDL, new RonaObject(value));
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_add() {
-    return new Instruction(OP_ADD);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_sub() {
-    return new Instruction(OP_SUB);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_mul() {
-    return new Instruction(OP_MUL);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_div() {
-    return new Instruction(OP_DIV);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_mod() {
-    return new Instruction(OP_MOD);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_gte() {
-    return new Instruction(OP_GTE);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_lte() {
-    return new Instruction(OP_LTE);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_gt() {
-    return new Instruction(OP_GT);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_lt() {
-    return new Instruction(OP_LT);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_eq() {
-    return new Instruction(OP_EQ);
-}
-
-/******************************************************************************
- * @brief
- * @param base
- * @param alias
- * @return
- */
-Instruction *Instruction::make_als(std::string base, std::string alias) {
-    return new Instruction(
-            OP_ALS,
-            new RonaObject(std::move(base)),
-            new RonaObject(std::move(alias))
-    );
-}
-
-/******************************************************************************
- * @brief
- * @param id
- * @param arg_cnt
- * @return
- */
-Instruction *Instruction::make_ldf(const std::string &id, long arg_cnt) {
-    return new Instruction(OP_LDF, new RonaObject(arg_cnt));
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_and() {
-    return new Instruction(OP_AND);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_or() {
-    return new Instruction(OP_OR);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_xor() {
-    return new Instruction(OP_XOR);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_inv() {
-    return new Instruction(OP_INV);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_not() {
-    return new Instruction(OP_NOT);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_lsh() {
-    return new Instruction(OP_LSH);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_rsh() {
-    return new Instruction(OP_RSH);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_pop() {
-    return new Instruction(OP_NOP);
-}
-
-/******************************************************************************
- * @brief
- * @return
- */
-Instruction *Instruction::make_nop() {
-    return new Instruction(OP_NOP);
-}
-
-/******************************************************************************
- * @brief
- * @param id
- * @return
- */
-Instruction *Instruction::make_del(std::string id) {
-    return new Instruction(OP_DEL, new RonaObject(std::move(id)));
+    return output;
 }

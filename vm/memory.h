@@ -37,54 +37,44 @@
 #include "rona_type.h"
 #include "rona_class_decl.h"
 
+#define MEMORY_SIZE_LIMIT 1000000000
+#define HEAP_CONTRACTION_THRSH 1000000
+
 
 class RonaFunction;
-
 class RonaObject;
-
 class RonaClass;
+
+struct MemoryBlock {
+    RonaObject *obj = nullptr;
+    MemoryBlock *next = nullptr;
+    MemoryBlock *previous = nullptr;
+};
 
 
 class Memory {
 public:
-    Memory();
+    static Memory *instance;
 
-    ~Memory();
+    static Memory *get_instance();
+    RonaObject *obj_malloc();
+    void add_to_heap(RonaObject *obj);
+    long heap_size_bytes();
+    void sweep();
+    bool resize(int n);
+    MemoryBlock *find_first_free();
+    void contract_heap();
 
-    static void collect(RonaObject *obj);
-
-    void set_var(RonaObject *id, RonaObject *value, bool by_reference = false);
-
-    RonaObject *get(RonaObject *id);
-
-    void remove(RonaObject *id);
-
-    RonaObject *make_var(RonaObject *id, long data);
-
-    RonaObject *make_var(RonaObject *id, double data);
-
-    RonaObject *make_var(RonaObject *id, std::string data);
-
-    RonaObject *make_var(RonaObject *id);
-
-    bool exists(RonaObject *id);
-
-    bool is_var(RonaObject *id);
-
-    bool is_func(RonaObject *id);
-
-    RonaFunction *make_func(RonaObject *id);
-
-    RonaObject *make_class_instance(RonaObject *class_name);
-
-    long size();
-
-    void cleanup();
-
-    void reset();
 
 protected:
-    std::map<std::string, RonaObject *> _obj_store;
+    MemoryBlock *heap = nullptr;
+    MemoryBlock *head = nullptr;
+    MemoryBlock *tail = nullptr;
+    long _heap_size = 0;
+
+private:
+    Memory();
+    ~Memory();
 };
 
 

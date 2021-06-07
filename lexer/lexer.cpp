@@ -30,7 +30,6 @@
 #include <utility>
 #include "../exceptions/SourceNotFoundError.h"
 
-
 /******************************************************************************
  * @brief
  */
@@ -40,7 +39,7 @@ Lexer::Lexer() {
     this->_buf[1] = '\0';
     this->_buf[2] = '\0';
 
-    // Setup the token map
+    // Setup the token map.rn
     this->token_map["{"] = TokenType::R_BRACE;
     this->token_map["}"] = TokenType::L_BRACE;
     this->token_map["("] = TokenType::R_PARAN;
@@ -83,7 +82,8 @@ Lexer::Lexer() {
     this->token_map["~="] = TokenType::TILDE_EQUAL;
     this->token_map["&&"] = TokenType::DBL_AMPER;
     this->token_map["||"] = TokenType::DBL_BAR;
-    this->token_map["[]"] = TokenType::EMPTY_LIST;
+    this->token_map[">>"] = TokenType::DBL_R_CARAT;
+    this->token_map["<<"] = TokenType::DBL_L_CARAT;
     this->token_map["<="] = TokenType::LEQ;
     this->token_map[">="] = TokenType::GEQ;
     this->token_map["^="] = TokenType::XOREQ;
@@ -95,15 +95,22 @@ Lexer::Lexer() {
     this->token_map["object"] = TokenType::OBJECT;
     this->token_map["array"] = TokenType::ARRAY;
     this->token_map["class"] = TokenType::CLASS;
+    this->token_map["callable"] = TokenType::CALLABLE;
     this->token_map["var"] = TokenType::VAR;
-    this->token_map["func"] = TokenType::FUNCTION;
+    this->token_map["const"] = TokenType::CONST;
+    this->token_map["public"] = TokenType::PUBLIC;
+    this->token_map["protected"] = TokenType::PROTECTED;
+    this->token_map["private"] = TokenType::PRIVATE;
+    this->token_map["static"] = TokenType::STATIC;
+    this->token_map["literal"] = TokenType::LITERAL;
+    this->token_map["reference"] = TokenType::REFERENCE;
+    this->token_map["func"] = TokenType::FUNC;
     this->token_map["require"] = TokenType::REQUIRE;
     this->token_map["return"] = TokenType::RETURN;
     this->token_map["break"] = TokenType::BREAK;
+    this->token_map["continue"] = TokenType::CONTINUE;
     this->token_map["void"] = TokenType::VOID;
     this->token_map["null"] = TokenType::NONE;
-    this->token_map["construct"] = TokenType::CONSTRUCT;
-    this->token_map["destruct"] = TokenType::DESTRUCT;
     this->token_map["if"] = TokenType::IF;
     this->token_map["elif"] = TokenType::ELIF;
     this->token_map["else"] = TokenType::ELSE;
@@ -111,6 +118,9 @@ Lexer::Lexer() {
     this->token_map["alias"] = TokenType::ALIAS;
     this->token_map["while"] = TokenType::WHILE;
     this->token_map["for"] = TokenType::FOR;
+    this->token_map["type"] = TokenType::TYPE;
+    this->token_map["try"] = TokenType::TRY;
+    this->token_map["catch"] = TokenType::CATCH;
 
     // Setup reserved words set
     this->reserved_words.insert("float");
@@ -130,12 +140,21 @@ Lexer::Lexer() {
     this->reserved_words.insert("construct");
     this->reserved_words.insert("destruct");
     this->reserved_words.insert("var");
+    this->reserved_words.insert("const");
     this->reserved_words.insert("public");
     this->reserved_words.insert("protected");
     this->reserved_words.insert("private");
     this->reserved_words.insert("return");
     this->reserved_words.insert("break");
+    this->reserved_words.insert("continue");
     this->reserved_words.insert("inherits");
+    this->reserved_words.insert("literal");
+    this->reserved_words.insert("reference");
+    this->reserved_words.insert("static");
+    this->reserved_words.insert("callable");
+    this->reserved_words.insert("type");
+    this->reserved_words.insert("try");
+    this->reserved_words.insert("catch");
 
     this->compounds.insert("++");
     this->compounds.insert("+=");
@@ -155,9 +174,11 @@ Lexer::Lexer() {
     this->compounds.insert("->");
     this->compounds.insert(">=");
     this->compounds.insert("<=");
-    this->compounds.insert("[]");
+    this->compounds.insert("==");
+//    this->compounds.insert("[]");
     this->compounds.insert(">>");
     this->compounds.insert("<<");
+    this->compounds.insert("::");
 
     // Setup compound operators set
     this->compound_ops.insert("+=");
@@ -204,7 +225,12 @@ Lexer::Lexer() {
  * @brief
  */
 Lexer::~Lexer() {
+    file_obj.close();
 
+    for (auto &token : this->tokens) {
+        delete token;
+    }
+    tokens.clear();
 }
 
 /******************************************************************************
@@ -236,8 +262,6 @@ char Lexer::lookback() {
  * @param n Number of characters to advance
  */
 void Lexer::adv_buf(int n) {
-    //std::cout << current();
-
     for (int i = 0; i < n; i++) {
         this->_buf[0] = this->_buf[1];
         this->_buf[1] = this->_buf[2];
@@ -274,48 +298,6 @@ void Lexer::expect(char c1) {
 }
 
 /******************************************************************************
- * @brief
- * @param c1
- * @param c2
- */
-void Lexer::expect(char c1, char c2) {
-
-}
-
-/******************************************************************************
- * @brief
- * @param c1
- * @param c2
- * @param c3
- */
-void Lexer::expect(char c1, char c2, char c3) {
-
-}
-
-/******************************************************************************
- * @brief
- * @param c1
- * @param c2
- * @param c3
- * @param c4
- */
-void Lexer::expect(char c1, char c2, char c3, char c4) {
-
-}
-
-/******************************************************************************
- * @brief
- * @param c1
- * @param c2
- * @param c3
- * @param c4
- * @param c5
- */
-void Lexer::expect(char c1, char c2, char c3, char c4, char c5) {
-
-}
-
-/******************************************************************************
  * @brief Make a new Token object from a string.
  * @param s Input string
  * @return Token instance.
@@ -325,7 +307,7 @@ Token *Lexer::make_token(const std::string &s) {
     token->file_pos.char_num = char_num;
     token->file_pos.line_num = line_num;
 
-    if (token_map.count(s)) {
+    if (token_map.count(s) || (token_map.count(s) && is_reserved_word(s))) {
         token->tok_type = token_map[s];
     } else if (is_int_literal(s)) {
         token->tok_type = TokenType::INT_LITERAL;
@@ -333,8 +315,8 @@ Token *Lexer::make_token(const std::string &s) {
         token->tok_type = TokenType::FLOAT_LITERAL;
     } else if (is_str_literal(s)) {
         token->tok_type = TokenType::STRING_LITERAL;
-    } else if (is_reserved_word(s)) {
-        token->tok_type = token_map[s];
+    } else if (is_bool_literal(s)) {
+        token->tok_type = TokenType::BOOL_LITERAL;
     } else {
         token->tok_type = TokenType::NAME;
     }
@@ -353,12 +335,10 @@ Token Lexer::make_token(TokenType::TokenType_t type) {
 /******************************************************************************
  * @brief Determine if a string contains an integer representation.
  * @param s
- * @return
+ * @return bool
  */
 bool Lexer::is_int_literal(std::string s) {
-    bool is_negative = s[0] == '-';
-
-    for (int i = is_negative ? 1 : 0; i < s.length(); i++) {
+    for (int i = IS_NEGATIVE_LITERAL(s) ? 1 : 0; i < s.length(); i++) {
         if (!std::isdigit(s[i])) {
             return false;
         }
@@ -369,13 +349,12 @@ bool Lexer::is_int_literal(std::string s) {
 /******************************************************************************
  * @brief Determine if a string contains a float representation.
  * @param s
- * @return
+ * @return bool
  */
 bool Lexer::is_float_literal(std::string s) {
-    bool is_negative = s[0] == '-';
     bool decimal_found = false;
 
-    for (int i = is_negative ? 1 : 0; i < s.length(); i++) {
+    for (int i = IS_NEGATIVE_LITERAL(s) ? 1 : 0; i < s.length(); i++) {
         if (!std::isdigit(s[i])) {
             if (s[i] == '.' && !decimal_found) {
                 decimal_found = true;
@@ -390,10 +369,10 @@ bool Lexer::is_float_literal(std::string s) {
 /******************************************************************************
  * @brief Determine if a string contains a hex representation.
  * @param s
- * @return
+ * @return bool
  */
 bool Lexer::is_hex_literal(std::string s) {
-    if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X')) {
+    if (std::string(1, s[0]) + std::string(1, s[1]) == HEX_LITERAL_PREFIX) {
         for (int i = 2; i < s.length(); i++) {
             if (!std::isdigit(s[i])) {
                 return false;
@@ -406,18 +385,27 @@ bool Lexer::is_hex_literal(std::string s) {
 }
 
 /******************************************************************************
+ * @brief Determine if a string is a boolean literal value.
+ * @param s
+ * @return bool
+ */
+bool Lexer::is_bool_literal(const std::string &s) {
+    return s == "true" || s == "false";
+}
+
+/******************************************************************************
  * @brief
  * @param s
- * @return
+ * @return bool
  */
-bool Lexer::is_str_literal(std::string s) {
+bool Lexer::is_str_literal(const std::string &s) {
     return s[0] == '"' && s[s.length() - 1] == '"';
 }
 
 /******************************************************************************
  * @brief
  * @param s
- * @return
+ * @return bool
  */
 bool Lexer::is_cmpnd(const std::string &s) {
     return this->compounds.find(get_cmpnd_candidate()) != this->compounds.end();
@@ -426,7 +414,7 @@ bool Lexer::is_cmpnd(const std::string &s) {
 /******************************************************************************
  * @brief
  * @param s
- * @return
+ * @return bool
  */
 bool Lexer::is_reserved_word(const std::string &s) {
     return this->reserved_words.find(s) != this->reserved_words.end();
@@ -469,11 +457,11 @@ Token *Lexer::default_handler() {
 Token *Lexer::comment_handler(bool is_block_comment) {
     if (this->lexeme.empty()) {
         if (is_block_comment) {
-            while (get_cmpnd_candidate() != "*/" && !eof()) {
+            while (get_cmpnd_candidate() != BLOCK_COMMENT_END && !eof()) {
                 adv_buf(1);
             }
         } else {
-            while (current() != '\n') {
+            while (current() != INLINE_COMMENT_END) {
                 adv_buf(1);
             }
         }
@@ -554,9 +542,9 @@ Token *Lexer::get_token() {
         case ';':
             return default_handler();
         case '/':
-            if (peek() == '*') {
+            if (get_cmpnd_candidate() == BLOCK_COMMENT_START) {
                 return comment_handler(true);
-            } else if (peek() == '/') {
+            } else if (get_cmpnd_candidate() == INLINE_COMMENT_START) {
                 return comment_handler(false);
             } else {
                 return op_handler();
@@ -572,6 +560,7 @@ Token *Lexer::get_token() {
         case '=':
         case '<':
         case '>':
+        case '!':
             return op_handler();
         case '\'':
         case '\"':
@@ -629,7 +618,5 @@ void Lexer::load_file(const std::string &path) {
  * @return
  */
 bool Lexer::eof() {
-    return this->char_idx == this->file_char_cnt + 2;
+    return this->char_idx >= this->file_char_cnt + 2;
 }
-
-

@@ -45,6 +45,20 @@ VarDecl::~VarDecl() {
  * @brief
  * @return
  */
-std::string VarDecl::to_string() {
-    return AstNode::to_string();
+std::string VarDecl::to_string(bool nl) {
+    std::string output = make_tab_str() + "VarDecl( " + this->id + ", " + this->type;
+
+    for (auto &qualifier : this->qualifiers) {
+        output += ", " + qualifier->lexeme;
+    }
+
+    output += " )\n";
+
+    if (init_value != nullptr) {
+        this->init_value->nest_lvl = this->nest_lvl + 1;
+        output += make_tab_str() + "AssignmentStmt( " + this->id + " )\n";
+        output += this->init_value->to_string();
+    }
+
+    return output;
 }

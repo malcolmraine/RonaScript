@@ -30,8 +30,9 @@
 
 #include "BaseException.h"
 
-class MemoryError : protected BaseException {
-
+class MemoryError : public BaseException {
+public:
+    explicit MemoryError(const std::string &message = "");
 };
 
 

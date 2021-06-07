@@ -38,6 +38,16 @@ ScopeNode::ScopeNode() {
  * @brief
  */
 ScopeNode::~ScopeNode() {
+    for (auto &node : this->var_decls) {
+        delete node;
+    }
+    for (auto &node : this->class_decls) {
+        delete node;
+    }
+    for (auto &node : this->func_decls) {
+        delete node;
+    }
+
     for (auto &node : this->children) {
         delete node;
     }
@@ -47,21 +57,71 @@ ScopeNode::~ScopeNode() {
  * @brief
  * @return
  */
-std::string ScopeNode::to_string() {
-    return AstNode::to_string();
+std::string ScopeNode::to_string(bool nl) {
+    std::string output = make_tab_str() + "Scope( )\n";
+
+    for (auto &child : this->class_decls) {
+        child->nest_lvl = this->nest_lvl + 1;
+        output += child->to_string();
+    }
+
+    for (auto &child : this->var_decls) {
+        child->nest_lvl = this->nest_lvl + 1;
+        output += child->to_string();
+    }
+
+    for (auto &child : this->func_decls) {
+        child->nest_lvl = this->nest_lvl + 1;
+        output += child->to_string();
+    }
+
+    for (auto &child : this->children) {
+        child->nest_lvl = this->nest_lvl + 1;
+        output += child->to_string();
+    }
+
+    return output;
 }
 
 /******************************************************************************
  * @brief
  * @param subtree
- * @param is_class_decl
+ * @param hoist
  */
-void ScopeNode::add_subtree(AstNode *subtree, bool is_class_decl) {
+void ScopeNode::add_subtree(AstNode *subtree, bool hoist) {
     subtree->nest_lvl = this->nest_lvl + 1;
 
-    if (is_class_decl) {
+    if (hoist) {
         this->children.insert(this->children.begin(), subtree);
     } else {
         this->children.emplace_back(subtree);
     }
+}
+
+/******************************************************************************
+ * @brief
+ * @param class_decl
+ */
+void ScopeNode::add_class_decl(ClassDecl *class_decl) {
+    class_decl->nest_lvl = this->nest_lvl + 1;
+    this->class_decls.emplace_back(class_decl);
+}
+
+/******************************************************************************
+ * @brief
+ * @param var_decl
+ */
+void ScopeNode::add_var_decl(VarDecl *var_decl) {
+    var_decl->nest_lvl = this->nest_lvl + 1;
+    this->var_decls.emplace_back(var_decl);
+
+}
+
+/******************************************************************************
+ * @brief
+ * @param func_decl
+ */
+void ScopeNode::add_func_decl(FuncDecl *func_decl) {
+    func_decl->nest_lvl = this->nest_lvl + 1;
+    this->func_decls.emplace_back(func_decl);
 }

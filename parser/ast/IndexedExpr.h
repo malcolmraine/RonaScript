@@ -36,9 +36,10 @@ class IndexedExpr : public Expr {
 public:
     IndexedExpr();
     ~IndexedExpr();
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     AstNode *idx = nullptr;
+    bool is_access = false; // For handling access vs assignment indexing
 
 };
 

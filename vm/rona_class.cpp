@@ -34,42 +34,14 @@
  * @brief
  */
 RonaClass::RonaClass() {
-    this->scope = new Scope;
+    //this->scope = new Scope;
 }
 
 /******************************************************************************
  * @brief
  */
 RonaClass::~RonaClass() {
-    this->scope->cleanup();
-}
 
-/******************************************************************************
- * @brief
- * @param id
- * @return
- */
-RonaObject *RonaClass::get_var(RonaObject *id) {
-    return this->scope->get_obj(id);
-}
-
-/******************************************************************************
- * @brief
- * @param id
- * @param value
- * @param by_reference
- * @return
- */
-bool RonaClass::set_var(RonaObject *id, RonaObject *value, bool by_reference) {
-    if (by_reference) {
-        auto *copied_value = new RonaObject;
-        *copied_value = *value;
-        this->scope->set(id, copied_value);
-    } else {
-        this->scope->set(id, value);
-    }
-
-    return true;
 }
 
 /******************************************************************************

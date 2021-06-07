@@ -44,6 +44,11 @@ ElseStmt::~ElseStmt() {
  * @brief
  * @return
  */
-std::string ElseStmt::to_string() {
-    return AstNode::to_string();
+std::string ElseStmt::to_string(bool nl) {
+    std::string output = make_tab_str() + "Else( )\n";
+    output += make_tab_str() + "\tConsequent( )\n";
+    this->consequent->nest_lvl = this->nest_lvl + 2;
+    output += this->consequent->to_string();
+
+    return output;
 }

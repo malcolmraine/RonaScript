@@ -27,11 +27,13 @@
 
 #include "AstNode.h"
 
+#define TAB_CHAR "  "
+
 /******************************************************************************
  * @brief
  * @return
  */
-std::string AstNode::to_string() {
+std::string AstNode::to_string(bool nl) {
     return "";
 }
 
@@ -43,7 +45,8 @@ std::string AstNode::make_tab_str() {
     std::string outp_str;
 
     for (int i = 0; i < nest_lvl; i++) {
-        outp_str += "\t";
+        outp_str += "|";
+        outp_str += TAB_CHAR;
     }
 
     return outp_str;

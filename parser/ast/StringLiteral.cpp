@@ -46,15 +46,33 @@ StringLiteral::StringLiteral(std::string value) {
 
 /******************************************************************************
  * @brief
+ * @param value
  */
-StringLiteral::~StringLiteral() {
-
+StringLiteral::StringLiteral(bool value) {
+    this->node_type = STRING_LITERAL;
+    this->data = std::to_string(value);
 }
+
+/******************************************************************************
+ * @brief
+ * @param value
+ */
+StringLiteral::StringLiteral(double value) {
+    this->node_type = STRING_LITERAL;
+    this->data = std::to_string(value);
+}
+
+/******************************************************************************
+ * @brief
+ */
+StringLiteral::~StringLiteral() = default;
 
 /******************************************************************************
  * @brief
  * @return
  */
-std::string StringLiteral::to_string() {
-    return AstNode::to_string();
+std::string StringLiteral::to_string(bool nl) {
+    return make_tab_str() + "StringLiteral( " + this->data + " )\n";
 }
+
+

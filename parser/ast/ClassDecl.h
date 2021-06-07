@@ -30,17 +30,19 @@
 #include <string>
 #include "AstNode.h"
 #include "ScopeNode.h"
+#include "Name.h"
+
+class ScopeNode;
 
 class ClassDecl : public AstNode {
 public:
     ClassDecl();
-
     ~ClassDecl();
-
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     std::string id;
     ScopeNode *scope = nullptr;
+    std::vector<Name *> parent_classes;  // Names of classes to inherit. Names are resolved at code generation time
 };
 
 

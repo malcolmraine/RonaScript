@@ -52,6 +52,14 @@ FloatLiteral::~FloatLiteral() = default;
  * @brief
  * @return
  */
-std::string FloatLiteral::to_string() {
-    return AstNode::to_string();
+std::string FloatLiteral::to_string(bool nl) {
+    return make_tab_str() + "FloatLiteral( " + std::to_string(this->data) + " )\n";
+}
+
+FloatLiteral::FloatLiteral(const std::string &value) {
+
+}
+
+FloatLiteral::FloatLiteral(bool value) {
+
 }

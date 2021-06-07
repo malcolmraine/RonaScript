@@ -34,10 +34,8 @@
 class Expr : public AstNode {
 public:
     Expr();
-
     ~Expr();
-
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     AstNode *expr = nullptr;
 };

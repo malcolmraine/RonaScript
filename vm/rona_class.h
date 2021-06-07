@@ -34,23 +34,21 @@
 
 
 class RonaObject;
-
 class Memory;
-
 class Scope;
+
+enum ScopeVisibility {
+    PUBLIC_VISIBILITY,
+    PRIVATE_VISIBILITY,
+    PROTECTED_VISIBILITY,
+    STATIC_VISIBILITY
+};
 
 class RonaClass {
 public:
     RonaClass();
-
     ~RonaClass();
-
-    RonaObject *get_var(RonaObject *id);
-
-    bool set_var(RonaObject *id, RonaObject *value, bool by_reference = false);
-
     void set_name(RonaObject *name);
-
     RonaObject *get_name();
 
     Scope *scope = nullptr;

@@ -45,6 +45,16 @@ ClassDecl::~ClassDecl() {
  * @brief
  * @return
  */
-std::string ClassDecl::to_string() {
-    return AstNode::to_string();
+std::string ClassDecl::to_string(bool nl) {
+    std::string output = make_tab_str() + "ClassDecl( " + this->id + ", inherits [ ";
+
+    for (auto &parent : this->parent_classes) {
+        output += parent->value + " ";
+    }
+    output += "] )\n";
+
+    this->scope->nest_lvl = this->nest_lvl + 1;
+    output += this->scope->to_string();
+
+    return output;
 }

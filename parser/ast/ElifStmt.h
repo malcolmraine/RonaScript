@@ -33,10 +33,8 @@
 class ElifStmt : public AstNode {
 public:
     ElifStmt();
-
     ~ElifStmt();
-
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     AstNode *test = nullptr;
     AstNode *consequent = nullptr;

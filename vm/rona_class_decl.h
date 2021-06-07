@@ -28,18 +28,22 @@
 #ifndef RONASCRIPT_RONA_CLASS_DECL_H
 #define RONASCRIPT_RONA_CLASS_DECL_H
 
+#include <vector>
+#include <map>
 #include "rona_object.h"
 #include "rona_type.h"
+#include "scope.h"
 
+class RonaClassDecl;
 
 class RonaClassDecl {
 public:
     RonaClassDecl();
     ~RonaClassDecl();
-
     int i_start = -1;
-    int i_cnt = -1;
+    int i_end = -1;
     std::string name;
+    std::map<std::string, RonaClassDecl *> parent_classes;
 };
 
 

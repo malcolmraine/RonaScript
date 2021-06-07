@@ -35,8 +35,10 @@ class StringLiteral : public AstNode {
 public:
     StringLiteral();
     explicit StringLiteral(std::string value);
+    explicit StringLiteral(bool value);
+    explicit StringLiteral(double value);
     ~StringLiteral();
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     std::string data;
 };

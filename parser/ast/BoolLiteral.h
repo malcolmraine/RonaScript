@@ -35,12 +35,13 @@
 class BoolLiteral : public AstNode {
 public:
     BoolLiteral();
-
     explicit BoolLiteral(bool value);
-
+    explicit BoolLiteral(long value);
+    explicit BoolLiteral(double value);
+    explicit BoolLiteral(const std::string &value);
     ~BoolLiteral();
 
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     bool data = false;
 };

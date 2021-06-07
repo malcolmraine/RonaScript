@@ -25,6 +25,7 @@
 * SOFTWARE.
 *******************************************************************************/
 #include "ListLiteral.h"
+#include <iostream>
 
 /******************************************************************************
  * @brief
@@ -37,7 +38,7 @@ ListLiteral::ListLiteral() {
  * @brief
  */
 ListLiteral::~ListLiteral() {
-    for (auto &item : this->items) {
+    for (auto item : this->items) {
         delete item;
     }
 }
@@ -46,6 +47,13 @@ ListLiteral::~ListLiteral() {
  * @brief
  * @return
  */
-std::string ListLiteral::to_string() {
-    return AstNode::to_string();
+std::string ListLiteral::to_string(bool nl) {
+    std::string output = make_tab_str() + "ListLiteral( )\n";
+
+    for (auto &item : this->items) {
+        item->nest_lvl = this->nest_lvl + 1;
+        output += item->to_string();
+    }
+
+    return output;
 }

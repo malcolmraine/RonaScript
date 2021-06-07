@@ -37,63 +37,72 @@
 #include "../exceptions/TypeAssignmentError.h"
 #include "../exceptions/TypeCastError.h"
 #include "rona_function.h"
+#include "rona_class_decl.h"
 
 class RonaClass;
-
 class RonaFunction;
-
 
 class RonaObject {
 public:
     RonaObject();
-    RonaObject(RonaType_t type);
-    RonaObject(RonaClass *value);
-    RonaObject(RonaFunction *value);
-    RonaObject(long value);
-    RonaObject(bool value);
-    RonaObject(double value);
+    explicit RonaObject(RonaType_t type);
+    explicit RonaObject(RonaClass *value);
+    explicit RonaObject(RonaFunction *value);
+    explicit RonaObject(long value);
+    explicit RonaObject(bool value);
+    explicit RonaObject(double value);
     void set(bool value);
-    RonaObject(std::string value);
+    explicit RonaObject(std::string value);
     ~RonaObject();
-    [[nodiscard]] RonaType_t type() const;
+    [[nodiscard]] RonaType_t type();
     void set(long value);
     void set(double value);
     void set(std::string value);
     void set(RonaClass *value);
     void set(long offset, const RonaObject &value);
-    std::string to_string();
+    std::string to_string(bool sanitize_strings = true);
+    static std::string sanitize_string(std::string str);
     long to_int();
+    bool to_bool();
+    double to_float();
     RonaFunction *as_function();
-    RonaObject *operator[](int idx) const;
-    RonaObject *operator+(RonaObject *other) const;
-    RonaObject *operator-(RonaObject *other) const;
-    RonaObject *operator/(RonaObject *other) const;
-    RonaObject *operator*(RonaObject *other) const;
-    RonaObject *operator%(RonaObject *other) const;
-    RonaObject *operator>(RonaObject *other) const;
-    RonaObject *operator<(RonaObject *other) const;
-    RonaObject *operator>=(RonaObject *other) const;
-    RonaObject *operator<=(RonaObject *other) const;
-    RonaObject *operator>>(RonaObject *other) const;
-    RonaObject *operator<<(RonaObject *other) const;
+    RonaObject *operator[](int idx);
+    RonaObject *operator+(RonaObject *other);
+    RonaObject *operator+();
+    RonaObject *operator-(RonaObject *other);
+    RonaObject *operator-();
+    RonaObject *operator/(RonaObject *other);
+    RonaObject *operator*(RonaObject *other);
+    RonaObject *operator%(RonaObject *other);
+    RonaObject *operator>(RonaObject *other);
+    RonaObject *operator<(RonaObject *other);
+    RonaObject *operator>=(RonaObject *other);
+    RonaObject *operator<=(RonaObject *other);
+    RonaObject *operator>>(RonaObject *other);
+    RonaObject *operator<<(RonaObject *other);
     RonaObject *operator==(RonaObject *other);
     RonaObject *operator!=(RonaObject *other);
-    RonaObject *operator|(RonaObject *other) const;
-    RonaObject *operator&(RonaObject *other) const;
-    RonaObject *operator^(RonaObject *other) const;
-    RonaObject *operator&&(RonaObject *other) const;
-    RonaObject *operator||(RonaObject *other) const;
-    void free_reference_cnt();
-    void add_reference_cnt();
-    int get_reference_cnt();
+    RonaObject *operator|(RonaObject *other);
+    RonaObject *operator&(RonaObject *other);
+    RonaObject *operator^(RonaObject *other);
+    RonaObject *operator&&(RonaObject *other);
+    RonaObject *operator||(RonaObject *other);
+    RonaObject *operator!();
+    RonaObject *operator~();
     long address();
+    RonaObject *clone();
+    void set_type(RonaType_t type);
 
-    std::vector<std::variant<std::string, long, double, bool, RonaObject *, RonaClass *, RonaFunction *>> data;
+    std::vector<std::variant<std::monostate, std::string, long, double, bool, RonaObject *, RonaClass *, RonaFunction *>> data;
+    Scope *parent = nullptr;
+    bool is_const = false;
+    std::string type_string = "null";
+    int ref_cnt = 0;
+    bool gc_flag = false;
+//    ScopeVisibility visibility = PUBLIC_VISIBILITY;
 
 protected:
-    RonaType_t _type = RONA_NULL;
-    int _reference_cnt = 0;
-
+    RonaType_t _type = RN_TYPE_NULL;
 };
 
 

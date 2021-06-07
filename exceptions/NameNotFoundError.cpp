@@ -26,3 +26,18 @@
 *******************************************************************************/
 
 #include "NameNotFoundError.h"
+
+
+/******************************************************************************
+ * @brief
+ * @param target
+ * @param value
+ * @param message
+ */
+NameNotFoundError::NameNotFoundError(const std::string &name, const std::string &message) {
+    message_ = formatted_msg("NameNotFoundError: Name '" + name + "' not found.");
+
+    if (!message.empty()) {
+        message_ += ": " + message;
+    }
+}

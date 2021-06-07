@@ -45,6 +45,8 @@ Expr::~Expr() {
  * @brief
  * @return
  */
-std::string Expr::to_string() {
-    return AstNode::to_string();
+std::string Expr::to_string(bool nl) {
+    this->expr->nest_lvl = this->nest_lvl;
+
+    return this->expr->to_string();
 }

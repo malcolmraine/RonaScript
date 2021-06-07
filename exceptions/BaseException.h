@@ -37,14 +37,15 @@ protected:
 
 public:
     explicit BaseException(std::string message = "");
+
     [[nodiscard]] const char *what() const noexcept override {
         return message_.c_str();
     }
+
     std::string formatted_msg(const std::string &message);
 
     std::string color_fmt_prefix = "\033[31m";
     std::string color_fmt_suffix = "\033[0m";
 };
-
 
 #endif //RONASCRIPT_BASEEXCEPTION_H

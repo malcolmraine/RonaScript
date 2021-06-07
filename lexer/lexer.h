@@ -36,7 +36,13 @@
 #include "token.h"
 #include "token_type.h"
 
-#define STRING_LITERAL_MAX_LENGTH 1000000000
+#define STRING_LITERAL_MAX_LENGTH 1000000
+#define BLOCK_COMMENT_START "/*"
+#define BLOCK_COMMENT_END "*/"
+#define INLINE_COMMENT_START "//"
+#define INLINE_COMMENT_END '\n'
+#define HEX_LITERAL_PREFIX "0x"
+#define IS_NEGATIVE_LITERAL(s) ((s)[0] == '-')
 
 class Lexer {
 public:
@@ -48,16 +54,13 @@ public:
     void adv_buf(int n);
     Token *emit();
     void expect(char c1);
-    void expect(char c1, char c2);
-    void expect(char c1, char c2, char c3);
-    void expect(char c1, char c2, char c3, char c4);
-    void expect(char c1, char c2, char c3, char c4, char c5);
     Token *make_token(const std::string &s);
     static Token make_token(TokenType::TokenType_t type);
     static bool is_int_literal(std::string s);
     static bool is_float_literal(std::string s);
     static bool is_hex_literal(std::string s);
-    static bool is_str_literal(std::string s);
+    static bool is_bool_literal(const std::string &s);
+    static bool is_str_literal(const std::string &s);
     bool is_cmpnd(const std::string &s);
     bool is_reserved_word(const std::string &s);
     std::string get_cmpnd_candidate();
@@ -78,8 +81,6 @@ public:
     long file_char_cnt = -1;
 
 protected:
-    bool is_valid_char(char c);
-
     std::string _file_path;
     long char_idx = 0;
     std::ifstream file_obj;
@@ -90,9 +91,6 @@ protected:
     std::set<std::string> reserved_words;
     std::set<std::string> compound_ops;
     char _buf[3]{};
-    bool check_expected = false;
-    std::vector<char> expected_chars;
 };
-
 
 #endif //RONASCRIPT_LEXER_H

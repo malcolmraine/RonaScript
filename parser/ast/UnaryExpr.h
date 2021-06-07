@@ -37,9 +37,9 @@ class UnaryExpr : public AstNode {
 public:
     UnaryExpr();
     ~UnaryExpr();
-    std::string to_string() override;
+    std::string to_string(bool nl = true);
 
-    Name *id = nullptr;
+    AstNode *expr = nullptr;
     std::string op;
 };
 

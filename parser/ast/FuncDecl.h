@@ -33,18 +33,20 @@
 #include "AstNode.h"
 #include "ArgDecl.h"
 #include "ScopeNode.h"
+#include "../../lexer/token.h"
+
+class ScopeNode;
 
 class FuncDecl : public AstNode {
 public:
     FuncDecl();
-
     ~FuncDecl();
-
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     std::string id;
     std::vector<ArgDecl *> args;
     std::string type;
+    std::vector<Token *> qualifiers;
     ScopeNode *scope = nullptr;
 };
 

@@ -25,9 +25,8 @@
 * SOFTWARE.
 *******************************************************************************/
 
-#include "token.h"
-
 #include <utility>
+#include "token.h"
 
 /******************************************************************************
  * @brief
@@ -49,20 +48,25 @@ Token::Token(std::string s, TokenType::TokenType_t token, int line_num, int char
 bool Token::is_literal() {
     return this->tok_type == TokenType::FLOAT_LITERAL ||
            this->tok_type == TokenType::INT_LITERAL ||
+           this->tok_type == TokenType::BOOL_LITERAL ||
            this->tok_type == TokenType::STRING_LITERAL;
 }
 
 /******************************************************************************
- * @brief
- * @return
+ * @brief Returns true if the token is a binary operator.
+ * @return bool
  */
 bool Token::is_binary_op() {
     return this->tok_type == TokenType::PLUS
            || this->tok_type == TokenType::MINUS
            || this->tok_type == TokenType::STAR
            || this->tok_type == TokenType::BAR
+           || this->tok_type == TokenType::DBL_BAR
+           || this->tok_type == TokenType::DBL_AMPER
+           || this->tok_type == TokenType::DBL_EQUAL
            || this->tok_type == TokenType::UP_ARROW
-           || this->tok_type == TokenType::EQUAL
+           || this->tok_type == TokenType::GEQ
+           || this->tok_type == TokenType::LEQ
            || this->tok_type == TokenType::R_CARAT
            || this->tok_type == TokenType::L_CARAT
            || this->tok_type == TokenType::SLASH
@@ -72,24 +76,23 @@ bool Token::is_binary_op() {
 }
 
 /******************************************************************************
- * @brief
- * @return
+ * @brief Returns true if the token is a unary operator.
+ * @return bool
  */
 bool Token::is_unary_op() {
-    return false;
-//    return this->tok_type == TokenType::DBL_PLUS
-//           || this->tok_type == TokenType::DBL_MINUS
-//           || this->tok_type == TokenType::DBL_STAR
-//           || this->tok_type == TokenType::MINUS
-//           || this->tok_type == TokenType::PLUS
-//           || this->tok_type == TokenType::UP_ARROW
-//           || this->tok_type == TokenType::TILDE
-//           || this->tok_type == TokenType::NOT;
+    return this->tok_type == TokenType::DBL_PLUS
+           || this->tok_type == TokenType::DBL_MINUS
+           || this->tok_type == TokenType::DBL_STAR
+           || this->tok_type == TokenType::MINUS
+           || this->tok_type == TokenType::PLUS
+           || this->tok_type == TokenType::UP_ARROW
+           || this->tok_type == TokenType::TILDE
+           || this->tok_type == TokenType::NOT;
 }
 
 /******************************************************************************
- * @brief
- * @return
+ * @brief Returns true if the token is a compound operator.
+ * @return bool
  */
 bool Token::is_cmpnd_op() {
     return this->tok_type == TokenType::PLUS_EQUAL
@@ -97,21 +100,22 @@ bool Token::is_cmpnd_op() {
            || this->tok_type == TokenType::STAR_EQUAL
            || this->tok_type == TokenType::SLASH_EQUAL
            || this->tok_type == TokenType::AMPER_EQUAL
+           || this->tok_type == TokenType::XOREQ
            || this->tok_type == TokenType::BAR_EQUAL
            || this->tok_type == TokenType::PERCENT_EQUAL;
 }
 
 /******************************************************************************
- * @brief
- * @return
+ * @brief Returns true if the token is an operator.
+ * @return bool
  */
 bool Token::is_operator() {
     return is_binary_op();
 }
 
 /******************************************************************************
- * @brief
- * @return
+ * @brief Returns true if the token is a type name.
+ * @return bool
  */
 bool Token::is_type() {
     return this->tok_type == TokenType::FLOAT
@@ -125,16 +129,20 @@ bool Token::is_type() {
  * @brief
  * @return
  */
-bool Token::is_reserved_word() {
-    return false;
+std::string Token::to_string() {
+    return "Token('" + this->lexeme + "', " + std::to_string(tok_type) + ")";
 }
 
 /******************************************************************************
  * @brief
  * @return
  */
-std::string Token::to_string() {
-    return "Token('" + this->lexeme + "', " + std::to_string(tok_type) + ")";
+bool Token::is_qualifier() {
+    return this->tok_type == TokenType::PUBLIC
+           || this->tok_type == TokenType::PROTECTED
+           || this->tok_type == TokenType::PRIVATE
+           || this->tok_type == TokenType::STATIC
+           || this->tok_type == TokenType::LITERAL
+           || this->tok_type == TokenType::REFERENCE
+           || this->tok_type == TokenType::CONST;
 }
-
-

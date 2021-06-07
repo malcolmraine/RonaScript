@@ -35,10 +35,8 @@
 class ElseStmt : public AstNode {
 public:
     ElseStmt();
-
     ~ElseStmt();
-
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 
     ScopeNode *consequent = nullptr;
 };

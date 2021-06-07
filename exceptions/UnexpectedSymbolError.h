@@ -31,7 +31,9 @@
 #include "BaseException.h"
 
 class UnexpectedSymbolError : public BaseException {
-
+public:
+    explicit UnexpectedSymbolError(const std::string &symbol, const std::string &expected, long line_num, long char_num,
+                                   const std::string &message = "");
 };
 
 

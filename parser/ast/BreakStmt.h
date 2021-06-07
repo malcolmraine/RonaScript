@@ -34,10 +34,8 @@
 class BreakStmt : public AstNode {
 public:
     BreakStmt();
-
     ~BreakStmt();
-
-    std::string to_string() override;
+    std::string to_string(bool nl = true) override;
 };
 
 

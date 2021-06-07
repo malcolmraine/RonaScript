@@ -47,6 +47,13 @@ FuncCall::~FuncCall() {
  * @brief
  * @return
  */
-std::string FuncCall::to_string() {
-    return AstNode::to_string();
+std::string FuncCall::to_string(bool nl) {
+    std::string output = make_tab_str() + "FuncCall( " + this->id->to_string(false) + " )\n";
+
+    for (auto &arg : this->args) {
+        arg->nest_lvl = this->nest_lvl + 1;
+        output += arg->to_string();
+    }
+
+    return output;
 }

@@ -45,6 +45,11 @@ IndexedExpr::~IndexedExpr() {
  * @brief
  * @return
  */
-std::string IndexedExpr::to_string() {
-    return Expr::to_string();
+std::string IndexedExpr::to_string(bool nl) {
+    std::string output = make_tab_str() + "IndexedExpr( )\n";
+    this->idx->nest_lvl = this->nest_lvl + 1;
+    this->expr->nest_lvl = this->nest_lvl + 1;
+    output += this->expr->to_string() + this->idx->to_string();
+
+    return output;
 }

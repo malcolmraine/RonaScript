@@ -37,14 +37,12 @@ ArgDecl::ArgDecl() {
 /******************************************************************************
  * @brief
  */
-ArgDecl::~ArgDecl() {
-
-}
+ArgDecl::~ArgDecl() = default;
 
 /******************************************************************************
  * @brief
  * @return
  */
-std::string ArgDecl::to_string() {
-    return std::string();
+std::string ArgDecl::to_string(bool nl) {
+    return make_tab_str() + "ArgDecl( " + this->type + " )\n";
 }

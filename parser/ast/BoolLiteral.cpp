@@ -32,7 +32,7 @@
  * @brief
  */
 BoolLiteral::BoolLiteral() {
-    this->node_type = FLOAT_LITERAL;
+    this->node_type = BOOL_LITERAL;
     this->data = false;
 }
 
@@ -40,9 +40,34 @@ BoolLiteral::BoolLiteral() {
  * @brief
  */
 BoolLiteral::BoolLiteral(bool value) {
-    this->node_type = FLOAT_LITERAL;
-    this->data = value;
+    this->node_type = BOOL_LITERAL;
+    this->data = static_cast<bool>(value) ? true : false;
 }
+
+/******************************************************************************
+ * @brief
+ */
+BoolLiteral::BoolLiteral(long value) {
+    this->node_type = BOOL_LITERAL;
+    this->data = static_cast<bool>(value) ? true : false;
+}
+
+/******************************************************************************
+ * @brief
+ */
+BoolLiteral::BoolLiteral(const std::string &value) {
+    this->node_type = BOOL_LITERAL;
+    this->data = value.empty() ? true : false;
+}
+
+/******************************************************************************
+ * @brief
+ */
+BoolLiteral::BoolLiteral(double value) {
+    this->node_type = BOOL_LITERAL;
+    this->data = static_cast<bool>(value) ? true : false;
+}
+
 
 /******************************************************************************
  * @brief
@@ -53,6 +78,6 @@ BoolLiteral::~BoolLiteral() = default;
  * @brief
  * @return
  */
-std::string BoolLiteral::to_string() {
-    return AstNode::to_string();
+std::string BoolLiteral::to_string(bool nl) {
+    return "BoolLiteral( " + std::to_string(this->data) + " )\n";
 }

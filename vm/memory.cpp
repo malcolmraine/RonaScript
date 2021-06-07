@@ -34,180 +34,156 @@
  * @brief
  */
 Memory::Memory() {
-
+    this->heap = new MemoryBlock;
+    this->head = this->heap;
+    this->tail = new MemoryBlock;
+    this->head->next = this->tail;
+    this->tail->previous = this->head;
 }
 
 /******************************************************************************
  * @brief
  */
 Memory::~Memory() {
-    cleanup();
+    MemoryBlock *current = this->head;
+
+    while (current != nullptr) {
+        delete current->obj;
+        current->obj = nullptr;
+        current = current->next;
+        delete current->previous;
+        current->previous = nullptr;
+    }
+}
+
+/******************************************************************************
+ * @brief
+ * @return
+ */
+Memory *Memory::get_instance() {
+    if (!instance) {
+        instance = new Memory;
+    }
+
+    return instance;
+}
+
+/******************************************************************************
+ * @brief
+ * @return
+ */
+RonaObject *Memory::obj_malloc() {
+    auto obj = new RonaObject(RN_TYPE_NULL);
+    MemoryBlock *block = find_first_free();
+
+    if (block == nullptr) {
+        resize(1);
+        this->tail->previous->obj = obj;
+    } else {
+        block->obj = obj;
+    }
+
+    return obj;
 }
 
 /******************************************************************************
  * @brief
  * @param obj
  */
-void Memory::collect(RonaObject *obj) {
-    if (obj->get_reference_cnt() == 0) {
-        if (obj->type() == RONA_ARRAY) {
-            for (auto &element : obj->data) {
-                Memory::collect(std::get<RonaObject *>(element));
+void Memory::add_to_heap(RonaObject *obj) {
+    MemoryBlock *block = find_first_free();
+
+    if (block == nullptr) {
+        resize(1);
+        this->tail->previous->obj = obj;
+    } else {
+        block->obj = obj;
+    }
+}
+
+/******************************************************************************
+ * @brief
+ * @return
+ */
+long Memory::heap_size_bytes() {
+    return this->_heap_size * (sizeof(MemoryBlock) + (sizeof(RonaObject) - 2));
+}
+
+/******************************************************************************
+ * @brief
+ */
+void Memory::sweep() {
+    MemoryBlock *current = this->head->next;
+
+    while (current != nullptr && current != this->head && current != this->tail) {
+        if (current->obj != nullptr) {
+            if (!current->obj->gc_flag) {
+                delete current->obj;
+                current->obj = nullptr;
+            } else {
+                current->obj->gc_flag = false;
             }
-        } else {
-            delete obj;
         }
-    } else {
-        obj->free_reference_cnt();
+        current = current->next;
+    }
+
+    contract_heap();
+}
+
+/******************************************************************************
+ * @brief Increase the size of the heap by n blocks
+ * @param n
+ * @return
+ */
+bool Memory::resize(int n) {
+    for (int i = 0; i < n; i++) {
+        auto block = new MemoryBlock;
+        this->tail->previous->next = block;
+        block->previous = this->tail->previous;
+        this->tail->previous = block;
+        block->next = this->tail;
+        this->_heap_size++;
+    }
+
+    return true;
+}
+
+/******************************************************************************
+ * @brief
+ * @return
+ */
+MemoryBlock *Memory::find_first_free() {
+    MemoryBlock *current = this->head;
+
+    while (current != nullptr) {
+        if (current->obj == nullptr && current != this->head && current != this->tail) {
+            return current;
+        } else {
+            current = current->next;
+        }
+    }
+
+    return nullptr;
+}
+
+/******************************************************************************
+ * @brief
+ */
+void Memory::contract_heap() {
+    MemoryBlock *current = this->head;
+    MemoryBlock *obj_to_delete = nullptr;
+
+    while (current != this->tail) {
+        current = current->next;
+        obj_to_delete = current;
+
+        if (obj_to_delete->obj == nullptr && obj_to_delete != this->tail) {
+            obj_to_delete->previous->next = obj_to_delete->next;
+            obj_to_delete->next->previous = obj_to_delete->previous;
+            delete obj_to_delete;
+            this->_heap_size--;
+        }
     }
 }
 
-/******************************************************************************
- * @brief
- * @param id
- * @param value
- */
-void Memory::set_var(RonaObject *id, RonaObject *value, bool by_reference) {
-    if (exists(id)) {
-        remove(id);
-    }
 
-    if (by_reference) {
-        value->add_reference_cnt();
-        this->_obj_store[id->to_string()] = value;
-    } else {
-        *this->_obj_store[id->to_string()] = *value;
-    }
-}
-
-/******************************************************************************
- * @brief
- * @param id
- * @return
- */
-RonaObject *Memory::get(RonaObject *id) {
-    if (exists(id)) {
-        RonaObject *var = this->_obj_store[id->to_string()];
-        var->add_reference_cnt();
-
-        return var;
-    } else {
-        return nullptr;
-    }
-}
-
-/******************************************************************************
- * @brief
- * @param id
- */
-void Memory::remove(RonaObject *id) {
-    this->_obj_store.erase(id->to_string());
-}
-
-/******************************************************************************
- * @brief
- * @param id
- * @param data
- * @return
- */
-RonaObject *Memory::make_var(RonaObject *id, long data) {
-    auto *x = new RonaObject(data);
-    this->_obj_store[id->to_string()] = x;
-
-    return x;
-}
-
-/******************************************************************************
- * @brief
- * @param id
- * @param data
- * @return
- */
-RonaObject *Memory::make_var(RonaObject *id, double data) {
-    auto *x = new RonaObject(data);
-    this->_obj_store[id->to_string()] = x;
-
-    return x;
-}
-
-/******************************************************************************
- * @brief
- * @param id
- * @param data
- * @return
- */
-RonaObject *Memory::make_var(RonaObject *id, std::string data) {
-    auto *x = new RonaObject(std::move(data));
-    this->_obj_store[id->to_string()] = x;
-
-    return x;
-}
-
-/******************************************************************************
- * @brief
- * @param id
- * @return
- */
-RonaObject *Memory::make_var(RonaObject *id) {
-    auto *x = new RonaObject();
-    this->_obj_store[id->to_string()] = x;
-
-    return x;
-}
-
-/******************************************************************************
- * @brief
- * @param id
- * @return
- */
-bool Memory::exists(RonaObject *id) {
-    return this->_obj_store.count(id->to_string()) > 0;
-}
-
-/******************************************************************************
- * @brief
- * @param id
- * @return
- */
-bool Memory::is_var(RonaObject *id) {
-    if (exists(id)) {
-        return this->_obj_store[id->to_string()]->type() != RONA_FUNCTION;
-    } else {
-        return false;
-    }
-}
-
-/******************************************************************************
- * @brief
- * @param id
- * @return
- */
-bool Memory::is_func(RonaObject *id) {
-    if (exists(id)) {
-        return this->_obj_store[id->to_string()]->type() == RONA_FUNCTION;
-    } else {
-        return false;
-    }
-}
-
-/******************************************************************************
- * @brief
- * @param id
- * @return
- */
-RonaFunction *Memory::make_func(RonaObject *id) {
-    auto *func = new RonaFunction();
-    this->_obj_store[id->to_string()] = new RonaObject(func);
-
-    return func;
-}
-
-/******************************************************************************
- * @brief
- */
-void Memory::cleanup() {
-    for (auto const &x : this->_obj_store) {
-        Memory::collect(x.second);
-    }
-    this->_obj_store.clear();
-}

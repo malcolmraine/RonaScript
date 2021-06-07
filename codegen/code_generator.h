@@ -35,7 +35,7 @@
 #include "../parser/ast/Ast.h"
 #include "../parser/ast/StringLiteral.h"
 #include "../parser/ast/ScopeNode.h"
-#include "../parser/ast/Require.h"
+#include "../parser/ast/RequireStmt.h"
 #include "../parser/ast/ArgDecl.h"
 #include "../parser/ast/AstNode.h"
 #include "../parser/ast/ForLoop.h"
@@ -59,36 +59,58 @@
 #include "../parser/ast/ListLiteral.h"
 #include "../parser/ast/ElifStmt.h"
 #include "../parser/ast/IntLiteral.h"
-#include "../parser/ast/FlowStmt.h"
+#include "../parser/ast/ContinueStmt.h"
 #include "../parser/ast/ElseStmt.h"
 #include "../parser/ast/Name.h"
+#include "../parser/ast/try_block.h"
+#include "../parser/ast/catch_block.h"
+#include "../parser/ast/Ast.h"
 #include "../vm/instruction.h"
+
+typedef std::vector<Instruction *> InstructionVec;
+
+struct ModuleCodeBlock {
+    InstructionVec instructions;
+    Instruction *make_instruction;   // Will need to reference later to set the start index and instruction count operands
+    long i_start = 0;   // Instruction start index
+    long i_cnt = 0; // Instruction count
+};
 
 class CodeGenerator {
 public:
     CodeGenerator();
     ~CodeGenerator();
-    std::vector<Instruction *> generate_binary_expr(BinaryExpr *node);
-    std::vector<Instruction *> generate_unary_expr(UnaryExpr *node);
-    std::vector<Instruction *> generate_expr(Expr *node);
-    std::vector<Instruction *> generate_indexed_expr(IndexedExpr *node);
-    std::vector<Instruction *> generate_list_literal(ListLiteral *node);
-    std::vector<Instruction *> generate_if_stmt(IfStmt *node);
-    std::vector<Instruction *> generate_elif_stmt(ElifStmt *node);
-    std::vector<Instruction *> generate_else_stmt(ElseStmt *node);
-    std::vector<Instruction *> generate_for_loop(ForLoop *node);
-    std::vector<Instruction *> generate_while_loop(WhileLoop *node);
-    std::vector<Instruction *> generate_alias_decl(AliasDecl *node);
-    std::vector<Instruction *> generate_break_stmt(BreakStmt *node);
-    std::vector<Instruction *> generate_flow_stmt(FlowStmt *node);
-    std::vector<Instruction *> generate_return_stmt(ReturnStmt *node);
-    std::vector<Instruction *> generate_scope(ScopeNode *node);
-    std::vector<Instruction *> generate_func_decl(FuncDecl *node);
-    std::vector<Instruction *> generate_func_call(FuncCall *node);
-    std::vector<Instruction *> generate_var_decl(VarDecl *node);
-    std::vector<Instruction *> generate_assignment_stmt(AssignmentStmt *node);
-    std::vector<Instruction *> generate_require(RequireStmt *node);
-    std::vector<Instruction *> instructions;
+    InstructionVec generate_binary_expr(BinaryExpr *node);
+    InstructionVec generate_unary_expr(UnaryExpr *node);
+    InstructionVec generate_expr(Expr *node);
+    InstructionVec generate_indexed_expr(IndexedExpr *node);
+    InstructionVec generate_list_literal(ListLiteral *node);
+    InstructionVec generate_if_stmt(IfStmt *node);
+    InstructionVec generate_elif_stmt(ElifStmt *node);
+    InstructionVec generate_else_stmt(ElseStmt *node);
+    InstructionVec generate_for_loop(ForLoop *node);
+    InstructionVec generate_while_loop(WhileLoop *node);
+    InstructionVec generate_break_stmt(BreakStmt *node);
+    InstructionVec generate_continue_stmt(ContinueStmt *node);
+    InstructionVec generate_return_stmt(ReturnStmt *node);
+    InstructionVec generate_scope(ScopeNode *node);
+    InstructionVec generate_func_decl(FuncDecl *node);
+    InstructionVec generate_func_call(FuncCall *node);
+    InstructionVec generate_var_decl(VarDecl *node);
+    InstructionVec generate_assignment_stmt(AssignmentStmt *node);
+    InstructionVec generate_require(RequireStmt *node);
+    InstructionVec generate_class_decl(ClassDecl *node);
+    InstructionVec generate_try_block(TryBlock *node);
+    InstructionVec generate_alias_decl(AliasDecl *node);
+    InstructionVec generate_node(AstNode *node);
+    void generate_modules(Ast *ast);
+    InstructionVec generate(Ast *ast);
+    std::string dumps();
+
+    InstructionVec instructions;
+
+private:
+    std::map<std::string, ModuleCodeBlock *> modules;
 };
 
 

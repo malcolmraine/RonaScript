@@ -38,19 +38,19 @@ RonaType_t get_type(std::string type) {
     transform(normalized_string.begin(), normalized_string.end(), normalized_string.begin(), ::tolower);
 
     if (normalized_string == "int") {
-        return RONA_INT;
+        return RN_TYPE_INT;
     } else if (normalized_string == "float") {
-        return RONA_FLOAT;
+        return RN_TYPE_FLOAT;
     } else if (normalized_string == "array") {
-        return RONA_ARRAY;
+        return RN_TYPE_ARRAY;
     } else if (normalized_string == "string") {
-        return RONA_STRING;
+        return RN_TYPE_STRING;
     } else if (normalized_string == "bool") {
-        return RONA_BOOL;
+        return RN_TYPE_BOOL;
     } else if (normalized_string == "class" || normalized_string == "object") {
-        return RONA_CLASS;
+        return RN_TYPE_CLASS;
     } else {
-        return RONA_NULL;
+        return RN_TYPE_NULL;
     }
 }
 
@@ -61,19 +61,19 @@ RonaType_t get_type(std::string type) {
  */
 std::string get_type_as_string(RonaType_t type) {
     switch (type) {
-        case RONA_INT:
+        case RN_TYPE_INT:
             return "int";
-        case RONA_FLOAT:
+        case RN_TYPE_FLOAT:
             return "float";
-        case RONA_BOOL:
+        case RN_TYPE_BOOL:
             return "bool";
-        case RONA_CLASS:
+        case RN_TYPE_CLASS:
             return "class";
-        case RONA_STRING:
+        case RN_TYPE_STRING:
             return "string";
-        case RONA_ARRAY:
+        case RN_TYPE_ARRAY:
             return "array";
-        case RONA_NULL:
+        case RN_TYPE_NULL:
             return "null";
         default:
             return "";

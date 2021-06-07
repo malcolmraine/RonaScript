@@ -36,7 +36,7 @@
 #include "ast/Ast.h"
 #include "ast/StringLiteral.h"
 #include "ast/ScopeNode.h"
-#include "ast/Require.h"
+#include "ast/RequireStmt.h"
 #include "ast/ArgDecl.h"
 #include "ast/AstNode.h"
 #include "ast/ForLoop.h"
@@ -60,9 +60,12 @@
 #include "ast/ListLiteral.h"
 #include "ast/ElifStmt.h"
 #include "ast/IntLiteral.h"
-#include "ast/FlowStmt.h"
+#include "ast/ContinueStmt.h"
 #include "ast/ElseStmt.h"
 #include "ast/Name.h"
+#include "ast/try_block.h"
+#include "ast/catch_block.h"
+#include "ast/BoolLiteral.h"
 
 enum Associativity_t {
     LEFT,
@@ -74,48 +77,59 @@ class Parser {
 public:
     Parser();
     ~Parser();
-    Token *peek();
-    Token *current();
-    Token *lookback();
     void adv_buf(int n);
     void conditional_buf_adv(TokenType::TokenType_t t);
     RequireStmt *parse_require_stmt();
-    VarDecl *parse_var_decl();
-    FuncDecl *parse_func_decl();
+    VarDecl *parse_var_decl(std::vector<Token *> qualifiers = {});
+    FuncDecl *parse_func_decl(std::vector<Token *> qualifiers = {});
     ArgDecl *parse_arg_decl();
     ClassDecl *parse_class_decl();
     AstNode *get_expr_cmpnt();
     AstNode *parse_expr(TokenType::TokenType_t stop_token = TokenType::SEMICOLON);
-    UnaryExpr *parse_unary_expr();
-    //BinaryExpr* parse_binary_expr();
+    UnaryExpr *parse_unary_expr(Name *name = nullptr);
     BreakStmt *parse_break_stmt();
-    FlowStmt *parse_flow_stmt();
+    ContinueStmt *parse_continue_stmt();
     ReturnStmt *parse_return_stmt();
-    AssignmentStmt *parse_assignment_stmt();
+    AssignmentStmt *parse_assignment_stmt(Name *name = nullptr);
     IfStmt *parse_if_stmt();
     ElifStmt *parse_elif_stmt();
     ElseStmt *parse_else_stmt();
     ScopeNode *parse_scope();
-    FuncCall *parse_func_call();
+    FuncCall *parse_func_call(Name *name = nullptr);
     ListLiteral *parse_list_literal();
     WhileLoop *parse_while_loop();
     ForLoop *parse_for_loop();
     AliasDecl *parse_alias_decl();
-    IndexedExpr *parse_indexed_expr();
+    AstNode *parse_indexed_expr(AstNode *expr = nullptr);
     Name *parse_name();
+    TryBlock *parse_try_block();
+    CatchBlock *parse_catch_block();
     void revert_scope();
     void convert_scope(ScopeNode *scope);
     std::string dumps_ast();
     void parse();
+    std::vector<Token *> get_qualifiers();
+    void load_tokens(std::vector<Token *> t);
 
     Ast *ast;
     ScopeNode *current_scope = nullptr;
     std::vector<Token *> tokens;
+    std::string working_dir;
+    Token *current = nullptr;
+    Token *peek = nullptr;
+    Token *lookback = nullptr;
+    std::map<std::string, std::string> type_alias_map;
+    std::map<std::string, std::string> name_alias_map;
+
 protected:
+    void expect(TokenType::TokenType_t token_type);
+    void check_expected_token();
+    bool end_of_buffer_reached = false;
+    std::map<TokenType::TokenType_t, std::string> char_map;
+    TokenType::TokenType_t expected_token = TokenType::UNDEFINED;
     std::map<std::string, int> prec_tbl;
     std::map<std::string, Associativity_t> associativity;
     unsigned long idx = 0;
 };
-
 
 #endif //RONASCRIPT_PARSER_H

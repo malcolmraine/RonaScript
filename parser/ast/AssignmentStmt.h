@@ -35,13 +35,13 @@
 class AssignmentStmt : public AstNode {
 public:
     AssignmentStmt();
-
     ~AssignmentStmt();
+    std::string to_string(bool nl = true) override;
 
-    std::string to_string() override;
-
-    Name *id;
+    Name *id{};
     AstNode *expr = nullptr;
+    AstNode *offset = nullptr;
+    AstNode *idx = nullptr;
 };
 
 
