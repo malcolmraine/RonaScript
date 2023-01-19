@@ -1,0 +1,14 @@
+
+
+// This would produce a compiler error
+__pragma (bounds, strict)
+var age: int<0..99> = 100;
+
+// This would produce a warning but would allow it
+__pragma (typing, strict)
+__pragma (bounds, relaxed)
+var value: int<0..10> = 1.0;
+
+// This would produce a warning for the bounds and an error for the type
+__pragma (typing, strict)
+//var foo: int<0..10> = 90.723;

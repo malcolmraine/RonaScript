@@ -1,0 +1,90 @@
+module Path is
+begin
+
+class Path is
+begin
+    var __initial_value: string = "";
+    var __cached_abs: string = "";
+    var __cached_rel: string = "";
+    var __cached_filename: string = "";
+    var __cached_parent_dir: string = "";
+
+    /******************************************************/
+    routine construct(var p: any)
+    begin
+        if is_array(p):
+            this->__initial_value = array_join("/", p);
+        elif is_string(p):
+            this->__initial_value = p;
+        else:
+            throw(InvalidInputException());
+        end
+    end // routine construct
+
+    /******************************************************/
+    routine absolute(): string
+    begin
+        if this->__cached_abs:
+            return this->__cached_parent_dir;
+        else:
+            return "";
+        end;
+    end
+
+    /******************************************************/
+    routine relative(): string
+    begin
+        if this->__cached_rel:
+            return this->__cached_parent_dir;
+        else:
+            return "";
+        end;
+    end
+
+    /******************************************************/
+    routine filename(): string
+    begin
+        if this->__cached_filename:
+            return this->__cached_filename;
+        else:
+            return "";
+        end;
+    end
+
+    /******************************************************/
+    routine parent_dir(): string
+    begin
+        if this->__cached_parent_dir:
+            return this->__cached_parent_dir;
+        else:
+            return "";
+        end
+    end
+
+    /******************************************************/
+    routine is_absolute(): bool
+    begin
+
+    end
+
+    /******************************************************/
+    routine is_relative(): bool
+    begin
+        return false;
+    end
+
+    /******************************************************/
+    routine is_file(): bool
+    begin
+        return false;
+    end
+
+    /******************************************************/
+    routine is_dir(): bool
+    begin
+        return false;
+    end
+
+end // class Path
+
+end // module Path

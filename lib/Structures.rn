@@ -1,0 +1,239 @@
+module Structures is
+begin
+
+//import AccessException;
+
+/**********************************************************/
+/**********************************************************/
+class __ArrayBased is  
+begin
+
+    var __data: array = [];
+    var __nullable: bool = false;
+
+    /******************************************************/
+    routine construct()
+    begin
+
+    end // routine construct
+
+    /******************************************************/
+    routine __handle_invalid_access(): any
+    begin
+        if this->__nullable:
+            return null;
+        else:
+            throw(AccessException());
+    end // routine __handle_invalid_access
+
+    /******************************************************/
+    routine size(): int
+    begin
+        return count(this->_data);
+    end // routine size
+
+    /******************************************************/
+    routine reset(): void
+    begin
+        array_clear(this->__data);
+    end // routine reset
+
+end // __ArrayBased
+
+/**********************************************************/
+/**********************************************************/
+class Stack extends __ArrayBased is
+begin
+    /******************************************************/
+    routine construct()
+    begin
+
+    end // routine construct
+
+    /******************************************************/
+    routine push(var item: any): void
+    begin
+        array_append(this->_data, item);
+    end // routine push
+
+    /******************************************************/
+    routine pop(): any
+    begin
+        if this->size():
+            return array_pop(this->_data);
+        else:
+            return this->__handle_invalid_access();
+    end // routine pop
+
+    /******************************************************/
+    routine top(): any
+    begin
+        if this->size():
+            return this->__data[count(this->__data) - 1];
+        else:
+            return this->__handle_invalid_access();
+    end // routine top
+
+end // class Stack
+
+/**********************************************************/
+/**********************************************************/
+class __ListNode is
+begin
+    var __previous: __ListNode = null;
+    var __next: __ListNode = null;
+    var __data: any = null;
+
+    /******************************************************/
+    routine set_data(var data: any): void
+    begin
+        this->__data = data;
+    end
+
+end // class __ListNode
+
+/**********************************************************/
+/**********************************************************/
+class List is
+begin
+    var __first: __ListNode = null;
+    var __last: __ListNode = null;
+    var __size: int = 0;
+
+    /******************************************************/
+    routine truncate(var n: int): void
+    begin
+
+    end // routine truncate
+
+    /******************************************************/
+    routine insert(var idx: int, var item: any): void
+    begin
+        if idx:
+            if is_null(this->__first):
+                throw(AccessException());
+            else:
+                var node: __ListNode = __ListNode(item);
+                local current: __ListNode = this->__first;
+                local i: int = 0;
+
+                while current:
+                    if i == idx:
+                        node->__previous = current;
+                        node->__next = current->__next;
+
+                        if current->__next:
+                            current->__next->__previous = node;
+                        end
+
+                        current->__next = node;
+                        return;
+                    end
+                    current = current->__next;
+                end
+            end
+        end
+        this->__size++;
+    end
+
+    /******************************************************/
+    routine remove(var item: any): void
+    begin
+        if is_null(this->__first):
+            throw(AccessException());
+        else:
+            local current: __ListNode = this->__first;
+
+            while current:
+                if current->__data == item:
+                    local node: __ListNode = current;
+                    current->__last->__next = current->__next;
+                    current->__next->__last = current->__last;
+                    node->__last = null;
+                    node->__next = null;
+                    delete node;
+                end
+                current = current->__next;
+            end
+        end
+    end // routine remove
+
+    /******************************************************/
+    routine find(var item: any): any
+    begin
+        if is_null(this->__first):
+            throw(AccessException());
+        else:
+            local current: __ListNode = this->__first;
+
+            while current:
+                if current->__data == item:
+                    return current;
+                else:
+                    current = current->__next;
+                end
+            end
+        end
+    end // routine find
+
+    /******************************************************/
+    routine back(): any
+    begin
+        return this->__last;
+    end
+
+    /******************************************************/
+    routine front(): any
+    begin
+        return this->__first;
+    end // routine front
+
+    /******************************************************/
+    routine size(): int
+    begin
+        return this->__size();
+    end // routine size
+
+end // class List
+
+
+/**********************************************************/
+/**********************************************************/
+class BinaryTreeNode is
+begin
+    var left: BinaryTreeNode = null;
+    var right: BinaryTreeNode = null;
+    var data: any = null;
+
+    routine construct(): void
+    begin
+
+    end // routine construct
+
+end // class TreeNode
+
+
+/**********************************************************/
+/**********************************************************/
+class BinaryTree is
+begin
+    var root: BinaryTreeNode = null;
+    var node_cnt: int = 0;
+    var depth: int = 0;
+    var height: int = 0;
+
+    /******************************************************/
+    routine construct(): void
+    begin
+
+    end // routine construct
+
+    /******************************************************/
+    routine rebalance(): void
+    begin
+
+    end // routine rebalance
+
+end // class BinaryTree
+
+end // module Structures

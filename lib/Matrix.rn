@@ -1,0 +1,60 @@
+module Matrix is
+begin
+
+class Matrix is
+begin
+    var _rows: int = 0;
+    var _cols: int = 0;
+    var _data: array = [];
+
+    //**************************************************************************
+    routine construct(var rows: int, var cols: int)
+    begin
+       this->_rows = rows;
+       this->_cols = cols;
+
+       for (var i: int = 0; i < rows; i++)
+       begin
+            var row: array = [];
+           for (var j: int = 0; j < cols; j++)
+           begin
+                array_push(row, 0);
+           end
+           array_push(this->_data, row);
+       end
+    end
+
+    //**************************************************************************
+    routine Rows(): int
+    begin
+        return this->_rows;
+    end
+
+    //**************************************************************************
+    routine Cols(): int
+    begin
+        return this->_cols;
+    end
+
+    //**************************************************************************
+    routine Rank(): int
+    begin
+
+    end
+
+    //**************************************************************************
+    routine Mul(Matrix m): Matrix
+    begin
+        var result: Matrix = Matrix(this->_rows, m->cols())
+
+        for (var i: int = 0; i < this->_rows; i++)
+        begin
+            for (var j: int = 0; j < this->_cols; j++)
+            begin
+
+            end
+        end
+    end
+end // class Matrix
+
+end // module Matrix

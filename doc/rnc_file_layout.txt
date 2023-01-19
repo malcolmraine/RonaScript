@@ -1,0 +1,6 @@
+Timestamp - 8 bytes
+Const internment
+    - Layout: [[size, value], [size, value]..., [size, value]]
+Instructions:
+    - Each instruction is 1-9 bytes, with each argument being 4 bytes and the opcode being 1
+    - Layout: [[opcode, ?arg1, ?arg2]]

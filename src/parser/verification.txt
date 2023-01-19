@@ -1,0 +1,6 @@
+
+Things to check:
+    - Is a function without a return value used in an expression
+    - Does the expression used for a variable assignment or argument passing use an in-bounds value
+    - Does the expression used for variable assignment or argument passing use a correct type value
+    -

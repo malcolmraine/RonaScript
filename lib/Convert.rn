@@ -1,0 +1,28 @@
+module Convert is
+begin
+
+import Math;
+import Test;
+
+/*
+mm_to_miles
+cm_to_miles
+meters_to_miles
+km_to_miles
+miles_to_km
+miles_to_meters
+miles_to_cm
+miles_to_mm
+miles_to_yards
+miles_to_feet
+miles_to_inches
+
+
+*/
+
+routine km_to_miles(var km: float): float
+begin
+    return km * 0.621371;
+end
+
+end // module convert
