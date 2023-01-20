@@ -2,19 +2,20 @@
 
 PROC_COUNT=9
 TARGET="invalid"
+BUILD_DIR=""
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 function build_project() {
-    mkdir ./build
-    cmake -S. -B ./build
-    cd ./build || exit 1
+    mkdir "$BUILD_DIR"
+    cmake -S. -B "$BUILD_DIR"
+    cd "$BUILD_DIR" || exit 1
     make "-j$PROC_COUNT"
     cd ../
 
     declare -a REMOVALS=(
-        "./build/CMakeCache.txt"
-        "./build/cmake_install.cmake")
+        "$BUILD_DIR/CMakeCache.txt"
+        "$BUILD_DIR/cmake_install.cmake")
 
     for item in "${REMOVALS[@]}"; do
         if [[ -d $item ]]; then
@@ -28,11 +29,11 @@ function build_project() {
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 function clean_project() {
-    if [[ -d ./build ]]; then
-        cd ./build || exit 1
+    if [[ -d $BUILD_DIR ]]; then
+        cd "$BUILD_DIR" || exit 1
         make clean "-j$PROC_COUNT"
         cd ../
-        rm -R ./build
+        rm -R "$BUILD_DIR"
     else
         echo "Nothing to clean."
     fi
@@ -49,7 +50,7 @@ function rebuild_project() {
 # -----------------------------------------------------------------------------
 function install_project() {
     rm /usr/local/bin/rona
-    cp ./build/RonaScript /usr/local/bin/rona
+    cp "$BUILD_DIR/RonaScript" /usr/local/bin/rona
 }
 
 # -----------------------------------------------------------------------------
@@ -68,6 +69,12 @@ function show_help() {
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
+if [[ -d ../build ]]; then
+    BUILD_DIR=../build
+elif [[ -d ./build ]]; then
+    BUILD_DIR=./build
+fi
+
 while true; do
     case $1 in
     --target)
