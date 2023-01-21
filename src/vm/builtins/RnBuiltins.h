@@ -11,6 +11,7 @@
 #define RONASCRIPT_RNBUILTINS_H
 
 #include <vector>
+#include <map>
 
 class RnScope;
 class RnObject;
@@ -23,6 +24,8 @@ class RnBuiltins
 	static void rn_builtin_call(RnScope* scope, const std::vector<RnObject*>& args,
 		RnObject* ret_val);
 	static void rn_builtin_system(RnScope* scope, const std::vector<RnObject*>& args,
+		RnObject* ret_val);
+	static void lload(RnScope* scope, const std::vector<RnObject*>& args,
 		RnObject* ret_val);
 };
 

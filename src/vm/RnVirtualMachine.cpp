@@ -770,6 +770,7 @@ void RnVirtualMachine::RegisterBuiltins()
 		 { "count", CastToBuiltin(&RnBuiltins_Array::rn_builtin_count),
 		   RnType::RN_INT },
 		 { "system", CastToBuiltin(&RnBuiltins::rn_builtin_system), RnType::RN_ARRAY },
+		 { "lload", CastToBuiltin(&RnBuiltins::lload), RnType::RN_NULL },
 		 { "count", CastToBuiltin(&RnBuiltins_Array::rn_builtin_count),
 		   RnType::RN_INT },
 		 { "array_push", CastToBuiltin(&RnBuiltins_Array::rn_builtin_array_push),

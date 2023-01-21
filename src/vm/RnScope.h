@@ -11,6 +11,7 @@
 #define RONASCRIPT_RNSCOPE_H
 
 #include <vector>
+#include <map>
 #include "../util/RnStack.h"
 #include "RnScope.h"
 #include "RnMemoryGroup.h"
@@ -30,11 +31,16 @@ class RnScope
 	[[nodiscard]] RnScope* GetParent() const;
 	[[nodiscard]] RnMemoryGroup* GetMemoryGroup() const;
 
+	static void LoadLibraryIntoScope(RnScope* scope, const std::string& library);
+
  protected:
 	RnScope* _parent = nullptr;
 	std::vector<RnObject*> _stack;
 	RnSymbolTable _symbolTable;
 	RnMemoryGroup* _memory_group = nullptr;
+
+ private:
+	static std::map<std::string, void*> _handles;
 };
 
 #endif //RONASCRIPT_RNSCOPE_H

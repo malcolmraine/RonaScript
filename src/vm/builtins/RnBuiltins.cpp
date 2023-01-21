@@ -21,6 +21,7 @@
 #include "../RnObject.h"
 #include "../RnFunctionObject.h"
 #include "../RnFunction.h"
+#include <dlfcn.h>
 
 /*****************************************************************************/
 void RnBuiltins::rn_builtin_unpack(RnScope* scope, const std::vector<RnObject*>& args,
@@ -72,4 +73,13 @@ void RnBuiltins::rn_builtin_system(RnScope* scope, const std::vector<RnObject*>&
 	result = String::Replace(result, "\n", "\\n");
 	std::vector<RnObject*> output = { RnObject::Create(result) };
 	ret_val->SetData(output);
+}
+
+/*****************************************************************************/
+void RnBuiltins::lload(RnScope* scope, const std::vector<RnObject*>& args,
+	RnObject* ret_val)
+{
+	// TODO: Add file existence check for library
+	// TODO: Add check to make sure library actually loaded and return status accordingly
+	RnScope::LoadLibraryIntoScope(scope->GetParent(), args.at(0)->ToString());
 }

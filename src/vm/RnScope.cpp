@@ -7,9 +7,16 @@
 *
 ******************************************************************************/
 
+#include <iostream>
 #include "RnScope.h"
 #include "RnSymbolTable.h"
 #include "RnMemoryManager.h"
+#include "RnObject.h"
+#include "RnFunctionObject.h"
+#include "RnFunction.h"
+#include <dlfcn.h>
+
+std::map<std::string, void*> RnScope::_handles;
 
 /*****************************************************************************/
 RnScope::RnScope(RnScope* parent)
@@ -93,6 +100,51 @@ RnScope* RnScope::GetParent() const
 RnMemoryGroup* RnScope::GetMemoryGroup() const
 {
 	return _memory_group;
+}
+
+/*****************************************************************************/
+void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library)
+{
+	// This function should really be moved somewhere more appropriate and
+	// should do something other than just load the names into the parent scope.
+	// It would be ideal to return an object containing the scope
+	auto CastToBuiltin = [](auto f)
+	{
+	  return reinterpret_cast<BuiltinFunction>(f);
+	};
+
+	void* handle = dlopen(library.c_str(), RTLD_LOCAL);
+	_handles[library] = handle;
+
+	if (handle)
+	{
+		void (* ListExports)(
+			std::vector<std::tuple<std::string, RnType::Type>>&) = nullptr;
+		ListExports =
+			(void (*)(std::vector<std::tuple<std::string, RnType::Type>>&))dlsym(handle,
+				"LibraryFunctions");
+		std::vector<std::tuple<std::string, RnType::Type>> functions;
+		ListExports(functions);
+		for (const auto& info : functions)
+		{
+			auto name = std::get<0>(info);
+			std::cout << "Loading external function: " << std::get<0>(info)
+					  << std::endl;
+
+			auto func =
+				new RnBuiltinFunction(name, CastToBuiltin(dlsym(handle, name.c_str())));
+			func->SetScope(scope);
+			auto obj =
+				dynamic_cast<RnFunctionObject*>(RnObject::Create(RnType::RN_FUNCTION));
+			obj->SetReturnType(std::get<1>(info));
+			obj->SetData(func);
+			scope->StoreObject(name, obj);
+		}
+	}
+	else
+	{
+		std::cout << "Unable to load external library: " << library << std::endl;
+	}
 }
 
 
