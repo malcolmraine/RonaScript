@@ -36,19 +36,23 @@ RnMemoryGroup::~RnMemoryGroup()
 //	return nullptr;
 //}
 
-std::vector<RnMemoryBlock*> RnMemoryGroup::GetChildBlocks() const {
+std::vector<RnMemoryBlock*> RnMemoryGroup::GetChildBlocks() const
+{
 	return _child_blocks;
 }
 
 /*****************************************************************************/
-std::vector<RnMemoryGroup*> RnMemoryGroup::GetChildGroups() const {
+std::vector<RnMemoryGroup*> RnMemoryGroup::GetChildGroups() const
+{
 	return _child_groups;
 }
 
 /*****************************************************************************/
-void RnMemoryGroup::RemoveChildGroup(RnMemoryGroup* group) {
+void RnMemoryGroup::RemoveChildGroup(RnMemoryGroup* group)
+{
 	auto iter = std::find(_child_groups.begin(), _child_groups.end(), group);
-	if (iter != _child_groups.end()) {
+	if (iter != _child_groups.end())
+	{
 		_child_groups.erase(iter);
 	}
 }
@@ -60,17 +64,20 @@ void RnMemoryGroup::AddChildBlock(RnMemoryBlock* block)
 }
 
 /*****************************************************************************/
-void RnMemoryGroup::AddChildGroup(RnMemoryGroup* child) {
+void RnMemoryGroup::AddChildGroup(RnMemoryGroup* child)
+{
 	_child_groups.push_back(child);
 }
 
 /*****************************************************************************/
-RnMemoryGroup* RnMemoryGroup::GetParent() const {
+RnMemoryGroup* RnMemoryGroup::GetParent() const
+{
 	return _parent;
 }
 
 /*****************************************************************************/
-void RnMemoryGroup::SetParent(RnMemoryGroup* parent) {
+void RnMemoryGroup::SetParent(RnMemoryGroup* parent)
+{
 	_parent = parent;
 
 	if (parent)

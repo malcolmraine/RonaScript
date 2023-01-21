@@ -15,7 +15,8 @@
 #include <dlfcn.h>
 
 /*****************************************************************************/
-void RonaScriptMain() {
+void RonaScriptMain()
+{
 	std::filesystem::path const file = "../examples/Test.rn";
 	std::filesystem::path const cfile = file.string() + "c";
 

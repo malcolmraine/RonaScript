@@ -98,7 +98,8 @@ class RnStack
 	}
 
 	/*************************************************************************/
-	void Reserve(size_t n) {
+	void Reserve(size_t n)
+	{
 		_data.reserve(n);
 	}
 

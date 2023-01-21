@@ -85,11 +85,13 @@ class RnObject
 //	bool IsMarked() const {
 //		return _is_marked;
 //	}
-	bool IsCached() const {
+	bool IsCached() const
+	{
 		return _is_cached;
 	}
 
-	void SetIsCached(bool flag) {
+	void SetIsCached(bool flag)
+	{
 		_is_cached = flag;
 	}
 

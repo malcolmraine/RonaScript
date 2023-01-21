@@ -23,7 +23,7 @@ class RnScope
 	explicit RnScope(RnScope* parent);
 	virtual ~RnScope();
 	void StoreObject(const std::string& name, RnObject* value);
-	[[nodiscard]] RnObject* GetObject(const std::string& name) ;
+	[[nodiscard]] RnObject* GetObject(const std::string& name);
 	void RemoveObject(const std::string& name);
 	[[nodiscard]] RnSymbolTable* GetSymbolTable();
 	[[nodiscard]] std::vector<RnObject*>& GetStack();

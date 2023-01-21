@@ -27,7 +27,8 @@ class RnSymbolTable
 	RnObject* GetObject(const std::string& symbol);
 	void RemoveSymbol(const std::string& symbol);
 	void AliasSymbol(const std::string& base, const std::string& alias);
-	[[nodiscard]] bool SymbolExists(const std::string& symbol, bool search_parent = true) const;
+	[[nodiscard]] bool SymbolExists(const std::string& symbol,
+		bool search_parent = true) const;
 	void SetMemoryGroup(RnMemoryGroup* group);
 	void SetParent(RnSymbolTable* parent);
 	[[nodiscard]] RnSymbolTable* GetParent() const;

@@ -31,8 +31,7 @@
 
 RONA_EXPORT const char* LibraryName();
 RONA_EXPORT const char* LibraryVersion();
-RONA_EXPORT void LibraryFunctions(std::vector<std::tuple<std::string, RnType::Type>>& functions);
-
-
+RONA_EXPORT void LibraryFunctions(
+	std::vector<std::tuple<std::string, RnType::Type>>& functions);
 
 #endif //RONASCRIPT_SANDBOX_RNSHAREDLIB_H_

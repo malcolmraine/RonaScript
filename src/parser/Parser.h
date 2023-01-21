@@ -61,10 +61,9 @@ enum Associativity_t
 	LEFT, RIGHT, NO_ASSOCIATIVITY,
 };
 
-enum ParserState {
-	GENERAL_CONTEXT,
-	CLASS_DECL_CONTEXT,
-	FUNC_DECL_CONTEXT,
+enum ParserState
+{
+	GENERAL_CONTEXT, CLASS_DECL_CONTEXT, FUNC_DECL_CONTEXT,
 };
 
 class Parser : public RonaSequencer<Token*, TokenType>

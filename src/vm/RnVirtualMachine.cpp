@@ -697,7 +697,9 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		{
 			auto result = scope->GetObject(name);
 			GetStack().push_back(result);
-		} else if (scope->GetParent()->GetSymbolTable()->SymbolExists(name, false)) {
+		}
+		else if (scope->GetParent()->GetSymbolTable()->SymbolExists(name, false))
+		{
 			auto result = scope->GetParent()->GetObject(name);
 			GetStack().push_back(result);
 		}
@@ -721,14 +723,16 @@ void RnVirtualMachine::Run()
 	while (i_idx < _instructions.size())
 	{
 		ExecuteInstruction(_instructions[i_idx], has_returned, i_idx);
-		if (has_returned) {
+		if (has_returned)
+		{
 			break;
 		}
 		i_idx++;
 	}
 	stopwatch.Stop();
 	std::cout << "\nRuntime duration: " << stopwatch.Duration() << std::endl;
-	std::cout << "Heap size: " << _memory_manager->GetHeapCount() * sizeof(RnObject) * 2;
+	std::cout << "Heap size: "
+			  << _memory_manager->GetHeapCount() * sizeof(RnObject) * 2;
 }
 
 /*****************************************************************************/

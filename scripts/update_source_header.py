@@ -1,5 +1,5 @@
-from glob import glob
 import os
+from glob import glob
 
 header = """/*****************************************************************************
 * File: RnVirtualMachine.h

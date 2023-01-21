@@ -31,7 +31,7 @@ RnCodeGenerator::~RnCodeGenerator()
 /*****************************************************************************/
 void RnCodeGenerator::Generate(Ast* ast)
 {
-	for (auto& module : ast->modules)
+	for (auto & module : ast->modules)
 	{
 		InstructionBlock module_instructions = visitor.GeneralVisit(module.second);
 		instructions.insert(instructions.end(),

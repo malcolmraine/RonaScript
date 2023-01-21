@@ -287,7 +287,8 @@ std::vector<RnObject*> RnIntObject::ToList() const
 }
 
 /*****************************************************************************/
-RnBoolNative RnIntObject::ToBool() const  {
+RnBoolNative RnIntObject::ToBool() const
+{
 	return static_cast<bool>(_data);
 }
 

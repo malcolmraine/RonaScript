@@ -294,7 +294,9 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(VarDecl* node)
 		instructions.emplace_back(new RnInstruction(OP_MAKE_CONST,
 			node->type.GetType(),
 			interned_id));
-	} else {
+	}
+	else
+	{
 		instructions.emplace_back(new RnInstruction(OP_MAKE_VAR,
 			node->type.GetType(),
 			interned_id));
@@ -388,7 +390,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(IfStmt* node)
 /*****************************************************************************/
 std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ElifStmt* node)
 {
-	InstructionBlock instructions = {new RnInstruction(OP_CREATE_CONTEXT)};
+	InstructionBlock instructions = { new RnInstruction(OP_CREATE_CONTEXT) };
 	InstructionBlock test = GeneralVisit(node->test);
 	InstructionBlock consequent = GeneralVisit(node->consequent);
 	WrapContext(consequent);
@@ -468,7 +470,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ArgDecl* node)
 {
 	return { new RnInstruction(OP_MAKE_ARG,
 		RnType::StringToType(node->type),
-		RnObject::InternValue(node->id->value))};
+		RnObject::InternValue(node->id->value)) };
 }
 
 /*****************************************************************************/
@@ -539,7 +541,8 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(BreakStmt* node)
 }
 
 /*****************************************************************************/
-void RnCodeGenVisitor::WrapContext(InstructionBlock& block) {
+void RnCodeGenVisitor::WrapContext(InstructionBlock& block)
+{
 	block.insert(block.begin(), new RnInstruction(OP_CREATE_CONTEXT));
 	block.push_back(new RnInstruction(OP_DESTROY_CONTEXT));
 }
