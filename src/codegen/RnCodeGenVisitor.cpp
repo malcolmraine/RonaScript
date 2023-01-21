@@ -193,7 +193,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ForLoop* node)
 	InstructionBlock scope = GeneralVisit(node->scope);
 	test.push_back(new RnInstruction(OP_JUMPF_IF, scope.size() + update.size() + 2));
 	scope.insert(scope.begin(), test.begin(), test.end());
-//	WrapContext(scope);
+	WrapContext(scope);
 
 	instructions.reserve(scope.size() + test.size() + init.size() + update.size());
 
@@ -467,8 +467,8 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(AliasDecl* node)
 std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ArgDecl* node)
 {
 	return { new RnInstruction(OP_MAKE_ARG,
-		RnObject::InternValue(node->id->value),
-		RnObject::InternValue(node->type)) };
+		RnType::StringToType(node->type),
+		RnObject::InternValue(node->id->value))};
 }
 
 /*****************************************************************************/

@@ -1,6 +1,5 @@
 // hello.cpp
 #include <iostream>
-
 #include "../../src/ffi/RnSharedLib.h"
 
 /*****************************************************************************/
