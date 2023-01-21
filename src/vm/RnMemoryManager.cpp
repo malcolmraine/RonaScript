@@ -15,13 +15,15 @@ RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr
 {
 	_object_cache.reserve(OBJECT_CACHE_SIZE);
 
-	for (size_t i = 0; i < OBJECT_CACHE_SIZE; i++) {
+	for (size_t i = 0; i < OBJECT_CACHE_SIZE; i++)
+	{
 		auto obj = RnObject::Create(RnType::RN_INT);
 		obj->SetIsCached(true);
 		_object_cache[RnType::RN_INT].push_back(obj);
 	}
 
-	for (size_t i = 0; i < OBJECT_CACHE_SIZE; i++) {
+	for (size_t i = 0; i < OBJECT_CACHE_SIZE; i++)
+	{
 		auto obj = RnObject::Create(RnType::RN_FLOAT);
 		obj->SetIsCached(true);
 		_object_cache[RnType::RN_FLOAT].push_back(obj);
@@ -37,10 +39,13 @@ RnMemoryManager::~RnMemoryManager()
 }
 
 /*****************************************************************************/
-RnObject* RnMemoryManager::CreateObject(RnType::Type type) {
-	if (_object_cache.contains(type)) {
+RnObject* RnMemoryManager::CreateObject(RnType::Type type)
+{
+	if (_object_cache.contains(type))
+	{
 		auto cache = _object_cache[type];
-		if (!cache.empty()) {
+		if (!cache.empty())
+		{
 			return RnObject::Create(type);
 		}
 		auto obj = cache.back();
@@ -73,7 +78,8 @@ size_t RnMemoryManager::GetHeapCount() const
 }
 
 /*****************************************************************************/
-int RnMemoryManager::GetHeapUsedCount() const {
+int RnMemoryManager::GetHeapUsedCount() const
+{
 	return _used_heap_blocks;
 }
 
@@ -87,7 +93,7 @@ size_t RnMemoryManager::GrowHeap(size_t size)
 //		_heap.push_back(new RnMemoryBlock());
 //		_heap_node_cnt++;
 //	}
-_heap_node_cnt += size;
+	_heap_node_cnt += size;
 
 	std::cout << "Growing heap by " << size << "   New heap size: " << _heap_node_cnt
 			  << std::endl;
@@ -97,7 +103,8 @@ _heap_node_cnt += size;
 /*****************************************************************************/
 RnMemoryBlock* RnMemoryManager::FindFirstFree(bool start_at_last_block)
 {
-	if (_last_free_index >= _heap.size()) {
+	if (_last_free_index >= _heap.size())
+	{
 		_last_free_index = 0;
 	}
 

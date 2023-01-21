@@ -63,7 +63,7 @@ class RnMemoryManager
 	[[nodiscard]] int GetHeapUsedCount() const;
 	size_t GrowHeap(size_t size);
 //	size_t ShrinkHeap(size_t size);
-	RnMemoryBlock* FindFirstFree(bool start_at_last_block =  true);
+	RnMemoryBlock* FindFirstFree(bool start_at_last_block = true);
 	void GCMark();
 	void GCSweep();
 	void SetRootMemoryGroup(RnMemoryGroup* group);

@@ -73,6 +73,7 @@ RnIntNative RnBoolObject::ToInt() const
 }
 
 /*****************************************************************************/
-RnBoolNative RnBoolObject::ToBool() const {
+RnBoolNative RnBoolObject::ToBool() const
+{
 	return _data;
 }

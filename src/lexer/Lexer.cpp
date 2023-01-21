@@ -410,7 +410,8 @@ Token* Lexer::ProcessComment(bool is_block_comment)
 		}
 		else
 		{
-			while (Current() != INLINE_COMMENT_END_N && Current() != INLINE_COMMENT_END_R && !EndOfFile())
+			while (Current() != INLINE_COMMENT_END_N
+				&& Current() != INLINE_COMMENT_END_R && !EndOfFile())
 				AdvanceBuffer(1);
 		}
 		AdvanceBuffer(1);
