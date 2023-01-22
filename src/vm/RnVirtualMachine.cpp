@@ -39,10 +39,6 @@ RnVirtualMachine::RnVirtualMachine()
 	AddScope();
 	_memory_manager->SetRootMemoryGroup(GetScope()->GetMemoryGroup());
 	RegisterBuiltins();
-	_int_holder = RnObject::Create(RnType::RN_INT);
-	_float_holder = RnObject::Create(RnType::RN_FLOAT);
-	_string_holder = RnObject::Create(RnType::RN_STRING);
-	_bool_holder = RnObject::Create(RnType::RN_BOOLEAN);
 }
 
 /*****************************************************************************/
@@ -416,27 +412,25 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	case OP_LOAD_INT:
 	{
 		auto value = RnObject::GetInternedInt(instruction->_arg1);
-		_int_holder->SetData(value);
-//		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
-		GetStack().push_back(_int_holder);
+		auto obj = RnObject::Create(value);
+		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
+		GetStack().push_back(obj);
 		break;
 	}
 	case OP_LOAD_FLOAT:
 	{
 		auto value = RnObject::GetInternedFloat(instruction->_arg1);
-//		auto obj = RnObject::Create(value);
-//		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
-		_float_holder->SetData(value);
-		GetStack().push_back(_float_holder);
+		auto obj = RnObject::Create(value);
+		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
+		GetStack().push_back(obj);
 		break;
 	}
 	case OP_LOAD_STRING:
 	{
 		auto value = RnObject::GetInternedString(instruction->_arg1);
-//		auto obj = RnObject::Create(value);
-//		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
-		_string_holder->SetData(value);
-		GetStack().push_back(_string_holder);
+		auto obj = RnObject::Create(value);
+		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
+		GetStack().push_back(obj);
 		break;
 	}
 	case OP_LOAD_NAME:
@@ -531,6 +525,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	}
 	case OP_MAKE_CLASS:
 	{
+		_state_stack.push_back(CLASS_DECLARATION);
 		auto name = RnObject::GetInternedString(instruction->_arg1);
 		auto obj = new RnClass(GetScope());
 		obj->SetName(name);
@@ -548,6 +543,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 //		delete scope;
 		_scopes.pop_back();
 //		index += instruction->_arg2;
+		_state_stack.pop_back();
 		break;
 	}
 	case OP_MAKE_FUNC:
@@ -573,6 +569,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 				static_cast<RnType::Type>(arg_instruction->_arg1),
 				i);
 		}
+
 		index += instruction->_arg2 + func->GetICnt();
 		GetScope()->StoreObject(func->GetName(), obj);
 		break;
@@ -642,8 +639,11 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	}
 	case OP_EXIT:
 	{
-		std::cout << "Exit " << instruction->_arg1;
 		break_scope = true;
+		auto obj = RnObject::Create(RnType::RN_INT);
+		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
+		obj->SetData(static_cast<RnIntNative>(instruction->_arg1));
+		GetStack().push_back(obj);
 		break;
 	}
 	case OP_ARRAY_STORE:
@@ -715,10 +715,12 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 }
 
 /*****************************************************************************/
-void RnVirtualMachine::Run()
+RnIntNative RnVirtualMachine::Run()
 {
 	bool has_returned = false; // Placeholder
 	auto stopwatch = StopWatch();
+	std::cout << "\n======================================================\n\n";
+
 	stopwatch.Start();
 	while (i_idx < _instructions.size())
 	{
@@ -730,9 +732,12 @@ void RnVirtualMachine::Run()
 		i_idx++;
 	}
 	stopwatch.Stop();
+
+	std::cout << "\n======================================================\n";
 	std::cout << "\nRuntime duration: " << stopwatch.Duration() << std::endl;
-	std::cout << "Heap size: "
-			  << _memory_manager->GetHeapCount() * sizeof(RnObject) * 2;
+	return GetStack().back()->ToInt();
+//	std::cout << "Heap size: "
+//			  << _memory_manager->GetHeapCount() * sizeof(RnObject) * 2;
 }
 
 /*****************************************************************************/

@@ -104,10 +104,6 @@ class RnObject
  private:
 //	bool _is_marked = false;
 	bool _is_cached = false;
-	static RnObject* _int_holder;
-	static RnObject* _float_holder;
-	static RnObject* _string_holder;
-	static RnObject* _bool_holder;
 };
 
 #endif //RONASCRIPT_RNOBJECT_H

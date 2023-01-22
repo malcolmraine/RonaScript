@@ -87,16 +87,10 @@ int RnMemoryManager::GetHeapUsedCount() const
 size_t RnMemoryManager::GrowHeap(size_t size)
 {
 	_heap.resize(_heap.size() + size);
-//	_heap.reserve(_heap.size() + size);
-//	for (size_t i = 0; i < size; i++)
-//	{
-//		_heap.push_back(new RnMemoryBlock());
-//		_heap_node_cnt++;
-//	}
 	_heap_node_cnt += size;
 
-	std::cout << "Growing heap by " << size << "   New heap size: " << _heap_node_cnt
-			  << std::endl;
+//	std::cout << "Growing heap by " << size << "   New heap size: " << _heap_node_cnt
+//			  << std::endl;
 	return _heap_node_cnt;
 }
 

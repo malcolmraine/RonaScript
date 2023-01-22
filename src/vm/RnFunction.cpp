@@ -98,6 +98,13 @@ void RnFunction::CreateArgument(const std::string& name, RnType::Type type,
 /*****************************************************************************/
 void RnFunction::PassArguments(const std::vector<RnObject*>& args)
 {
+	if (!_argument_scope)
+	{
+		throw std::runtime_error(
+			"Fatal error: uninitialized function argument scope for '" + GetName()
+				+ "'");
+	}
+
 	if (args.size() < _argument_index_map.size())
 	{
 		throw std::runtime_error(
@@ -114,7 +121,8 @@ void RnFunction::PassArguments(const std::vector<RnObject*>& args)
 	{
 		for (size_t i = 0; i < args.size(); i++)
 		{
-			_scope->StoreObject(_argument_index_map.at(i), args[i]);
+
+			_argument_scope->StoreObject(_argument_index_map[i], args[i]);
 		}
 	}
 }

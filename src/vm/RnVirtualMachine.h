@@ -72,7 +72,7 @@ class RnVirtualMachine
 
 	void CallFunction(RnFunctionObject* obj, uint32_t arg_cnt);
 	void AddScope();
-	void Run();
+	RnIntNative Run();
 
 	void LoadInstructions(std::vector<RnInstruction*> instructions)
 	{
@@ -95,12 +95,8 @@ class RnVirtualMachine
 	RnMemoryManager* _memory_manager;
 	size_t i_idx = 0;
 	size_t _gc_count = 0;
-	State _current_state = GENERAL_EXECUTION;
-	RnObject* _int_holder = nullptr;
-	RnObject* _float_holder = nullptr;
-	RnObject* _string_holder = nullptr;
-	RnObject* _bool_holder = nullptr;
-
+	std::vector<State> _state_stack;
+//	RnObject* _state_parent = nullptr;
 };
 
 #endif //RONASCRIPT_RNVIRTUALMACHINE_H

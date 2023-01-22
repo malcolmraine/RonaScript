@@ -22,10 +22,6 @@
 RnInternment<std::string>* string_internment = new RnInternment<std::string>();
 RnInternment<double>* float_internment = new RnInternment<double>();
 RnInternment<long>* int_internment = new RnInternment<long>();
-RnObject* RnObject::_int_holder = RnObject::Create(RnType::RN_INT);
-RnObject* RnObject::_float_holder = RnObject::Create(RnType::RN_FLOAT);
-RnObject* RnObject::_string_holder = RnObject::Create(RnType::RN_STRING);
-RnObject* RnObject::_bool_holder = RnObject::Create(RnType::RN_BOOLEAN);
 
 /*****************************************************************************/
 static RnObject* GetNullObject()

@@ -12,7 +12,6 @@ Create list of builtin functions
 ------------------------------------------------------------------------
 UNFINISHED ISSUES
 ------------------------------------------------------------------------
-Fix issues with function scopes
 Add support for classes
 Add support for imported modules
 Add pragma support
@@ -20,12 +19,14 @@ Move all unnecessary operator overloads onto RnObjectBase and implement there wi
 Parsing doesn't work correctly for multidimensional array subscripting
 Fix issue where class constructor doesn't work if not assigned to variable
 Add support for modules within modules
+Fix issue where acceptance conditions for parsing certain things cause syntax errors to go undetected.
 
 
 ------------------------------------------------------------------------
 FINISHED ISSUES:
 ------------------------------------------------------------------------
 Garbage collection - sort of
+Fix issues with function scopes
 Implement for loops
 Implement while loops
 Change all references to RonaScript2 to RonaScript
