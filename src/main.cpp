@@ -8,7 +8,6 @@
 #include <unordered_set>
 #include "vm/RnMemoryManager.h"
 #include "vm/RnObject.h"
-#include "codegen/RnInstruction.h"
 #include "codegen/RnCodeGenerator.h"
 #include "vm/RnVirtualMachine.h"
 #include "util/MLib/String.h"
@@ -22,7 +21,16 @@ void RonaScriptMain()
 
 	Lexer lexer;
 	lexer.LoadFile(file);
-	lexer.ProcessTokens();
+
+	try
+	{
+		lexer.ProcessTokens();
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << "\033[31m" << "Lexer Error: " << e.what() << std::endl;
+		return;
+	}
 
 	for (auto& token : lexer.tokens)
 	{
@@ -33,7 +41,16 @@ void RonaScriptMain()
 	parser.working_dir = file.parent_path();
 	parser.file = file;
 	parser.LoadTokens(lexer.tokens);
-	parser.Parse();
+
+	try
+	{
+		parser.Parse();
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << "\033[31m" << "Parse Error: " << e.what() << std::endl;
+		return;
+	}
 
 	std::cout << parser.DumpsAst();
 
@@ -45,11 +62,20 @@ void RonaScriptMain()
 	{
 		std::cout << String::Pad(std::to_string(index++), 6) << instruction->ToString()
 				  << std::endl;
-		char* b = instruction->GetAsBytes();
 	}
 	auto vm = RnVirtualMachine();
 	vm.LoadInstructions(code_generator.GetInstructions());
-	vm.Run();
+
+	try
+	{
+		RnIntNative exit_code = vm.Run();
+		std::cout << "Exit " << exit_code << std::endl;
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << "\033[31m" << "Runtime Error: " << e.what() << std::endl;
+		return;
+	}
 }
 
 /*****************************************************************************/
@@ -82,5 +108,6 @@ int main(int argc, char** argv)
 //	dlclose(handle);
 	std::ios_base::sync_with_stdio(false);
 	RonaScriptMain();
+
 	return 0;
 }
