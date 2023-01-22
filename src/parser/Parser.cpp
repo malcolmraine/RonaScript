@@ -342,6 +342,13 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers)
 			arg->type = Current()->lexeme;
 			AdvanceBuffer(1);
 		}
+		else
+		{
+			throw std::runtime_error(
+				"Invalid type '" + Current()->lexeme + "' for parameter '"
+					+ arg->id->value + "' while declaring routine '" + node->id + "'");
+		}
+
 		ConditionalBufAdvance(TokenType::COMMA);
 		node->args.emplace_back(arg);
 	}
@@ -369,27 +376,6 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers)
 
 	// Get the function's scope
 	node->scope = ParseScope();
-
-	return node;
-}
-
-/*****************************************************************************/
-std::shared_ptr<ArgDecl> Parser::ParseArgDecl()
-{
-	auto node = std::make_shared<ArgDecl>();
-	node->file_info = new FileInfo(Current()->file_info);
-	Expect(TokenType::NAME);
-	AdvanceBuffer(1);
-	node->id = ParseName();
-	Expect(TokenType::COLON);
-	AdvanceBuffer(1);
-
-	if (Current()->IsType())
-	{
-		node->type = Current()->lexeme;
-		AdvanceBuffer(1);
-	}
-	ConditionalBufAdvance(TokenType::COMMA);
 
 	return node;
 }

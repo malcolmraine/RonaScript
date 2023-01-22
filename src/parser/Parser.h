@@ -78,7 +78,6 @@ class Parser : public RonaSequencer<Token*, TokenType>
 	std::shared_ptr<ImportStmt> ParseImportStmt();
 	std::shared_ptr<VarDecl> ParseVarDecl(std::vector<Token*> qualifiers = {});
 	std::shared_ptr<FuncDecl> ParseFuncDecl(std::vector<Token*> qualifiers = {});
-	std::shared_ptr<ArgDecl> ParseArgDecl();
 	std::shared_ptr<ClassDecl> ParseClassDecl();
 	std::shared_ptr<AstNode> GetExprComponent();
 	std::shared_ptr<AstNode> ParseExpr(TokenType stop_token = TokenType::SEMICOLON);

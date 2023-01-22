@@ -197,7 +197,8 @@ bool Token::IsOperator() const
 bool Token::IsType() const
 {
 	return IsOneOf({ TokenType::FLOAT, TokenType::INT, TokenType::STRING,
-					 TokenType::ARRAY, TokenType::OBJECT, TokenType::BOOL });
+					 TokenType::ARRAY, TokenType::OBJECT, TokenType::BOOL,
+					 TokenType::CALLABLE });
 }
 
 /*****************************************************************************/
