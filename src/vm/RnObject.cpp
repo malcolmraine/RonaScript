@@ -122,7 +122,8 @@ RnObject* RnObject::Create(RnType::Type type)
 }
 
 /*****************************************************************************/
-RnObject* RnObject::Copy(RnObject* obj) {
+RnObject* RnObject::Copy(RnObject* obj)
+{
 	auto result = RnObject::Create(obj->GetType());
 	switch (obj->GetType())
 	{

@@ -31,7 +31,8 @@ class RnScope
 	[[nodiscard]] RnScope* GetParent() const;
 	[[nodiscard]] RnMemoryGroup* GetMemoryGroup() const;
 
-	static void LoadLibraryIntoScope(RnScope* scope, const std::string& library, bool add_data = false);
+	static void LoadLibraryIntoScope(RnScope* scope, const std::string& library,
+		bool add_data = false);
 
  protected:
 	RnScope* _parent = nullptr;

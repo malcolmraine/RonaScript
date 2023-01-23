@@ -103,7 +103,8 @@ RnMemoryGroup* RnScope::GetMemoryGroup() const
 }
 
 /*****************************************************************************/
-void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library, bool add_data)
+void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library,
+	bool add_data)
 {
 	// This function should really be moved somewhere more appropriate and
 	// should do something other than just load the names into the parent scope.
@@ -142,7 +143,8 @@ void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library, b
 			scope->StoreObject(name, obj);
 		}
 
-		if (add_data) {
+		if (add_data)
+		{
 			auto name_list = RnObject::Create(RnType::RN_ARRAY);
 			name_list->SetData(function_names);
 			scope->StoreObject("__exports__", name_list);

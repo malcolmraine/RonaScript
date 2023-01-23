@@ -89,7 +89,8 @@ void RnBuiltins::rn_builtin_lload(RnScope* scope, const std::vector<RnObject*>& 
 
 /*****************************************************************************/
 void RnBuiltins::rn_builtin_bind(RnScope* scope, const std::vector<RnObject*>& args,
-	RnObject* ret_val) {
+	RnObject* ret_val)
+{
 	// arg 1: object to bind to
 	// arg 2: function object
 
@@ -98,7 +99,8 @@ void RnBuiltins::rn_builtin_bind(RnScope* scope, const std::vector<RnObject*>& a
 	auto func = dynamic_cast<RnFunctionObject*>(args[1]);
 
 	// User can pass a different name to bind to if they want
-	if (args.size() == 3) {
+	if (args.size() == 3)
+	{
 		name = args[2]->ToString();
 	}
 	func->GetData()->GetScope()->StoreObject(name, obj);
