@@ -25,7 +25,9 @@ class RnBuiltins
 		RnObject* ret_val);
 	static void rn_builtin_system(RnScope* scope, const std::vector<RnObject*>& args,
 		RnObject* ret_val);
-	static void lload(RnScope* scope, const std::vector<RnObject*>& args,
+	static void rn_builtin_lload(RnScope* scope, const std::vector<RnObject*>& args,
+		RnObject* ret_val);
+	static void rn_builtin_bind(RnScope* scope, const std::vector<RnObject*>& args,
 		RnObject* ret_val);
 };
 

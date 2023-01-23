@@ -12,6 +12,7 @@ Create list of builtin functions
 ------------------------------------------------------------------------
 UNFINISHED ISSUES
 ------------------------------------------------------------------------
+Add ability to set variable values to null as default if they are an object or callable type.
 Track down all uses of RnObject::Create and make sure those objects can be garbage collected.
 Add support for imported modules
 Add pragma support

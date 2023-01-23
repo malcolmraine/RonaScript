@@ -77,7 +77,7 @@ void RnBuiltins::rn_builtin_system(RnScope* scope, const std::vector<RnObject*>&
 }
 
 /*****************************************************************************/
-void RnBuiltins::lload(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins::rn_builtin_lload(RnScope* scope, const std::vector<RnObject*>& args,
 	RnObject* ret_val)
 {
 	// TODO: Add file existence check for library
@@ -85,4 +85,22 @@ void RnBuiltins::lload(RnScope* scope, const std::vector<RnObject*>& args,
 	auto scope_obj = new RnScope(nullptr);
 	RnScope::LoadLibraryIntoScope(scope_obj, args.at(0)->ToString(), true);
 	ret_val->SetData(scope_obj);
+}
+
+/*****************************************************************************/
+void RnBuiltins::rn_builtin_bind(RnScope* scope, const std::vector<RnObject*>& args,
+	RnObject* ret_val) {
+	// arg 1: object to bind to
+	// arg 2: function object
+
+	std::string name = "this";
+	auto obj = args[0];
+	auto func = dynamic_cast<RnFunctionObject*>(args[1]);
+
+	// User can pass a different name to bind to if they want
+	if (args.size() == 3) {
+		name = args[2]->ToString();
+	}
+	func->GetData()->GetScope()->StoreObject(name, obj);
+	ret_val->SetData(func->GetData());
 }
