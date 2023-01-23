@@ -417,7 +417,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 			throw std::runtime_error("Cannot return outside of a function");
 		}
 		// Have to get the parent of the working scope, not the argument scope
-		auto ret_scope = function_scope->GetParent()->GetParent();
+		auto ret_scope = _scopes[_scopes.size() - 2];
 		ret_scope->GetStack().push_back(GetStack().back());
 		GetStack().pop_back();
 		break_scope = true;
@@ -574,9 +574,10 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto func =
 			new RnFunction(name, index + 1 + instruction->_arg2, instruction->_arg3);
 		obj->SetData(func);
+		obj->SetReturnType(static_cast<RnType::Type>(instruction->_arg2));
 		func->SetScope(new RnScope(GetScope()));
 
-		for (uint32_t i = 0; i < instruction->_arg2; i++)
+		for (uint32_t i = 0; _instructions[i + index + 1]->_opcode == OP_MAKE_ARG; i++)
 		{
 			auto arg_instruction = _instructions[i + index + 1];
 			func->CreateArgument(RnObject::GetInternedString(arg_instruction->_arg2),
@@ -727,19 +728,26 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		GetStack().pop_back();
 		auto name = RnObject::GetInternedString(instruction->_arg1);
 		auto scope = object->GetScope();
+		RnObject* result = nullptr;
 		if (scope->GetSymbolTable()->SymbolExists(name, false))
 		{
-			auto result = scope->GetObject(name);
+			result = scope->GetObject(name);
 			GetStack().push_back(result);
 		}
 		else if (scope->GetParent()->GetSymbolTable()->SymbolExists(name, false))
 		{
-			auto result = scope->GetParent()->GetObject(name);
+			result = scope->GetParent()->GetObject(name);
 			GetStack().push_back(result);
 		}
 		else
 		{
 			throw std::runtime_error("Object has no attribute '" + name + "'");
+		}
+
+		if (result->GetType() == RnType::RN_FUNCTION)
+		{
+			auto func = dynamic_cast<RnFunctionObject*>(result)->GetData();
+			func->GetScope()->GetSymbolTable()->SetSymbol("this", object);
 		}
 		break;
 	}

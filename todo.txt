@@ -12,11 +12,10 @@ Create list of builtin functions
 ------------------------------------------------------------------------
 UNFINISHED ISSUES
 ------------------------------------------------------------------------
-Add support for classes
+Track down all uses of RnObject::Create and make sure those objects can be garbage collected.
 Add support for imported modules
 Add pragma support
 Move all unnecessary operator overloads onto RnObjectBase and implement there with runtime errors thrown
-Parsing doesn't work correctly for multidimensional array subscripting
 Fix issue where class constructor doesn't work if not assigned to variable
 Add support for modules within modules
 Fix issue where acceptance conditions for parsing certain things cause syntax errors to go undetected.
@@ -25,8 +24,10 @@ Fix issue where acceptance conditions for parsing certain things cause syntax er
 ------------------------------------------------------------------------
 FINISHED ISSUES:
 ------------------------------------------------------------------------
+Add support for classes
 Garbage collection - sort of
 Fix issues with function scopes
+Parsing doesn't work correctly for multidimensional array subscripting
 Implement for loops
 Implement while loops
 Change all references to RonaScript2 to RonaScript
