@@ -982,6 +982,18 @@ std::shared_ptr<AstNode> Parser::ParseIndexedExpr(const std::shared_ptr<AstNode>
 	node->expr = expr ? expr : ParseExpr();
 	node->idx = ParseExpr(TokenType::L_BRACK);
 
+	// Since the first parent expression is passed, we only loop for
+	// subsequent index accesses.
+	if (Current()->token_type == TokenType::R_BRACK)
+	{
+		std::shared_ptr<AstNode> multiDimNode = ParseIndexedExpr(node);
+		while (Current()->token_type == TokenType::R_BRACK)
+		{
+			multiDimNode = ParseIndexedExpr(node);
+		}
+		return multiDimNode;
+	}
+
 	return node;
 }
 

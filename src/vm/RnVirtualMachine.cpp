@@ -271,7 +271,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		GetStack().pop_back();
 		auto a = GetStack().back();
 		GetStack().pop_back();
-		auto result = RnObject::Create(std::pow(a->ToFloat(),  b->ToFloat()));
+		auto result = RnObject::Create(std::pow(a->ToFloat(), b->ToFloat()));
 		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), result);
 		GetStack().push_back(result);
 		break;
@@ -671,8 +671,26 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		GetStack().pop_back();
 		auto obj = dynamic_cast<RnArrayObject*>(GetStack().back());
 		GetStack().pop_back();
-		auto result = obj->ToArray().at(idx_value);
-		GetStack().push_back(result);
+
+		// try/catch is used here to handle out of bounds access for performance
+		// reasons. Checking the bounds for each access would be unnecessarily costly.
+		try
+		{
+			auto result = obj->ToArray().at(idx_value);
+			GetStack().push_back(result);
+		}
+		catch (const std::exception& e)
+		{
+			if (idx_value >= obj->ToArray().size() || idx_value < 0)
+			{
+				throw std::runtime_error(
+					"Invalid index [" + std::to_string(idx_value) + "]");
+			}
+			else
+			{
+				throw e;
+			}
+		}
 		break;
 	}
 	case OP_MAKE_ARG:
