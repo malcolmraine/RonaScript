@@ -25,6 +25,7 @@ Add support for matrix product operator '@'
 AST pruning
 AST type checking
 AST symbol table
+Reuse RnObjects by putting them back into type specific bins so they can be used by later data
 
 
 ------------------------------------------------------------------------

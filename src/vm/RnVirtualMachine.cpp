@@ -104,14 +104,7 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt)
 		}
 
 		_call_stack.pop_back();
-//		auto scope = _scopes.back();
-//		delete scope;
 		_scopes.pop_back();
-
-
-		//auto call_frame = _call_stack.back();
-		//delete call_frame;
-
 
 		if (func->GetName() == "construct")
 		{
@@ -139,8 +132,8 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	_gc_count++;
 	if (_gc_count > 1000)
 	{
-//		_memory_manager->GCMark();
-//		_memory_manager->GCSweep();
+		_memory_manager->GCMark();
+		_memory_manager->GCSweep();
 		_gc_count = 0;
 	}
 
@@ -750,7 +743,8 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 			else
 			{
 				auto symbol_table = func->GetScope()->GetSymbolTable();
-				if (symbol_table->SymbolExists("this")) {
+				if (symbol_table->SymbolExists("this"))
+				{
 					symbol_table->RemoveSymbol("this");
 				}
 			}
@@ -793,14 +787,16 @@ RnIntNative RnVirtualMachine::Run()
 }
 
 /*****************************************************************************/
-void  RnVirtualMachine::LoadInstructions(std::vector<RnInstruction*> instructions)
+void RnVirtualMachine::LoadInstructions(std::vector<RnInstruction*> instructions)
 {
 	_instructions = std::move(instructions);
 }
 
 /*****************************************************************************/
-RnVirtualMachine* RnVirtualMachine::GetInstance() {
-	if (!_instance) {
+RnVirtualMachine* RnVirtualMachine::GetInstance()
+{
+	if (!_instance)
+	{
 		_instance = new RnVirtualMachine();
 	}
 	return _instance;

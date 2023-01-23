@@ -84,7 +84,6 @@ class RnVirtualMachine
  private:
 	static RnVirtualMachine* _instance;
 
-
  protected:
 	RnInternment<std::string> _string_internment;
 	RnInternment<double> _float_internment;

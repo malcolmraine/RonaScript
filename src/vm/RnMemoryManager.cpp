@@ -136,7 +136,9 @@ void RnMemoryManager::GCSweep()
 			block.Reset();
 		}
 		else
+		{
 			block.UnsetMarkedFlag();
+		}
 	}
 
 //	std::cout << "Cleaned up " << sweep_count << " blocks" << std::endl;
