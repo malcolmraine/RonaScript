@@ -120,3 +120,38 @@ RnObject* RnObject::Create(RnType::Type type)
 		return RnNullObject::Instance();
 	}
 }
+
+/*****************************************************************************/
+RnObject* RnObject::Copy(RnObject* obj) {
+	auto result = RnObject::Create(obj->GetType());
+	switch (obj->GetType())
+	{
+	case RnType::RN_BOOLEAN:
+		result->SetData(obj->ToBool());
+		break;
+	case RnType::RN_STRING:
+		result->SetData(obj->ToString());
+		break;
+	case RnType::RN_FLOAT:
+		result->SetData(obj->ToFloat());
+		break;
+	case RnType::RN_INT:
+		result->SetData(obj->ToInt());
+		break;
+	case RnType::RN_ARRAY:
+		result->SetData(obj->ToArray());
+		break;
+	case RnType::RN_FUNCTION:
+		result->SetData(obj->ToFunction());
+		break;
+	case RnType::RN_CLASS_INSTANCE:
+	case RnType::RN_OBJECT:
+		result->SetData(obj->ToObject());
+		break;
+	case RnType::RN_UNKNOWN:
+	default:
+		throw std::runtime_error("Could not copy object.");
+	}
+
+	return result;
+}

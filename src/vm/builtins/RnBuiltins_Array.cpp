@@ -43,7 +43,7 @@ void RnBuiltins_Array::rn_builtin_array_merge(RnScope* scope,
 	std::vector<RnObject*> data;
 	for (auto arg : args)
 	{
-		for (auto& item : arg->ToList())
+		for (auto& item : arg->ToArray())
 		{
 			data.emplace_back(item);
 		}
@@ -62,7 +62,7 @@ void RnBuiltins_Array::rn_builtin_count(RnScope* scope,
 	}
 	else
 	{
-		ret_val->SetData(static_cast<RnIntNative>(obj->ToList().size()));
+		ret_val->SetData(static_cast<RnIntNative>(obj->ToArray().size()));
 	}
 
 }

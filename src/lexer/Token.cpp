@@ -167,7 +167,7 @@ bool Token::IsBinaryOp() const
 					 TokenType::R_CARAT, TokenType::L_CARAT, TokenType::SLASH,
 					 TokenType::AMPER, TokenType::NOT_EQUAL, TokenType::PERCENT,
 					 TokenType::UP_ARROW, TokenType::DOUBLE_COLON,
-					 TokenType::R_ARROW });
+					 TokenType::R_ARROW, TokenType::DBL_STAR});
 }
 
 /*****************************************************************************/

@@ -34,7 +34,7 @@ void RnBuiltins::rn_builtin_unpack(RnScope* scope, const std::vector<RnObject*>&
 		unpack_scope = scope;
 	}
 
-	for (auto obj : args.front()->ToList())
+	for (auto obj : args.front()->ToArray())
 	{
 		scope->GetStack().push_back(obj);
 	}

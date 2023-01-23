@@ -64,7 +64,7 @@ void RnBuiltins_Math::rn_builtin_sum(RnScope* scope, const std::vector<RnObject*
 	RnObject* ret_val)
 {
 	RnFloatNative result = 0.0;
-	auto operands = args.front()->ToList();
+	auto operands = args.front()->ToArray();
 	for (auto operand : operands)
 	{
 		result += operand->ToFloat();

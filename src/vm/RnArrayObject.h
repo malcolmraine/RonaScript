@@ -33,7 +33,7 @@ class RnArrayObject : public RnObjectBase<std::vector<RnObject*>>
 	void SetData(std::vector<RnObject*> data) override;
 	void SetData(RnObject* data) override;
 	[[nodiscard]] RnStringNative ToString() const override;
-	[[nodiscard]] std::vector<RnObject*> ToList() const override;
+	[[nodiscard]] std::vector<RnObject*> ToArray() const override;
 	[[nodiscard]]  RnBoolNative ToBool() const override;
 
 	[[nodiscard]] RnType::Type GetType() const override

@@ -1181,8 +1181,7 @@ void Parser::Parse()
 					else if (Current()->IsUnaryOp())
 					{
 						if (Current()->IsOneOf({ TokenType::DBL_MINUS,
-												 TokenType::DBL_PLUS,
-												 TokenType::DBL_STAR, }))
+												 TokenType::DBL_PLUS }))
 						{
 							_current_scope->add_subtree(ParseUnaryExpr(expr));
 						}
@@ -1208,7 +1207,6 @@ void Parser::Parse()
 				break;
 			case TokenType::DBL_MINUS:
 			case TokenType::DBL_PLUS:
-			case TokenType::DBL_STAR:
 				_current_scope->add_subtree(ParseUnaryExpr());
 				break;
 			case TokenType::SEMICOLON:

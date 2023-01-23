@@ -254,8 +254,26 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		GetStack().push_back(result);
 		break;
 	}
+	case OP_BINARY_NEQ:
+	{
+		auto b = GetStack().back();
+		GetStack().pop_back();
+		auto a = GetStack().back();
+		GetStack().pop_back();
+		auto result = *a != b;
+		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), result);
+		GetStack().push_back(result);
+		break;
+	}
 	case OP_BINARY_POWER:
 	{
+		auto b = GetStack().back();
+		GetStack().pop_back();
+		auto a = GetStack().back();
+		GetStack().pop_back();
+		auto result = RnObject::Create(std::pow(a->ToFloat(),  b->ToFloat()));
+		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), result);
+		GetStack().push_back(result);
 		break;
 	}
 	case OP_BINARY_RSH:
@@ -385,10 +403,6 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto name = RnObject::GetInternedString(instruction->_arg1);
 		auto obj = GetScope()->GetObject(name);
 		obj->SetData(obj->ToFloat() + 1);
-		break;
-	}
-	case OP_UNARY_POWER:
-	{
 		break;
 	}
 	case OP_UNARY_NEGATION:
@@ -657,7 +671,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		GetStack().pop_back();
 		auto obj = dynamic_cast<RnArrayObject*>(GetStack().back());
 		GetStack().pop_back();
-		auto result = obj->ToList().at(idx_value);
+		auto result = obj->ToArray().at(idx_value);
 		GetStack().push_back(result);
 		break;
 	}
@@ -681,7 +695,9 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 
 		for (RnIntNative i = 0; i < instruction->_arg1; i++)
 		{
-			obj->Append(GetStack().back());
+			auto copy = RnObject::Copy(GetStack().back());
+			_memory_manager->AddObject(GetScope()->GetMemoryGroup(), copy);
+			obj->Append(copy);
 			GetStack().pop_back();
 		}
 		GetStack().push_back(obj);

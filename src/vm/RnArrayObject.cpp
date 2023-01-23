@@ -27,12 +27,12 @@ RnObject* RnArrayObject::operator+(RnObject* obj)
 	std::vector<RnObject*> data;
 	auto result = RnObject::Create(RnType::RN_ARRAY);
 
-	for (auto& item : obj->ToList())
+	for (auto& item : obj->ToArray())
 	{
 		data.emplace_back(item);
 	}
 
-	for (auto& item : ToList())
+	for (auto& item : ToArray())
 	{
 		data.emplace_back(item);
 	}
@@ -138,7 +138,7 @@ RnStringNative RnArrayObject::ToString() const
 }
 
 /*****************************************************************************/
-std::vector<RnObject*> RnArrayObject::ToList() const
+std::vector<RnObject*> RnArrayObject::ToArray() const
 {
 	return GetData();
 }

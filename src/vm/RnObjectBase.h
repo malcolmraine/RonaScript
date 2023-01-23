@@ -99,7 +99,7 @@ class RnObjectBase : public RnObject
 	UNDEFINED_CAST(RnIntNative, ToInt(), "int")
 	UNDEFINED_CAST(RnFloatNative, ToFloat(), "float")
 	UNDEFINED_CAST(RnStringNative, ToString(), "string")
-	UNDEFINED_CAST(std::vector<RnObject*>, ToList(), "array")
+	UNDEFINED_CAST(std::vector<RnObject*>, ToArray(), "array")
 	UNDEFINED_CAST(RnFunction*, ToFunction(), "function")
 	UNDEFINED_CAST(RnScope*, ToObject(), "object")
 	UNDEFINED_CAST(RnBoolNative, ToBool(), "bool")
@@ -139,7 +139,7 @@ class RnObjectBase : public RnObject
 			SetData(obj->ToInt());
 			break;
 		case RnType::RN_ARRAY:
-			SetData(obj->ToList());
+			SetData(obj->ToArray());
 			break;
 		case RnType::RN_FUNCTION:
 			SetData(obj->ToFunction());

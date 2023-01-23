@@ -80,7 +80,7 @@ class RnVirtualMachine
 	}
 
  private:
-	void ExecuteInstruction(RnInstruction* instruction, bool& break_scope,
+	inline void ExecuteInstruction(RnInstruction* instruction, bool& break_scope,
 		size_t& index);
 	void RegisterBuiltins();
 

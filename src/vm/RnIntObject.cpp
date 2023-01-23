@@ -281,9 +281,9 @@ RnStringNative RnIntObject::ToString() const
 }
 
 /*****************************************************************************/
-std::vector<RnObject*> RnIntObject::ToList() const
+std::vector<RnObject*> RnIntObject::ToArray() const
 {
-	return RnObjectBase::ToList();
+	return RnObjectBase::ToArray();
 }
 
 /*****************************************************************************/

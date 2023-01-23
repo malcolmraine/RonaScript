@@ -46,7 +46,7 @@ class RnObject
 	[[nodiscard]] virtual RnIntNative ToInt() const = 0;
 	[[nodiscard]] virtual RnFloatNative ToFloat() const = 0;
 	[[nodiscard]] virtual RnStringNative ToString() const = 0;
-	[[nodiscard]] virtual std::vector<RnObject*> ToList() const = 0;
+	[[nodiscard]] virtual std::vector<RnObject*> ToArray() const = 0;
 	[[nodiscard]] virtual RnFunction* ToFunction() const = 0;
 	[[nodiscard]] virtual RnScope* ToObject() const = 0;
 	[[nodiscard]] virtual RnBoolNative ToBool() const = 0;
@@ -72,6 +72,7 @@ class RnObject
 	static RnObject* Create(RnIntNative data);
 	static RnObject* Create(RnFloatNative data);
 	static RnObject* Create(RnType::Type type);
+	static RnObject* Copy(RnObject* obj);
 	virtual void SetConstFlag(bool flag) = 0;
 
 //	void Mark() {

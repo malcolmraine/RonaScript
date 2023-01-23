@@ -38,7 +38,7 @@ void RnBuiltins_IO::rn_builtin_print(RnScope* scope, const std::vector<RnObject*
 	{
 		s += arg->ToString();
 	}
-	std::cout << s << std::endl;
+	std::cout << s << "\n";
 }
 
 /*****************************************************************************/

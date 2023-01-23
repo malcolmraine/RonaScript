@@ -96,7 +96,6 @@ auto RnInstruction::ToString() -> std::string
 	case OP_UNARY_INCREMENT:
 	case OP_UNARY_DECREMENT:
 	case OP_UNARY_INVERT:
-	case OP_UNARY_POWER:
 	case OP_LOAD_VALUE:
 		arg1_str = RnObject::GetInternedString(_arg1);
 		s += std::to_string(_arg1) + "\t\t";

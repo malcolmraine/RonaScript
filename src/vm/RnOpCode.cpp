@@ -38,6 +38,8 @@ std::string GetOpCodeAsString(RnOpCode opcode)
 		return "OP_BINARY_LT";
 	case OP_BINARY_EQ:
 		return "OP_BINARY_EQ";
+	case OP_BINARY_NEQ:
+		return "OP_BINARY_NEQ";
 	case OP_BINARY_POWER:
 		return "OP_BINARY_POWER";
 	case OP_BINARY_RSH:
@@ -74,8 +76,6 @@ std::string GetOpCodeAsString(RnOpCode opcode)
 		return "OP_UNARY_NOT";
 	case OP_UNARY_NEGATION:
 		return "OP_UNARY_NEGATION";
-	case OP_UNARY_POWER:
-		return "OP_UNARY_POWER";
 	case OP_RETURN:
 		return "OP_RETURN";
 	case OP_LOAD_INT:
@@ -176,7 +176,7 @@ RnOpCode GetOpCodeFromOperator(const std::string& op)
 	}
 	else if (op == "**")
 	{
-		return OP_UNARY_POWER;
+		return OP_BINARY_POWER;
 	}
 	else if (op == "&")
 	{
@@ -212,7 +212,7 @@ RnOpCode GetOpCodeFromOperator(const std::string& op)
 	}
 	else if (op == "!=")
 	{
-		return OP_BINARY_EQ;
+		return OP_BINARY_NEQ;
 	}
 	else if (op == "?")
 	{

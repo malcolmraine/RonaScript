@@ -26,6 +26,7 @@ typedef enum
 	OP_BINARY_GT,       // op1:          op2:
 	OP_BINARY_LT,       // op1:          op2:
 	OP_BINARY_EQ,       // op1:          op2:
+	OP_BINARY_NEQ,       // op1:          op2:
 	OP_BINARY_POWER,    // op1:          op2:
 	OP_BINARY_RSH,      // op1:          op2:
 	OP_BINARY_LSH,      // op1:          op2:
@@ -43,7 +44,6 @@ typedef enum
 	OP_UNARY_INVERT,    // op1: name     op2:
 	OP_UNARY_DECREMENT, // op1: name     op2:
 	OP_UNARY_INCREMENT, // op1: name     op2:
-	OP_UNARY_POWER,
 	OP_UNARY_NEGATION,
 	OP_RETURN,          // op1: rel_idx  op2:
 	OP_LOAD_INT,    // op1: value    op2:
