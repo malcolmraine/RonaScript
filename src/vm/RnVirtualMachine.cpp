@@ -30,6 +30,8 @@
 #include <vector>
 #include "../util/MLib/StopWatch.h"
 
+RnVirtualMachine* RnVirtualMachine::_instance = nullptr;
+
 /*****************************************************************************/
 RnVirtualMachine::RnVirtualMachine()
 {
@@ -788,6 +790,20 @@ RnIntNative RnVirtualMachine::Run()
 	return GetStack().back()->ToInt();
 //	std::cout << "Heap size: "
 //			  << _memory_manager->GetHeapCount() * sizeof(RnObject) * 2;
+}
+
+/*****************************************************************************/
+void  RnVirtualMachine::LoadInstructions(std::vector<RnInstruction*> instructions)
+{
+	_instructions = std::move(instructions);
+}
+
+/*****************************************************************************/
+RnVirtualMachine* RnVirtualMachine::GetInstance() {
+	if (!_instance) {
+		_instance = new RnVirtualMachine();
+	}
+	return _instance;
 }
 
 /*****************************************************************************/

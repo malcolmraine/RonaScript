@@ -57,7 +57,6 @@ class RnVirtualMachine
 		FUNCTION_CALL, CLASS_DECLARATION, GENERAL_EXECUTION,
 	};
 
-	RnVirtualMachine();
 	~RnVirtualMachine();
 
 	RnScope* GetScope()
@@ -73,16 +72,18 @@ class RnVirtualMachine
 	void CallFunction(RnFunctionObject* obj, uint32_t arg_cnt);
 	void AddScope();
 	RnIntNative Run();
-
-	void LoadInstructions(std::vector<RnInstruction*> instructions)
-	{
-		_instructions = std::move(instructions);
-	}
+	void LoadInstructions(std::vector<RnInstruction*> instructions);
+	static RnVirtualMachine* GetInstance();
 
  private:
 	inline void ExecuteInstruction(RnInstruction* instruction, bool& break_scope,
 		size_t& index);
 	void RegisterBuiltins();
+	RnVirtualMachine();
+
+ private:
+	static RnVirtualMachine* _instance;
+
 
  protected:
 	RnInternment<std::string> _string_internment;

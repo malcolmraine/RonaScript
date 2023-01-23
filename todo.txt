@@ -18,14 +18,19 @@ Track down all uses of RnObject::Create and make sure those objects can be garba
 Add support for imported modules
 Add pragma support
 Move all unnecessary operator overloads onto RnObjectBase and implement there with runtime errors thrown
-Fix issue where class constructor doesn't work if not assigned to variable
 Add support for modules within modules
 Fix issue where acceptance conditions for parsing certain things cause syntax errors to go undetected.
+Add support for hadamard product operator '*'
+Add support for matrix product operator '@'
+AST pruning
+AST type checking
+AST symbol table
 
 
 ------------------------------------------------------------------------
 FINISHED ISSUES:
 ------------------------------------------------------------------------
+Fix issue where class constructor doesn't work if not assigned to variable
 Add support for classes
 Garbage collection - sort of
 Fix issues with function scopes
