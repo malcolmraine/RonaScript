@@ -16,12 +16,12 @@
 #include <array>
 #include <sstream>
 #include <iostream>
-#include "../../util/MLib/String.h"
-#include "../RnScope.h"
-#include "../RnObject.h"
-#include "../RnFunctionObject.h"
-#include "../RnClassObject.h"
-#include "../RnFunction.h"
+#include "../util/MLib/String.h"
+#include "../vm/RnScope.h"
+#include "../vm/RnObject.h"
+#include "../vm/RnFunctionObject.h"
+#include "../vm/RnClassObject.h"
+#include "../vm/RnFunction.h"
 #include <dlfcn.h>
 
 /*****************************************************************************/

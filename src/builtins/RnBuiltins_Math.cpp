@@ -8,8 +8,8 @@
 ******************************************************************************/
 
 #include "RnBuiltins_Math.h"
-#include "../RnScope.h"
-#include "../RnObject.h"
+#include "../vm/RnScope.h"
+#include "../vm/RnObject.h"
 #include <random>
 
 /*****************************************************************************/

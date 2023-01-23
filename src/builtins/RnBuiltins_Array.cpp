@@ -4,9 +4,9 @@
 
 
 #include "RnBuiltins_Array.h"
-#include "../RnScope.h"
-#include "../RnArrayObject.h"
-#include "../RnObject.h"
+#include "../vm/RnScope.h"
+#include "../vm/RnArrayObject.h"
+#include "../vm/RnObject.h"
 
 /*****************************************************************************/
 void RnBuiltins_Array::array_merge(RnScope* scope, const std::vector<RnObject*>& args,

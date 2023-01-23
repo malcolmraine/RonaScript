@@ -8,8 +8,8 @@
 ******************************************************************************/
 
 #include "RnBuiltins_Type.h"
-#include "../RnScope.h"
-#include "../RnObject.h"
+#include "../vm/RnScope.h"
+#include "../vm/RnObject.h"
 
 /*****************************************************************************/
 void RnBuiltins_Type::to_int(RnScope* scope, const std::vector<RnObject*>& args,

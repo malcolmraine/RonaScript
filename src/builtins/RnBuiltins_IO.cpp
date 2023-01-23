@@ -8,8 +8,8 @@
 ******************************************************************************/
 
 #include "RnBuiltins_IO.h"
-#include "../RnScope.h"
-#include "../RnObject.h"
+#include "../vm/RnScope.h"
+#include "../vm/RnObject.h"
 #include <fstream>
 #include <filesystem>
 #include <sstream>

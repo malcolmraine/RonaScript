@@ -8,7 +8,7 @@
 ******************************************************************************/
 
 #include "RnBuiltins_Time.h"
-#include "../RnScope.h"
-#include "../RnObject.h"
-#include "../../util/MLib/Time.h"
-#include "../../util/MLib/StopWatch.h"
+#include "../vm/RnScope.h"
+#include "../vm/RnObject.h"
+#include "../util/MLib/Time.h"
+#include "../util/MLib/StopWatch.h"

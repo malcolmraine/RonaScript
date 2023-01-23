@@ -8,9 +8,9 @@
 ******************************************************************************/
 
 #include "RnBuiltins_String.h"
-#include "../../util/MLib/String.h"
-#include "../RnScope.h"
-#include "../RnObject.h"
+#include "../util/MLib/String.h"
+#include "../vm/RnScope.h"
+#include "../vm/RnObject.h"
 
 /*****************************************************************************/
 void RnBuiltins_String::titlecase(RnScope* scope, const std::vector<RnObject*>& args,

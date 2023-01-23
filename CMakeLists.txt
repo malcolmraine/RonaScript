@@ -16,6 +16,7 @@ include(src/lexer/CMakeLists.txt)
 include(src/parser/CMakeLists.txt)
 include(src/parser/ast/CMakeLists.txt)
 include(src/vm/CMakeLists.txt)
+include(src/builtins/CMakeLists.txt)
 include(src/util/CMakeLists.txt)
 include(src/codegen/CMakeLists.txt)
 
