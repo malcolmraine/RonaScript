@@ -86,8 +86,6 @@ std::string GetOpCodeAsString(RnOpCode opcode)
 		return "OP_LOAD_STRING";
 	case OP_LOAD_BOOL:
 		return "OP_LOAD_BOOL";
-	case OP_LOAD_NAME:
-		return "OP_LOAD_NAME";
 	case OP_LOAD_VALUE:
 		return "OP_LOAD_VALUE";
 	case OP_LOAD_NULL:

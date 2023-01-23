@@ -305,7 +305,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(VarDecl* node)
 	{
 		InstructionBlock expr = GeneralVisit(node->init_value);
 		instructions.insert(instructions.end(), expr.begin(), expr.end());
-		instructions.push_back(new RnInstruction(OP_LOAD_NAME, interned_id));
+		instructions.push_back(new RnInstruction(OP_LOAD_VALUE, interned_id));
 		instructions.push_back(new RnInstruction(OP_STORE));
 	}
 	return instructions;

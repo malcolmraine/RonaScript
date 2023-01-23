@@ -447,14 +447,6 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		GetStack().push_back(obj);
 		break;
 	}
-	case OP_LOAD_NAME:
-//	{
-//		auto name = RnObject::GetInternedString(instruction->_arg1);
-//		auto obj = new RnStringObject(name);
-//		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
-//		GetStack().push_back(obj);
-//		break;
-//	}
 	case OP_LOAD_VALUE:
 	{
 		auto name = RnObject::GetInternedString(instruction->_arg1);

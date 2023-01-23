@@ -49,7 +49,6 @@ typedef enum
 	OP_LOAD_INT,    // op1: value    op2:
 	OP_LOAD_FLOAT,
 	OP_LOAD_STRING,
-	OP_LOAD_NAME,
 	OP_LOAD_NULL,
 	OP_LOAD_BOOL,
 	OP_CALL,       // op1: name     op2: _arg1 count

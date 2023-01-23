@@ -88,7 +88,6 @@ auto RnInstruction::ToString() -> std::string
 		s += std::to_string(_arg1) + "\t\t";
 		break;
 	case OP_ATTR_ACCESS:
-	case OP_LOAD_NAME:
 		arg1_str = RnObject::GetInternedString(_arg1);
 		s += std::to_string(_arg1) + "\t";
 		break;
