@@ -754,6 +754,10 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		break;
 	}
 	case OP_RESOLVE_NAMESPACE:
+		// TODO: Fix this so that it pushes the correct object onto the stack
+		auto name = RnObject::GetInternedString(instruction->_arg1);
+		auto nspace = _namespaces[name];
+		GetStack().push_back(nspace->GetObject(name));
 		break;
 	}
 }
