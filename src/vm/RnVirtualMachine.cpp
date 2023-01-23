@@ -738,11 +738,20 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 
 		// Only want to set "this" binding if the function is immediately called.
 		// Otherwise, the user will need to bind the function
-		if (result->GetType() == RnType::RN_FUNCTION
-			&& _instructions[index + 1]->_opcode == OP_CALL)
+		if (result->GetType() == RnType::RN_FUNCTION)
 		{
 			auto func = dynamic_cast<RnFunctionObject*>(result)->GetData();
-			func->GetScope()->GetSymbolTable()->SetSymbol("this", object);
+			if (_instructions[index + 1]->_opcode == OP_CALL)
+			{
+				func->GetScope()->GetSymbolTable()->SetSymbol("this", object);
+			}
+			else
+			{
+				auto symbol_table = func->GetScope()->GetSymbolTable();
+				if (symbol_table->SymbolExists("this")) {
+					symbol_table->RemoveSymbol("this");
+				}
+			}
 		}
 		break;
 	}
