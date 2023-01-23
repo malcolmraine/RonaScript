@@ -103,30 +103,31 @@ RnMemoryGroup* RnScope::GetMemoryGroup() const
 }
 
 /*****************************************************************************/
-void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library)
+void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library, bool add_data)
 {
 	// This function should really be moved somewhere more appropriate and
 	// should do something other than just load the names into the parent scope.
 	// It would be ideal to return an object containing the scope
-	auto CastToBuiltin = [](auto f)
-	{
-	  return reinterpret_cast<BuiltinFunction>(f);
-	};
-
 	void* handle = dlopen(library.c_str(), RTLD_LOCAL);
 	_handles[library] = handle;
 
 	if (handle)
 	{
-		void (* ListExports)(
-			std::vector<std::tuple<std::string, RnType::Type>>&) = nullptr;
-		ListExports =
+//		void (* ListExports)(
+//			std::vector<std::tuple<std::string, RnType::Type>>&) = nullptr;
+		auto ListExports =
 			(void (*)(std::vector<std::tuple<std::string, RnType::Type>>&))dlsym(handle,
 				"LibraryFunctions");
+
+		auto LibraryName = (const char* (*)())dlsym(handle, "LibraryName");
+		auto LibraryVersion = (const char* (*)())dlsym(handle, "LibraryVersion");
 		std::vector<std::tuple<std::string, RnType::Type>> functions;
 		ListExports(functions);
+		std::vector<RnObject*> function_names;
+		function_names.reserve(functions.size());
 		for (const auto& info : functions)
 		{
+			function_names.push_back(RnObject::Create(std::get<0>(info)));
 			auto name = std::get<0>(info);
 			std::cout << "Loading external function: " << std::get<0>(info)
 					  << std::endl;
@@ -139,6 +140,20 @@ void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library)
 			obj->SetReturnType(std::get<1>(info));
 			obj->SetData(func);
 			scope->StoreObject(name, obj);
+		}
+
+		if (add_data) {
+			auto name_list = RnObject::Create(RnType::RN_ARRAY);
+			name_list->SetData(function_names);
+			scope->StoreObject("__exports__", name_list);
+
+			auto name_obj = RnObject::Create(RnType::RN_STRING);
+			name_obj->SetData(static_cast<std::string>(LibraryName()));
+			scope->StoreObject("__name__", name_obj);
+
+			auto version_obj = RnObject::Create(RnType::RN_STRING);
+			version_obj->SetData(static_cast<std::string>(LibraryVersion()));
+			scope->StoreObject("__version__", version_obj);
 		}
 	}
 	else

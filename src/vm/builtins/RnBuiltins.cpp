@@ -20,6 +20,7 @@
 #include "../RnScope.h"
 #include "../RnObject.h"
 #include "../RnFunctionObject.h"
+#include "../RnClassObject.h"
 #include "../RnFunction.h"
 #include <dlfcn.h>
 
@@ -81,5 +82,7 @@ void RnBuiltins::lload(RnScope* scope, const std::vector<RnObject*>& args,
 {
 	// TODO: Add file existence check for library
 	// TODO: Add check to make sure library actually loaded and return status accordingly
-	RnScope::LoadLibraryIntoScope(scope->GetParent(), args.at(0)->ToString());
+	auto scope_obj = new RnScope(nullptr);
+	RnScope::LoadLibraryIntoScope(scope_obj, args.at(0)->ToString(), true);
+	ret_val->SetData(scope_obj);
 }

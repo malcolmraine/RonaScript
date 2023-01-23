@@ -47,6 +47,11 @@ class RnFunction
 /*****************************************************************************/
 typedef void(* BuiltinFunction)(RnScope*, std::vector<RnObject*>, RnObject*);
 
+auto CastToBuiltin = [](auto f)
+{
+  return reinterpret_cast<BuiltinFunction>(f);
+};
+
 class RnBuiltinFunction : public RnFunction
 {
  public:

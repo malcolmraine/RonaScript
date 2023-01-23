@@ -777,10 +777,6 @@ RnIntNative RnVirtualMachine::Run()
 /*****************************************************************************/
 void RnVirtualMachine::RegisterBuiltins()
 {
-	auto CastToBuiltin = [](auto f)
-	{
-	  return reinterpret_cast<BuiltinFunction>(f);
-	};
 	// Would be nice to have each of these in separate namespaces based on their
 	// category
 	std::vector<std::tuple<std::string, BuiltinFunction, RnType::Type>> functions =
@@ -813,7 +809,7 @@ void RnVirtualMachine::RegisterBuiltins()
 		 { "count", CastToBuiltin(&RnBuiltins_Array::rn_builtin_count),
 		   RnType::RN_INT },
 		 { "system", CastToBuiltin(&RnBuiltins::rn_builtin_system), RnType::RN_ARRAY },
-		 { "lload", CastToBuiltin(&RnBuiltins::lload), RnType::RN_NULL },
+		 { "lload", CastToBuiltin(&RnBuiltins::lload), RnType::RN_CLASS_INSTANCE },
 		 { "count", CastToBuiltin(&RnBuiltins_Array::rn_builtin_count),
 		   RnType::RN_INT },
 		 { "array_push", CastToBuiltin(&RnBuiltins_Array::rn_builtin_array_push),
