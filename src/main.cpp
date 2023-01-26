@@ -12,11 +12,24 @@
 #include "vm/RnVirtualMachine.h"
 #include "util/MLib/String.h"
 #include <dlfcn.h>
+#include "util/ArgParser.h"
 
 /*****************************************************************************/
-void RonaScriptMain()
+void RonaScriptMain(int argc, char* argv[])
 {
-	std::filesystem::path const file = "../examples/Test.rn";
+	ArgParser arg_parser;
+	arg_parser.SetMainDescription("Usage: RonaScript <file> [options...]");
+	arg_parser.AddArgument("<file>", "Input file (*.rn | *.rnc)");
+	arg_parser.AddArgument("-c", "Compile to *.rnc file");
+	arg_parser.AddArgument("-norun", "Compile to *.rnc file without running");
+	arg_parser.Parse(argc, argv);
+
+	if (arg_parser.IsSet("-h")) {
+		arg_parser.ShowHelp();
+		return;
+	}
+
+	std::filesystem::path const file = arg_parser.GetInputFile();
 	std::filesystem::path const cfile = file.string() + "c";
 
 	Lexer lexer;
@@ -63,51 +76,27 @@ void RonaScriptMain()
 		std::cout << String::Pad(std::to_string(index++), 6) << instruction->ToString()
 				  << std::endl;
 	}
-	auto vm = RnVirtualMachine();
-	vm.LoadInstructions(code_generator.GetInstructions());
+	auto vm = RnVirtualMachine::GetInstance();
+	vm->LoadInstructions(code_generator.GetInstructions());
 
 	try
 	{
-		RnIntNative exit_code = vm.Run();
-		std::cout << "Exit " << exit_code << std::endl;
+		std::ios_base::sync_with_stdio(false);
+		RnIntNative exit_code = vm->Run();
 	}
 	catch (const std::exception& e)
 	{
 		std::cout << "\033[31m" << "Runtime Error: " << e.what() << std::endl;
 		return;
 	}
+
+	delete vm;
 }
 
 /*****************************************************************************/
-int main(int argc, char** argv)
+int main(int argc, char* argv[])
 {
-//	void* handle = dlopen("../sandbox/libHello.dylib", RTLD_LOCAL);
-//	if (handle) {
-//		void (*b1a_name)(RnScope* scope, const std::vector<RnObject*>& args,
-//			RnObject* ret_val) = nullptr;
-//		b1a_name = (void (*)(RnScope* scope, const std::vector<RnObject*>& args,
-//			RnObject* ret_val))dlsym(handle, "hello");
-//
-//		const char* (*LibraryName)() = nullptr;
-//		LibraryName = (const char*(*)())dlsym(handle, "LibraryName");
-//
-//		if (LibraryName) {
-//			std::cout << LibraryName() << std::endl;
-//		}
-//
-//		if (b1a_name) {
-//			auto obj = RnObject::Create(RnType::RN_STRING);
-//			b1a_name(nullptr, {}, obj);
-//			std::cout << obj->ToString() << std::endl;
-//		}
-//	}
-//	else {
-//		printf("[%s] Unable to open libBus1a.dylib: %s\n",
-//			__FILE__, dlerror());
-//	}
-//	dlclose(handle);
-	std::ios_base::sync_with_stdio(false);
-	RonaScriptMain();
+	RonaScriptMain(argc, argv);
 
 	return 0;
 }
