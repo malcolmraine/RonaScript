@@ -132,8 +132,8 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	_gc_count++;
 	if (_gc_count > 1000)
 	{
-		_memory_manager->GCMark();
-		_memory_manager->GCSweep();
+//		_memory_manager->GCMark();
+//		_memory_manager->GCSweep();
 		_gc_count = 0;
 	}
 

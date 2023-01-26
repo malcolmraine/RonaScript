@@ -51,8 +51,8 @@ std::string AssignmentStmt::ToString(bool nl)
 
 	rexpr->nest_lvl = nest_lvl + 1;
 	lexpr->nest_lvl = nest_lvl + 1;
-	s += lexpr->ToString(true);
-	s += rexpr->ToString(true);
+	s.append(lexpr->ToString(true));
+	s.append(rexpr->ToString(true));
 
 	return s;
 }

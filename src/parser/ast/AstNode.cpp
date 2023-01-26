@@ -25,8 +25,8 @@ std::string AstNode::MakeTabStr()
 
 	for (int i = 0; i < nest_lvl; ++i)
 	{
-		outp_str += "|";
-		outp_str += TAB_CHAR;
+		outp_str.append("|");
+		outp_str.append(TAB_CHAR);
 	}
 
 	return outp_str;

@@ -28,6 +28,9 @@ void RonaScriptMain(int argc, char* argv[])
 	{
 		arg_parser.ShowHelp();
 		return;
+	} else if (arg_parser.GetInputFile().empty()) {
+		std::cout << "\033[31m" << "RonaScript: Error: No input file\n";
+		return;
 	}
 
 	std::filesystem::path const file = arg_parser.GetInputFile();

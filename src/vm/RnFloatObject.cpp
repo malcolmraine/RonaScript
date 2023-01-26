@@ -102,7 +102,7 @@ auto RnFloatObject::ToString() const -> RnStringNative
 	str.erase(str.find_last_not_of('0') + 1, std::string::npos);
 	if (str.ends_with('.'))
 	{
-		str += "0";
+		str.append("0");
 	}
 	return str;
 }

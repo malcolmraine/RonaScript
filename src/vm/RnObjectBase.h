@@ -59,12 +59,6 @@ class RnObjectBase : public RnObject
 		return _data;
 	}
 
-//	/*************************************************************************/
-//	void SetType(RnType::Type type) override
-//	{
-//		_type = type;
-//	}
-
 	/*************************************************************************/
 	[[nodiscard]] RnType::Type GetType() const override
 	{

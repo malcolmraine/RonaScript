@@ -376,7 +376,7 @@ std::string Lexer::GetCompoundCandidate(int n) const
 	std::string s = std::string(1, Current());
 
 	for (int i = 1; i < n; ++i)
-		s += std::string(1, Peek(i));
+		s.append(std::string(1, Peek(i)));
 
 	return s;
 }
@@ -451,7 +451,7 @@ Token* Lexer::ProcessStringLiteral()
 {
 	if (_lexeme.empty())
 	{
-		_lexeme += std::string(1, Current());
+		_lexeme.append(std::string(1, Current()));
 		AdvanceBuffer(1);
 		bool end_quote_found = false;
 
@@ -460,7 +460,7 @@ Token* Lexer::ProcessStringLiteral()
 			if (Current() == '\"' && Lookback() != '\\')
 				end_quote_found = true;
 
-			_lexeme += std::string(1, Current());
+			_lexeme.append(std::string(1, Current()));
 			AdvanceBuffer(1);
 		}
 	}
@@ -524,7 +524,7 @@ Token* Lexer::Consume()
 	default:
 	{
 		if (Current() != '\r' && Current() != '\t' && Current() != '\n')
-			_lexeme += std::string(1, Current());
+			_lexeme.append(std::string(1, Current()));
 		AdvanceBuffer(1);
 		break;
 	}
@@ -632,7 +632,7 @@ void Lexer::HandleUnexpectedItem()
 			+ file_info.ToString() + "\nExpected one of [";
 
 	for (auto& expected_char : _expected_items)
-		msg += "'" + std::string(1, expected_char) + "', ";
+		msg.append("'" + std::string(1, expected_char) + "', ");
 
 	if (!_expected_items.empty())
 		msg = msg.substr(0, msg.length() - 2);
