@@ -24,7 +24,8 @@ void RonaScriptMain(int argc, char* argv[])
 	arg_parser.AddArgument("-norun", "Compile to *.rnc file without running");
 	arg_parser.Parse(argc, argv);
 
-	if (arg_parser.IsSet("-h")) {
+	if (arg_parser.IsSet("-h"))
+	{
 		arg_parser.ShowHelp();
 		return;
 	}

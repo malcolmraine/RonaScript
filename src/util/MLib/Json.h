@@ -21,7 +21,13 @@ class JSONNode
  public:
 	enum TYPE
 	{
-		FLOAT, INTEGER, STRING, OBJECT, LIST, NULL_VALUE, DEFAULT,
+		FLOAT,
+		INTEGER,
+		STRING,
+		OBJECT,
+		LIST,
+		NULL_VALUE,
+		DEFAULT,
 	};
 
 	[[nodiscard]] virtual std::string ToString() const = 0;

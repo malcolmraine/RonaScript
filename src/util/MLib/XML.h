@@ -22,7 +22,8 @@ class XMLContent
  public:
 	enum Type
 	{
-		ELEMENT, STRING
+		ELEMENT,
+		STRING
 	};
 
 	XMLContent();

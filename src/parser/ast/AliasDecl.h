@@ -17,7 +17,8 @@ class Name;
 
 enum AliasType
 {
-	NAME_ALIAS, TYPE_ALIAS
+	NAME_ALIAS,
+	TYPE_ALIAS
 };
 
 class AliasDecl : public AstNode

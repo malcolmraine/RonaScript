@@ -1146,11 +1146,11 @@ void Parser::Parse()
 				break;
 			case TokenType::CLASS:
 			{
-				__previous_state = _current_state;
+				_previous_state = _current_state;
 				_current_state = CLASS_DECL_CONTEXT;
 				_current_scope->add_class_decl(ParseClassDecl());
-				_current_state = __previous_state;
-				__previous_state = GENERAL_CONTEXT;
+				_current_state = _previous_state;
+				_previous_state = GENERAL_CONTEXT;
 				break;
 			}
 			case TokenType::NAME:

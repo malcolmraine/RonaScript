@@ -73,7 +73,7 @@ bool Argument::HasValue() const
 /*****************************************************************************/
 ArgParser::ArgParser()
 {
-	AddArgument("-h", "Show help", false, "", {"--help"});
+	AddArgument("-h", "Show help", false, "", { "--help" });
 }
 
 /*****************************************************************************/
@@ -96,7 +96,8 @@ void ArgParser::AddArgument(const std::string& arg, const std::string& descripti
 	}
 
 	argument->SetAlternateKeys(alternates);
-	for (const auto& key : alternates) {
+	for (const auto& key : alternates)
+	{
 		_arguments[key] = argument;
 		_help_exclusions.insert(key);
 	}
@@ -125,7 +126,8 @@ void ArgParser::ShowHelp()
 	help << _main_description + "\n";
 	for (const auto& argument : _arguments)
 	{
-		if (_help_exclusions.contains(argument.first)) {
+		if (_help_exclusions.contains(argument.first))
+		{
 			continue;
 		}
 

@@ -58,22 +58,24 @@ class AttributeAccess;
 
 enum Associativity_t
 {
-	LEFT, RIGHT, NO_ASSOCIATIVITY,
+	LEFT,
+	RIGHT,
+	NO_ASSOCIATIVITY,
 };
 
 enum ParserState
 {
-	GENERAL_CONTEXT, CLASS_DECL_CONTEXT, FUNC_DECL_CONTEXT,
+	GENERAL_CONTEXT,
+	CLASS_DECL_CONTEXT,
+	FUNC_DECL_CONTEXT,
 };
 
 class Parser : public RonaSequencer<Token*, TokenType>
 {
  public:
 	Parser();
-
 	~Parser();
 
-	//void AdvanceBuffer(int n);
 	void ConditionalBufAdvance(TokenType t);
 	std::shared_ptr<ImportStmt> ParseImportStmt();
 	std::shared_ptr<VarDecl> ParseVarDecl(std::vector<Token*> qualifiers = {});
@@ -155,7 +157,7 @@ class Parser : public RonaSequencer<Token*, TokenType>
 	std::unordered_map<TokenType, int> _prec_tbl;
 	std::unordered_map<TokenType, Associativity_t> associativity;
 	std::unordered_map<std::string, std::string> _pragma_table;
-	ParserState __previous_state = GENERAL_CONTEXT;
+	ParserState _previous_state = GENERAL_CONTEXT;
 	ParserState _current_state = GENERAL_CONTEXT;
 
 };

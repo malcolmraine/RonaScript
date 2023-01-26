@@ -54,7 +54,9 @@ class RnVirtualMachine
  public:
 	enum State
 	{
-		FUNCTION_CALL, CLASS_DECLARATION, GENERAL_EXECUTION,
+		FUNCTION_CALL,
+		CLASS_DECLARATION,
+		GENERAL_EXECUTION,
 	};
 
 	~RnVirtualMachine();
