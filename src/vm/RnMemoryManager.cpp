@@ -8,28 +8,27 @@
 ******************************************************************************/
 
 #include "RnMemoryManager.h"
-#include <iostream>
+
+#include <utility>
+#include "RnBoolObject.h"
+#include "RnFunctionObject.h"
+#include "RnIntObject.h"
+#include "RnStringObject.h"
+#include "RnFloatObject.h"
+#include "RnArrayObject.h"
+#include "RnClassObject.h"
+//#include <iostream>
 
 /*****************************************************************************/
 RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr))
 {
-	_object_cache.reserve(OBJECT_CACHE_SIZE);
-
-	for (size_t i = 0; i < OBJECT_CACHE_SIZE; i++)
-	{
-		auto obj = RnObject::Create(RnType::RN_INT);
-		obj->SetIsCached(true);
-		_object_cache[RnType::RN_INT].push_back(obj);
-	}
-
-	for (size_t i = 0; i < OBJECT_CACHE_SIZE; i++)
-	{
-		auto obj = RnObject::Create(RnType::RN_FLOAT);
-		obj->SetIsCached(true);
-		_object_cache[RnType::RN_FLOAT].push_back(obj);
-	}
-
 	GrowHeap(DEFAULT_MAX_HEAP_SIZE);
+	_block_size =
+		std::max({ sizeof(RnArrayObject), sizeof(RnIntObject), sizeof(RnFunctionObject),
+				   sizeof(RnFloatObject), sizeof(RnBoolObject),
+				   sizeof(RnStringObject) });
+	_allocation_size = _block_size * 100000;
+	GrowAllocation(_allocation_size);
 }
 
 /*****************************************************************************/
@@ -41,18 +40,68 @@ RnMemoryManager::~RnMemoryManager()
 /*****************************************************************************/
 RnObject* RnMemoryManager::CreateObject(RnType::Type type)
 {
-	if (_object_cache.contains(type))
+	if (_available_addresses.empty())
 	{
-		auto cache = _object_cache[type];
-		if (!cache.empty())
-		{
-			return RnObject::Create(type);
-		}
-		auto obj = cache.back();
-		cache.pop_back();
-		return obj;
+		GrowAllocation(_allocation_size);
 	}
-	return RnObject::Create(type);
+
+	auto address = _available_addresses.back();
+	_available_addresses.pop_back();
+	_used_addresses.push_back(address);
+
+	switch (type)
+	{
+	case RnType::RN_BOOLEAN:
+		return new(address) RnBoolObject();
+	case RnType::RN_STRING:
+		return new(address) RnStringObject();
+	case RnType::RN_FLOAT:
+		return new(address) RnFloatObject();
+	case RnType::RN_INT:
+		return new(address) RnIntObject();
+	case RnType::RN_ARRAY:
+		return new(address) RnArrayObject();
+	case RnType::RN_FUNCTION:
+		return new(address) RnFunctionObject();
+	case RnType::RN_CLASS_INSTANCE:
+	case RnType::RN_OBJECT:
+		return new(address) RnClassObject();
+	case RnType::RN_NULL:
+	case RnType::RN_UNKNOWN:
+		return nullptr;
+	}
+}
+
+/*****************************************************************************/
+RnObject* RnMemoryManager::Create(RnStringNative data)
+{
+	auto obj = CreateObject(RnType::RN_STRING);
+	obj->SetData(std::move(data));
+	return obj;
+}
+
+/*****************************************************************************/
+RnObject* RnMemoryManager::Create(RnBoolNative data)
+{
+	auto obj = CreateObject(RnType::RN_BOOLEAN);
+	obj->SetData(data);
+	return obj;
+}
+
+/*****************************************************************************/
+RnObject* RnMemoryManager::Create(RnIntNative data)
+{
+	auto obj = CreateObject(RnType::RN_INT);
+	obj->SetData(data);
+	return obj;
+}
+
+/*****************************************************************************/
+RnObject* RnMemoryManager::Create(RnFloatNative data)
+{
+	auto obj = CreateObject(RnType::RN_FLOAT);
+	obj->SetData(data);
+	return obj;
 }
 
 /*****************************************************************************/
@@ -162,5 +211,21 @@ void RnMemoryManager::GCMarkMemoryGroup(RnMemoryGroup* memory_group)
 	for (auto& group : memory_group->GetChildGroups())
 	{
 		GCMarkMemoryGroup(group);
+	}
+}
+
+/*****************************************************************************/
+void RnMemoryManager::GrowAllocation(size_t size)
+{
+	char* block = (char*)malloc(size);
+	if (block == nullptr) {
+		throw std::runtime_error("Out of memory.");
+	}
+	_allocations.push_back(block);
+	_available_addresses.reserve(_allocation_size / _block_size);
+	_used_addresses.reserve(_allocation_size / _block_size);
+	for (char* address = block; address < block + size; address += _block_size)
+	{
+		_available_addresses.push_back(address);
 	}
 }

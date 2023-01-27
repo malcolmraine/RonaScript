@@ -28,11 +28,7 @@ class RnIntObject : public RnObjectBase<RnIntNative>
 	RnObject* operator&(RnObject* obj) override;
 	RnObject* operator^(RnObject* obj) override;
 	RnObject* operator>(RnObject* obj) override;
-
-	inline RnObject* operator<(RnObject* obj) override
-	{
-		return RnObject::Create(GetData() < obj->ToInt());
-	}
+	RnObject* operator<(RnObject* obj) override;
 	RnObject* operator>=(RnObject* obj) override;
 	RnObject* operator<=(RnObject* obj) override;
 	RnObject* operator%(RnObject* obj) override;

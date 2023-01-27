@@ -13,6 +13,7 @@
 #include "RnMemoryGroup.h"
 #include "RnMemoryBlock.h"
 #include <unordered_map>
+#include <set>
 #include "RnType.h"
 
 #define DEFAULT_MAX_HEAP_SIZE (1024000)
@@ -28,41 +29,15 @@ class RnMemoryManager
 	RnMemoryManager();
 	~RnMemoryManager();
 	RnObject* CreateObject(RnType::Type type);
+	RnObject* Create(RnStringNative data);
+	RnObject* Create(RnBoolNative data);
+	RnObject* Create(RnIntNative data);
+	RnObject* Create(RnFloatNative data);
+
 	void AddObject(RnMemoryGroup* parent_group, RnObject* obj);
-//	RnObject* MakeObject(RnMemoryGroup* parent_group,
-//		RnType::Type type = RnType::RN_NULL);
-	//RnMemoryGroup* MakeMemoryGroup(RnMemoryGroup* parent_group);
-
-//	void EnableGC()
-//	{
-//		_gc_enabled = true;
-//	}
-//
-//	void DisableGC()
-//	{
-//		_gc_enabled = false;
-//	}
-//
-//	[[nodiscard]] bool GetGCEnabled() const
-//	{
-//		return _gc_enabled;
-//	}
-
-//	void SetMaxHeapSize(size_t size)
-//	{
-//		_max_heap_size = size;
-//	}
-//
-//	[[nodiscard]] size_t GetMaxHeapSize() const
-//	{
-//		return _max_heap_size;
-//	}
-
-//	size_t GetHeapSizeMB();
 	[[nodiscard]] size_t GetHeapCount() const;
 	[[nodiscard]] int GetHeapUsedCount() const;
 	size_t GrowHeap(size_t size);
-//	size_t ShrinkHeap(size_t size);
 	RnMemoryBlock* FindFirstFree(bool start_at_last_block = true);
 	void GCMark();
 	void GCSweep();
@@ -70,13 +45,16 @@ class RnMemoryManager
 
  private:
 	void GCMarkMemoryGroup(RnMemoryGroup* memory_group);
-//	void MoveToEnd(RnMemoryBlock* block);
+	void GrowAllocation(size_t size);
 
+ private:
 	bool _gc_enabled = true;
 	std::vector<RnMemoryBlock> _heap;
-	std::unordered_map<RnType::Type, std::vector<RnObject*>> _object_cache;
-//	RnMemoryBlock* _heap = nullptr;
-//	RnMemoryBlock* _last_heap_node = nullptr;
+	std::vector<char*> _allocations;
+	size_t _block_size = 0;
+	size_t _allocation_size = 0;
+	std::vector<char*> _available_addresses;
+	std::vector<char*> _used_addresses;
 	size_t _used_heap_blocks = 0;
 	size_t _heap_node_cnt = 0;
 	size_t _last_free_index = 0;

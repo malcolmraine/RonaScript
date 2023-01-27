@@ -13,6 +13,7 @@
 #include "util/MLib/String.h"
 #include <dlfcn.h>
 #include "util/ArgParser.h"
+#include <set>
 
 /*****************************************************************************/
 void RonaScriptMain(int argc, char* argv[])

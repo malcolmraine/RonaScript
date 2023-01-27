@@ -18,6 +18,7 @@
 #include "RnFunctionObject.h"
 #include "RnBoolObject.h"
 #include "RnNullObject.h"
+#include "RnVirtualMachine.h"
 
 RnInternment<std::string>* string_internment = new RnInternment<std::string>();
 RnInternment<double>* float_internment = new RnInternment<double>();
@@ -80,24 +81,37 @@ RnObject* RnObject::Create(RnStringNative data)
 /*****************************************************************************/
 RnObject* RnObject::Create(RnBoolNative data)
 {
+	if (RnVirtualMachine::GetInstance()) {
+		return RnVirtualMachine::GetInstance()->CreateObject(data);
+	}
 	return new RnBoolObject(data);
 }
 
 /*****************************************************************************/
 RnObject* RnObject::Create(RnIntNative data)
 {
+	if (RnVirtualMachine::GetInstance()) {
+		return RnVirtualMachine::GetInstance()->CreateObject(data);
+	}
 	return new RnIntObject(data);
 }
 
 /*****************************************************************************/
 RnObject* RnObject::Create(RnFloatNative data)
 {
+	if (RnVirtualMachine::GetInstance()) {
+		return RnVirtualMachine::GetInstance()->CreateObject(data);
+	}
 	return new RnFloatObject(data);
 }
 
 /*****************************************************************************/
 RnObject* RnObject::Create(RnType::Type type)
 {
+	if (RnVirtualMachine::GetInstance()) {
+		return RnVirtualMachine::GetInstance()->CreateObject(type);
+	}
+
 	switch (type)
 	{
 	case RnType::RN_BOOLEAN:

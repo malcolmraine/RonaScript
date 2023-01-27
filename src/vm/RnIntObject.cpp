@@ -192,11 +192,11 @@ RnObject* RnIntObject::operator>(RnObject* obj)
 	return RnObject::Create(GetData() > obj->ToInt());
 }
 
-///*****************************************************************************/
-//RnObject* RnIntObject::operator<(RnObject* obj)
-//{
-//	return RnObject::Create(GetData() < obj->ToInt());
-//}
+/*****************************************************************************/
+RnObject* RnIntObject::operator<(RnObject* obj)
+{
+	return RnObject::Create(GetData() < obj->ToInt());
+}
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator>=(RnObject* obj)

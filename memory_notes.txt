@@ -1,0 +1,14 @@
+
+
+for memory management, allocate a large block of char* memory
+    - N * max size of RN object classes
+
+new objects will be constructed using an existing allocation address
+in the available memory pool. That address will then go into the used
+memory pool
+
+object freeing will move the address from the used pool to the available pool,
+making sure to reset the values somehow
+
+if the available pool is all used, a new block of memory will be allocated
+with its addresses added to the available pool

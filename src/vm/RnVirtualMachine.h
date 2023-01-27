@@ -76,6 +76,11 @@ class RnVirtualMachine
 	RnIntNative Run();
 	void LoadInstructions(std::vector<RnInstruction*> instructions);
 	static RnVirtualMachine* GetInstance();
+	RnObject* CreateObject(RnType::Type type);
+	RnObject* CreateObject(RnStringNative data);
+	RnObject* CreateObject(RnBoolNative data);
+	RnObject* CreateObject(RnIntNative data);
+	RnObject* CreateObject(RnFloatNative data);
 
  private:
 	inline void ExecuteInstruction(RnInstruction* instruction, bool& break_scope,

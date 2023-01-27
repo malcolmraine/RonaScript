@@ -27,6 +27,7 @@
 #include "../builtins/RnBuiltins_Type.h"
 #include <iostream>
 #include <tuple>
+#include <utility>
 #include <vector>
 #include "../util/MLib/StopWatch.h"
 
@@ -75,7 +76,7 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt)
 		args.insert(args.begin(), GetStack().back());
 		GetStack().pop_back();
 	}
-	RnObject* ret_val = RnObject::Create(obj->GetReturnType());
+	RnObject* ret_val = _memory_manager->CreateObject(obj->GetReturnType());
 
 	if (func->IsBuiltIn())
 	{
@@ -266,7 +267,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		GetStack().pop_back();
 		auto a = GetStack().back();
 		GetStack().pop_back();
-		auto result = RnObject::Create(std::pow(a->ToFloat(), b->ToFloat()));
+		auto result = CreateObject(std::pow(a->ToFloat(), b->ToFloat()));
 		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), result);
 		GetStack().push_back(result);
 		break;
@@ -421,7 +422,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	case OP_LOAD_INT:
 	{
 		auto value = RnObject::GetInternedInt(instruction->_arg1);
-		auto obj = RnObject::Create(value);
+		auto obj = CreateObject(value);
 		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
 		GetStack().push_back(obj);
 		break;
@@ -429,7 +430,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	case OP_LOAD_FLOAT:
 	{
 		auto value = RnObject::GetInternedFloat(instruction->_arg1);
-		auto obj = RnObject::Create(value);
+		auto obj = CreateObject(value);
 		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
 		GetStack().push_back(obj);
 		break;
@@ -437,7 +438,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	case OP_LOAD_STRING:
 	{
 		auto value = RnObject::GetInternedString(instruction->_arg1);
-		auto obj = RnObject::Create(value);
+		auto obj = CreateObject(value);
 		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
 		GetStack().push_back(obj);
 		break;
@@ -454,7 +455,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		{
 			auto class_obj = dynamic_cast<RnClass*>(_namespaces[name]);
 			auto instance =
-				dynamic_cast<RnClassObject*>(RnObject::Create(RnType::RN_CLASS_INSTANCE));
+				dynamic_cast<RnClassObject*>(_memory_manager->CreateObject(RnType::RN_CLASS_INSTANCE));
 			_memory_manager->AddObject(GetScope()->GetMemoryGroup(), instance);
 			instance->GetScope()->SetParent(class_obj);
 			class_obj->CopySymbols(instance->GetScope());
@@ -475,7 +476,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	}
 	case OP_LOAD_NULL:
 	{
-		GetStack().push_back(RnObject::Create(RnType::RN_NULL));
+		GetStack().push_back(_memory_manager->CreateObject(RnType::RN_NULL));
 		break;
 	}
 	case OP_LOAD_BOOL:
@@ -503,7 +504,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 			throw std::runtime_error("Redeclaration of symbol '" + name + "'");
 		}
 
-		auto obj = RnObject::Create(type);
+		auto obj = _memory_manager->CreateObject(type);
 		obj->SetConstFlag(true);
 		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
 		GetScope()->StoreObject(name, obj);
@@ -519,7 +520,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 			throw std::runtime_error("Redeclaration of symbol '" + name + "'");
 		}
 
-		auto obj = RnObject::Create(type);
+		auto obj = _memory_manager->CreateObject(type);
 		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
 		GetScope()->StoreObject(name, obj);
 		break;
@@ -550,7 +551,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	case OP_MAKE_FUNC:
 	{
 		auto obj =
-			dynamic_cast<RnFunctionObject*>(RnObject::Create(RnType::RN_FUNCTION));
+			dynamic_cast<RnFunctionObject*>(_memory_manager->CreateObject(RnType::RN_FUNCTION));
 		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
 		auto name = RnObject::GetInternedString(instruction->_arg1);
 		if (GetScope()->GetSymbolTable()->SymbolExists(name))
@@ -642,7 +643,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	case OP_EXIT:
 	{
 		break_scope = true;
-		auto obj = RnObject::Create(RnType::RN_INT);
+		auto obj = _memory_manager->CreateObject(RnType::RN_INT);
 		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
 		obj->SetData(static_cast<RnIntNative>(instruction->_arg1));
 		GetStack().push_back(obj);
@@ -803,6 +804,31 @@ RnVirtualMachine* RnVirtualMachine::GetInstance()
 }
 
 /*****************************************************************************/
+RnObject* RnVirtualMachine::CreateObject(RnType::Type type) {
+	return _memory_manager->CreateObject(type);
+}
+
+/*****************************************************************************/
+RnObject*  RnVirtualMachine::CreateObject(RnStringNative data) {
+	return _memory_manager->Create(std::move(data));
+}
+
+/*****************************************************************************/
+RnObject*  RnVirtualMachine::CreateObject(RnBoolNative data) {
+	return _memory_manager->Create(data);
+}
+
+/*****************************************************************************/
+RnObject*  RnVirtualMachine::CreateObject(RnIntNative data) {
+	return _memory_manager->Create(data);
+}
+
+/*****************************************************************************/
+RnObject*  RnVirtualMachine::CreateObject(RnFloatNative data) {
+	return _memory_manager->Create(data);
+}
+
+/*****************************************************************************/
 void RnVirtualMachine::RegisterBuiltins()
 {
 	// Would be nice to have each of these in separate namespaces based on their
@@ -850,7 +876,7 @@ void RnVirtualMachine::RegisterBuiltins()
 		auto func = new RnBuiltinFunction(std::get<0>(parts), std::get<1>(parts));
 		func->SetScope(GetScope());
 		auto obj =
-			dynamic_cast<RnFunctionObject*>(RnObject::Create(RnType::RN_FUNCTION));
+			dynamic_cast<RnFunctionObject*>(_memory_manager->CreateObject(RnType::RN_FUNCTION));
 		_memory_manager->AddObject(GetScope()->GetMemoryGroup(), obj);
 		obj->SetReturnType(std::get<2>(parts));
 		obj->SetData(func);
