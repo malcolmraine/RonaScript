@@ -23,6 +23,9 @@ void RonaScriptMain(int argc, char* argv[])
 	arg_parser.AddArgument("<file>", "Input file (*.rn | *.rnc)");
 	arg_parser.AddArgument("-c", "Compile to *.rnc file");
 	arg_parser.AddArgument("-norun", "Compile to *.rnc file without running");
+	arg_parser.AddArgument("-v", "Compile to *.rnc file without running", false, "", {"--version"});
+	arg_parser.AddArgument("--info", "Compile to *.rnc file without running");
+	arg_parser.AddArgument("-norun", "Compile to *.rnc file without running");
 	arg_parser.Parse(argc, argv);
 
 	if (arg_parser.IsSet("-h"))
@@ -50,10 +53,10 @@ void RonaScriptMain(int argc, char* argv[])
 		return;
 	}
 
-	for (auto& token : lexer.tokens)
-	{
-		std::cout << token->ToString() << std::endl;
-	}
+//	for (auto& token : lexer.tokens)
+//	{
+//		std::cout << token->ToString() << std::endl;
+//	}
 
 	Parser parser;
 	parser.working_dir = file.parent_path();
@@ -70,17 +73,17 @@ void RonaScriptMain(int argc, char* argv[])
 		return;
 	}
 
-	std::cout << parser.DumpsAst();
+//	std::cout << parser.DumpsAst();
 
 	RnCodeGenerator code_generator;
 	code_generator.Generate(parser.ast);
 
-	size_t index = 0;
-	for (auto& instruction : code_generator.GetInstructions())
-	{
-		std::cout << String::Pad(std::to_string(index++), 6) << instruction->ToString()
-				  << std::endl;
-	}
+//	size_t index = 0;
+//	for (auto& instruction : code_generator.GetInstructions())
+//	{
+//		std::cout << String::Pad(std::to_string(index++), 6) << instruction->ToString()
+//				  << std::endl;
+//	}
 	auto vm = RnVirtualMachine::GetInstance();
 	vm->LoadInstructions(code_generator.GetInstructions());
 

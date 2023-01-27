@@ -19,6 +19,8 @@
 #include "RnClassObject.h"
 //#include <iostream>
 
+#define OBJECT_ALLOCATION_COUNT 10000
+
 /*****************************************************************************/
 RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr))
 {
@@ -27,7 +29,7 @@ RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr
 		std::max({ sizeof(RnArrayObject), sizeof(RnIntObject), sizeof(RnFunctionObject),
 				   sizeof(RnFloatObject), sizeof(RnBoolObject),
 				   sizeof(RnStringObject) });
-	_allocation_size = _block_size * 100000;
+	_allocation_size = _block_size * OBJECT_ALLOCATION_COUNT;
 	GrowAllocation(_allocation_size);
 }
 

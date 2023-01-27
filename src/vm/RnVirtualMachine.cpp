@@ -766,7 +766,7 @@ RnIntNative RnVirtualMachine::Run()
 {
 	bool has_returned = false; // Placeholder
 	auto stopwatch = StopWatch();
-	std::cout << "\n======================================================\n\n";
+//	std::cout << "\n======================================================\n\n";
 
 	stopwatch.Start();
 	while (i_idx < _instructions.size())
@@ -780,7 +780,7 @@ RnIntNative RnVirtualMachine::Run()
 	}
 	stopwatch.Stop();
 
-	std::cout << "\n======================================================\n";
+//	std::cout << "\n======================================================\n";
 	std::cout << "\nRuntime duration: " << stopwatch.Duration() << std::endl;
 	return GetStack().back()->ToInt();
 //	std::cout << "Heap size: "
