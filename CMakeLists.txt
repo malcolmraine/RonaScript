@@ -20,4 +20,4 @@ include(src/builtins/CMakeLists.txt)
 include(src/util/CMakeLists.txt)
 include(src/codegen/CMakeLists.txt)
 
-add_executable(RonaScript src/main.cpp ${RonaScript_SOURCES})
+add_executable(RonaScript src/main.cpp ${RonaScript_SOURCES} src/RnVersionInfo.h)

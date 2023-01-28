@@ -57,6 +57,7 @@ class ArgParser
 	std::string _main_description;
 	std::string _input_file;
 	std::unordered_set<std::string> _help_exclusions;
+	std::vector<std::string> _ordered_args;
 };
 
 #endif //RONASCRIPT_SRC_UTIL_ARGPARSER_H_

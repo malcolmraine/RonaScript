@@ -1,0 +1,10 @@
+//
+// Created by Malcolm Hall on 1/27/23.
+//
+
+#ifndef RONASCRIPT_SRC_RNVERSIONINFO_H_
+#define RONASCRIPT_SRC_RNVERSIONINFO_H_
+
+#define RONASCRIPT_VERSION "0.0.1 beta"
+
+#endif //RONASCRIPT_SRC_RNVERSIONINFO_H_

@@ -73,7 +73,6 @@ bool Argument::HasValue() const
 /*****************************************************************************/
 ArgParser::ArgParser()
 {
-	AddArgument("-h", "Show help", false, "", { "--help" });
 }
 
 /*****************************************************************************/
@@ -89,6 +88,7 @@ void ArgParser::AddArgument(const std::string& arg, const std::string& descripti
 {
 	auto argument = std::make_shared<Argument>(arg, description, has_value);
 	_arguments[arg] = argument;
+	_ordered_args.push_back(arg);
 
 	if (!defaultValue.empty())
 	{
@@ -124,20 +124,21 @@ void ArgParser::ShowHelp()
 {
 	std::stringstream help;
 	help << _main_description + "\n";
-	for (const auto& argument : _arguments)
+	for (const auto& key : _ordered_args)
 	{
-		if (_help_exclusions.contains(argument.first))
+		if (_help_exclusions.contains(key))
 		{
 			continue;
 		}
 
-		std::string key_str = argument.first;
-		for (const auto& key : argument.second->GetAlternateKeys())
+		auto argument = _arguments[key];
+		std::string key_str = key;
+		for (const auto& alternate_key : argument->GetAlternateKeys())
 		{
 			key_str += ", " + key;
 		}
 		help << "  " << String::Pad(key_str, 20, ' ')
-			 << argument.second->GetDescription() << "\n";
+			 << argument->GetDescription() << "\n";
 	}
 
 	std::cout << help.str();

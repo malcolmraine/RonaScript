@@ -14,6 +14,7 @@
 #include <dlfcn.h>
 #include "util/ArgParser.h"
 #include <set>
+#include "RnVersionInfo.h"
 
 /*****************************************************************************/
 void RonaScriptMain(int argc, char* argv[])
@@ -23,14 +24,16 @@ void RonaScriptMain(int argc, char* argv[])
 	arg_parser.AddArgument("<file>", "Input file (*.rn | *.rnc)");
 	arg_parser.AddArgument("-c", "Compile to *.rnc file");
 	arg_parser.AddArgument("-norun", "Compile to *.rnc file without running");
-	arg_parser.AddArgument("-v", "Compile to *.rnc file without running", false, "", {"--version"});
-	arg_parser.AddArgument("--info", "Compile to *.rnc file without running");
-	arg_parser.AddArgument("-norun", "Compile to *.rnc file without running");
+	arg_parser.AddArgument("-v", "Show version information", false, "", {"--version"});
+	arg_parser.AddArgument("-h", "Show help", false, "", { "--help" });
 	arg_parser.Parse(argc, argv);
 
 	if (arg_parser.IsSet("-h"))
 	{
 		arg_parser.ShowHelp();
+		return;
+	}else if (arg_parser.IsSet("-v")) {
+		std::cout << "RonaScript " << RONASCRIPT_VERSION << "\n";
 		return;
 	} else if (arg_parser.GetInputFile().empty()) {
 		std::cout << "\033[31m" << "RonaScript: Error: No input file\n";
