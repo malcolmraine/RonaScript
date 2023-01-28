@@ -29,3 +29,34 @@ begin
     
 end // class Person
 ~~~
+
+## Compiling RonaScript From Source
+RonaScript can be built using a single build script, as it currently does not have any third-party dependencies.
+~~~
+./scripts/build.sh
+
+Usage: bash build.sh <command> [options...]
+  help,-h,--help            Show help.
+  -t, --target <option>     Specify the build target.
+      build                     Build RonaScript.
+      clean                     Clean the project.
+      install                   Install the project.
+      rebuild                   Rebuild the entire project.
+
+~~~
+From the project directory, run the following:
+~~~ commandline
+bash ./scripts/build.sh --target build
+~~~
+
+## Running RonaScript
+*Note: some options may not be available yet as this is in active development.*
+~~~
+Usage: RonaScript <file> [options...]
+  <file>              Input file (*.rn | *.rnc)
+  -c                  Compile to *.rnc file
+  -norun              Compile to *.rnc file without running
+  -v, -v              Show version information
+  -h, -h              Show help
+
+~~~
