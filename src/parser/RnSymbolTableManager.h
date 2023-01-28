@@ -1,0 +1,13 @@
+//
+// Created by Malcolm Hall on 1/27/23.
+//
+
+#ifndef RONASCRIPT_SRC_PARSER_RNSYMBOLTABLEMANAGER_H_
+#define RONASCRIPT_SRC_PARSER_RNSYMBOLTABLEMANAGER_H_
+
+class RnSymbolTableManager
+{
+
+};
+
+#endif //RONASCRIPT_SRC_PARSER_RNSYMBOLTABLEMANAGER_H_
