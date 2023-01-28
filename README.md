@@ -56,7 +56,7 @@ Usage: RonaScript <file> [options...]
   <file>              Input file (*.rn | *.rnc)
   -c                  Compile to *.rnc file
   -norun              Compile to *.rnc file without running
-  -v, -v              Show version information
-  -h, -h              Show help
+  -v, --version       Show version information
+  -h, --help          Show help
 
 ~~~

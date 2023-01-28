@@ -135,7 +135,7 @@ void ArgParser::ShowHelp()
 		std::string key_str = key;
 		for (const auto& alternate_key : argument->GetAlternateKeys())
 		{
-			key_str += ", " + key;
+			key_str += ", " + alternate_key;
 		}
 		help << "  " << String::Pad(key_str, 20, ' ')
 			 << argument->GetDescription() << "\n";
