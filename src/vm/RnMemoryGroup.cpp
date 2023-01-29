@@ -13,7 +13,7 @@
 RnMemoryGroup::RnMemoryGroup(RnMemoryGroup* parent)
 {
 	SetParent(parent);
-	_child_blocks.reserve(10);
+	_objects.reserve(10);
 	_child_groups.reserve(10);
 }
 
@@ -23,22 +23,10 @@ RnMemoryGroup::~RnMemoryGroup()
 
 }
 
-///*****************************************************************************/
-//RnMemoryBlock* RnMemoryGroup::GetBlockForObject(RnObject* obj)
-//{
-//	for (auto& block : _child_blocks)
-//	{
-//		if (block->GetStoredObject() == obj)
-//		{
-//			return block;
-//		}
-//	}
-//	return nullptr;
-//}
-
+/*****************************************************************************/
 std::vector<RnObject*> RnMemoryGroup::GetObjects() const
 {
-	return _child_blocks;
+	return _objects;
 }
 
 /*****************************************************************************/
@@ -58,9 +46,9 @@ void RnMemoryGroup::RemoveChildGroup(RnMemoryGroup* group)
 }
 
 /*****************************************************************************/
-void RnMemoryGroup::AddChildBlock(RnObject* block)
+void RnMemoryGroup::AddObject(RnObject* obj)
 {
-	_child_blocks.emplace_back(block);
+	_objects.emplace_back(obj);
 }
 
 /*****************************************************************************/
@@ -79,7 +67,6 @@ RnMemoryGroup* RnMemoryGroup::GetParent() const
 void RnMemoryGroup::SetParent(RnMemoryGroup* parent)
 {
 	_parent = parent;
-
 	if (parent)
 		_parent->AddChildGroup(this);
 }

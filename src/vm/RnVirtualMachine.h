@@ -24,30 +24,6 @@ class RnObject;
 class RnFunctionObject;
 class RnMemoryManager;
 
-//class RnNameSpace
-//{
-// public:
-//	explicit RnNameSpace(const std::string& name) : _name(name)
-//	{
-//
-//	}
-//
-//	~RnNameSpace() = default;
-//
-//	[[nodiscard]] RnScope* GetScope() const
-//	{
-//		return _scope;
-//	}
-//
-//	void SetScope(RnScope* scope)
-//	{
-//		_scope = scope;
-//	}
-//
-// private:
-//	RnScope* _scope = nullptr;
-//	std::string _name;
-//};
 
 class RnVirtualMachine
 {
@@ -102,8 +78,6 @@ class RnVirtualMachine
 	RnMemoryManager* _memory_manager;
 	size_t i_idx = 0;
 	size_t _gc_count = 0;
-	std::vector<State> _state_stack;
-//	RnObject* _state_parent = nullptr;
 };
 
 #endif //RONASCRIPT_RNVIRTUALMACHINE_H

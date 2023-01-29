@@ -133,8 +133,8 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	_gc_count++;
 	if (_gc_count > 1000)
 	{
-//		_memory_manager->GCMark();
-//		_memory_manager->GCSweep();
+		_memory_manager->GCMark();
+		_memory_manager->GCSweep();
 		_gc_count = 0;
 	}
 
@@ -147,7 +147,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a + b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -158,7 +158,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a - b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -169,7 +169,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a * b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -180,7 +180,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a / b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -191,7 +191,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a % b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -202,7 +202,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a >= b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -213,7 +213,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a <= b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -224,7 +224,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a > b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -235,7 +235,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a < b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -246,7 +246,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a == b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -257,7 +257,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a != b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -268,7 +268,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = CreateObject(std::pow(a->ToFloat(), b->ToFloat()));
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -279,7 +279,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a << b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -290,7 +290,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a >> b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -301,7 +301,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a | b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -312,7 +312,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a ^ b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -323,7 +323,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a & b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -334,7 +334,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a || b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -345,7 +345,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto a = GetStack().back();
 		GetStack().pop_back();
 		auto result = *a && b;
-		GetScope()->GetMemoryGroup()->AddChildBlock(result);
+		GetScope()->GetMemoryGroup()->AddObject(result);
 		GetStack().push_back(result);
 		break;
 	}
@@ -423,7 +423,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	{
 		auto value = RnObject::GetInternedInt(instruction->_arg1);
 		auto obj = CreateObject(value);
-		GetScope()->GetMemoryGroup()->AddChildBlock(obj);
+		GetScope()->GetMemoryGroup()->AddObject(obj);
 		GetStack().push_back(obj);
 		break;
 	}
@@ -431,7 +431,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	{
 		auto value = RnObject::GetInternedFloat(instruction->_arg1);
 		auto obj = CreateObject(value);
-		GetScope()->GetMemoryGroup()->AddChildBlock(obj);
+		GetScope()->GetMemoryGroup()->AddObject(obj);
 		GetStack().push_back(obj);
 		break;
 	}
@@ -439,7 +439,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	{
 		auto value = RnObject::GetInternedString(instruction->_arg1);
 		auto obj = CreateObject(value);
-		GetScope()->GetMemoryGroup()->AddChildBlock(obj);
+		GetScope()->GetMemoryGroup()->AddObject(obj);
 		GetStack().push_back(obj);
 		break;
 	}
@@ -456,7 +456,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 			auto class_obj = dynamic_cast<RnClass*>(_namespaces[name]);
 			auto instance =
 				dynamic_cast<RnClassObject*>(_memory_manager->CreateObject(RnType::RN_CLASS_INSTANCE));
-			GetScope()->GetMemoryGroup()->AddChildBlock(instance);
+			GetScope()->GetMemoryGroup()->AddObject(instance);
 			instance->GetScope()->SetParent(class_obj);
 			class_obj->CopySymbols(instance->GetScope());
 			instance->GetScope()->StoreObject("this", instance);
@@ -483,7 +483,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	{
 		auto value = static_cast<bool>(instruction->_arg1);
 		auto obj = new RnBoolObject(value);
-		GetScope()->GetMemoryGroup()->AddChildBlock(obj);
+		GetScope()->GetMemoryGroup()->AddObject(obj);
 		GetStack().push_back(obj);
 		break;
 	}
@@ -506,7 +506,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 
 		auto obj = _memory_manager->CreateObject(type);
 		obj->SetConstFlag(true);
-		GetScope()->GetMemoryGroup()->AddChildBlock(obj);
+		GetScope()->GetMemoryGroup()->AddObject(obj);
 		GetScope()->StoreObject(name, obj);
 		break;
 	}
@@ -521,13 +521,12 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		}
 
 		auto obj = _memory_manager->CreateObject(type);
-		GetScope()->GetMemoryGroup()->AddChildBlock(obj);
+		GetScope()->GetMemoryGroup()->AddObject(obj);
 		GetScope()->StoreObject(name, obj);
 		break;
 	}
 	case OP_MAKE_CLASS:
 	{
-		_state_stack.push_back(CLASS_DECLARATION);
 		auto name = RnObject::GetInternedString(instruction->_arg1);
 		auto obj = new RnClass(GetScope());
 		obj->SetName(name);
@@ -540,19 +539,14 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 			ExecuteInstruction(_instructions[index], break_scope, index);
 		}
 		index--;
-
-//		auto scope = _scopes.back();
-//		delete scope;
 		_scopes.pop_back();
-//		index += instruction->_arg2;
-		_state_stack.pop_back();
 		break;
 	}
 	case OP_MAKE_FUNC:
 	{
 		auto obj =
 			dynamic_cast<RnFunctionObject*>(_memory_manager->CreateObject(RnType::RN_FUNCTION));
-		GetScope()->GetMemoryGroup()->AddChildBlock(obj);
+		GetScope()->GetMemoryGroup()->AddObject(obj);
 		auto name = RnObject::GetInternedString(instruction->_arg1);
 		if (GetScope()->GetSymbolTable()->SymbolExists(name))
 		{
@@ -644,7 +638,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	{
 		break_scope = true;
 		auto obj = _memory_manager->CreateObject(RnType::RN_INT);
-		GetScope()->GetMemoryGroup()->AddChildBlock(obj);
+		GetScope()->GetMemoryGroup()->AddObject(obj);
 		obj->SetData(static_cast<RnIntNative>(instruction->_arg1));
 		GetStack().push_back(obj);
 		break;
@@ -698,12 +692,12 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	case OP_MAKE_ARRAY:
 	{
 		auto obj = new RnArrayObject();
-		GetScope()->GetMemoryGroup()->AddChildBlock(obj);
+		GetScope()->GetMemoryGroup()->AddObject(obj);
 
 		for (RnIntNative i = 0; i < instruction->_arg1; i++)
 		{
 			auto copy = RnObject::Copy(GetStack().back());
-			GetScope()->GetMemoryGroup()->AddChildBlock(copy);
+			GetScope()->GetMemoryGroup()->AddObject(copy);
 			obj->Append(copy);
 			GetStack().pop_back();
 		}
@@ -877,7 +871,7 @@ void RnVirtualMachine::RegisterBuiltins()
 		func->SetScope(GetScope());
 		auto obj =
 			dynamic_cast<RnFunctionObject*>(_memory_manager->CreateObject(RnType::RN_FUNCTION));
-		GetScope()->GetMemoryGroup()->AddChildBlock(obj);
+		GetScope()->GetMemoryGroup()->AddObject(obj);
 		obj->SetReturnType(std::get<2>(parts));
 		obj->SetData(func);
 		GetScope()->StoreObject(std::get<0>(parts), obj);

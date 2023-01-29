@@ -114,14 +114,14 @@ void RnMemoryManager::GCMark()
 /*****************************************************************************/
 void RnMemoryManager::GCSweep()
 {
-//	std::cout << "Current heap usage: " << _used_heap_blocks << std::endl;
-	size_t sweep_count = 0;
 	for (auto address : _heap)
 	{
 		if (!address->IsMarked())
 		{
-			sweep_count++;
 			_available_addresses.push_back(address);
+			_used_addresses.erase(std::find(_used_addresses.begin(),
+				_used_addresses.end(),
+				address));
 
 			switch (address->GetType())
 			{
@@ -158,9 +158,6 @@ void RnMemoryManager::GCSweep()
 			address->Unmark();
 		}
 	}
-
-//	std::cout << "Cleaned up " << sweep_count << " blocks" << std::endl;
-//	std::cout << "New heap usage: " << _used_heap_blocks << std::endl;
 }
 
 /*****************************************************************************/
@@ -172,9 +169,9 @@ void RnMemoryManager::SetRootMemoryGroup(RnMemoryGroup* group)
 /*****************************************************************************/
 void RnMemoryManager::GCMarkMemoryGroup(RnMemoryGroup* memory_group)
 {
-	for (auto& block : memory_group->GetObjects())
+	for (auto& obj : memory_group->GetObjects())
 	{
-		block->Mark();
+		obj->Mark();
 	}
 
 	for (auto& group : memory_group->GetChildGroups())
