@@ -82,9 +82,9 @@ void ArgParser::SetMainDescription(const std::string& description)
 }
 
 /*****************************************************************************/
-void ArgParser::AddArgument(const std::string& arg, const std::string& description,
-	bool has_value, const std::string& defaultValue,
-	const std::vector<std::string>& alternates)
+void ArgParser::AddArgument(const std::string& arg,
+	const std::vector<std::string>& alternates, const std::string& description,
+	bool has_value, const std::string& defaultValue)
 {
 	auto argument = std::make_shared<Argument>(arg, description, has_value);
 	_arguments[arg] = argument;
@@ -130,6 +130,7 @@ void ArgParser::ShowHelp()
 		{
 			continue;
 		}
+//../examples/Test.rn -past -ptok -pcode
 
 		auto argument = _arguments[key];
 		std::string key_str = key;
@@ -137,8 +138,9 @@ void ArgParser::ShowHelp()
 		{
 			key_str += ", " + alternate_key;
 		}
-		help << "  " << String::Pad(key_str, 20, ' ')
-			 << argument->GetDescription() << "\n";
+		help << "  " << String::Pad(key_str, 20, ' ') << argument->GetDescription()
+			 << "\n";
+		std::cout << "Creating help" << std::endl;
 	}
 
 	std::cout << help.str();

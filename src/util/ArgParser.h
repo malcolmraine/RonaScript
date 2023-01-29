@@ -35,7 +35,7 @@ class Argument
 	bool _is_set = false;
 	std::string _description;
 	bool _has_value = false;
-	std::vector<std::string> _alternates_keys;
+	std::vector<std::string> _alternates_keys{};
 };
 
 class ArgParser
@@ -43,9 +43,8 @@ class ArgParser
  public:
 	ArgParser();
 	void SetMainDescription(const std::string& description);
-	void AddArgument(const std::string& arg, const std::string& description,
-		bool has_value = false, const std::string& defaultValue = "",
-		const std::vector<std::string>& alternates = {});
+	void AddArgument(const std::string& arg, const std::vector<std::string>& alternates, const std::string& description,
+		bool has_value = false, const std::string& defaultValue = "");
 	[[nodiscard]] bool IsSet(const std::string& arg);
 	[[nodiscard]] std::string GetValue(const std::string& arg);
 	void ShowHelp();
@@ -53,11 +52,11 @@ class ArgParser
 	[[nodiscard]] std::string GetInputFile() const;
 
  private:
-	std::map<std::string, std::shared_ptr<Argument>> _arguments;
+	std::map<std::string, std::shared_ptr<Argument>> _arguments{};
 	std::string _main_description;
 	std::string _input_file;
-	std::unordered_set<std::string> _help_exclusions;
-	std::vector<std::string> _ordered_args;
+	std::unordered_set<std::string> _help_exclusions{};
+	std::vector<std::string> _ordered_args{};
 };
 
 #endif //RONASCRIPT_SRC_UTIL_ARGPARSER_H_
