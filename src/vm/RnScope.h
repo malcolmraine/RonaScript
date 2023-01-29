@@ -22,9 +22,9 @@ class RnScope
  public:
 	explicit RnScope(RnScope* parent);
 	virtual ~RnScope();
-	void StoreObject(const std::string& name, RnObject* value);
-	[[nodiscard]] RnObject* GetObject(const std::string& name);
-	void RemoveObject(const std::string& name);
+	void StoreObject(RnIntNative key, RnObject* value);
+	[[nodiscard]] RnObject* GetObject(RnIntNative key);
+	void RemoveObject(RnIntNative key);
 	[[nodiscard]] RnSymbolTable* GetSymbolTable();
 	[[nodiscard]] std::vector<RnObject*>& GetStack();
 	void SetParent(RnScope* scope);

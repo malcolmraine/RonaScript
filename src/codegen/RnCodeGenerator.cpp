@@ -12,10 +12,6 @@
 #include "../parser/ast/ScopeNode.h"
 #include "../parser/ast/Module.h"
 
-RnInternment<std::string> RnCodeGenerator::_string_internment;
-RnInternment<double> RnCodeGenerator::_float_internment;
-RnInternment<long> RnCodeGenerator::_int_internment;
-
 /*****************************************************************************/
 RnCodeGenerator::RnCodeGenerator()
 {

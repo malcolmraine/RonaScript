@@ -32,6 +32,8 @@
 #include "../util/MLib/StopWatch.h"
 
 RnVirtualMachine* RnVirtualMachine::_instance = nullptr;
+RnIntNative RnVirtualMachine::_object_this_key = 0;
+RnIntNative RnVirtualMachine::_object_construct_key = 0;
 
 /*****************************************************************************/
 RnVirtualMachine::RnVirtualMachine()
@@ -42,6 +44,8 @@ RnVirtualMachine::RnVirtualMachine()
 	AddScope();
 	_memory_manager->SetRootMemoryGroup(GetScope()->GetMemoryGroup());
 	RegisterBuiltins();
+	_object_this_key = RnObject::InternValue("this");
+	_object_construct_key = RnObject::InternValue("construct");
 }
 
 /*****************************************************************************/
@@ -109,7 +113,7 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt)
 
 		if (func->GetName() == "construct")
 		{
-			GetStack().push_back(func->GetScope()->GetObject("this"));
+			GetStack().push_back(func->GetScope()->GetObject(_object_this_key));
 		}
 		func->Reset();
 	}
@@ -356,7 +360,6 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto value = GetStack().back();
 		GetStack().pop_back();
 		obj->CopyDataFromObject(value);
-//		GetScope()->StoreObject(name->ToString(), value);
 		break;
 	}
 	case OP_POP:
@@ -366,8 +369,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	}
 	case OP_UNARY_NOT:
 	{
-		auto name = RnObject::GetInternedString(instruction->_arg1);
-		auto obj = GetScope()->GetObject(name);
+		auto obj = GetScope()->GetObject(instruction->_arg1);
 		obj->SetData(!obj->ToBool());
 		break;
 	}
@@ -389,15 +391,13 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	}
 	case OP_UNARY_DECREMENT:
 	{
-		auto name = RnObject::GetInternedString(instruction->_arg1);
-		auto obj = GetScope()->GetObject(name);
+		auto obj = GetScope()->GetObject(instruction->_arg1);
 		obj->SetData(obj->ToFloat() - 1);
 		break;
 	}
 	case OP_UNARY_INCREMENT:
 	{
-		auto name = RnObject::GetInternedString(instruction->_arg1);
-		auto obj = GetScope()->GetObject(name);
+		auto obj = GetScope()->GetObject(instruction->_arg1);
 		obj->SetData(obj->ToFloat() + 1);
 		break;
 	}
@@ -445,23 +445,23 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	}
 	case OP_LOAD_VALUE:
 	{
-		auto name = RnObject::GetInternedString(instruction->_arg1);
-		if (GetScope()->GetSymbolTable()->SymbolExists(name))
+		auto key = instruction->_arg1;
+		if (GetScope()->GetSymbolTable()->SymbolExists(instruction->_arg1))
 		{
-			auto object = GetScope()->GetObject(name);
+			auto object = GetScope()->GetObject(key);
 			GetStack().push_back(object);
 		}
-		else if (_namespaces.contains(name))
+		else if (_namespaces.contains(key))
 		{
-			auto class_obj = dynamic_cast<RnClass*>(_namespaces[name]);
+			auto class_obj = dynamic_cast<RnClass*>(_namespaces[key]);
 			auto instance =
 				dynamic_cast<RnClassObject*>(_memory_manager->CreateObject(RnType::RN_CLASS_INSTANCE));
 			GetScope()->GetMemoryGroup()->AddObject(instance);
 			instance->GetScope()->SetParent(class_obj);
 			class_obj->CopySymbols(instance->GetScope());
-			instance->GetScope()->StoreObject("this", instance);
+			instance->GetScope()->StoreObject(_object_this_key, instance);
 			auto func_obj =
-				dynamic_cast<RnFunctionObject*>(class_obj->GetObject("construct"));
+				dynamic_cast<RnFunctionObject*>(class_obj->GetObject(_object_construct_key));
 			auto func = func_obj->ToFunction();
 
 			func->SetScope(new RnScope(instance->GetScope()));
@@ -469,7 +469,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		}
 		else
 		{
-			throw std::runtime_error("Symbol does not exist: " + name);
+			throw std::runtime_error("Symbol does not exist: " + RnObject::GetInternedString(key));
 		}
 
 		break;
@@ -496,33 +496,29 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	}
 	case OP_MAKE_CONST:
 	{
-		auto type = static_cast<RnType::Type>(instruction->_arg1);
-		auto name = RnObject::GetInternedString(instruction->_arg2);
-
-		if (GetScope()->GetSymbolTable()->SymbolExists(name))
+		if (GetScope()->GetSymbolTable()->SymbolExists(instruction->_arg2))
 		{
-			throw std::runtime_error("Redeclaration of symbol '" + name + "'");
+			throw std::runtime_error("Redeclaration of symbol '" + RnObject::GetInternedString(instruction->_arg2) + "'");
 		}
 
+		auto type = static_cast<RnType::Type>(instruction->_arg1);
 		auto obj = _memory_manager->CreateObject(type);
 		obj->SetConstFlag(true);
 		GetScope()->GetMemoryGroup()->AddObject(obj);
-		GetScope()->StoreObject(name, obj);
+		GetScope()->StoreObject(instruction->_arg2, obj);
 		break;
 	}
 	case OP_MAKE_VAR:
 	{
-		auto type = static_cast<RnType::Type>(instruction->_arg1);
-		auto name = RnObject::GetInternedString(instruction->_arg2);
-
-		if (GetScope()->GetSymbolTable()->SymbolExists(name, false))
+		if (GetScope()->GetSymbolTable()->SymbolExists(instruction->_arg2, false))
 		{
-			throw std::runtime_error("Redeclaration of symbol '" + name + "'");
+			throw std::runtime_error("Redeclaration of symbol '" + RnObject::GetInternedString(instruction->_arg2) + "'");
 		}
 
+		auto type = static_cast<RnType::Type>(instruction->_arg1);
 		auto obj = _memory_manager->CreateObject(type);
 		GetScope()->GetMemoryGroup()->AddObject(obj);
-		GetScope()->StoreObject(name, obj);
+		GetScope()->StoreObject(instruction->_arg2, obj);
 		break;
 	}
 	case OP_MAKE_CLASS:
@@ -530,7 +526,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		auto name = RnObject::GetInternedString(instruction->_arg1);
 		auto obj = new RnClass(GetScope());
 		obj->SetName(name);
-		_namespaces[name] = obj;
+		_namespaces[instruction->_arg1] = obj;
 		_scopes.push_back(obj);
 		index++;
 		size_t stop_index = index + instruction->_arg2;
@@ -548,7 +544,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 			dynamic_cast<RnFunctionObject*>(_memory_manager->CreateObject(RnType::RN_FUNCTION));
 		GetScope()->GetMemoryGroup()->AddObject(obj);
 		auto name = RnObject::GetInternedString(instruction->_arg1);
-		if (GetScope()->GetSymbolTable()->SymbolExists(name))
+		if (GetScope()->GetSymbolTable()->SymbolExists(instruction->_arg1))
 		{
 			throw std::runtime_error("Redeclaration of symbol '" + name + "'");
 		}
@@ -562,13 +558,13 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		for (uint32_t i = 0; _instructions[i + index + 1]->_opcode == OP_MAKE_ARG; i++)
 		{
 			auto arg_instruction = _instructions[i + index + 1];
-			func->CreateArgument(RnObject::GetInternedString(arg_instruction->_arg2),
+			func->CreateArgument(arg_instruction->_arg2,
 				static_cast<RnType::Type>(arg_instruction->_arg1),
 				i);
 		}
 
 		index += instruction->_arg2 + func->GetICnt();
-		GetScope()->StoreObject(func->GetName(), obj);
+		GetScope()->StoreObject(instruction->_arg1, obj);
 		break;
 	}
 	case OP_MAKE_MODULE:
@@ -590,8 +586,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	}
 	case OP_DELETE:
 	{
-		auto name = RnObject::GetInternedString(instruction->_arg1);
-		GetScope()->GetSymbolTable()->RemoveSymbol(name);
+		GetScope()->GetSymbolTable()->RemoveSymbol(instruction->_arg1);
 		break;
 	}
 	case OP_NOP:
@@ -684,9 +679,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	}
 	case OP_MAKE_ALIAS:
 	{
-		auto alias = RnObject::GetInternedString(instruction->_arg2);
-		auto base = RnObject::GetInternedString(instruction->_arg1);
-		GetScope()->GetSymbolTable()->AliasSymbol(base, alias);
+		GetScope()->GetSymbolTable()->AliasSymbol(instruction->_arg1, instruction->_arg2);
 		break;
 	}
 	case OP_MAKE_ARRAY:
@@ -708,22 +701,21 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	{
 		auto object = dynamic_cast<RnClassObject*>(GetStack().back());
 		GetStack().pop_back();
-		auto name = RnObject::GetInternedString(instruction->_arg1);
 		auto scope = object->GetScope();
 		RnObject* result = nullptr;
-		if (scope->GetSymbolTable()->SymbolExists(name, false))
+		if (scope->GetSymbolTable()->SymbolExists(instruction->_arg1, false))
 		{
-			result = scope->GetObject(name);
+			result = scope->GetObject(instruction->_arg1);
 			GetStack().push_back(result);
 		}
-		else if (scope->GetParent()->GetSymbolTable()->SymbolExists(name, false))
+		else if (scope->GetParent()->GetSymbolTable()->SymbolExists(instruction->_arg1, false))
 		{
-			result = scope->GetParent()->GetObject(name);
+			result = scope->GetParent()->GetObject(instruction->_arg1);
 			GetStack().push_back(result);
 		}
 		else
 		{
-			throw std::runtime_error("Object has no attribute '" + name + "'");
+			throw std::runtime_error("Object has no attribute '" + RnObject::GetInternedString(instruction->_arg1) + "'");
 		}
 
 		// Only want to set "this" binding if the function is immediately called.
@@ -733,14 +725,14 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 			auto func = dynamic_cast<RnFunctionObject*>(result)->GetData();
 			if (_instructions[index + 1]->_opcode == OP_CALL)
 			{
-				func->GetScope()->GetSymbolTable()->SetSymbol("this", object);
+				func->GetScope()->GetSymbolTable()->SetSymbol(_object_this_key, object);
 			}
 			else
 			{
 				auto symbol_table = func->GetScope()->GetSymbolTable();
-				if (symbol_table->SymbolExists("this"))
+				if (symbol_table->SymbolExists(_object_this_key))
 				{
-					symbol_table->RemoveSymbol("this");
+					symbol_table->RemoveSymbol(_object_this_key);
 				}
 			}
 		}
@@ -748,9 +740,8 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	}
 	case OP_RESOLVE_NAMESPACE:
 		// TODO: Fix this so that it pushes the correct object onto the stack
-		auto name = RnObject::GetInternedString(instruction->_arg1);
-		auto nspace = _namespaces[name];
-		GetStack().push_back(nspace->GetObject(name));
+		auto nspace = _namespaces[instruction->_arg1];
+		GetStack().push_back(nspace->GetObject(instruction->_arg1));
 		break;
 	}
 }
@@ -760,7 +751,6 @@ RnIntNative RnVirtualMachine::Run()
 {
 	bool has_returned = false; // Placeholder
 	auto stopwatch = StopWatch();
-//	std::cout << "\n======================================================\n\n";
 
 	stopwatch.Start();
 	while (i_idx < _instructions.size())
@@ -774,11 +764,8 @@ RnIntNative RnVirtualMachine::Run()
 	}
 	stopwatch.Stop();
 
-//	std::cout << "\n======================================================\n";
 	std::cout << "\nRuntime duration: " << stopwatch.Duration() << std::endl;
 	return GetStack().back()->ToInt();
-//	std::cout << "Heap size: "
-//			  << _memory_manager->GetHeapCount() * sizeof(RnObject) * 2;
 }
 
 /*****************************************************************************/
@@ -874,8 +861,7 @@ void RnVirtualMachine::RegisterBuiltins()
 		GetScope()->GetMemoryGroup()->AddObject(obj);
 		obj->SetReturnType(std::get<2>(parts));
 		obj->SetData(func);
-		GetScope()->StoreObject(std::get<0>(parts), obj);
+		GetScope()->StoreObject(RnObject::InternValue(std::get<0>(parts)), obj);
 	}
-
 }
 

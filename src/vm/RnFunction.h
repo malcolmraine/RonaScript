@@ -32,11 +32,11 @@ class RnFunction
 	void SetScope(RnScope* scope);
 	[[nodiscard]] virtual bool IsBuiltIn() const;
 	virtual void Call(const std::vector<RnObject*>& args, RnObject* ret_val);
-	void CreateArgument(const std::string& name, RnType::Type type, size_t index);
+	void CreateArgument(RnIntNative key, RnType::Type type, size_t index);
 	void PassArguments(const std::vector<RnObject*>& args);
 
  private:
-	std::unordered_map<size_t, std::string> _argument_index_map;
+	std::unordered_map<size_t, RnIntNative> _argument_index_map;
 	std::string _name;
 	long _i_start = -1;
 	long _i_cnt = -1;

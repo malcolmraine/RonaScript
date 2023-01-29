@@ -87,12 +87,12 @@ void RnFunction::Call(const std::vector<RnObject*>& args, RnObject* ret_val)
 }
 
 /*****************************************************************************/
-void RnFunction::CreateArgument(const std::string& name, RnType::Type type,
+void RnFunction::CreateArgument(RnIntNative key, RnType::Type type,
 	size_t index)
 {
 	auto obj = RnObject::Create(type);
-	_argument_scope->StoreObject(name, obj);
-	_argument_index_map[index] = name;
+	_argument_scope->StoreObject(key, obj);
+	_argument_index_map[index] = key;
 }
 
 /*****************************************************************************/

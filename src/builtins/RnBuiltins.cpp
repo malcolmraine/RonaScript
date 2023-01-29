@@ -45,7 +45,7 @@ void RnBuiltins::rn_builtin_unpack(RnScope* scope, const std::vector<RnObject*>&
 void RnBuiltins::rn_builtin_call(RnScope* scope, const std::vector<RnObject*>& args,
 	RnObject* ret_val)
 {
-	auto obj = scope->GetObject(args.front()->ToString());
+	auto obj = scope->GetObject(RnObject::InternValue(args.front()->ToString()));
 	auto func_obj = dynamic_cast<RnFunctionObject*>(obj);
 	auto func = func_obj->GetData();
 	std::vector<RnObject*> callArgs(args.begin() + 1, args.end());
@@ -103,6 +103,6 @@ void RnBuiltins::rn_builtin_bind(RnScope* scope, const std::vector<RnObject*>& a
 	{
 		name = args[2]->ToString();
 	}
-	func->GetData()->GetScope()->StoreObject(name, obj);
+	func->GetData()->GetScope()->StoreObject(RnObject::InternValue(name), obj);
 	ret_val->SetData(func->GetData());
 }

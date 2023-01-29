@@ -13,6 +13,7 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include "RnType.h"
 
 class RnMemoryGroup;
 
@@ -23,21 +24,21 @@ class RnSymbolTable
  public:
 	explicit RnSymbolTable(RnSymbolTable* parent_table = nullptr);
 	~RnSymbolTable();
-	bool SetSymbol(const std::string& symbol, RnObject* obj);
-	RnObject* GetObject(const std::string& symbol);
-	void RemoveSymbol(const std::string& symbol);
-	void AliasSymbol(const std::string& base, const std::string& alias);
-	[[nodiscard]] bool SymbolExists(const std::string& symbol,
+	bool SetSymbol(RnIntNative symbol, RnObject* obj);
+	RnObject* GetObject(RnIntNative symbol);
+	void RemoveSymbol(RnIntNative symbol);
+	void AliasSymbol(RnIntNative base, RnIntNative alias);
+	[[nodiscard]] bool SymbolExists(RnIntNative key,
 		bool search_parent = true) const;
 	void SetMemoryGroup(RnMemoryGroup* group);
 	void SetParent(RnSymbolTable* parent);
 	[[nodiscard]] RnSymbolTable* GetParent() const;
-	std::vector<std::string> GetSymbols() const;
+	[[nodiscard]] std::vector<RnIntNative> GetSymbols() const;
 
  private:
 	RnSymbolTable* _parent_table = nullptr;
 	RnMemoryGroup* _memory_group = nullptr;
-	std::unordered_map<std::string, RnObject*> _table;
+	std::unordered_map<RnIntNative, RnObject*> _table;
 
 };
 

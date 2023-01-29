@@ -50,21 +50,21 @@ RnScope::~RnScope()
 }
 
 /*****************************************************************************/
-void RnScope::StoreObject(const std::string& name, RnObject* value)
+void RnScope::StoreObject(RnIntNative key, RnObject* value)
 {
-	_symbolTable.SetSymbol(name, value);
+	_symbolTable.SetSymbol(key, value);
 }
 
 /*****************************************************************************/
-RnObject* RnScope::GetObject(const std::string& name)
+RnObject* RnScope::GetObject(RnIntNative key)
 {
-	return _symbolTable.GetObject(name);
+	return _symbolTable.GetObject(key);
 }
 
 /*****************************************************************************/
-void RnScope::RemoveObject(const std::string& name)
+void RnScope::RemoveObject(RnIntNative key)
 {
-	_symbolTable.RemoveSymbol(name);
+	_symbolTable.RemoveSymbol(key);
 }
 
 /*****************************************************************************/
@@ -140,22 +140,22 @@ void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library,
 				dynamic_cast<RnFunctionObject*>(RnObject::Create(RnType::RN_FUNCTION));
 			obj->SetReturnType(std::get<1>(info));
 			obj->SetData(func);
-			scope->StoreObject(name, obj);
+			scope->StoreObject(RnObject::InternValue(name), obj);
 		}
 
 		if (add_data)
 		{
 			auto name_list = RnObject::Create(RnType::RN_ARRAY);
 			name_list->SetData(function_names);
-			scope->StoreObject("__exports__", name_list);
+			scope->StoreObject(RnObject::InternValue("__exports__"), name_list);
 
 			auto name_obj = RnObject::Create(RnType::RN_STRING);
 			name_obj->SetData(static_cast<std::string>(LibraryName()));
-			scope->StoreObject("__name__", name_obj);
+			scope->StoreObject(RnObject::InternValue("__name__"), name_obj);
 
 			auto version_obj = RnObject::Create(RnType::RN_STRING);
 			version_obj->SetData(static_cast<std::string>(LibraryVersion()));
-			scope->StoreObject("__version__", version_obj);
+			scope->StoreObject(RnObject::InternValue("__version__"), version_obj);
 		}
 	}
 	else

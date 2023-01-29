@@ -73,11 +73,13 @@ class RnVirtualMachine
 	RnInternment<long> _int_internment;
 	std::vector<RnScope*> _scopes;
 	std::vector<RnScope*> _call_stack;
-	std::unordered_map<std::string, RnScope*> _namespaces;
+	std::unordered_map<RnIntNative, RnScope*> _namespaces;
 	std::vector<RnInstruction*> _instructions;
 	RnMemoryManager* _memory_manager;
 	size_t i_idx = 0;
 	size_t _gc_count = 0;
+	static RnIntNative _object_this_key;
+	static RnIntNative _object_construct_key;
 };
 
 #endif //RONASCRIPT_RNVIRTUALMACHINE_H

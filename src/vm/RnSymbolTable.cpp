@@ -24,9 +24,9 @@ RnSymbolTable::~RnSymbolTable()
 }
 
 /*****************************************************************************/
-bool RnSymbolTable::SetSymbol(const std::string& symbol, RnObject* obj)
+bool RnSymbolTable::SetSymbol(RnIntNative symbol, RnObject* obj)
 {
-	if (_table.find(symbol) != _table.end())
+	if (_table.contains(symbol))
 	{
 		_table[symbol] = obj;
 		return true;
@@ -44,7 +44,7 @@ bool RnSymbolTable::SetSymbol(const std::string& symbol, RnObject* obj)
 }
 
 /*****************************************************************************/
-RnObject* RnSymbolTable::GetObject(const std::string& symbol)
+RnObject* RnSymbolTable::GetObject(RnIntNative symbol)
 {
 	auto iter = _table.find(symbol);
 	if (iter != _table.end())
@@ -57,12 +57,12 @@ RnObject* RnSymbolTable::GetObject(const std::string& symbol)
 	}
 	else
 	{
-		throw std::runtime_error("Symbol not found: " + symbol);
+		throw std::runtime_error("Symbol not found: " + RnObject::GetInternedString(symbol));
 	}
 }
 
 /*****************************************************************************/
-void RnSymbolTable::RemoveSymbol(const std::string& symbol)
+void RnSymbolTable::RemoveSymbol(RnIntNative symbol)
 {
 	auto iter = _table.find(symbol);
 	if (iter != _table.end())
@@ -76,27 +76,27 @@ void RnSymbolTable::RemoveSymbol(const std::string& symbol)
 	else
 	{
 		throw std::runtime_error(
-			"Attempting to delete unknown symbol '" + symbol + "'");
+			"Attempting to delete unknown symbol '" + RnObject::GetInternedString(symbol) + "'");
 	}
 }
 
 /*****************************************************************************/
-void RnSymbolTable::AliasSymbol(const std::string& base, const std::string& alias)
+void RnSymbolTable::AliasSymbol(RnIntNative base, RnIntNative alias)
 {
 	auto obj = GetObject(base);
 	_table[alias] = obj;
 }
 
 /*****************************************************************************/
-bool RnSymbolTable::SymbolExists(const std::string& symbol, bool search_parent) const
+bool RnSymbolTable::SymbolExists(RnIntNative key, bool search_parent) const
 {
-	if (_table.contains(symbol))
+	if (_table.contains(key))
 	{
 		return true;
 	}
 	else if (_parent_table && search_parent)
 	{
-		return _parent_table->SymbolExists(symbol);
+		return _parent_table->SymbolExists(key);
 	}
 	return false;
 }
@@ -121,9 +121,9 @@ RnSymbolTable* RnSymbolTable::GetParent() const
 }
 
 /*****************************************************************************/
-std::vector<std::string> RnSymbolTable::GetSymbols() const
+std::vector<RnIntNative> RnSymbolTable::GetSymbols() const
 {
-	std::vector<std::string> result;
+	std::vector<RnIntNative> result;
 	result.reserve(_table.size());
 	for (const auto& pair : _table)
 	{
