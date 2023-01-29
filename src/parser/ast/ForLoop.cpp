@@ -31,13 +31,23 @@ std::string ForLoop::ToString(bool nl)
 	{
 		output += "\n";
 	}
-	init->nest_lvl = nest_lvl + 1;
-	test->nest_lvl = nest_lvl + 1;
-	update->nest_lvl = nest_lvl + 1;
+
+	if (init)
+	{
+		init->nest_lvl = nest_lvl + 1;
+		output += init->ToString(nl);
+	}
+	if (test)
+	{
+		test->nest_lvl = nest_lvl + 1;
+		output += test->ToString(nl);
+	}
+	if (update)
+	{
+		update->nest_lvl = nest_lvl + 1;
+		output += update->ToString(nl);
+	}
 	scope->nest_lvl = nest_lvl + 1;
-	output += init->ToString(nl);
-	output += test->ToString(nl);
-	output += update->ToString(nl);
 	output += scope->ToString(nl);
 
 	return output;

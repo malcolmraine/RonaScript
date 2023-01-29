@@ -194,14 +194,18 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ForLoop* node)
 	test.push_back(new RnInstruction(OP_JUMPF_IF, scope.size() + update.size() + 2));
 	scope.insert(scope.begin(), test.begin(), test.end());
 	WrapContext(scope);
-
 	instructions.reserve(scope.size() + test.size() + init.size() + update.size());
 
-	instructions.insert(instructions.end(), init.begin(), init.end());
-//	instructions.insert(instructions.end(), test.begin(), test.end());
-//	instructions.emplace_back(new RnInstruction(OP_JUMPF_IF, test.size() + scope.size() + update.size() + 1));
+	if (!init.empty())
+	{
+		instructions.insert(instructions.end(), init.begin(), init.end());
+	}
 	instructions.insert(instructions.end(), scope.begin(), scope.end());
-	instructions.insert(instructions.end(), update.begin(), update.end());
+
+	if (!update.empty())
+	{
+		instructions.insert(instructions.end(), update.begin(), update.end());
+	}
 	instructions.emplace_back(new RnInstruction(OP_JUMPB,
 		scope.size() + update.size()));
 	WrapContext(instructions);

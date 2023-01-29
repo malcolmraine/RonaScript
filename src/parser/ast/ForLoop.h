@@ -23,7 +23,7 @@ class ForLoop : public AstNode
 	~ForLoop();
 	std::string ToString(bool nl) override;
 
-	std::shared_ptr<VarDecl> init = nullptr;
+	std::shared_ptr<AstNode> init = nullptr;
 	std::shared_ptr<AstNode> test = nullptr;
 	std::shared_ptr<AstNode> update = nullptr;
 	std::shared_ptr<ScopeNode> scope = nullptr;
