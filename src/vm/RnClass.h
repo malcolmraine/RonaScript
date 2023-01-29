@@ -30,8 +30,17 @@ class RnClass : public RnScope
 		_name = name;
 	}
 
+	[[nodiscard]] bool IsModule() const {
+		return _is_module;
+	}
+
+	void SetIsModule(bool flag) {
+		_is_module = flag;
+	}
+
  private:
 	std::string _name;
+	bool _is_module = false;
 };
 
 #endif //RONASCRIPT_RNCLASS_H

@@ -67,6 +67,17 @@ class RnClassObject : public RnObjectBase<RnScope*>
 		return RnType::RN_OBJECT;
 	}
 
+	[[nodiscard]] bool IsModule() const {
+		return _is_module;
+	}
+
+	void SetIsModule(bool flag) {
+		_is_module = flag;
+	}
+
+ private:
+	bool _is_module = false;
+
 };
 
 #endif //RONASCRIPT_VM_RNCLASSOBJECT_H_

@@ -454,14 +454,20 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		else if (_namespaces.contains(key))
 		{
 			auto class_obj = dynamic_cast<RnClass*>(_namespaces[key]);
+			if (class_obj->IsModule())
+			{
+				throw std::runtime_error(
+					"Cannot instantiate module '" + class_obj->GetName() + "'");
+			}
+
 			auto instance =
 				dynamic_cast<RnClassObject*>(_memory_manager->CreateObject(RnType::RN_CLASS_INSTANCE));
 			GetScope()->GetMemoryGroup()->AddObject(instance);
 			instance->GetScope()->SetParent(class_obj);
 			class_obj->CopySymbols(instance->GetScope());
 			instance->GetScope()->StoreObject(_object_this_key, instance);
-			auto func_obj =
-				dynamic_cast<RnFunctionObject*>(class_obj->GetObject(_object_construct_key));
+			auto func_obj = dynamic_cast<RnFunctionObject*>(class_obj->GetObject(
+				_object_construct_key));
 			auto func = func_obj->ToFunction();
 
 			func->SetScope(new RnScope(instance->GetScope()));
@@ -469,7 +475,8 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		}
 		else
 		{
-			throw std::runtime_error("Symbol does not exist: " + RnObject::GetInternedString(key));
+			throw std::runtime_error(
+				"Symbol does not exist: " + RnObject::GetInternedString(key));
 		}
 
 		break;
@@ -498,7 +505,8 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	{
 		if (GetScope()->GetSymbolTable()->SymbolExists(instruction->_arg2))
 		{
-			throw std::runtime_error("Redeclaration of symbol '" + RnObject::GetInternedString(instruction->_arg2) + "'");
+			throw std::runtime_error("Redeclaration of symbol '"
+				+ RnObject::GetInternedString(instruction->_arg2) + "'");
 		}
 
 		auto type = static_cast<RnType::Type>(instruction->_arg1);
@@ -512,7 +520,8 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	{
 		if (GetScope()->GetSymbolTable()->SymbolExists(instruction->_arg2, false))
 		{
-			throw std::runtime_error("Redeclaration of symbol '" + RnObject::GetInternedString(instruction->_arg2) + "'");
+			throw std::runtime_error("Redeclaration of symbol '"
+				+ RnObject::GetInternedString(instruction->_arg2) + "'");
 		}
 
 		auto type = static_cast<RnType::Type>(instruction->_arg1);
@@ -521,13 +530,31 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		GetScope()->StoreObject(instruction->_arg2, obj);
 		break;
 	}
+	case OP_MAKE_MODULE:
+	{
+		auto name = RnObject::GetInternedString(instruction->_arg1);
+		auto obj = static_cast<RnClassObject*>(RnObject::Create(RnType::RN_CLASS_INSTANCE));
+//		auto obj = new RnClass(GetScope()); // TODO: use memory manager for this
+		obj->SetIsModule(true);
+//		obj->SetName(name);
+		_namespaces[instruction->_arg1] = obj;
+		_scopes.push_back(obj->ToObject());
+		index++;
+		size_t stop_index = index + instruction->_arg2;
+		for (; index < stop_index; index++)
+		{
+			ExecuteInstruction(_instructions[index], break_scope, index);
+		}
+		index--;
+		_scopes.pop_back();
+		break;
+	}
 	case OP_MAKE_CLASS:
 	{
 		auto name = RnObject::GetInternedString(instruction->_arg1);
-		auto obj = new RnClass(GetScope());
-		obj->SetName(name);
+		auto obj = static_cast<RnClassObject*>(RnObject::Create(RnType::RN_CLASS_INSTANCE));
 		_namespaces[instruction->_arg1] = obj;
-		_scopes.push_back(obj);
+		_scopes.push_back(obj->ToObject());
 		index++;
 		size_t stop_index = index + instruction->_arg2;
 		for (; index < stop_index; index++)
@@ -567,11 +594,12 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		GetScope()->StoreObject(instruction->_arg1, obj);
 		break;
 	}
-	case OP_MAKE_MODULE:
-	{
-
-		break;
-	}
+//	case OP_MAKE_MODULE:
+//	{
+//		auto obj = new RnClass(GetScope());
+//		obj->
+//		break;
+//	}
 	case OP_CREATE_CONTEXT:
 	{
 		AddScope();
@@ -679,7 +707,8 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	}
 	case OP_MAKE_ALIAS:
 	{
-		GetScope()->GetSymbolTable()->AliasSymbol(instruction->_arg1, instruction->_arg2);
+		GetScope()->GetSymbolTable()->AliasSymbol(instruction->_arg1,
+			instruction->_arg2);
 		break;
 	}
 	case OP_MAKE_ARRAY:
@@ -708,14 +737,16 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 			result = scope->GetObject(instruction->_arg1);
 			GetStack().push_back(result);
 		}
-		else if (scope->GetParent()->GetSymbolTable()->SymbolExists(instruction->_arg1, false))
+		else if (scope->GetParent()->GetSymbolTable()->SymbolExists(instruction->_arg1,
+			false))
 		{
 			result = scope->GetParent()->GetObject(instruction->_arg1);
 			GetStack().push_back(result);
 		}
 		else
 		{
-			throw std::runtime_error("Object has no attribute '" + RnObject::GetInternedString(instruction->_arg1) + "'");
+			throw std::runtime_error("Object has no attribute '"
+				+ RnObject::GetInternedString(instruction->_arg1) + "'");
 		}
 
 		// Only want to set "this" binding if the function is immediately called.
@@ -741,7 +772,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	case OP_RESOLVE_NAMESPACE:
 		// TODO: Fix this so that it pushes the correct object onto the stack
 		auto nspace = _namespaces[instruction->_arg1];
-		GetStack().push_back(nspace->GetObject(instruction->_arg1));
+		GetStack().push_back(nspace->ToObject()->GetObject(instruction->_arg2));
 		break;
 	}
 }
@@ -785,27 +816,32 @@ RnVirtualMachine* RnVirtualMachine::GetInstance()
 }
 
 /*****************************************************************************/
-RnObject* RnVirtualMachine::CreateObject(RnType::Type type) {
+RnObject* RnVirtualMachine::CreateObject(RnType::Type type)
+{
 	return _memory_manager->CreateObject(type);
 }
 
 /*****************************************************************************/
-RnObject*  RnVirtualMachine::CreateObject(RnStringNative data) {
+RnObject* RnVirtualMachine::CreateObject(RnStringNative data)
+{
 	return _memory_manager->Create(std::move(data));
 }
 
 /*****************************************************************************/
-RnObject*  RnVirtualMachine::CreateObject(RnBoolNative data) {
+RnObject* RnVirtualMachine::CreateObject(RnBoolNative data)
+{
 	return _memory_manager->Create(data);
 }
 
 /*****************************************************************************/
-RnObject*  RnVirtualMachine::CreateObject(RnIntNative data) {
+RnObject* RnVirtualMachine::CreateObject(RnIntNative data)
+{
 	return _memory_manager->Create(data);
 }
 
 /*****************************************************************************/
-RnObject*  RnVirtualMachine::CreateObject(RnFloatNative data) {
+RnObject* RnVirtualMachine::CreateObject(RnFloatNative data)
+{
 	return _memory_manager->Create(data);
 }
 
