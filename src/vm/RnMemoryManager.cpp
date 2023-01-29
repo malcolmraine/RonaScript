@@ -8,7 +8,6 @@
 ******************************************************************************/
 
 #include "RnMemoryManager.h"
-
 #include <utility>
 #include "RnBoolObject.h"
 #include "RnFunctionObject.h"
@@ -25,7 +24,6 @@
 /*****************************************************************************/
 RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr))
 {
-//	GrowHeap(DEFAULT_MAX_HEAP_SIZE);
 	_block_size =
 		std::max({ sizeof(RnArrayObject), sizeof(RnIntObject), sizeof(RnFunctionObject),
 				   sizeof(RnFloatObject), sizeof(RnBoolObject),
@@ -55,20 +53,20 @@ RnObject* RnMemoryManager::CreateObject(RnType::Type type)
 	switch (type)
 	{
 	case RnType::RN_BOOLEAN:
-		return new(address) RnBoolObject();
+		return std::construct_at<RnBoolObject>(reinterpret_cast<RnBoolObject*>(address));
 	case RnType::RN_STRING:
-		return new(address) RnStringObject();
+		return std::construct_at<RnStringObject>(reinterpret_cast<RnStringObject*>(address));
 	case RnType::RN_FLOAT:
-		return new(address) RnFloatObject();
+		return std::construct_at<RnFloatObject>(reinterpret_cast<RnFloatObject*>(address));
 	case RnType::RN_INT:
-		return new(address) RnIntObject();
+		return std::construct_at<RnIntObject>(reinterpret_cast<RnIntObject*>(address));
 	case RnType::RN_ARRAY:
-		return new(address) RnArrayObject();
+		return std::construct_at<RnArrayObject>(reinterpret_cast<RnArrayObject*>(address));
 	case RnType::RN_FUNCTION:
-		return new(address) RnFunctionObject();
+		return std::construct_at<RnFunctionObject>(reinterpret_cast<RnFunctionObject*>(address));
 	case RnType::RN_CLASS_INSTANCE:
 	case RnType::RN_OBJECT:
-		return new(address) RnClassObject();
+		return std::construct_at<RnClassObject>(reinterpret_cast<RnClassObject*>(address));
 	case RnType::RN_NULL:
 	case RnType::RN_UNKNOWN:
 		return nullptr;
@@ -118,17 +116,46 @@ void RnMemoryManager::GCSweep()
 {
 //	std::cout << "Current heap usage: " << _used_heap_blocks << std::endl;
 	size_t sweep_count = 0;
-	for (auto block : _heap)
+	for (auto address : _heap)
 	{
-		if (!block->IsMarked())
+		if (!address->IsMarked())
 		{
 			sweep_count++;
-			_available_addresses.push_back(block);
-			std::destroy_at(block);
+			_available_addresses.push_back(address);
+
+			switch (address->GetType())
+			{
+			case RnType::RN_BOOLEAN:
+				std::destroy_at<RnBoolObject>(reinterpret_cast<RnBoolObject*>(address));
+				break;
+			case RnType::RN_STRING:
+				std::destroy_at<RnStringObject>(reinterpret_cast<RnStringObject*>(address));
+				break;
+			case RnType::RN_FLOAT:
+				std::destroy_at<RnFloatObject>(reinterpret_cast<RnFloatObject*>(address));
+				break;
+			case RnType::RN_INT:
+				std::destroy_at<RnIntObject>(reinterpret_cast<RnIntObject*>(address));
+				break;
+			case RnType::RN_ARRAY:
+				std::destroy_at<RnArrayObject>(reinterpret_cast<RnArrayObject*>(address));
+				break;
+			case RnType::RN_FUNCTION:
+				std::destroy_at<RnFunctionObject>(reinterpret_cast<RnFunctionObject*>(address));
+				break;
+			case RnType::RN_CLASS_INSTANCE:
+			case RnType::RN_OBJECT:
+				std::destroy_at<RnClassObject>(reinterpret_cast<RnClassObject*>(address));
+				break;
+			case RnType::RN_NULL:
+			case RnType::RN_UNKNOWN:
+				std::destroy_at<RnObject>(reinterpret_cast<RnObject*>(address));
+				break;
+			}
 		}
 		else
 		{
-			block->Unmark();
+			address->Unmark();
 		}
 	}
 
@@ -159,8 +186,9 @@ void RnMemoryManager::GCMarkMemoryGroup(RnMemoryGroup* memory_group)
 /*****************************************************************************/
 void RnMemoryManager::GrowAllocation(size_t size)
 {
-	auto* block = (char*)malloc(size);
-	if (block == nullptr) {
+	auto* block = static_cast<char*>(malloc(size));
+	if (block == nullptr)
+	{
 		throw std::runtime_error("Out of memory.");
 	}
 	_allocations.push_back(block);
