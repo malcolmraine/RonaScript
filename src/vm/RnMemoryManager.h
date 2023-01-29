@@ -49,7 +49,7 @@ class RnMemoryManager
 
  private:
 	std::vector<RnObject*> _heap;
-	std::vector<RnObject*> _allocations; // Larger blocks of memory
+	std::vector<char*> _allocations; // Larger blocks of memory
 	size_t _block_size = 0;
 	size_t _allocation_size = 0;
 	std::vector<RnObject*> _available_addresses;

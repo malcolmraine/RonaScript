@@ -159,7 +159,7 @@ void RnMemoryManager::GCMarkMemoryGroup(RnMemoryGroup* memory_group)
 /*****************************************************************************/
 void RnMemoryManager::GrowAllocation(size_t size)
 {
-	auto* block = (RnObject*)malloc(size);
+	auto* block = (char*)malloc(size);
 	if (block == nullptr) {
 		throw std::runtime_error("Out of memory.");
 	}
