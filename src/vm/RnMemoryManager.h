@@ -34,11 +34,11 @@ class RnMemoryManager
 	RnObject* Create(RnIntNative data);
 	RnObject* Create(RnFloatNative data);
 
-	void AddObject(RnMemoryGroup* parent_group, RnObject* obj);
-	[[nodiscard]] size_t GetHeapCount() const;
-	[[nodiscard]] int GetHeapUsedCount() const;
-	size_t GrowHeap(size_t size);
-	RnMemoryBlock* FindFirstFree(bool start_at_last_block = true);
+//	void AddObject(RnMemoryGroup* parent_group, RnObject* obj);
+//	[[nodiscard]] size_t GetHeapCount() const;
+//	[[nodiscard]] int GetHeapUsedCount() const;
+//	size_t GrowHeap(size_t size);
+//	RnMemoryBlock* FindFirstFree(bool start_at_last_block = true);
 	void GCMark();
 	void GCSweep();
 	void SetRootMemoryGroup(RnMemoryGroup* group);
@@ -48,16 +48,15 @@ class RnMemoryManager
 	void GrowAllocation(size_t size);
 
  private:
-	bool _gc_enabled = true;
-	std::vector<RnMemoryBlock> _heap;
-	std::vector<char*> _allocations;
+	std::vector<RnObject*> _heap;
+	std::vector<RnObject*> _allocations; // Larger blocks of memory
 	size_t _block_size = 0;
 	size_t _allocation_size = 0;
-	std::vector<char*> _available_addresses;
-	std::vector<char*> _used_addresses;
-	size_t _used_heap_blocks = 0;
-	size_t _heap_node_cnt = 0;
-	size_t _last_free_index = 0;
+	std::vector<RnObject*> _available_addresses;
+	std::vector<RnObject*> _used_addresses;
+	size_t _used_heap_blocks = 0; // REMOVE
+	size_t _heap_node_cnt = 0; // REMOVE
+	size_t _last_free_index = 0; // REMOVE
 //	size_t _max_heap_size = DEFAULT_MAX_HEAP_SIZE;
 
 	RnMemoryGroup* root_memory_group;

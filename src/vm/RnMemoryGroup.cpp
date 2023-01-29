@@ -36,7 +36,7 @@ RnMemoryGroup::~RnMemoryGroup()
 //	return nullptr;
 //}
 
-std::vector<RnMemoryBlock*> RnMemoryGroup::GetChildBlocks() const
+std::vector<RnObject*> RnMemoryGroup::GetObjects() const
 {
 	return _child_blocks;
 }
@@ -58,7 +58,7 @@ void RnMemoryGroup::RemoveChildGroup(RnMemoryGroup* group)
 }
 
 /*****************************************************************************/
-void RnMemoryGroup::AddChildBlock(RnMemoryBlock* block)
+void RnMemoryGroup::AddChildBlock(RnObject* block)
 {
 	_child_blocks.emplace_back(block);
 }

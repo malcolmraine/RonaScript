@@ -19,11 +19,11 @@ class RnMemoryGroup
 	explicit RnMemoryGroup(RnMemoryGroup* parent);
 	~RnMemoryGroup();
 //	RnMemoryBlock* GetBlockForObject(RnObject* obj);
-	[[nodiscard]] std::vector<RnMemoryBlock*> GetChildBlocks() const;
+	[[nodiscard]] std::vector<RnObject*> GetObjects() const;
 	[[nodiscard]] std::vector<RnMemoryGroup*> GetChildGroups() const;
 	void RemoveChildGroup(RnMemoryGroup* group);
 
-	void AddChildBlock(RnMemoryBlock* block);
+	void AddChildBlock(RnObject* block);
 	void AddChildGroup(RnMemoryGroup* child);
 	[[nodiscard]] RnMemoryGroup* GetParent() const;
 	void SetParent(RnMemoryGroup* parent);
@@ -31,7 +31,7 @@ class RnMemoryGroup
  private:
 	RnMemoryGroup* _parent;
 	std::vector<RnMemoryGroup*> _child_groups;
-	std::vector<RnMemoryBlock*> _child_blocks;
+	std::vector<RnObject*> _child_blocks;
 
 };
 

@@ -75,35 +75,35 @@ class RnObject
 	static RnObject* Copy(RnObject* obj);
 	virtual void SetConstFlag(bool flag) = 0;
 
-//	void Mark() {
-//		_is_marked = true;
-//	}
-//
-//	void Unmark() {
-//		_is_marked = false;
-//	}
-//
-//	bool IsMarked() const {
-//		return _is_marked;
-//	}
-	bool IsCached() const
-	{
-		return _is_cached;
+	void Mark() {
+		_is_marked = true;
 	}
 
-	void SetIsCached(bool flag)
-	{
-		_is_cached = flag;
+	void Unmark() {
+		_is_marked = false;
 	}
+
+	bool IsMarked() const {
+		return _is_marked;
+	}
+//	bool IsCached() const
+//	{
+//		return _is_cached;
+//	}
+//
+//	void SetIsCached(bool flag)
+//	{
+//		_is_cached = flag;
+//	}
 
  public:
-	static RnInternment<std::string>* _string_internment;
-	static RnInternment<double>* _float_internment;
-	static RnInternment<long>* _int_internment;
+//	static RnInternment<std::string>* _string_internment;
+//	static RnInternment<double>* _float_internment;
+//	static RnInternment<long>* _int_internment;
 	static RnObject* null_object;
 
  private:
-//	bool _is_marked = false;
+	bool _is_marked = false;
 	bool _is_cached = false;
 };
 

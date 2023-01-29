@@ -17,6 +17,7 @@
 #include "RnFloatObject.h"
 #include "RnArrayObject.h"
 #include "RnClassObject.h"
+#include <memory>
 //#include <iostream>
 
 #define OBJECT_ALLOCATION_COUNT 10000
@@ -24,7 +25,7 @@
 /*****************************************************************************/
 RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr))
 {
-	GrowHeap(DEFAULT_MAX_HEAP_SIZE);
+//	GrowHeap(DEFAULT_MAX_HEAP_SIZE);
 	_block_size =
 		std::max({ sizeof(RnArrayObject), sizeof(RnIntObject), sizeof(RnFunctionObject),
 				   sizeof(RnFloatObject), sizeof(RnBoolObject),
@@ -107,67 +108,6 @@ RnObject* RnMemoryManager::Create(RnFloatNative data)
 }
 
 /*****************************************************************************/
-void RnMemoryManager::AddObject(RnMemoryGroup* parent_group, RnObject* obj)
-{
-	auto block = FindFirstFree();
-	if (!block)
-	{
-		_last_free_index = _heap_node_cnt - 1;
-		GrowHeap(DEFAULT_HEAP_GROW_SIZE);
-		block = FindFirstFree();
-	}
-
-	block->SetStoredObject(obj);
-	parent_group->AddChildBlock(block);
-	_used_heap_blocks++;
-}
-
-/*****************************************************************************/
-size_t RnMemoryManager::GetHeapCount() const
-{
-	return _heap_node_cnt;
-}
-
-/*****************************************************************************/
-int RnMemoryManager::GetHeapUsedCount() const
-{
-	return _used_heap_blocks;
-}
-
-/*****************************************************************************/
-size_t RnMemoryManager::GrowHeap(size_t size)
-{
-	_heap.resize(_heap.size() + size);
-	_heap_node_cnt += size;
-
-//	std::cout << "Growing heap by " << size << "   New heap size: " << _heap_node_cnt
-//			  << std::endl;
-	return _heap_node_cnt;
-}
-
-/*****************************************************************************/
-RnMemoryBlock* RnMemoryManager::FindFirstFree(bool start_at_last_block)
-{
-	if (_last_free_index >= _heap.size())
-	{
-		_last_free_index = 0;
-	}
-
-	for (size_t i = (start_at_last_block ? _last_free_index : 0); i < _heap.size(); i++)
-	{
-		auto block = &_heap[i];
-		if (block->GetStoredObject() == nullptr)
-		{
-			_last_free_index = i;
-			return block;
-		}
-	}
-
-	_last_free_index = _heap.size() - 1;
-	return nullptr;
-}
-
-/*****************************************************************************/
 void RnMemoryManager::GCMark()
 {
 	GCMarkMemoryGroup(root_memory_group);
@@ -180,15 +120,15 @@ void RnMemoryManager::GCSweep()
 	size_t sweep_count = 0;
 	for (auto block : _heap)
 	{
-		if (!block.IsMarked())
+		if (!block->IsMarked())
 		{
 			sweep_count++;
-			_used_heap_blocks--;
-			block.Reset();
+			_available_addresses.push_back(block);
+			std::destroy_at(block);
 		}
 		else
 		{
-			block.UnsetMarkedFlag();
+			block->Unmark();
 		}
 	}
 
@@ -205,9 +145,9 @@ void RnMemoryManager::SetRootMemoryGroup(RnMemoryGroup* group)
 /*****************************************************************************/
 void RnMemoryManager::GCMarkMemoryGroup(RnMemoryGroup* memory_group)
 {
-	for (auto& block : memory_group->GetChildBlocks())
+	for (auto& block : memory_group->GetObjects())
 	{
-		block->SetMarkedFlag();
+		block->Mark();
 	}
 
 	for (auto& group : memory_group->GetChildGroups())
@@ -219,15 +159,15 @@ void RnMemoryManager::GCMarkMemoryGroup(RnMemoryGroup* memory_group)
 /*****************************************************************************/
 void RnMemoryManager::GrowAllocation(size_t size)
 {
-	char* block = (char*)malloc(size);
+	auto* block = (RnObject*)malloc(size);
 	if (block == nullptr) {
 		throw std::runtime_error("Out of memory.");
 	}
 	_allocations.push_back(block);
 	_available_addresses.reserve(_allocation_size / _block_size);
 	_used_addresses.reserve(_allocation_size / _block_size);
-	for (char* address = block; address < block + size; address += _block_size)
+	for (auto address = block; address < block + size; address += _block_size)
 	{
-		_available_addresses.push_back(address);
+		_available_addresses.push_back((RnObject*)(address));
 	}
 }
