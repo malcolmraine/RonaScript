@@ -29,7 +29,7 @@ class RnScope
 	[[nodiscard]] std::vector<RnObject*>& GetStack();
 	void SetParent(RnScope* scope);
 	[[nodiscard]] RnScope* GetParent() const;
-	[[nodiscard]] RnMemoryGroup* GetMemoryGroup() const;
+	[[nodiscard]] RnMemoryGroup* GetMemoryGroup();
 
 	static void LoadLibraryIntoScope(RnScope* scope, const std::string& library,
 		bool add_data = false);
@@ -38,7 +38,7 @@ class RnScope
 	RnScope* _parent = nullptr;
 	std::vector<RnObject*> _stack;
 	RnSymbolTable _symbolTable;
-	RnMemoryGroup* _memory_group = nullptr;
+	RnMemoryGroup _memory_group;
 
  private:
 	static std::map<std::string, void*> _handles;

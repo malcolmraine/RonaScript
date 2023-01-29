@@ -505,7 +505,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 	case OP_LOAD_BOOL:
 	{
 		auto value = static_cast<bool>(instruction->_arg1);
-		auto obj = new RnBoolObject(value);
+		auto obj = CreateObject(value);
 		GetScope()->GetMemoryGroup()->AddObject(obj);
 		GetStack().push_back(obj);
 		break;
@@ -551,9 +551,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 		auto name = RnObject::GetInternedString(instruction->_arg1);
 		auto obj =
 			static_cast<RnClassObject*>(RnObject::Create(RnType::RN_CLASS_INSTANCE));
-//		auto obj = new RnClass(GetScope()); // TODO: use memory manager for this
 		obj->SetIsModule(true);
-//		obj->SetName(name);
 		_namespaces[instruction->_arg1] = obj;
 		_scopes.push_back(obj->ToObject());
 		index++;
@@ -612,12 +610,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 		GetScope()->StoreObject(instruction->_arg1, obj);
 		break;
 	}
-//	case OP_MAKE_MODULE:
-//	{
-//		auto obj = new RnClass(GetScope());
-//		obj->
-//		break;
-//	}
 	case OP_CREATE_CONTEXT:
 	{
 		AddScope();
@@ -627,7 +619,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 	{
 		auto scope = _scopes.back();
 		_scopes.pop_back();
-		delete scope;
+		std::destroy_at(scope);
 		break;
 	}
 	case OP_DELETE:
@@ -731,7 +723,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 	}
 	case OP_MAKE_ARRAY:
 	{
-		auto obj = new RnArrayObject();
+		auto obj = dynamic_cast<RnArrayObject*>(CreateObject(RnType::RN_ARRAY));
 		GetScope()->GetMemoryGroup()->AddObject(obj);
 
 		for (RnIntNative i = 0; i < instruction->_arg1; i++)

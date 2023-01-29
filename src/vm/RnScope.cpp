@@ -19,7 +19,7 @@
 std::map<std::string, void*> RnScope::_handles;
 
 /*****************************************************************************/
-RnScope::RnScope(RnScope* parent)
+RnScope::RnScope(RnScope* parent) : _memory_group(nullptr)
 {
 	_parent = parent;
 //	RnSymbolTable parent_table;
@@ -30,8 +30,8 @@ RnScope::RnScope(RnScope* parent)
 		parent_memory_group = parent->GetMemoryGroup();
 	}
 //	_symbolTable = RnSymbolTable(parent_table);
-	_memory_group = new RnMemoryGroup(parent_memory_group);
-	_symbolTable.SetMemoryGroup(_memory_group);
+	_memory_group = RnMemoryGroup(parent_memory_group);
+	_symbolTable.SetMemoryGroup(&_memory_group);
 //	_stack = new std::vector<RnObject*>();
 	_stack.reserve(10);
 }
@@ -39,11 +39,10 @@ RnScope::RnScope(RnScope* parent)
 /*****************************************************************************/
 RnScope::~RnScope()
 {
-	if (_memory_group->GetParent())
+	if (_memory_group.GetParent())
 	{
-		_memory_group->GetParent()->RemoveChildGroup(_memory_group);
+		_memory_group.GetParent()->RemoveChildGroup(&_memory_group);
 	}
-	delete _memory_group;
 //	delete _symbolTable;
 //	_stack.clear();
 //	delete _stack;
@@ -86,7 +85,7 @@ void RnScope::SetParent(RnScope* scope)
 	if (_parent)
 	{
 		_symbolTable.SetParent(_parent->GetSymbolTable());
-		_memory_group->SetParent(_parent->GetMemoryGroup());
+		_memory_group.SetParent(_parent->GetMemoryGroup());
 	}
 }
 
@@ -97,9 +96,9 @@ RnScope* RnScope::GetParent() const
 }
 
 /*****************************************************************************/
-RnMemoryGroup* RnScope::GetMemoryGroup() const
+RnMemoryGroup* RnScope::GetMemoryGroup()
 {
-	return _memory_group;
+	return &_memory_group;
 }
 
 /*****************************************************************************/
