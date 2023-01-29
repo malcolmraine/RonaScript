@@ -114,7 +114,7 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt)
 		size_t end_index = func->GetIStart() + func->GetICnt();
 		for (; func_index < end_index; func_index++)
 		{
-			ExecuteInstruction(_instructions[func_index], has_returned, func_index);
+			ExecuteInstruction(has_returned, func_index);
 			if (has_returned)
 			{
 				break;
@@ -146,17 +146,19 @@ void RnVirtualMachine::AddScope()
 }
 
 /*****************************************************************************/
-void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& break_scope,
+void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 	size_t& index)
 {
 	_gc_count++;
 	if (_gc_count > 1000)
 	{
-//		_memory_manager->GCMark();
-//		_memory_manager->GCSweep();
+		_memory_manager->GCMark();
+		_memory_manager->GCSweep();
 		_gc_count = 0;
+
 	}
 
+	auto instruction = _instructions[index];
 	switch (instruction->_opcode)
 	{
 	case OP_BINARY_ADD:
@@ -558,7 +560,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		size_t stop_index = index + instruction->_arg2;
 		for (; index < stop_index; index++)
 		{
-			ExecuteInstruction(_instructions[index], break_scope, index);
+			ExecuteInstruction(break_scope, index);
 		}
 		index--;
 		_scopes.pop_back();
@@ -575,7 +577,7 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 		size_t stop_index = index + instruction->_arg2;
 		for (; index < stop_index; index++)
 		{
-			ExecuteInstruction(_instructions[index], break_scope, index);
+			ExecuteInstruction(break_scope, index);
 		}
 		index--;
 		_scopes.pop_back();
@@ -802,7 +804,7 @@ RnIntNative RnVirtualMachine::Run()
 	stopwatch.Start();
 	while (i_idx < _instructions.size())
 	{
-		ExecuteInstruction(_instructions[i_idx], has_returned, i_idx);
+		ExecuteInstruction(has_returned, i_idx);
 		if (has_returned)
 		{
 			break;

@@ -59,7 +59,7 @@ class RnVirtualMachine
 	RnObject* CreateObject(RnFloatNative data);
 
  private:
-	inline void ExecuteInstruction(RnInstruction* instruction, bool& break_scope,
+	inline void ExecuteInstruction(bool& break_scope,
 		size_t& index);
 	void RegisterBuiltins();
 	RnVirtualMachine();
