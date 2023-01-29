@@ -938,15 +938,22 @@ std::shared_ptr<ForLoop> Parser::ParseForLoop()
 	{
 		AdvanceBuffer(1);
 		node->init = ParseVarDecl();
-	} else if (Peek()->token_type == TokenType::NAME) {
+	}
+	else if (Peek()->token_type == TokenType::NAME)
+	{
 		AdvanceBuffer(1);
-		if (Peek()->token_type == TokenType::EQUAL) {
+		if (Peek()->token_type == TokenType::EQUAL)
+		{
 			auto lexpr = ParseExpr(TokenType::EQUAL);
 			node->init = ParseAssignmentStatement(lexpr);
-		} else {
+		}
+		else
+		{
 			node->init = ParseExpr();
 		}
-	} else {
+	}
+	else
+	{
 		Expect(TokenType::SEMICOLON);
 		AdvanceBuffer(1);
 	}

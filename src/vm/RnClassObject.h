@@ -67,11 +67,13 @@ class RnClassObject : public RnObjectBase<RnScope*>
 		return RnType::RN_OBJECT;
 	}
 
-	[[nodiscard]] bool IsModule() const {
+	[[nodiscard]] bool IsModule() const
+	{
 		return _is_module;
 	}
 
-	void SetIsModule(bool flag) {
+	void SetIsModule(bool flag)
+	{
 		_is_module = flag;
 	}
 

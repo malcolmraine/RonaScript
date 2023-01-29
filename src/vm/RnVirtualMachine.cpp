@@ -41,11 +41,24 @@ RnVirtualMachine::RnVirtualMachine()
 	_scopes.reserve(16);
 	_call_stack.reserve(50);
 	_memory_manager = new RnMemoryManager();
-	AddScope();
-	_memory_manager->SetRootMemoryGroup(GetScope()->GetMemoryGroup());
-	RegisterBuiltins();
+
 	_object_this_key = RnObject::InternValue("this");
 	_object_construct_key = RnObject::InternValue("construct");
+}
+
+/*****************************************************************************/
+void RnVirtualMachine::Init()
+{
+	auto obj = RnObject::Create(RnType::RN_OBJECT);
+	auto scope = obj->ToObject();
+	scope->GetMemoryGroup()->AddObject(obj);
+	if (!_scopes.empty())
+	{
+		scope->SetParent(GetScope());
+	}
+	_scopes.push_back(scope);
+	_memory_manager->SetRootMemoryGroup(GetScope()->GetMemoryGroup());
+	RegisterBuiltins();
 }
 
 /*****************************************************************************/
@@ -122,7 +135,9 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt)
 /*****************************************************************************/
 void RnVirtualMachine::AddScope()
 {
-	auto scope = new RnScope(nullptr);
+	auto obj = RnObject::Create(RnType::RN_OBJECT);
+	auto scope = obj->ToObject();
+	scope->GetMemoryGroup()->AddObject(obj);
 	if (!_scopes.empty())
 	{
 		scope->SetParent(GetScope());
@@ -137,8 +152,8 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	_gc_count++;
 	if (_gc_count > 1000)
 	{
-		_memory_manager->GCMark();
-		_memory_manager->GCSweep();
+//		_memory_manager->GCMark();
+//		_memory_manager->GCSweep();
 		_gc_count = 0;
 	}
 
@@ -478,7 +493,6 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 			throw std::runtime_error(
 				"Symbol does not exist: " + RnObject::GetInternedString(key));
 		}
-
 		break;
 	}
 	case OP_LOAD_NULL:
@@ -533,7 +547,8 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	case OP_MAKE_MODULE:
 	{
 		auto name = RnObject::GetInternedString(instruction->_arg1);
-		auto obj = static_cast<RnClassObject*>(RnObject::Create(RnType::RN_CLASS_INSTANCE));
+		auto obj =
+			static_cast<RnClassObject*>(RnObject::Create(RnType::RN_CLASS_INSTANCE));
 //		auto obj = new RnClass(GetScope()); // TODO: use memory manager for this
 		obj->SetIsModule(true);
 //		obj->SetName(name);
@@ -552,7 +567,8 @@ void RnVirtualMachine::ExecuteInstruction(RnInstruction* instruction, bool& brea
 	case OP_MAKE_CLASS:
 	{
 		auto name = RnObject::GetInternedString(instruction->_arg1);
-		auto obj = static_cast<RnClassObject*>(RnObject::Create(RnType::RN_CLASS_INSTANCE));
+		auto obj =
+			static_cast<RnClassObject*>(RnObject::Create(RnType::RN_CLASS_INSTANCE));
 		_namespaces[instruction->_arg1] = obj;
 		_scopes.push_back(obj->ToObject());
 		index++;
@@ -811,6 +827,7 @@ RnVirtualMachine* RnVirtualMachine::GetInstance()
 	if (!_instance)
 	{
 		_instance = new RnVirtualMachine();
+		_instance->Init();
 	}
 	return _instance;
 }

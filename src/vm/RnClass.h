@@ -30,11 +30,13 @@ class RnClass : public RnScope
 		_name = name;
 	}
 
-	[[nodiscard]] bool IsModule() const {
+	[[nodiscard]] bool IsModule() const
+	{
 		return _is_module;
 	}
 
-	void SetIsModule(bool flag) {
+	void SetIsModule(bool flag)
+	{
 		_is_module = flag;
 	}
 

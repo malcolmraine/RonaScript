@@ -24,7 +24,8 @@ class RnInternment
 
 	InternmentKey InternItem(T item)
 	{
-		if (_item_key_map.contains(item)) {
+		if (_item_key_map.contains(item))
+		{
 			return _item_key_map[item];
 		}
 		_index++;

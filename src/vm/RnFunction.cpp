@@ -87,8 +87,7 @@ void RnFunction::Call(const std::vector<RnObject*>& args, RnObject* ret_val)
 }
 
 /*****************************************************************************/
-void RnFunction::CreateArgument(RnIntNative key, RnType::Type type,
-	size_t index)
+void RnFunction::CreateArgument(RnIntNative key, RnType::Type type, size_t index)
 {
 	auto obj = RnObject::Create(type);
 	_argument_scope->StoreObject(key, obj);

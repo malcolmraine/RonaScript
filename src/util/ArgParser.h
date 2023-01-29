@@ -43,8 +43,9 @@ class ArgParser
  public:
 	ArgParser();
 	void SetMainDescription(const std::string& description);
-	void AddArgument(const std::string& arg, const std::vector<std::string>& alternates, const std::string& description,
-		bool has_value = false, const std::string& defaultValue = "");
+	void AddArgument(const std::string& arg, const std::vector<std::string>& alternates,
+		const std::string& description, bool has_value = false,
+		const std::string& defaultValue = "");
 	[[nodiscard]] bool IsSet(const std::string& arg);
 	[[nodiscard]] std::string GetValue(const std::string& arg);
 	void ShowHelp();

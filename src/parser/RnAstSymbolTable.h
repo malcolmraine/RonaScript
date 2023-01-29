@@ -12,7 +12,8 @@
 #include "RnTypeComposite.h"
 #include <memory>
 
-struct SymbolTableEntry {
+struct SymbolTableEntry
+{
 	std::string name;
 	RnTypeComposite type;
 };

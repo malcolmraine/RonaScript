@@ -28,8 +28,7 @@ class RnSymbolTable
 	RnObject* GetObject(RnIntNative symbol);
 	void RemoveSymbol(RnIntNative symbol);
 	void AliasSymbol(RnIntNative base, RnIntNative alias);
-	[[nodiscard]] bool SymbolExists(RnIntNative key,
-		bool search_parent = true) const;
+	[[nodiscard]] bool SymbolExists(RnIntNative key, bool search_parent = true) const;
 	void SetMemoryGroup(RnMemoryGroup* group);
 	void SetParent(RnSymbolTable* parent);
 	[[nodiscard]] RnSymbolTable* GetParent() const;

@@ -25,7 +25,6 @@ class RnFunctionObject;
 class RnClassObject;
 class RnMemoryManager;
 
-
 class RnVirtualMachine
 {
  public:
@@ -67,6 +66,7 @@ class RnVirtualMachine
 
  private:
 	static RnVirtualMachine* _instance;
+	void Init();
 
  protected:
 	RnInternment<std::string> _string_internment;
