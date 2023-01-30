@@ -33,6 +33,8 @@ class RnMemoryManager
 	RnObject* Create(RnBoolNative data);
 	RnObject* Create(RnIntNative data);
 	RnObject* Create(RnFloatNative data);
+	RnScope* CreateScope();
+	void DestroyScope(RnScope* scope);
 	void GCMark();
 	void GCSweep();
 	void SetRootMemoryGroup(RnMemoryGroup* group);
@@ -44,11 +46,19 @@ class RnMemoryManager
  private:
 	std::vector<RnObject*> _heap;
 	std::vector<char*> _allocations; // Larger blocks of memory
+	std::vector<char*> _scope_allocations; // Larger blocks of memory
+
 	size_t _block_size = 0;
 	size_t _allocation_size = 0;
 	std::vector<RnObject*> _available_addresses;
 	std::vector<RnObject*> _used_addresses;
+
+	std::vector<RnScope*> _available_scope_addresses;
+	std::vector<RnScope*> _used_scope_addresses;
 	RnMemoryGroup* root_memory_group;
+	RnObject* _cached_bool_true_object = nullptr;
+	RnObject* _cached_bool_false_object = nullptr;
+	RnObject* _cached_int_object = nullptr;
 };
 
 #endif //RONASCRIPT_RNMEMORYMANAGER_H

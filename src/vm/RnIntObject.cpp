@@ -24,11 +24,11 @@ RnObject* RnIntObject::operator+(RnObject* obj)
 	switch (obj->GetType())
 	{
 	case RnType::RN_BOOLEAN:
-		return RnObject::Create(GetData() + obj->ToInt());
+		return RnObject::Create(_data + obj->ToInt());
 	case RnType::RN_FLOAT:
-		return RnObject::Create(GetData() + obj->ToFloat());
+		return RnObject::Create(_data + obj->ToFloat());
 	case RnType::RN_INT:
-		return RnObject::Create(GetData() + obj->ToInt());
+		return RnObject::Create(_data + obj->ToInt());
 	case RnType::RN_ARRAY:
 	case RnType::RN_FUNCTION:
 	case RnType::RN_CLASS_INSTANCE:
@@ -50,11 +50,11 @@ RnObject* RnIntObject::operator-(RnObject* obj)
 	switch (obj->GetType())
 	{
 	case RnType::RN_BOOLEAN:
-		return RnObject::Create(GetData() - obj->ToInt());
+		return RnObject::Create(_data - obj->ToInt());
 	case RnType::RN_FLOAT:
-		return RnObject::Create(GetData() - obj->ToFloat());
+		return RnObject::Create(_data - obj->ToFloat());
 	case RnType::RN_INT:
-		return RnObject::Create(GetData() - obj->ToInt());
+		return RnObject::Create(_data - obj->ToInt());
 	case RnType::RN_ARRAY:
 	case RnType::RN_FUNCTION:
 	case RnType::RN_CLASS_INSTANCE:
@@ -76,11 +76,11 @@ RnObject* RnIntObject::operator==(RnObject* obj)
 	switch (obj->GetType())
 	{
 	case RnType::RN_BOOLEAN:
-		return RnObject::Create(GetData() == obj->ToInt());
+		return RnObject::Create(_data == obj->ToInt());
 	case RnType::RN_FLOAT:
-		return RnObject::Create(GetData() == obj->ToFloat());
+		return RnObject::Create(_data == obj->ToFloat());
 	case RnType::RN_INT:
-		return RnObject::Create(GetData() == obj->ToInt());
+		return RnObject::Create(_data == obj->ToInt());
 	case RnType::RN_ARRAY:
 	case RnType::RN_FUNCTION:
 	case RnType::RN_CLASS_INSTANCE:
@@ -110,11 +110,11 @@ RnObject* RnIntObject::operator/(RnObject* obj)
 	switch (obj->GetType())
 	{
 	case RnType::RN_BOOLEAN:
-		return RnObject::Create(GetData() / obj->ToInt());
+		return RnObject::Create(_data / obj->ToInt());
 	case RnType::RN_FLOAT:
-		return RnObject::Create(GetData() / obj->ToFloat());
+		return RnObject::Create(_data / obj->ToFloat());
 	case RnType::RN_INT:
-		return RnObject::Create(GetData() / obj->ToInt());
+		return RnObject::Create(_data / obj->ToInt());
 	case RnType::RN_ARRAY:
 	case RnType::RN_FUNCTION:
 	case RnType::RN_CLASS_INSTANCE:
@@ -169,7 +169,7 @@ RnObject* RnIntObject::operator^(RnObject* obj)
 	{
 	case RnType::RN_BOOLEAN:
 	case RnType::RN_INT:
-		return RnObject::Create(GetData() ^ obj->ToInt());
+		return RnObject::Create(_data ^ obj->ToInt());
 	case RnType::RN_FLOAT:
 	case RnType::RN_ARRAY:
 	case RnType::RN_FUNCTION:
@@ -189,13 +189,13 @@ RnObject* RnIntObject::operator^(RnObject* obj)
 /*****************************************************************************/
 RnObject* RnIntObject::operator>(RnObject* obj)
 {
-	return RnObject::Create(GetData() > obj->ToInt());
+	return RnObject::Create(_data > obj->ToInt());
 }
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator<(RnObject* obj)
 {
-	return RnObject::Create(GetData() < obj->ToInt());
+	return RnObject::Create(_data < obj->ToInt());
 }
 
 /*****************************************************************************/
@@ -242,11 +242,11 @@ RnObject* RnIntObject::operator*(RnObject* obj)
 	switch (obj->GetType())
 	{
 	case RnType::RN_BOOLEAN:
-		return RnObject::Create(GetData() * obj->ToInt());
+		return RnObject::Create(_data * obj->ToInt());
 	case RnType::RN_FLOAT:
-		return RnObject::Create(GetData() * obj->ToFloat());
+		return RnObject::Create(_data * obj->ToFloat());
 	case RnType::RN_INT:
-		return RnObject::Create(GetData() * obj->ToInt());
+		return RnObject::Create(_data * obj->ToInt());
 	case RnType::RN_ARRAY:
 	case RnType::RN_FUNCTION:
 	case RnType::RN_CLASS_INSTANCE:
@@ -265,13 +265,13 @@ RnObject* RnIntObject::operator*(RnObject* obj)
 /*****************************************************************************/
 RnIntNative RnIntObject::ToInt() const
 {
-	return static_cast<RnIntNative>(GetData());
+	return static_cast<RnIntNative>(_data);
 }
 
 /*****************************************************************************/
 RnFloatNative RnIntObject::ToFloat() const
 {
-	return static_cast<RnFloatNative>(GetData());
+	return static_cast<RnFloatNative>(_data);
 }
 
 /*****************************************************************************/

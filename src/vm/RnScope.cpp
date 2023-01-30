@@ -22,17 +22,12 @@ std::map<std::string, void*> RnScope::_handles;
 RnScope::RnScope(RnScope* parent) : _memory_group(nullptr)
 {
 	_parent = parent;
-//	RnSymbolTable parent_table;
-	RnMemoryGroup* parent_memory_group = nullptr;
 	if (parent)
 	{
-		_symbolTable.SetParent(&parent->_symbolTable);
-		parent_memory_group = parent->GetMemoryGroup();
+		_symbolTable.SetParent(parent->GetSymbolTable());
+		_memory_group.SetParent(parent->GetMemoryGroup());
 	}
-//	_symbolTable = RnSymbolTable(parent_table);
-	_memory_group = RnMemoryGroup(parent_memory_group);
 	_symbolTable.SetMemoryGroup(&_memory_group);
-//	_stack = new std::vector<RnObject*>();
 	_stack.reserve(10);
 }
 
@@ -43,9 +38,6 @@ RnScope::~RnScope()
 	{
 		_memory_group.GetParent()->RemoveChildGroup(&_memory_group);
 	}
-//	delete _symbolTable;
-//	_stack.clear();
-//	delete _stack;
 }
 
 /*****************************************************************************/

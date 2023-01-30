@@ -19,23 +19,24 @@
 #include <memory>
 //#include <iostream>
 
-#define OBJECT_ALLOCATION_COUNT 10000
+#define OBJECT_ALLOCATION_COUNT 1000000
 
 /*****************************************************************************/
 RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr))
 {
 	_block_size =
 		std::max({ sizeof(RnArrayObject), sizeof(RnIntObject), sizeof(RnFunctionObject),
-				   sizeof(RnFloatObject), sizeof(RnBoolObject),
-				   sizeof(RnStringObject) });
+				   sizeof(RnFloatObject), sizeof(RnBoolObject), sizeof(RnStringObject),
+				   sizeof(RnClassObject) });
 	_allocation_size = _block_size * OBJECT_ALLOCATION_COUNT;
 	GrowAllocation(_allocation_size);
+	_cached_bool_true_object = new RnBoolObject(true);
+	_cached_bool_false_object = new RnBoolObject(false);
 }
 
 /*****************************************************************************/
 RnMemoryManager::~RnMemoryManager()
 {
-
 }
 
 /*****************************************************************************/
@@ -84,9 +85,11 @@ RnObject* RnMemoryManager::Create(RnStringNative data)
 /*****************************************************************************/
 RnObject* RnMemoryManager::Create(RnBoolNative data)
 {
-	auto obj = CreateObject(RnType::RN_BOOLEAN);
-	obj->SetData(data);
-	return obj;
+	if (data) {
+		return _cached_bool_true_object;
+	} else {
+		return _cached_bool_false_object;
+	}
 }
 
 /*****************************************************************************/
@@ -103,6 +106,43 @@ RnObject* RnMemoryManager::Create(RnFloatNative data)
 	auto obj = CreateObject(RnType::RN_FLOAT);
 	obj->SetData(data);
 	return obj;
+}
+
+/*****************************************************************************/
+RnScope* RnMemoryManager::CreateScope()
+{
+	if (_available_scope_addresses.empty())
+	{
+		auto* block = static_cast<char*>(malloc(10000));
+		if (block == nullptr)
+		{
+			throw std::runtime_error("Out of memory.");
+		}
+		_scope_allocations.push_back(block);
+		_available_scope_addresses.reserve(_allocation_size / sizeof(RnScope));
+		_used_addresses.reserve(_allocation_size / sizeof(RnScope));
+		for (auto address = block; address < block + 10000; address += sizeof(RnScope))
+		{
+			_available_scope_addresses.push_back((RnScope*)(address));
+		}
+	}
+
+	auto address = _available_scope_addresses.back();
+	_available_scope_addresses.pop_back();
+	_used_scope_addresses.push_back(address);
+
+	return std::construct_at<RnScope>(reinterpret_cast<RnScope*>(address), nullptr);
+}
+
+/*****************************************************************************/
+void RnMemoryManager::DestroyScope(RnScope* scope)
+{
+	_available_scope_addresses.push_back(scope);
+	_used_scope_addresses.erase(std::find(_used_scope_addresses.begin(),
+		_used_scope_addresses.end(),
+		scope));
+
+	std::destroy_at<RnScope>(reinterpret_cast<RnScope*>(scope));
 }
 
 /*****************************************************************************/

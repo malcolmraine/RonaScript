@@ -12,6 +12,7 @@
 
 #include "RnObjectBase.h"
 #include "RnClass.h"
+#include "RnVirtualMachine.h"
 
 /**
  * class objects are object with a scope data type
@@ -37,7 +38,7 @@ class RnClassObject : public RnObjectBase<RnScope*>
  public:
 	RnClassObject()
 	{
-		_data = new RnScope(nullptr);
+		_data = RnVirtualMachine::GetInstance()->CreateScope();
 	}
 
 	~RnClassObject()

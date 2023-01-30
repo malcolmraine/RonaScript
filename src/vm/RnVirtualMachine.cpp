@@ -135,9 +135,7 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt)
 /*****************************************************************************/
 void RnVirtualMachine::AddScope()
 {
-	auto obj = RnObject::Create(RnType::RN_OBJECT);
-	auto scope = obj->ToObject();
-	scope->GetMemoryGroup()->AddObject(obj);
+	auto scope = _memory_manager->CreateScope();
 	if (!_scopes.empty())
 	{
 		scope->SetParent(GetScope());
@@ -550,7 +548,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 	{
 		auto name = RnObject::GetInternedString(instruction->_arg1);
 		auto obj =
-			static_cast<RnClassObject*>(RnObject::Create(RnType::RN_CLASS_INSTANCE));
+			dynamic_cast<RnClassObject*>(RnObject::Create(RnType::RN_CLASS_INSTANCE));
 		obj->SetIsModule(true);
 		_namespaces[instruction->_arg1] = obj;
 		_scopes.push_back(obj->ToObject());
@@ -568,7 +566,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 	{
 		auto name = RnObject::GetInternedString(instruction->_arg1);
 		auto obj =
-			static_cast<RnClassObject*>(RnObject::Create(RnType::RN_CLASS_INSTANCE));
+			dynamic_cast<RnClassObject*>(RnObject::Create(RnType::RN_CLASS_INSTANCE));
 		_namespaces[instruction->_arg1] = obj;
 		_scopes.push_back(obj->ToObject());
 		index++;
@@ -619,7 +617,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 	{
 		auto scope = _scopes.back();
 		_scopes.pop_back();
-		std::destroy_at(scope);
+		_memory_manager->DestroyScope(scope);
 		break;
 	}
 	case OP_DELETE:
@@ -854,6 +852,11 @@ RnObject* RnVirtualMachine::CreateObject(RnIntNative data)
 RnObject* RnVirtualMachine::CreateObject(RnFloatNative data)
 {
 	return _memory_manager->Create(data);
+}
+
+/*****************************************************************************/
+RnScope* RnVirtualMachine::CreateScope() {
+	return _memory_manager->CreateScope();
 }
 
 /*****************************************************************************/

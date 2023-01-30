@@ -12,9 +12,12 @@
 /*****************************************************************************/
 RnMemoryGroup::RnMemoryGroup(RnMemoryGroup* parent)
 {
-	SetParent(parent);
+	_parent = parent;
+	if (parent)
+	{
+		_parent->AddChildGroup(this);
+	}
 	_objects.reserve(10);
-	_child_groups.reserve(10);
 }
 
 /*****************************************************************************/

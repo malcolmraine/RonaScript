@@ -28,7 +28,7 @@ class RnMemoryGroup
 	void SetParent(RnMemoryGroup* parent);
 
  private:
-	RnMemoryGroup* _parent;
+	RnMemoryGroup* _parent = nullptr;
 	std::vector<RnMemoryGroup*> _child_groups;
 	std::vector<RnObject*> _objects;
 

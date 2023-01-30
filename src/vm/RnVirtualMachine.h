@@ -57,6 +57,7 @@ class RnVirtualMachine
 	RnObject* CreateObject(RnBoolNative data);
 	RnObject* CreateObject(RnIntNative data);
 	RnObject* CreateObject(RnFloatNative data);
+	RnScope* CreateScope();
 
  private:
 	inline void ExecuteInstruction(bool& break_scope,
