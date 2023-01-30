@@ -251,7 +251,6 @@ Lexer::~Lexer()
 
 	for (auto& token : tokens)
 		delete token;
-	tokens.clear();
 }
 
 /*****************************************************************************/

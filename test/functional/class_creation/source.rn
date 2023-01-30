@@ -1,0 +1,17 @@
+
+class Person is
+begin
+    var name: string = "";
+    var age: int = 0;
+
+    routine construct(var name: string, var age: int): object
+    begin
+        this->name = name;
+        this->age = age;
+        return this;
+    end
+end
+
+var p: object = Person("Dave", 55);
+print(p->name);
+print(p->age);

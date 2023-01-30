@@ -1,0 +1,15 @@
+routine gcf(var x: int, var y: int): int
+begin
+    if (y == 0):
+        return x;
+    else:
+        return gcf(y, x % y);
+    end
+end
+
+var results: array = [
+    gcf(12, 46),
+    gcf(72, 144)
+];
+
+print(results);
