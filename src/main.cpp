@@ -29,6 +29,9 @@ void RonaScriptMain(int argc, char* argv[])
 	arg_parser.AddArgument("-pcode",
 		{ "--print-opcodes" },
 		"Print opcodes after generation");
+	arg_parser.AddArgument("-d",
+		{ "--debug" },
+		"Show various debug logging");
 	arg_parser.AddArgument("-norun",
 		{ "--print-opcodes" },
 		"Compile to *.rnc file without running");

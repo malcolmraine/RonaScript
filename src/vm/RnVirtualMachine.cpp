@@ -69,13 +69,6 @@ RnVirtualMachine::~RnVirtualMachine()
 		delete instruction;
 	}
 	_instructions.clear();
-
-	for (size_t i = 0; i < _scopes.size(); i++)
-	{
-		auto obj = _scopes.back();
-		delete obj;
-		_scopes.pop_back();
-	}
 	_scopes.clear();
 	_call_stack.clear();
 
@@ -803,7 +796,7 @@ RnIntNative RnVirtualMachine::Run()
 	}
 	stopwatch.Stop();
 
-	std::cout << "\nRuntime duration: " << stopwatch.Duration() << std::endl;
+//	std::cout << "\nRuntime duration: " << stopwatch.Duration() << std::endl;
 	return GetStack().back()->ToInt();
 }
 

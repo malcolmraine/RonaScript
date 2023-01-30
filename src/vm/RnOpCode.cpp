@@ -224,6 +224,10 @@ RnOpCode GetOpCodeFromOperator(const std::string& op)
 	{
 		return OP_ATTR_ACCESS;
 	}
+	else if (op == "%")
+	{
+		return OP_BINARY_MOD;
+	}
 	else
 	{
 		return OP_NOP;

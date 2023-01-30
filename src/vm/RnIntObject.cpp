@@ -201,39 +201,31 @@ RnObject* RnIntObject::operator<(RnObject* obj)
 /*****************************************************************************/
 RnObject* RnIntObject::operator>=(RnObject* obj)
 {
-	throw std::runtime_error("Operator '>=' is not defined for types '"
-		+ RnType::TypeToString(RnObjectBase<RnIntNative>::GetType()) + "' and '"
-		+ RnType::TypeToString(obj->GetType()) + "'");
+	return RnObject::Create(_data >= obj->ToInt());
 }
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator<=(RnObject* obj)
 {
-	return nullptr;
+	return RnObject::Create(_data <= obj->ToInt());
 }
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator%(RnObject* obj)
 {
-	throw std::runtime_error("Operator '%' is not defined for types '"
-		+ RnType::TypeToString(RnObjectBase<RnIntNative>::GetType()) + "' and '"
-		+ RnType::TypeToString(obj->GetType()) + "'");
+	return RnObject::Create(_data % obj->ToInt());
 }
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator>>(RnObject* obj)
 {
-	throw std::runtime_error("Operator '>>' is not defined for types '"
-		+ RnType::TypeToString(RnObjectBase<RnIntNative>::GetType()) + "' and '"
-		+ RnType::TypeToString(obj->GetType()) + "'");
+	return RnObject::Create(_data >> obj->ToInt());
 }
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator<<(RnObject* obj)
 {
-	throw std::runtime_error("Operator '<<' is not defined for types '"
-		+ RnType::TypeToString(RnObjectBase<RnIntNative>::GetType()) + "' and '"
-		+ RnType::TypeToString(obj->GetType()) + "'");
+	return RnObject::Create(_data << obj->ToInt());
 }
 
 /*****************************************************************************/
