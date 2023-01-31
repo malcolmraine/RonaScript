@@ -58,6 +58,18 @@ Parser::Parser()
 	ast = new Ast();
 	_current_scope = ast->root;
 
+	// TODO: Add rest of builtin functions
+	_current_scope->symbol_table->AddSymbol("print", RnType::RN_NULL);
+	_current_scope->symbol_table->AddSymbol("prompt", RnType::RN_NULL);
+	_current_scope->symbol_table->AddSymbol("read", RnType::RN_NULL);
+	_current_scope->symbol_table->AddSymbol("write", RnType::RN_NULL);
+	_current_scope->symbol_table->AddSymbol("array_merge", RnType::RN_NULL);
+	_current_scope->symbol_table->AddSymbol("array_push", RnType::RN_NULL);
+	_current_scope->symbol_table->AddSymbol("array_pop", RnType::RN_NULL);
+//	_current_scope->symbol_table->AddSymbol("print", RnType::RN_NULL);
+//	_current_scope->symbol_table->AddSymbol("print", RnType::RN_NULL);
+//	_current_scope->symbol_table->AddSymbol("print", RnType::RN_NULL);
+
 	// Set up the associativity table
 	associativity[TokenType::R_PARAN] = NO_ASSOCIATIVITY;
 	associativity[TokenType::R_ARROW] = LEFT;

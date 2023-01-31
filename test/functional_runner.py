@@ -6,14 +6,14 @@ rn_executable = sys.argv[1]
 
 
 class Test(object):
-    def __init__(self, name, source_dir: str, args: list):
+    def __init__(self, name, source_dir: str, args: list, timeout: int = 5):
         self.stdout = ""
         self.stderr = ""
         self.source_dir = source_dir
         self.source_file = f"{source_dir}/source.rn"
         self.expected_output = f"{source_dir}/expected_output.txt"
         self.args = args
-        self.timeout = 5
+        self.timeout = timeout
         self.returncode = -1
         self.name = name
         self.log_file = f"{self.source_dir}/test.results"
@@ -86,9 +86,10 @@ class TestRunner(object):
 
 if __name__ == "__main__":
     runner = TestRunner()
-    runner.add_test(Test("Recursive GCF", "functional/recursive_gcf", []))
-    runner.add_test(Test("Class Creation", "functional/class_creation", []))
+    runner.add_test(Test("Recursive GCF", "functional/recursive_gcf", [], 2))
+    runner.add_test(Test("Class Creation", "functional/class_creation", [], 1))
     runner.add_test(Test("Simple Array", "functional/simple_array", []))
     runner.add_test(Test("Loop Timeout", "functional/loop_timeout", []))
     runner.add_test(Test("Matrix Multiplication", "functional/matrix_multiplication", []))
+    runner.add_test(Test("Var Declaration Stress", "functional/var_decl_stress_test", [], 10))
     runner.run()
