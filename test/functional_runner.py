@@ -90,4 +90,5 @@ if __name__ == "__main__":
     runner.add_test(Test("Class Creation", "functional/class_creation", []))
     runner.add_test(Test("Simple Array", "functional/simple_array", []))
     runner.add_test(Test("Loop Timeout", "functional/loop_timeout", []))
+    runner.add_test(Test("Matrix Multiplication", "functional/matrix_multiplication", []))
     runner.run()
