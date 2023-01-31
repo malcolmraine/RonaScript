@@ -6,9 +6,9 @@ rn_executable = sys.argv[1]
 
 
 class Test(object):
-    def __init__(self, name, source_dir: str, args: list, timeout: int = 5):
-        self.stdout = ""
-        self.stderr = ""
+    def __init__(self, name, source_dir: str, args: list, timeout: int = 5, invoke_count=1):
+        self.stdout = []
+        self.stderr = []
         self.source_dir = source_dir
         self.source_file = f"{source_dir}/source.rn"
         self.expected_output = f"{source_dir}/expected_output.txt"
@@ -20,6 +20,7 @@ class Test(object):
         open(self.log_file, "w").close()
         self.process = None
         self.timeout_occurred = False
+        self.invoke_count = invoke_count
 
     def log(self, *args):
         with open(self.log_file, "a+") as file:
@@ -30,11 +31,17 @@ class Test(object):
     def check_output(self, returncode=0):
         with open(self.expected_output, "r") as file:
             expected = file.read().strip("\n").strip()
-            actual = self.stdout.strip("\n").strip()
-            msg = ""
+            actual = ""
+            passed = True
+
+            for output in self.stdout:
+                if output.strip("\n").strip() != expected:
+                    passed = False
+                    break
+
             if self.timeout_occurred:
                 msg = "TIMEOUT"
-            elif expected != actual:
+            elif not passed:
                 msg = "FAILED"
             else:
                 msg = "PASSED"
@@ -50,7 +57,8 @@ class Test(object):
             self.log("=========================================================")
             self.log("Actual")
             self.log("=========================================================")
-            self.log(actual)
+            for output in self.stdout:
+                self.log(output)
 
     def run(self):
         def target():
@@ -58,17 +66,21 @@ class Test(object):
                                             stdout=subprocess.PIPE)
             self.process.communicate()
 
-        thread = threading.Thread(target=target)
-        thread.start()
+        for n in range(self.invoke_count):
+            thread = threading.Thread(target=target)
+            thread.start()
 
-        thread.join(self.timeout)
-        if thread.is_alive():
-            self.process.terminate()
-            self.timeout_occurred = True
-            thread.join()
-        self.returncode = self.process.returncode
-        self.stdout, self.stderr = self.process.communicate()
-        self.stdout = self.stdout.decode("utf-8")
+            thread.join(self.timeout)
+            if thread.is_alive():
+                self.process.terminate()
+                self.timeout_occurred = True
+                thread.join()
+                break
+
+            self.returncode = self.process.returncode
+            stdout, stderr = self.process.communicate()
+            self.stderr.append(stderr.decode("utf-8"))
+            self.stdout.append(stdout.decode("utf-8"))
         self.check_output(self.returncode)
 
 
@@ -86,10 +98,10 @@ class TestRunner(object):
 
 if __name__ == "__main__":
     runner = TestRunner()
-    runner.add_test(Test("Recursive GCF", "functional/recursive_gcf", [], 2))
-    runner.add_test(Test("Class Creation", "functional/class_creation", [], 1))
+    runner.add_test(Test("Recursive GCF", "functional/recursive_gcf", [], timeout=2, invoke_count=10))
+    runner.add_test(Test("Class Creation", "functional/class_creation", [], timeout=1))
     runner.add_test(Test("Simple Array", "functional/simple_array", []))
     runner.add_test(Test("Loop Timeout", "functional/loop_timeout", []))
     runner.add_test(Test("Matrix Multiplication", "functional/matrix_multiplication", []))
-    runner.add_test(Test("Var Declaration Stress", "functional/var_decl_stress_test", [], 10))
+    runner.add_test(Test("Var Declaration Stress", "functional/var_decl_stress_test", [], timeout=10))
     runner.run()
