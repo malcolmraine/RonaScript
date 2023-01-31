@@ -308,7 +308,8 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers)
 		AdvanceBuffer(2);
 	}
 
-	if (_current_scope->symbol_table->SymbolExists(node->id)) {
+	if (_current_scope->symbol_table->SymbolExists(node->id))
+	{
 		throw std::runtime_error("Redeclaration of symbol '" + node->id + "'");
 	}
 	_current_scope->symbol_table->AddSymbol(node->id, node->type.GetType());
@@ -391,7 +392,8 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers)
 		node->type = "void";
 	}
 
-	if (_current_scope->symbol_table->SymbolExists(node->id)) {
+	if (_current_scope->symbol_table->SymbolExists(node->id))
+	{
 		throw std::runtime_error("Redeclaration of symbol '" + node->id + "'");
 	}
 	_current_scope->symbol_table->AddSymbol(node->id, RnType::StringToType(node->type));
@@ -409,6 +411,17 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl()
 	node->file_info = new FileInfo(Current()->file_info);
 	Expect(TokenType::NAME);
 	AdvanceBuffer(1);
+
+	if (_current_scope->symbol_table->SymbolExists(Current()->lexeme))
+	{
+		throw std::runtime_error("Redeclaration of symbol '" + Current()->lexeme);
+	}
+	else
+	{
+		_current_scope->symbol_table->AddSymbol(Current()->lexeme,
+			RnType::RN_CLASS_INSTANCE);
+	}
+
 	node->id = Current()->lexeme;
 	Expect({ TokenType::EXTENDS, TokenType::R_BRACE, TokenType::IS });
 	AdvanceBuffer(1);
@@ -421,9 +434,6 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl()
 
 		while (Current()->token_type == TokenType::NAME)
 		{
-			if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
-				throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
-			}
 			node->parent_classes.emplace_back(ParseName());
 			ConditionalBufAdvance(TokenType::COMMA);
 		}
@@ -443,6 +453,10 @@ std::shared_ptr<AstNode> Parser::GetExprComponent()
 	if ((Lookback() && Lookback()->IsOperator()) && Current()->IsUnaryOp()
 		&& Peek()->token_type == TokenType::NAME)
 	{
+		if (!_current_scope->symbol_table->SymbolExists(Peek()->lexeme))
+		{
+			throw std::runtime_error("Unknown symbol '" + Peek()->lexeme);
+		}
 		return ParseUnaryExpr();
 	}
 	else if (Current()->token_type == TokenType::R_BRACK)
@@ -451,6 +465,10 @@ std::shared_ptr<AstNode> Parser::GetExprComponent()
 	}
 	else if (Current()->token_type == TokenType::NAME)
 	{
+		if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme))
+		{
+			throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
+		}
 		node = ParseName();
 		if (Current()->IsUnaryOp())
 		{
@@ -488,6 +506,7 @@ std::shared_ptr<AstNode> Parser::GetExprComponent()
 		}
 		case TokenType::NAME:
 		{
+			// TODO: Remove, probably deadcode
 			node = ParseName();
 			break;
 		}
@@ -546,6 +565,10 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token)
 			if (Lookback()->token_type == TokenType::NAME
 				|| Current()->token_type == TokenType::L_PARAN)
 			{
+				if (!_current_scope->symbol_table->SymbolExists(Lookback()->lexeme))
+				{
+					throw std::runtime_error("Unknown symbol '" + Lookback()->lexeme);
+				}
 				result_stack.push_back(ParseIndexedExpr(result_stack.Pop()));
 			}
 			else
@@ -747,6 +770,10 @@ std::shared_ptr<DeleteStmt> Parser::ParseDeleteStmt()
 	auto node = std::make_shared<DeleteStmt>();
 	Expect(TokenType::NAME);
 	AdvanceBuffer(1);
+	if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme))
+	{
+		throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
+	}
 
 	if (Current()->token_type == TokenType::SEMICOLON)
 	{
@@ -968,6 +995,11 @@ std::shared_ptr<ForLoop> Parser::ParseForLoop()
 	else if (Peek()->token_type == TokenType::NAME)
 	{
 		AdvanceBuffer(1);
+		if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme))
+		{
+			throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
+		}
+
 		if (Peek()->token_type == TokenType::EQUAL)
 		{
 			auto lexpr = ParseExpr(TokenType::EQUAL);
@@ -1013,9 +1045,20 @@ std::shared_ptr<AliasDecl> Parser::ParseAliasDecl()
 	Expect(TokenType::NAME);
 
 	AdvanceBuffer(1);
+	if (_current_scope->symbol_table->SymbolExists(Current()->lexeme))
+	{
+		throw std::runtime_error("Redeclaration of '" + Current()->lexeme);
+	}
+
 	node->alias_name = ParseName();
+	_current_scope->symbol_table->AddSymbol(node->alias_name->value,
+		_current_scope->symbol_table->GetSymbolEntry(node->base_name->value)->GetType());
 	Expect(TokenType::NAME);
 	AdvanceBuffer(1);
+	if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme))
+	{
+		throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
+	}
 
 	node->base_name = ParseName();
 	AdvanceBuffer(1);
@@ -1081,6 +1124,10 @@ std::shared_ptr<CatchBlock> Parser::ParseCatchBlock()
 		AdvanceBuffer(1);
 		while (Current()->token_type == TokenType::NAME)
 		{
+			if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme))
+			{
+				throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
+			}
 			node->exception_ids.emplace_back(ParseName());
 			ConditionalBufAdvance(TokenType::COMMA);
 		}
@@ -1218,8 +1265,10 @@ void Parser::Parse()
 				}
 				else
 				{
-					if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
-						throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
+					if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme))
+					{
+						throw std::runtime_error(
+							"Unknown symbol '" + Current()->lexeme);
 					}
 
 					auto expr = ParseExpr(TokenType::EQUAL);
