@@ -68,6 +68,16 @@ class RnClassObject : public RnObjectBase<RnScope*>
 		return RnType::RN_OBJECT;
 	}
 
+	[[nodiscard]] std::string GetName() const
+	{
+		return _name;
+	}
+
+	void SetName(const std::string& name)
+	{
+		_name = name;
+	}
+
 	[[nodiscard]] bool IsModule() const
 	{
 		return _is_module;
@@ -78,8 +88,11 @@ class RnClassObject : public RnObjectBase<RnScope*>
 		_is_module = flag;
 	}
 
+	void CopySymbols(RnScope* target);
+
  private:
 	bool _is_module = false;
+	std::string _name;
 
 };
 

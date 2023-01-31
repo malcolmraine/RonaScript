@@ -461,7 +461,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 		}
 		else if (_namespaces.contains(key))
 		{
-			auto class_obj = dynamic_cast<RnClass*>(_namespaces[key]);
+			auto class_obj = dynamic_cast<RnClassObject*>(_namespaces[key]);
 			if (class_obj->IsModule())
 			{
 				throw std::runtime_error(
@@ -471,10 +471,10 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 			auto instance =
 				dynamic_cast<RnClassObject*>(_memory_manager->CreateObject(RnType::RN_CLASS_INSTANCE));
 			GetScope()->GetMemoryGroup()->AddObject(instance);
-			instance->GetScope()->SetParent(class_obj);
+			instance->ToObject()->SetParent(class_obj->ToObject());
 			class_obj->CopySymbols(instance->GetScope());
 			instance->GetScope()->StoreObject(_object_this_key, instance);
-			auto func_obj = dynamic_cast<RnFunctionObject*>(class_obj->GetObject(
+			auto func_obj = dynamic_cast<RnFunctionObject*>(class_obj->ToObject()->GetObject(
 				_object_construct_key));
 			auto func = func_obj->ToFunction();
 
