@@ -296,6 +296,11 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers)
 		AdvanceBuffer(2);
 	}
 
+	if (_current_scope->symbol_table->SymbolExists(node->id)) {
+		throw std::runtime_error("Redeclaration of symbol '" + node->id + "'");
+	}
+	_current_scope->symbol_table->AddSymbol(node->id, node->type.GetType());
+
 	if (Current()->token_type == TokenType::EQUAL)
 	{
 		AdvanceBuffer(1);
@@ -374,6 +379,11 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers)
 		node->type = "void";
 	}
 
+	if (_current_scope->symbol_table->SymbolExists(node->id)) {
+		throw std::runtime_error("Redeclaration of symbol '" + node->id + "'");
+	}
+	_current_scope->symbol_table->AddSymbol(node->id, RnType::StringToType(node->type));
+
 	// Get the function's scope
 	node->scope = ParseScope();
 
@@ -399,6 +409,9 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl()
 
 		while (Current()->token_type == TokenType::NAME)
 		{
+			if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
+				throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
+			}
 			node->parent_classes.emplace_back(ParseName());
 			ConditionalBufAdvance(TokenType::COMMA);
 		}
@@ -860,6 +873,7 @@ std::shared_ptr<ScopeNode> Parser::ParseScope()
 {
 	auto node = std::make_shared<ScopeNode>();
 	node->parent = _current_scope;
+	node->symbol_table->SetParent(_current_scope->symbol_table);
 	ConvertScope(node);
 	ConditionalBufAdvance(TokenType::R_BRACE);
 	ConditionalBufAdvance(TokenType::COLON);
@@ -1192,6 +1206,10 @@ void Parser::Parse()
 				}
 				else
 				{
+					if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
+						throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
+					}
+
 					auto expr = ParseExpr(TokenType::EQUAL);
 
 					if (Current()->token_type == TokenType::EQUAL

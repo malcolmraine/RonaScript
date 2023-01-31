@@ -17,6 +17,7 @@
 ScopeNode::ScopeNode()
 {
 	node_type = AST_SCOPE;
+	symbol_table = std::make_shared<RnAstSymbolTable>();
 }
 
 /*****************************************************************************/

@@ -13,11 +13,10 @@
 #include <vector>
 #include "NodeType.h"
 #include "AstNode.h"
+#include "../RnAstSymbolTable.h"
 
 class ClassDecl;
-
 class FuncDecl;
-
 class VarDecl;
 
 class ScopeNode : public AstNode
@@ -35,6 +34,7 @@ class ScopeNode : public AstNode
 //	std::vector<std::shared_ptr<ClassDecl>> class_decls;   // Class declarations
 //	std::vector<std::shared_ptr<FuncDecl>> func_decls;     // Function declarations
 	std::shared_ptr<ScopeNode> parent = nullptr;
+	std::shared_ptr<RnAstSymbolTable> symbol_table = nullptr;
 };
 
 #endif //RONASCRIPT_SCOPE_NODE_H
