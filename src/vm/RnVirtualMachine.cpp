@@ -561,7 +561,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 		auto obj =
 			dynamic_cast<RnClassObject*>(RnObject::Create(RnType::RN_CLASS_INSTANCE));
 		_namespaces[instruction->_arg1] = obj;
-		_scopes.push_back(obj->ToObject());
+		auto class_scope = obj->ToObject();
+		class_scope->SetParent(GetScope());
+		_scopes.push_back(class_scope);
 		index++;
 		size_t stop_index = index + instruction->_arg2;
 		for (; index < stop_index; index++)
