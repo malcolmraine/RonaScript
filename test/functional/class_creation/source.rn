@@ -1,17 +1,45 @@
 
+/*******************************************************************************/
+/*******************************************************************************/
 class Person is
 begin
-    var name: string = "";
-    var age: int = 0;
+    var _name: string = "N/A";
+    var _age: int = 0;
 
+    /***************************************************************************/
     routine construct(var name: string, var age: int): object
     begin
-        this->name = name;
-        this->age = age;
+        this->_name = name;
+        this->_age = age;
         return this;
     end
-end
 
-var p: object = Person("Dave", 55);
-print(p->name);
-print(p->age);
+    /***************************************************************************/
+    routine GetName(): string
+    begin
+        return this->_name;
+    end
+
+    /***************************************************************************/
+    routine SetName(var n: string): void
+    begin
+        this->_name = n;
+    end
+
+    /***************************************************************************/
+    routine GetAge(): int
+    begin
+        return this->_age;
+    end
+
+    /***************************************************************************/
+    routine SetAge(var age: int): void
+    begin
+        this->_age = age;
+    end
+
+end // class Person
+
+var p: object = Person("Dave", 56);
+print(p->GetName());
+print(p->GetAge());
