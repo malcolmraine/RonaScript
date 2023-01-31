@@ -454,9 +454,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 	case OP_LOAD_VALUE:
 	{
 		auto key = instruction->_arg1;
-		if (GetScope()->GetSymbolTable()->SymbolExists(instruction->_arg1))
+		auto object = GetScope()->GetObject(key);;
+		if (object)
 		{
-			auto object = GetScope()->GetObject(key);
 			GetStack().push_back(object);
 		}
 		else if (_namespaces.contains(key))

@@ -25,7 +25,7 @@ class RnSymbolTable
 	explicit RnSymbolTable(RnSymbolTable* parent_table = nullptr);
 	~RnSymbolTable();
 	bool SetSymbol(RnIntNative symbol, RnObject* obj);
-	RnObject* GetObject(RnIntNative symbol);
+	RnObject* GetObject(RnIntNative symbol, bool should_throw = false);
 	void RemoveSymbol(RnIntNative symbol);
 	void AliasSymbol(RnIntNative base, RnIntNative alias);
 	[[nodiscard]] bool SymbolExists(RnIntNative key, bool search_parent = true) const;

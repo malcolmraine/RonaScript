@@ -44,7 +44,7 @@ bool RnSymbolTable::SetSymbol(RnIntNative symbol, RnObject* obj)
 }
 
 /*****************************************************************************/
-RnObject* RnSymbolTable::GetObject(RnIntNative symbol)
+RnObject* RnSymbolTable::GetObject(RnIntNative symbol, bool should_throw)
 {
 	auto iter = _table.find(symbol);
 	if (iter != _table.end())
@@ -57,6 +57,9 @@ RnObject* RnSymbolTable::GetObject(RnIntNative symbol)
 	}
 	else
 	{
+		if (!should_throw) {
+			return nullptr;
+		}
 		throw std::runtime_error(
 			"Symbol not found: " + RnObject::GetInternedString(symbol));
 	}
