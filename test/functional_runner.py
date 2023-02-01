@@ -1,8 +1,13 @@
 import subprocess
 import sys
 import threading
+import time
+import os
 
 rn_executable = sys.argv[1]
+
+if os.name == "nt":
+    os.system("colors")
 
 
 class Test(object):
@@ -21,6 +26,7 @@ class Test(object):
         self.process = None
         self.timeout_occurred = False
         self.invoke_count = invoke_count
+        self.runtime = 0
 
     def log(self, *args):
         with open(self.log_file, "a+") as file:
@@ -40,13 +46,13 @@ class Test(object):
                     break
 
             if self.timeout_occurred:
-                msg = "TIMEOUT"
+                msg = "\033[91mTIMEOUT"
             elif not passed:
-                msg = "FAILED"
+                msg = "\033[91mFAILED"
             else:
-                msg = "PASSED"
+                msg = "\033[92mPASSED"
 
-            print(f"{msg} - {self.name}")
+            print(f"{msg} ({round(self.runtime, 6)}s) - {self.name}")
             self.log(f"{msg} - {self.name}")
             self.log(f"return code: {self.returncode}")
             self.log("=========================================================")
@@ -66,6 +72,7 @@ class Test(object):
                                             stdout=subprocess.PIPE)
             self.process.communicate()
 
+        start = time.time()
         for n in range(self.invoke_count):
             thread = threading.Thread(target=target)
             thread.start()
@@ -81,6 +88,8 @@ class Test(object):
             stdout, stderr = self.process.communicate()
             self.stderr.append(stderr.decode("utf-8"))
             self.stdout.append(stdout.decode("utf-8"))
+        end = time.time()
+        self.runtime = end - start
         self.check_output(self.returncode)
 
 
@@ -104,4 +113,5 @@ if __name__ == "__main__":
     runner.add_test(Test("Loop Timeout", "functional/loop_timeout", []))
     runner.add_test(Test("Matrix Multiplication", "functional/matrix_multiplication", []))
     runner.add_test(Test("Var Declaration Stress", "functional/var_decl_stress_test", [], timeout=10))
+    runner.add_test(Test("Multiple Invokes", "functional/multiple_invokes", [], timeout=10, invoke_count=10))
     runner.run()
