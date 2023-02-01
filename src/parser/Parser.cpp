@@ -318,6 +318,9 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers)
 	{
 		AdvanceBuffer(1);
 		node->init_value = ParseExpr();
+		if (!CanAssignTypeTo(node->type, EvaluateSubtreeType(node->init_value))) {
+			throw std::runtime_error("Type error.");
+		}
 	}
 	else
 	{
@@ -1394,4 +1397,152 @@ std::shared_ptr<Module> Parser::ParseModule()
 	node->scope = ParseScope();
 
 	return node;
+}
+
+/*****************************************************************************/
+RnTypeComposite Parser::ResolveTypes(RnTypeComposite type1, RnTypeComposite type2)
+{
+	auto type1_bounds = type1.GetFloatBounds();
+	auto type2_bounds = type2.GetFloatBounds();
+	auto lower_bound = std::min(type1_bounds.lower, type2_bounds.lower);
+	auto upper_bound = std::max(type1_bounds.upper, type2_bounds.upper);
+	RnTypeComposite resolved_type(type1.GetType());
+	resolved_type.SetBounds(lower_bound, upper_bound);
+	return resolved_type;
+}
+
+/*****************************************************************************/
+bool Parser::CanAssignTypeTo(RnTypeComposite destination, RnTypeComposite source)
+{
+	auto destination_bounds = destination.GetFloatBounds();
+	auto source_bounds = source.GetFloatBounds();
+	bool bounds_ok = true;
+	bool types_ok = true;
+	if (destination_bounds.lower > source_bounds.lower
+		|| destination_bounds.upper < source_bounds.upper)
+	{
+		if (_pragma_table["bounds"] == "strict") {
+			std::cout << "Error: Trying to assign out of bounds value";
+			bounds_ok = false;
+		} else if (_pragma_table["bounds"] == "relaxed") {
+			std::cout << "Warning: Trying to assign out of bounds value";
+			bounds_ok = true;
+		} else {
+			bounds_ok = true;
+		}
+	}
+
+	if (_pragma_table["typing"] == "strict") {
+		std::cout << "Error: Trying to assign incompatible types";
+		types_ok = destination.GetType() == source.GetType();
+	} else if (_pragma_table["typing"] == "relaxed") {
+		std::cout << "Warning: Trying to assign incompatible types";
+		types_ok = true;
+	}
+
+	return types_ok && bounds_ok;
+}
+
+/*****************************************************************************/
+RnTypeComposite Parser::EvaluateSubtreeType(std::shared_ptr<AstNode> subtree)
+{
+	switch (subtree->node_type)
+	{
+	case AST_BINARY_EXPR:
+	{
+		auto node = std::dynamic_pointer_cast<BinaryExpr>(subtree);
+		return ResolveTypes(EvaluateSubtreeType(node->_left),
+			EvaluateSubtreeType(node->_right));
+	}
+//	case AST_INDEXED_EXPR:
+//		break;
+	case AST_FUNC_CALL:
+	{
+		auto node = std::dynamic_pointer_cast<FuncCall>(subtree);
+		return EvaluateSubtreeType(node->expr);
+	}
+	case AST_LIST_LITERAL:
+	{
+		auto node = std::dynamic_pointer_cast<ArrayLiteral>(subtree);
+		auto type = RnTypeComposite(RnType::RN_ARRAY);
+		auto value = static_cast<RnIntNative>(node->items.size());
+		type.SetBounds(value, value);
+		return type;
+	}
+	case AST_STRING_LITERAL:
+	{
+		auto node = std::dynamic_pointer_cast<StringLiteral>(subtree);
+		auto type = RnTypeComposite(RnType::RN_STRING);
+		auto value = static_cast<RnIntNative>(node->data.length());
+		type.SetBounds(value, value);
+		return type;
+	}
+	case AST_BOOL_LITERAL:
+	{
+		auto node = std::dynamic_pointer_cast<BoolLiteral>(subtree);
+		auto type = RnTypeComposite(RnType::RN_BOOLEAN);
+		auto value = static_cast<RnIntNative>(node->data ? 1 : 0);
+		type.SetBounds(value, value);
+		return type;
+	}
+	case AST_FLOAT_LITERAL:
+	{
+		auto node = std::dynamic_pointer_cast<IntLiteral>(subtree);
+		auto type = RnTypeComposite(RnType::RN_FLOAT);
+		type.SetBounds(node->data, node->data);
+		return type;
+	}
+	case AST_INT_LITERAL:
+	{
+		auto node = std::dynamic_pointer_cast<IntLiteral>(subtree);
+		auto type = RnTypeComposite(RnType::RN_INT);
+		type.SetBounds(node->data, node->data);
+		return type;
+	}
+	case AST_RETURN_STMT:
+	{
+		auto node = std::dynamic_pointer_cast<ReturnStmt>(subtree);
+		return EvaluateSubtreeType(node->expr);
+	}
+	case AST_UNARY_EXPR:
+	{
+		auto node = std::dynamic_pointer_cast<UnaryExpr>(subtree);
+		return EvaluateSubtreeType(node->expr);
+	}
+	case AST_NAME:
+	{
+		auto node = std::dynamic_pointer_cast<Name>(subtree);
+		_current_scope->symbol_table->GetSymbolEntry(node->value)->GetType();
+	}
+	default:
+		throw std::runtime_error("Could not evaluate subtree");
+	}
+	return RnTypeComposite(RnType::RN_NULL);
+}
+
+/*****************************************************************************/
+TokenType Parser::GetCurrentAsExpectedType()
+{
+	return Current()->token_type;
+}
+
+/*****************************************************************************/
+size_t Parser::GetTokenCount()
+{
+	return GetDataSize();
+}
+
+/*****************************************************************************/
+std::string Parser::ItemToString(Token* token)
+{
+	return token->ToString();
+}
+
+/*****************************************************************************/
+void Parser::HandleUnexpectedItem()
+{
+	auto msg = "Unexpected token '" + Current()->lexeme + "'";
+	msg += +" in file " + Current()->file_info.ToString();
+	msg += "\n\n" + Current()->file_info.GetContextualBlock();
+	throw std::runtime_error(msg);
 }

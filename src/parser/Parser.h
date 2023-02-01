@@ -55,6 +55,7 @@ class BoolLiteral;
 class DeleteStmt;
 class ExitStmt;
 class AttributeAccess;
+class RnTypeComposite;
 
 enum Associativity_t
 {
@@ -115,33 +116,13 @@ class Parser : public RonaSequencer<Token*, TokenType>
 	void LoadTokens(std::vector<Token*> t);
 	std::shared_ptr<AstNode> TransformBinaryExpr(
 		std::shared_ptr<BinaryExpr> binary_expr);
-
-	/*************************************************************************/
-	TokenType GetCurrentAsExpectedType() override
-	{
-		return Current()->token_type;
-	}
-
-	/*************************************************************************/
-	size_t GetTokenCount()
-	{
-		return GetDataSize();
-	}
-
-	/*************************************************************************/
-	std::string ItemToString(Token* token) override
-	{
-		return token->ToString();
-	}
-
-	/*************************************************************************/
-	void HandleUnexpectedItem() override
-	{
-		auto msg = "Unexpected token '" + Current()->lexeme + "'";
-		msg += +" in file " + Current()->file_info.ToString();
-		msg += "\n\n" + Current()->file_info.GetContextualBlock();
-		throw std::runtime_error(msg);
-	}
+	RnTypeComposite EvaluateSubtreeType(std::shared_ptr<AstNode> subtree);
+	static RnTypeComposite ResolveTypes(RnTypeComposite type1, RnTypeComposite type2);
+	bool CanAssignTypeTo(RnTypeComposite destination, RnTypeComposite source);
+	TokenType GetCurrentAsExpectedType() override;
+	size_t GetTokenCount();
+	std::string ItemToString(Token* token) override;
+	void HandleUnexpectedItem() override;
 
  public:
 	std::string working_dir = ".";
