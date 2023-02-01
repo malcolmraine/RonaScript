@@ -1051,8 +1051,6 @@ std::shared_ptr<AliasDecl> Parser::ParseAliasDecl()
 	}
 
 	node->alias_name = ParseName();
-	_current_scope->symbol_table->AddSymbol(node->alias_name->value,
-		_current_scope->symbol_table->GetSymbolEntry(node->base_name->value)->GetType());
 	Expect(TokenType::NAME);
 	AdvanceBuffer(1);
 	if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme))
@@ -1061,6 +1059,8 @@ std::shared_ptr<AliasDecl> Parser::ParseAliasDecl()
 	}
 
 	node->base_name = ParseName();
+	_current_scope->symbol_table->AddSymbol(node->alias_name->value,
+		_current_scope->symbol_table->GetSymbolEntry(node->base_name->value)->GetType());
 	AdvanceBuffer(1);
 	return node;
 }

@@ -510,12 +510,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 	}
 	case OP_MAKE_CONST:
 	{
-		if (GetScope()->GetSymbolTable()->SymbolExists(instruction->_arg2))
-		{
-			throw std::runtime_error("Redeclaration of symbol '"
-				+ RnObject::GetInternedString(instruction->_arg2) + "'");
-		}
-
 		auto type = static_cast<RnType::Type>(instruction->_arg1);
 		auto obj = _memory_manager->CreateObject(type);
 		obj->SetConstFlag(true);
@@ -525,12 +519,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 	}
 	case OP_MAKE_VAR:
 	{
-		if (GetScope()->GetSymbolTable()->SymbolExists(instruction->_arg2, false))
-		{
-			throw std::runtime_error("Redeclaration of symbol '"
-				+ RnObject::GetInternedString(instruction->_arg2) + "'");
-		}
-
 		auto type = static_cast<RnType::Type>(instruction->_arg1);
 		auto obj = _memory_manager->CreateObject(type);
 		GetScope()->GetMemoryGroup()->AddObject(obj);
@@ -580,11 +568,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 			dynamic_cast<RnFunctionObject*>(_memory_manager->CreateObject(RnType::RN_FUNCTION));
 		GetScope()->GetMemoryGroup()->AddObject(obj);
 		auto name = RnObject::GetInternedString(instruction->_arg1);
-		if (GetScope()->GetSymbolTable()->SymbolExists(instruction->_arg1))
-		{
-			throw std::runtime_error("Redeclaration of symbol '" + name + "'");
-		}
-
 		auto func =
 			new RnFunction(name, index + 1 + instruction->_arg2, instruction->_arg3);
 		obj->SetData(func);
