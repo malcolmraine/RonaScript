@@ -74,6 +74,8 @@ Parser::Parser()
 		std::make_shared<RnTypeComposite>(RnType::RN_NULL));
 	_current_scope->symbol_table->AddSymbol("array_pop",
 		std::make_shared<RnTypeComposite>(RnType::RN_NULL));
+	_current_scope->symbol_table->AddSymbol("count",
+		std::make_shared<RnTypeComposite>(RnType::RN_INT));
 
 	// Set up the associativity table
 	associativity[TokenType::R_PARAN] = NO_ASSOCIATIVITY;
@@ -296,22 +298,7 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers)
 	Expect({ TokenType::STRING, TokenType::INT, TokenType::FLOAT, TokenType::BOOL,
 			 TokenType::ARRAY, TokenType::CALLABLE, TokenType::OBJECT, });
 	AdvanceBuffer(1);
-	node->type = std::make_shared<RnTypeComposite>(Current()->lexeme);
-	AdvanceBuffer(1);
-
-	if (Current()->token_type == TokenType::R_CARAT)
-	{
-		AdvanceBuffer(1);
-		char* p;
-		size_t lower_bnd_idx = Current()->lexeme.find("..");
-		size_t upper_bnd_idx = Current()->lexeme.find("..") + 2;
-		auto
-			lower = std::strtof(Current()->lexeme.substr(0, lower_bnd_idx).c_str(), &p);
-		auto upper = std::strtof(Current()->lexeme.substr(lower_bnd_idx + 2,
-			upper_bnd_idx).c_str(), &p);
-		node->type->SetBounds(lower, upper);
-		AdvanceBuffer(2);
-	}
+	node->type = ParseType();
 
 	if (_current_scope->symbol_table->SymbolExists(node->id))
 	{
@@ -378,6 +365,8 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers)
 
 		ConditionalBufAdvance(TokenType::COMMA);
 		node->args.emplace_back(arg);
+		_current_scope->symbol_table->AddSymbol(node->id,
+			std::make_shared<RnTypeComposite>(RnType::StringToType(node->type)));
 	}
 
 	ConditionalBufAdvance(TokenType::L_PARAN);
@@ -1483,8 +1472,9 @@ std::shared_ptr<RnTypeComposite> Parser::EvaluateSubtreeType(
 		return ResolveTypes(EvaluateSubtreeType(node->_left),
 			EvaluateSubtreeType(node->_right));
 	}
-//	case AST_INDEXED_EXPR:
-//		break;
+	case AST_INDEXED_EXPR:
+		// TODO: Evaluate type information for indexed expressions
+		return std::make_shared<RnTypeComposite>(RnType::RN_NULL);
 	case AST_FUNC_CALL:
 	{
 		auto node = std::dynamic_pointer_cast<FuncCall>(subtree);
@@ -1574,4 +1564,25 @@ void Parser::HandleUnexpectedItem()
 	msg += +" in file " + Current()->file_info.ToString();
 	msg += "\n\n" + Current()->file_info.GetContextualBlock();
 	throw std::runtime_error(msg);
+}
+std::shared_ptr<RnTypeComposite> Parser::ParseType()
+{
+	auto basic_type = RnType::StringToType(Current()->lexeme);
+	auto type = std::make_shared<RnTypeComposite>(basic_type);
+	AdvanceBuffer(1);
+
+	if (Current()->token_type == TokenType::R_CARAT)
+	{
+		AdvanceBuffer(1);
+		char* p;
+		size_t lower_bnd_idx = Current()->lexeme.find("..");
+		size_t upper_bnd_idx = Current()->lexeme.find("..") + 2;
+		auto
+			lower = std::strtof(Current()->lexeme.substr(0, lower_bnd_idx).c_str(), &p);
+		auto upper = std::strtof(Current()->lexeme.substr(lower_bnd_idx + 2,
+			upper_bnd_idx).c_str(), &p);
+		type->SetBounds(lower, upper);
+		AdvanceBuffer(2);
+	}
+	return type;
 }

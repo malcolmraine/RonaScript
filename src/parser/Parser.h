@@ -128,6 +128,7 @@ class Parser : public RonaSequencer<Token*, TokenType>
 	size_t GetTokenCount();
 	std::string ItemToString(Token* token) override;
 	void HandleUnexpectedItem() override;
+	std::shared_ptr<RnTypeComposite> ParseType();
 
  public:
 	std::string working_dir = ".";
