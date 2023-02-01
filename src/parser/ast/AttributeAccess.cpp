@@ -18,10 +18,7 @@ AttributeAccess::AttributeAccess()
 }
 
 /*****************************************************************************/
-AttributeAccess::~AttributeAccess()
-{
-
-}
+AttributeAccess::~AttributeAccess() = default;
 
 /*****************************************************************************/
 std::string AttributeAccess::ToString(bool nl)

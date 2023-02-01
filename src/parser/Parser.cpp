@@ -60,13 +60,20 @@ Parser::Parser()
 	_current_scope = ast->root;
 
 	// TODO: Add rest of builtin functions
-	_current_scope->symbol_table->AddSymbol("print", RnType::RN_NULL);
-	_current_scope->symbol_table->AddSymbol("prompt", RnType::RN_NULL);
-	_current_scope->symbol_table->AddSymbol("read", RnType::RN_NULL);
-	_current_scope->symbol_table->AddSymbol("write", RnType::RN_NULL);
-	_current_scope->symbol_table->AddSymbol("array_merge", RnType::RN_NULL);
-	_current_scope->symbol_table->AddSymbol("array_push", RnType::RN_NULL);
-	_current_scope->symbol_table->AddSymbol("array_pop", RnType::RN_NULL);
+	_current_scope->symbol_table->AddSymbol("print",
+		std::make_shared<RnTypeComposite>(RnType::RN_NULL));
+	_current_scope->symbol_table->AddSymbol("prompt",
+		std::make_shared<RnTypeComposite>(RnType::RN_NULL));
+	_current_scope->symbol_table->AddSymbol("read",
+		std::make_shared<RnTypeComposite>(RnType::RN_NULL));
+	_current_scope->symbol_table->AddSymbol("write",
+		std::make_shared<RnTypeComposite>(RnType::RN_NULL));
+	_current_scope->symbol_table->AddSymbol("array_merge",
+		std::make_shared<RnTypeComposite>(RnType::RN_NULL));
+	_current_scope->symbol_table->AddSymbol("array_push",
+		std::make_shared<RnTypeComposite>(RnType::RN_NULL));
+	_current_scope->symbol_table->AddSymbol("array_pop",
+		std::make_shared<RnTypeComposite>(RnType::RN_NULL));
 
 	// Set up the associativity table
 	associativity[TokenType::R_PARAN] = NO_ASSOCIATIVITY;
@@ -289,7 +296,7 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers)
 	Expect({ TokenType::STRING, TokenType::INT, TokenType::FLOAT, TokenType::BOOL,
 			 TokenType::ARRAY, TokenType::CALLABLE, TokenType::OBJECT, });
 	AdvanceBuffer(1);
-	node->type = RnTypeComposite(Current()->lexeme);
+	node->type = std::make_shared<RnTypeComposite>(Current()->lexeme);
 	AdvanceBuffer(1);
 
 	if (Current()->token_type == TokenType::R_CARAT)
@@ -302,7 +309,7 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers)
 			lower = std::strtof(Current()->lexeme.substr(0, lower_bnd_idx).c_str(), &p);
 		auto upper = std::strtof(Current()->lexeme.substr(lower_bnd_idx + 2,
 			upper_bnd_idx).c_str(), &p);
-		node->type.SetBounds(lower, upper);
+		node->type->SetBounds(lower, upper);
 		AdvanceBuffer(2);
 	}
 
@@ -310,13 +317,14 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers)
 	{
 		throw std::runtime_error("Redeclaration of symbol '" + node->id + "'");
 	}
-	_current_scope->symbol_table->AddSymbol(node->id, node->type.GetType());
+	_current_scope->symbol_table->AddSymbol(node->id, node->type);
 
 	if (Current()->token_type == TokenType::EQUAL)
 	{
 		AdvanceBuffer(1);
 		node->init_value = ParseExpr();
-		if (!CanAssignTypeTo(node->type, EvaluateSubtreeType(node->init_value))) {
+		if (!CanAssignTypeTo(node->type, EvaluateSubtreeType(node->init_value)))
+		{
 			throw std::runtime_error("Type error.");
 		}
 	}
@@ -397,7 +405,8 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers)
 	{
 		throw std::runtime_error("Redeclaration of symbol '" + node->id + "'");
 	}
-	_current_scope->symbol_table->AddSymbol(node->id, RnType::StringToType(node->type));
+	_current_scope->symbol_table->AddSymbol(node->id,
+		std::make_shared<RnTypeComposite>(RnType::StringToType(node->type)));
 
 	// Get the function's scope
 	node->scope = ParseScope();
@@ -420,7 +429,7 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl()
 	else
 	{
 		_current_scope->symbol_table->AddSymbol(Current()->lexeme,
-			RnType::RN_CLASS_INSTANCE);
+			std::make_shared<RnTypeComposite>(RnType::RN_CLASS_INSTANCE));
 	}
 
 	node->id = Current()->lexeme;
@@ -707,7 +716,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token)
 }
 
 /*****************************************************************************/
-std::shared_ptr<UnaryExpr> Parser::ParseUnaryExpr(std::shared_ptr<AstNode> expr)
+std::shared_ptr<UnaryExpr> Parser::ParseUnaryExpr(const std::shared_ptr<AstNode>& expr)
 {
 	auto node = std::make_shared<UnaryExpr>();
 	node->op = Current()->lexeme;
@@ -839,6 +848,12 @@ std::shared_ptr<AssignmentStmt> Parser::ParseAssignmentStatement(
 	{
 		ConditionalBufAdvance(TokenType::EQUAL);
 		node->rexpr = ParseExpr();
+	}
+
+	if (!CanAssignTypeTo(EvaluateSubtreeType(node->lexpr),
+		EvaluateSubtreeType(node->rexpr)))
+	{
+		throw std::runtime_error("Type error.");
 	}
 
 	ConditionalBufAdvance(TokenType::SEMICOLON);
@@ -1398,44 +1413,57 @@ std::shared_ptr<Module> Parser::ParseModule()
 }
 
 /*****************************************************************************/
-RnTypeComposite Parser::ResolveTypes(RnTypeComposite type1, RnTypeComposite type2)
+std::shared_ptr<RnTypeComposite> Parser::ResolveTypes(
+	const std::shared_ptr<RnTypeComposite>& type1,
+	const std::shared_ptr<RnTypeComposite>& type2)
 {
-	auto type1_bounds = type1.GetFloatBounds();
-	auto type2_bounds = type2.GetFloatBounds();
+	auto type1_bounds = type1->GetFloatBounds();
+	auto type2_bounds = type2->GetFloatBounds();
 	auto lower_bound = std::min(type1_bounds.lower, type2_bounds.lower);
 	auto upper_bound = std::max(type1_bounds.upper, type2_bounds.upper);
-	RnTypeComposite resolved_type(type1.GetType());
-	resolved_type.SetBounds(lower_bound, upper_bound);
+	auto resolved_type = std::make_shared<RnTypeComposite>(type1->GetType());
+	resolved_type->SetBounds(lower_bound, upper_bound);
 	return resolved_type;
 }
 
 /*****************************************************************************/
-bool Parser::CanAssignTypeTo(RnTypeComposite destination, RnTypeComposite source)
+bool Parser::CanAssignTypeTo(const std::shared_ptr<RnTypeComposite>& destination,
+	const std::shared_ptr<RnTypeComposite>& source)
 {
-	auto destination_bounds = destination.GetFloatBounds();
-	auto source_bounds = source.GetFloatBounds();
+	auto destination_bounds = destination->GetFloatBounds();
+	auto source_bounds = source->GetFloatBounds();
 	bool bounds_ok = true;
 	bool types_ok = true;
-	if (destination_bounds.lower > source_bounds.lower
-		|| destination_bounds.upper < source_bounds.upper)
+	if (!source->IsWithinRange(*destination))
+//	if (destination_bounds.lower > source_bounds.lower
+//		|| destination_bounds.upper < source_bounds.upper)
 	{
-		if (_pragma_table["bounds"] == "strict") {
+		if (_pragma_table["bounds"] == "strict")
+		{
 			bounds_ok = false;
 			throw std::runtime_error("Trying to assign out of bounds value");
-		} else if (_pragma_table["bounds"] == "relaxed") {
+		}
+		else if (_pragma_table["bounds"] == "relaxed")
+		{
 			Log::WARN("Warning: Trying to assign out of bounds value");
 			bounds_ok = true;
-		} else {
+		}
+		else
+		{
 			bounds_ok = true;
 		}
 	}
 
-	if (_pragma_table["typing"] == "strict") {
-		types_ok = destination.GetType() == source.GetType();
-		if (!types_ok) {
+	if (_pragma_table["typing"] == "strict")
+	{
+		types_ok = destination->GetType() == source->GetType();
+		if (!types_ok)
+		{
 			throw std::runtime_error("Trying to assign incompatible types");
 		}
-	} else if (_pragma_table["typing"] == "relaxed") {
+	}
+	else if (_pragma_table["typing"] == "relaxed")
+	{
 		Log::WARN("Warning: Trying to assign incompatible types");
 		types_ok = true;
 	}
@@ -1444,7 +1472,8 @@ bool Parser::CanAssignTypeTo(RnTypeComposite destination, RnTypeComposite source
 }
 
 /*****************************************************************************/
-RnTypeComposite Parser::EvaluateSubtreeType(std::shared_ptr<AstNode> subtree)
+std::shared_ptr<RnTypeComposite> Parser::EvaluateSubtreeType(
+	const std::shared_ptr<AstNode>& subtree)
 {
 	switch (subtree->node_type)
 	{
@@ -1464,39 +1493,39 @@ RnTypeComposite Parser::EvaluateSubtreeType(std::shared_ptr<AstNode> subtree)
 	case AST_LIST_LITERAL:
 	{
 		auto node = std::dynamic_pointer_cast<ArrayLiteral>(subtree);
-		auto type = RnTypeComposite(RnType::RN_ARRAY);
+		auto type = std::make_shared<RnTypeComposite>(RnType::RN_ARRAY);
 		auto value = static_cast<RnIntNative>(node->items.size());
-		type.SetBounds(value, value);
+		type->SetBounds(value, value);
 		return type;
 	}
 	case AST_STRING_LITERAL:
 	{
 		auto node = std::dynamic_pointer_cast<StringLiteral>(subtree);
-		auto type = RnTypeComposite(RnType::RN_STRING);
+		auto type = std::make_shared<RnTypeComposite>(RnType::RN_STRING);
 		auto value = static_cast<RnIntNative>(node->data.length());
-		type.SetBounds(value, value);
+		type->SetBounds(value, value);
 		return type;
 	}
 	case AST_BOOL_LITERAL:
 	{
 		auto node = std::dynamic_pointer_cast<BoolLiteral>(subtree);
-		auto type = RnTypeComposite(RnType::RN_BOOLEAN);
+		auto type = std::make_shared<RnTypeComposite>(RnType::RN_BOOLEAN);
 		auto value = static_cast<RnIntNative>(node->data ? 1 : 0);
-		type.SetBounds(value, value);
+		type->SetBounds(value, value);
 		return type;
 	}
 	case AST_FLOAT_LITERAL:
 	{
 		auto node = std::dynamic_pointer_cast<FloatLiteral>(subtree);
-		auto type = RnTypeComposite(RnType::RN_FLOAT);
-		type.SetBounds(node->data, node->data);
+		auto type = std::make_shared<RnTypeComposite>(RnType::RN_FLOAT);
+		type->SetBounds(node->data, node->data);
 		return type;
 	}
 	case AST_INT_LITERAL:
 	{
 		auto node = std::dynamic_pointer_cast<IntLiteral>(subtree);
-		auto type = RnTypeComposite(RnType::RN_INT);
-		type.SetBounds(node->data, node->data);
+		auto type = std::make_shared<RnTypeComposite>(RnType::RN_INT);
+		type->SetBounds(node->data, node->data);
 		return type;
 	}
 	case AST_RETURN_STMT:
@@ -1512,12 +1541,12 @@ RnTypeComposite Parser::EvaluateSubtreeType(std::shared_ptr<AstNode> subtree)
 	case AST_NAME:
 	{
 		auto node = std::dynamic_pointer_cast<Name>(subtree);
-		_current_scope->symbol_table->GetSymbolEntry(node->value)->GetType();
+		return _current_scope->symbol_table->GetSymbolEntry(node->value)->GetType();
 	}
 	default:
 		throw std::runtime_error("Could not evaluate subtree");
 	}
-	return RnTypeComposite(RnType::RN_NULL);
+	return std::make_shared<RnTypeComposite>(RnType::RN_NULL);
 }
 
 /*****************************************************************************/

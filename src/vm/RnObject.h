@@ -63,10 +63,9 @@ class RnObject
 	static std::string GetInternedString(InternmentKey key);
 	static double GetInternedFloat(InternmentKey key);
 	static long GetInternedInt(InternmentKey key);
-	static size_t InternValue(float x);
-	static size_t InternValue(double x);
-	static size_t InternValue(const std::string& x);
-	static size_t InternValue(long x);
+	static size_t InternValue(RnFloatNative x);
+	static size_t InternValue(const RnStringNative& x);
+	static size_t InternValue(RnIntNative x);
 	static RnObject* Create(RnBoolNative data);
 	static RnObject* Create(RnStringNative data);
 	static RnObject* Create(RnIntNative data);

@@ -18,18 +18,23 @@ RnAstSymbolTable::RnAstSymbolTable(RnAstSymbolTable* parent) : _parent(parent)
 /*****************************************************************************/
 bool RnAstSymbolTable::SymbolExists(const std::string& symbol)
 {
-	if (_table.contains(symbol)) {
+	if (_table.contains(symbol))
+	{
 		return true;
-	} else if (_parent && _parent->SymbolExists(symbol)) {
+	}
+	else if (_parent && _parent->SymbolExists(symbol))
+	{
 		return true;
-	} else {
+	}
+	else
+	{
 		return false;
 	}
 }
 
 /*****************************************************************************/
 std::shared_ptr<SymbolTableEntry> RnAstSymbolTable::AddSymbol(const std::string& symbol,
-	RnType::Type type)
+	std::shared_ptr<RnTypeComposite> type)
 {
 	auto entry = std::make_shared<SymbolTableEntry>(symbol, type);
 	_table[symbol] = entry;

@@ -16,36 +16,40 @@
 class SymbolTableEntry
 {
  public:
-	SymbolTableEntry(const std::string& name, RnType::Type type) {
+	SymbolTableEntry(const std::string& name, std::shared_ptr<RnTypeComposite> type)
+	{
 		_name = name;
-		_type = std::make_unique<RnTypeComposite>(type);
+		_type = std::move(type);
 	}
 
-	RnType::Type GetType() {
-		return _type->GetType();
+	std::shared_ptr<RnTypeComposite> GetType()
+	{
+		return _type;
 	}
 
-	std::string GetSymbol() {
+	std::string GetSymbol()
+	{
 		return _name;
 	}
 
  private:
 	std::string _name;
-	std::unique_ptr<RnTypeComposite> _type;
+	std::shared_ptr<RnTypeComposite> _type;
 };
 
 class RnAstSymbolTable
 {
  public:
-	RnAstSymbolTable(RnAstSymbolTable* parent = nullptr);
-
+	explicit RnAstSymbolTable(RnAstSymbolTable* parent = nullptr);
 	bool SymbolExists(const std::string& symbol);
-	std::shared_ptr<SymbolTableEntry> AddSymbol(const std::string& symbol, RnType::Type type);
+	std::shared_ptr<SymbolTableEntry> AddSymbol(const std::string& symbol,
+		std::shared_ptr<RnTypeComposite> type);
 	std::shared_ptr<SymbolTableEntry> GetSymbolEntry(const std::string& symbol);
-	void SetParent(std::shared_ptr<RnAstSymbolTable> parent) {
+
+	void SetParent(std::shared_ptr<RnAstSymbolTable> parent)
+	{
 		_parent = std::move(parent);
 	}
-
 
  private:
 	std::map<std::string, std::shared_ptr<SymbolTableEntry>> _table;

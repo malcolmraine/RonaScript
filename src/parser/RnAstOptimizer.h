@@ -18,7 +18,7 @@ class BinaryExpr;
 class RnAstOptimizer
 {
  public:
-	RnAstOptimizer(Ast* ast);
+	explicit RnAstOptimizer(Ast* ast);
 	~RnAstOptimizer();
 	void Optimize();
 	void TailCallOpt(FuncDecl* node);

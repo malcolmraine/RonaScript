@@ -17,10 +17,7 @@ UnaryExpr::UnaryExpr()
 }
 
 /*****************************************************************************/
-UnaryExpr::~UnaryExpr()
-{
-
-}
+UnaryExpr::~UnaryExpr() = default;
 
 /*****************************************************************************/
 std::string UnaryExpr::ToString(bool nl)

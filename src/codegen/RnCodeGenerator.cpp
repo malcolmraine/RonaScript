@@ -13,16 +13,10 @@
 #include "../parser/ast/Module.h"
 
 /*****************************************************************************/
-RnCodeGenerator::RnCodeGenerator()
-{
-
-}
+RnCodeGenerator::RnCodeGenerator() = default;
 
 /*****************************************************************************/
-RnCodeGenerator::~RnCodeGenerator()
-{
-
-}
+RnCodeGenerator::~RnCodeGenerator() = default;
 
 /*****************************************************************************/
 void RnCodeGenerator::Generate(Ast* ast)

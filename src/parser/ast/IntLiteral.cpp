@@ -47,8 +47,8 @@ IntLiteral::IntLiteral(double value)
 	data = static_cast<RnIntNative>(value);
 }
 
-/*****************************************************************************/
-IntLiteral::IntLiteral(const std::string& value)
-{
-	std::cout << value;
-}
+///*****************************************************************************/
+//IntLiteral::IntLiteral(const std::string& value)
+//{
+//	std::cout << value;
+//}

@@ -60,8 +60,7 @@ class RnVirtualMachine
 	RnScope* CreateScope();
 
  private:
-	inline void ExecuteInstruction(bool& break_scope,
-		size_t& index);
+	inline void ExecuteInstruction(bool& break_scope, size_t& index);
 	void RegisterBuiltins();
 	RnVirtualMachine();
 

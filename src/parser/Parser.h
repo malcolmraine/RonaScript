@@ -84,7 +84,8 @@ class Parser : public RonaSequencer<Token*, TokenType>
 	std::shared_ptr<ClassDecl> ParseClassDecl();
 	std::shared_ptr<AstNode> GetExprComponent();
 	std::shared_ptr<AstNode> ParseExpr(TokenType stop_token = TokenType::SEMICOLON);
-	std::shared_ptr<UnaryExpr> ParseUnaryExpr(std::shared_ptr<AstNode> expr = nullptr);
+	std::shared_ptr<UnaryExpr> ParseUnaryExpr(
+		const std::shared_ptr<AstNode>& expr = nullptr);
 	std::shared_ptr<BreakStmt> ParseBreakStmt();
 	std::shared_ptr<ContinueStmt> ParseContinueStmt();
 	std::shared_ptr<ReturnStmt> ParseReturnStmt();
@@ -116,9 +117,13 @@ class Parser : public RonaSequencer<Token*, TokenType>
 	void LoadTokens(std::vector<Token*> t);
 	std::shared_ptr<AstNode> TransformBinaryExpr(
 		std::shared_ptr<BinaryExpr> binary_expr);
-	RnTypeComposite EvaluateSubtreeType(std::shared_ptr<AstNode> subtree);
-	static RnTypeComposite ResolveTypes(RnTypeComposite type1, RnTypeComposite type2);
-	bool CanAssignTypeTo(RnTypeComposite destination, RnTypeComposite source);
+	std::shared_ptr<RnTypeComposite> EvaluateSubtreeType(
+		const std::shared_ptr<AstNode>& subtree);
+	static std::shared_ptr<RnTypeComposite> ResolveTypes(
+		const std::shared_ptr<RnTypeComposite>& type1,
+		const std::shared_ptr<RnTypeComposite>& type2);
+	bool CanAssignTypeTo(const std::shared_ptr<RnTypeComposite>& destination,
+		const std::shared_ptr<RnTypeComposite>& source);
 	TokenType GetCurrentAsExpectedType() override;
 	size_t GetTokenCount();
 	std::string ItemToString(Token* token) override;

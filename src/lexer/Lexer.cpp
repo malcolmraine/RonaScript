@@ -35,7 +35,7 @@ Lexer::Lexer()
 	// Initialize the buffer with EOF characters.
 	FillBuffer('\0');
 
-	// Setup the token map.rn
+	// Set up the token map.rn
 	_token_map["{"] = TokenType::R_BRACE;
 	_token_map["}"] = TokenType::L_BRACE;
 	_token_map["("] = TokenType::R_PARAN;
@@ -603,7 +603,7 @@ bool Lexer::IsWhiteSpace(char c) const
 /*****************************************************************************/
 std::string Lexer::ItemToString(char item)
 {
-	return std::string(1, item);
+	return { 1, item };
 }
 
 /*****************************************************************************/

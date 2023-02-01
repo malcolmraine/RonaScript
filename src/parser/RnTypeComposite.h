@@ -28,11 +28,8 @@ class RnTypeComposite
 	explicit RnTypeComposite(const std::string& type);
 	explicit RnTypeComposite(RnType::Type type);
 	~RnTypeComposite();
-	bool HasRange();
 	[[nodiscard]] bool IsWithinRange(RnTypeComposite type) const;
-//	bool CanAssignFrom(const RnTypeComposite& type);
-//	bool CanAssignTo(RnTypeComposite type);
-	[[nodiscard]] Bounds<long> GetIntBounds() const;
+	[[nodiscard]] Bounds<RnIntNative> GetIntBounds() const;
 	Bounds<RnFloatNative> GetFloatBounds();
 	void SetBounds(RnIntNative lower, RnIntNative upper);
 	void SetBounds(RnFloatNative lower, RnFloatNative upper);
@@ -44,7 +41,6 @@ class RnTypeComposite
 	}
 
  private:
-//	bool _has_range{};
 	Bounds<RnFloatNative> _bounds{};
 	RnType::Type _type;
 	std::string _str_type;

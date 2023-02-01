@@ -19,7 +19,7 @@ class ArgDecl : public AstNode
 {
  public:
 	ArgDecl();
-	~ArgDecl();
+	~ArgDecl() override;
 	std::string ToString(bool nl) override;
 	std::shared_ptr<Name> id{};
 	std::string type;

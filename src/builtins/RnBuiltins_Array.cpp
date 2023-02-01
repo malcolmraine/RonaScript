@@ -1,12 +1,15 @@
-//
-// Created by Malcolm Hall on 11/28/22.
-//
-
+/*****************************************************************************
+* File: RnBuiltins_Array.cpp
+* Description:
+* Author: Malcolm Hall
+* Date: 5/30/22
+* Version: 1
+*
+******************************************************************************/
 
 #include "RnBuiltins_Array.h"
 #include "../vm/RnScope.h"
 #include "../vm/RnArrayObject.h"
-#include "../vm/RnObject.h"
 
 /*****************************************************************************/
 void RnBuiltins_Array::array_merge(RnScope* scope, const std::vector<RnObject*>& args,

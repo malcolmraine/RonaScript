@@ -17,7 +17,7 @@ class BreakStmt : public AstNode
 {
  public:
 	BreakStmt();
-	~BreakStmt();
+	~BreakStmt() override;
 	std::string ToString(bool nl) override;
 };
 

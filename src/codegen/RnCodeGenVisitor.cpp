@@ -8,12 +8,10 @@
 ******************************************************************************/
 
 #include "RnCodeGenVisitor.h"
-#include "RnCodeGenerator.h"
 #include "../parser/ast/StringLiteral.h"
 #include "../parser/ast/ScopeNode.h"
 #include "../parser/ast/ImportStmt.h"
 #include "../parser/ast/ArgDecl.h"
-#include "../parser/ast/AstNode.h"
 #include "../parser/ast/ForLoop.h"
 #include "../parser/ast/AliasDecl.h"
 #include "../parser/ast/Expr.h"
@@ -35,7 +33,6 @@
 #include "../parser/ast/IntLiteral.h"
 #include "../parser/ast/ContinueStmt.h"
 #include "../parser/ast/ElseStmt.h"
-#include "../parser/ast/Name.h"
 #include "../parser/ast/TryBlock.h"
 #include "../parser/ast/CatchBlock.h"
 #include "../parser/ast/BoolLiteral.h"
@@ -123,7 +120,7 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node)
 }
 
 /*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::GeneralVisit(std::shared_ptr<AstNode> node)
+InstructionBlock RnCodeGenVisitor::GeneralVisit(const std::shared_ptr<AstNode>& node)
 {
 	if (node)
 	{
@@ -296,13 +293,13 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(VarDecl* node)
 	if (node->is_const)
 	{
 		instructions.emplace_back(new RnInstruction(OP_MAKE_CONST,
-			node->type.GetType(),
+			node->type->GetType(),
 			interned_id));
 	}
 	else
 	{
 		instructions.emplace_back(new RnInstruction(OP_MAKE_VAR,
-			node->type.GetType(),
+			node->type->GetType(),
 			interned_id));
 	}
 	if (node->init_value)
@@ -358,12 +355,14 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(AttributeAccess* node)
 /*****************************************************************************/
 std::vector<RnInstruction*> RnCodeGenVisitor::Visit(TryBlock* node)
 {
+	// TODO: Generate code for TryBlock
 	return {};
 }
 
 /*****************************************************************************/
 std::vector<RnInstruction*> RnCodeGenVisitor::Visit(CatchBlock* node)
 {
+	// TODO: Generate code for CatchBlock
 	return {};
 }
 
@@ -523,6 +522,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(BinaryExpr* node)
 /*****************************************************************************/
 std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ContinueStmt* node)
 {
+	// TODO: Generate code for ContinueStmt
 	return {};
 }
 
@@ -541,6 +541,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(IndexedExpr* node)
 /*****************************************************************************/
 std::vector<RnInstruction*> RnCodeGenVisitor::Visit(BreakStmt* node)
 {
+	// TODO: Generate code for BreakStmt
 	return {};
 }
 

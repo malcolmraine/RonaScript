@@ -57,7 +57,8 @@ RnObject* RnSymbolTable::GetObject(RnIntNative symbol, bool should_throw)
 	}
 	else
 	{
-		if (!should_throw) {
+		if (!should_throw)
+		{
 			return nullptr;
 		}
 		throw std::runtime_error(

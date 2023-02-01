@@ -12,7 +12,7 @@
 
 #include <string>
 
-typedef long RnIntNative;
+typedef long long RnIntNative;
 typedef double RnFloatNative;
 typedef std::string RnStringNative;
 typedef bool RnBoolNative;

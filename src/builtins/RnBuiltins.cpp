@@ -8,21 +8,15 @@
 ******************************************************************************/
 
 #include "RnBuiltins.h"
-#include <string>
 #include <cstdio>
 #include <fstream>
 #include <stdexcept>
-#include <string>
 #include <array>
 #include <sstream>
-#include <iostream>
 #include "../util/MLib/String.h"
 #include "../vm/RnScope.h"
-#include "../vm/RnObject.h"
 #include "../vm/RnFunctionObject.h"
-#include "../vm/RnClassObject.h"
 #include "../vm/RnFunction.h"
-#include <dlfcn.h>
 
 /*****************************************************************************/
 void RnBuiltins::rn_builtin_unpack(RnScope* scope, const std::vector<RnObject*>& args,

@@ -19,7 +19,7 @@ class ElseStmt : public AstNode
 {
  public:
 	ElseStmt();
-	~ElseStmt();
+	~ElseStmt() override;
 	std::string ToString(bool nl) override;
 	std::shared_ptr<ScopeNode> consequent = nullptr;
 };

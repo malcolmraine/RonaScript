@@ -11,7 +11,6 @@
 #define RONASCRIPT_RNMEMORYMANAGER_H
 
 #include "RnMemoryGroup.h"
-#include "RnMemoryBlock.h"
 #include <unordered_map>
 #include <set>
 #include "RnType.h"
@@ -22,6 +21,7 @@
 #define OBJECT_CACHE_SIZE (1000)
 
 class RnObject;
+class RnScope;
 
 class RnMemoryManager
 {

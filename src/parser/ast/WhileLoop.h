@@ -19,7 +19,7 @@ class WhileLoop : public AstNode
 {
  public:
 	WhileLoop();
-	~WhileLoop();
+	~WhileLoop() override;
 	std::string ToString(bool nl) override;
 	std::shared_ptr<AstNode> test = nullptr;
 	std::shared_ptr<ScopeNode> scope = nullptr;

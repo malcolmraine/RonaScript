@@ -22,10 +22,9 @@ class Ast
  public:
 	Ast();
 	~Ast();
-	void optimize();
 	std::map<std::string, std::shared_ptr<Module>> modules;
 	std::shared_ptr<ScopeNode> root = nullptr;
-	FileInfo* file_info;
+	FileInfo* file_info{};
 };
 
 #endif //RONASCRIPT_AST_H

@@ -144,7 +144,7 @@ class JSONList : public JSONValue<std::vector<JSONNode*>>
 {
  public:
 	JSONList();
-	JSONList(const std::vector<JSONNode*>& data);
+	explicit JSONList(const std::vector<JSONNode*>& data);
 	~JSONList() override;
 	[[nodiscard]] std::string ToString() const override;
 
@@ -161,7 +161,7 @@ class JSONFloat : public JSONValue<double>
 {
  public:
 	JSONFloat();
-	JSONFloat(double data);
+	explicit JSONFloat(double data);
 	[[nodiscard]] std::string ToString() const override;
 
 	/*************************************************************************/
@@ -177,7 +177,7 @@ class JSONInt : public JSONValue<long>
 {
  public:
 	JSONInt();
-	JSONInt(long data);
+	explicit JSONInt(long data);
 	[[nodiscard]] std::string ToString() const override;
 
 	/*************************************************************************/
@@ -193,7 +193,7 @@ class JSONString : public JSONValue<std::string>
 {
  public:
 	JSONString();
-	JSONString(std::string data);
+	explicit JSONString(std::string data);
 	[[nodiscard]] std::string ToString() const override;
 
 	/*************************************************************************/

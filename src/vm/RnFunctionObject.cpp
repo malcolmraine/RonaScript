@@ -12,9 +12,7 @@
 #include <sstream>
 
 /*****************************************************************************/
-RnFunctionObject::RnFunctionObject()
-{
-}
+RnFunctionObject::RnFunctionObject() = default;
 
 /*****************************************************************************/
 RnFunctionObject::~RnFunctionObject() = default;

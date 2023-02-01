@@ -35,9 +35,7 @@ RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr
 }
 
 /*****************************************************************************/
-RnMemoryManager::~RnMemoryManager()
-{
-}
+RnMemoryManager::~RnMemoryManager() = default;
 
 /*****************************************************************************/
 RnObject* RnMemoryManager::CreateObject(RnType::Type type)
@@ -85,9 +83,12 @@ RnObject* RnMemoryManager::Create(RnStringNative data)
 /*****************************************************************************/
 RnObject* RnMemoryManager::Create(RnBoolNative data)
 {
-	if (data) {
+	if (data)
+	{
 		return _cached_bool_true_object;
-	} else {
+	}
+	else
+	{
 		return _cached_bool_false_object;
 	}
 }

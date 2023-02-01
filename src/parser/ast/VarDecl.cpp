@@ -11,15 +11,13 @@
 #include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
-VarDecl::VarDecl() : type(RnTypeComposite(RnType::RN_NULL))
+VarDecl::VarDecl() : type(std::make_shared<RnTypeComposite>(RnType::RN_NULL))
 {
 	node_type = AST_VAR_DECL;
 }
 
 /*****************************************************************************/
-VarDecl::~VarDecl()
-{
-}
+VarDecl::~VarDecl() = default;
 
 /*****************************************************************************/
 std::string VarDecl::ToString(bool nl)
@@ -43,7 +41,7 @@ std::string VarDecl::ToString(bool nl)
 		s += "VarDecl";
 	}
 
-	s += "( " + id + ", " + type.ToString();
+	s += "( " + id + ", " + type->ToString();
 
 	for (auto& qualifier : qualifiers)
 	{

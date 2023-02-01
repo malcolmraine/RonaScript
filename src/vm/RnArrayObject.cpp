@@ -11,15 +11,10 @@
 #include "../util/RnStringUtil.h"
 
 /*****************************************************************************/
-RnArrayObject::RnArrayObject()
-{
-}
+RnArrayObject::RnArrayObject() = default;
 
 /*****************************************************************************/
-RnArrayObject::~RnArrayObject()
-{
-
-}
+RnArrayObject::~RnArrayObject() = default;
 
 /*****************************************************************************/
 RnObject* RnArrayObject::operator+(RnObject* obj)

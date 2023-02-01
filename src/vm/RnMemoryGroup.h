@@ -11,7 +11,8 @@
 #define RONASCRIPT_RNMEMORYGROUP_H
 
 #include <vector>
-#include "RnMemoryBlock.h"
+
+class RnObject;
 
 class RnMemoryGroup
 {

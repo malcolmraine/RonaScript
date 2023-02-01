@@ -17,7 +17,7 @@ class ElifStmt : public AstNode
 {
  public:
 	ElifStmt();
-	~ElifStmt();
+	~ElifStmt() override;
 	std::string ToString(bool nl) override;
 	std::shared_ptr<AstNode> test = nullptr;
 	std::shared_ptr<AstNode> consequent = nullptr;

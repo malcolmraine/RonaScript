@@ -29,16 +29,9 @@ RnTypeComposite::RnTypeComposite(RnType::Type type)
 RnTypeComposite::~RnTypeComposite() = default;
 
 /*****************************************************************************/
-bool RnTypeComposite::HasRange()
-{
-	return true;
-}
-
-/*****************************************************************************/
 [[nodiscard]] bool RnTypeComposite::IsWithinRange(RnTypeComposite type) const
 {
 	auto other_bounds = type.GetFloatBounds();
-
 	return _bounds.lower >= other_bounds.lower && _bounds.upper <= other_bounds.upper;
 }
 
@@ -238,7 +231,7 @@ bool RnTypeComposite::HasRange()
 //}
 
 /*****************************************************************************/
-Bounds<long> RnTypeComposite::GetIntBounds() const
+Bounds<RnIntNative> RnTypeComposite::GetIntBounds() const
 {
 	Bounds<RnIntNative> bounds{};
 	bounds.lower = static_cast<RnIntNative>(_bounds.lower);
@@ -282,7 +275,6 @@ std::string RnTypeComposite::ToString()
 	}
 	default:
 	{
-//		auto bounds = GetIntBounds();
 		return _str_type + "<" + std::to_string(_bounds.lower) + ".."
 			+ std::to_string(_bounds.upper) + ">";
 	}

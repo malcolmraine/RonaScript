@@ -8,7 +8,6 @@
 ******************************************************************************/
 
 #include "AliasDecl.h"
-#include "ScopeNode.h"
 #include "Name.h"
 #include "../../codegen/RnCodeGenVisitor.h"
 
@@ -16,15 +15,10 @@
 AliasDecl::AliasDecl()
 {
 	node_type = AST_ALIAS_DECL;
-
 }
 
 /*****************************************************************************/
-AliasDecl::~AliasDecl()
-{
-	//delete base_name;
-	//delete alias_name;
-}
+AliasDecl::~AliasDecl() = default;
 
 /*****************************************************************************/
 std::string AliasDecl::ToString(bool nl)

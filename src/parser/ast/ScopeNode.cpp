@@ -38,24 +38,6 @@ std::string ScopeNode::ToString(bool nl)
 		s += "\n";
 	}
 
-//	for (auto& child : class_decls)
-//	{
-//		child->nest_lvl = nest_lvl + 1;
-//		s += child->ToString(true);
-//	}
-//
-//	for (auto& child : var_decls)
-//	{
-//		child->nest_lvl = nest_lvl + 1;
-//		s += child->ToString(true);
-//	}
-//
-//	for (auto& child : func_decls)
-//	{
-//		child->nest_lvl = nest_lvl + 1;
-//		s += child->ToString(true);
-//	}
-
 	for (auto& child : children)
 	{
 		child->nest_lvl = nest_lvl + 1;

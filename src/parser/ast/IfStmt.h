@@ -16,7 +16,7 @@ class IfStmt : public AstNode
 {
  public:
 	IfStmt();
-	~IfStmt();
+	~IfStmt() override;
 	std::string ToString(bool nl) override;
 	std::shared_ptr<AstNode> test = nullptr;
 	std::shared_ptr<AstNode> consequent = nullptr;

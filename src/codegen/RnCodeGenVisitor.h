@@ -90,7 +90,7 @@ class RnCodeGenVisitor
 	~RnCodeGenVisitor() = default;
 
 	InstructionBlock GeneralVisit(AstNode* node);
-	InstructionBlock GeneralVisit(std::shared_ptr<AstNode> node);
+	InstructionBlock GeneralVisit(const std::shared_ptr<AstNode>& node);
 	std::vector<RnInstruction*> Visit(StringLiteral* node);
 	std::vector<RnInstruction*> Visit(FloatLiteral* node);
 	std::vector<RnInstruction*> Visit(IntLiteral* node);

@@ -9,23 +9,18 @@
 
 #include "RnVirtualMachine.h"
 #include "RnOpCode.h"
-#include "RnBoolObject.h"
 #include "RnSymbolTable.h"
 #include "RnArrayObject.h"
-#include "RnStringObject.h"
 #include "RnFunctionObject.h"
 #include "RnMemoryManager.h"
 #include "RnFunction.h"
-#include "RnClass.h"
 #include "RnClassObject.h"
 #include "../builtins/RnBuiltins.h"
 #include "../builtins/RnBuiltins_Math.h"
 #include "../builtins/RnBuiltins_Array.h"
 #include "../builtins/RnBuiltins_IO.h"
 #include "../builtins/RnBuiltins_String.h"
-#include "../builtins/RnBuiltins_Time.h"
 #include "../builtins/RnBuiltins_Type.h"
-#include <iostream>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -137,8 +132,7 @@ void RnVirtualMachine::AddScope()
 }
 
 /*****************************************************************************/
-void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
-	size_t& index)
+void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index)
 {
 	_gc_count++;
 	if (_gc_count > 1000)
@@ -430,7 +424,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 	case OP_LOAD_INT:
 	{
 		auto value = RnObject::GetInternedInt(instruction->_arg1);
-		auto obj = CreateObject(value);
+		auto obj = CreateObject(static_cast<RnIntNative>(value));
 		GetScope()->GetMemoryGroup()->AddObject(obj);
 		GetStack().push_back(obj);
 		break;
@@ -454,7 +448,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 	case OP_LOAD_VALUE:
 	{
 		auto key = instruction->_arg1;
-		auto object = GetScope()->GetObject(key);;
+		auto object = GetScope()->GetObject(key);
 		if (object)
 		{
 			GetStack().push_back(object);
@@ -474,8 +468,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope,
 			instance->ToObject()->SetParent(class_obj->ToObject());
 			class_obj->CopySymbols(instance->GetScope());
 			instance->GetScope()->StoreObject(_object_this_key, instance);
-			auto func_obj = dynamic_cast<RnFunctionObject*>(class_obj->ToObject()->GetObject(
-				_object_construct_key));
+			auto func_obj =
+				dynamic_cast<RnFunctionObject*>(class_obj->ToObject()->GetObject(
+					_object_construct_key));
 			auto func = func_obj->ToFunction();
 
 			func->SetScope(new RnScope(instance->GetScope()));
@@ -833,7 +828,8 @@ RnObject* RnVirtualMachine::CreateObject(RnFloatNative data)
 }
 
 /*****************************************************************************/
-RnScope* RnVirtualMachine::CreateScope() {
+RnScope* RnVirtualMachine::CreateScope()
+{
 	return _memory_manager->CreateScope();
 }
 
