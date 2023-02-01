@@ -143,7 +143,7 @@ class RnObjectBase : public RnObject
 			SetData(obj->ToObject());
 			break;
 		case RnType::RN_NULL:
-			break;
+		case RnType::RN_VOID:
 		case RnType::RN_UNKNOWN:
 			break;
 		}

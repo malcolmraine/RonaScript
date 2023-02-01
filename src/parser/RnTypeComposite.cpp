@@ -21,7 +21,7 @@ RnTypeComposite::RnTypeComposite(const std::string& type)
 RnTypeComposite::RnTypeComposite(RnType::Type type)
 {
 	_type = type;
-	_bounds.lower = std::numeric_limits<double>::infinity();
+	_bounds.lower = -std::numeric_limits<double>::infinity();
 	_bounds.upper = std::numeric_limits<double>::infinity();
 }
 
@@ -263,6 +263,12 @@ void RnTypeComposite::SetBounds(RnFloatNative lower, RnFloatNative upper)
 /*****************************************************************************/
 std::string RnTypeComposite::ToString()
 {
+	if (_bounds.lower == -std::numeric_limits<double>::infinity()
+		|| _bounds.upper == std::numeric_limits<double>::infinity())
+	{
+		return _str_type;
+	}
+
 	switch (_type)
 	{
 	case RnType::RN_INT:

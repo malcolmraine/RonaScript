@@ -13,22 +13,22 @@
 #include <vector>
 #include <string>
 #include "AstNode.h"
+#include "../RnTypeComposite.h"
 
 class ScopeNode;
-
 class ArgDecl;
-
 class Token;
 
 class FuncDecl : public AstNode
 {
  public:
 	FuncDecl();
-	~FuncDecl();
+	~FuncDecl() override;
+
 	std::string ToString(bool nl) override;
 	std::string id;
 	std::vector<ArgDecl*> args;
-	std::string type;
+	std::shared_ptr<RnTypeComposite> type;
 	std::vector<Token*> qualifiers;
 	std::shared_ptr<ScopeNode> scope = nullptr;
 };

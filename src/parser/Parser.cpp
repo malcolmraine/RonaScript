@@ -365,8 +365,7 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers)
 
 		ConditionalBufAdvance(TokenType::COMMA);
 		node->args.emplace_back(arg);
-		_current_scope->symbol_table->AddSymbol(node->id,
-			std::make_shared<RnTypeComposite>(RnType::StringToType(node->type)));
+		_current_scope->symbol_table->AddSymbol(node->id, node->type);
 	}
 
 	ConditionalBufAdvance(TokenType::L_PARAN);
@@ -375,10 +374,10 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers)
 	if (Current()->token_type == TokenType::COLON)
 	{
 		AdvanceBuffer(1);
-		node->type = Current()->lexeme;
+		node->type = ParseType();
 
-		if (node->type != "object" && _current_state == CLASS_DECL_CONTEXT
-			&& node->id == "construct")
+		if (node->type->GetType() != RnType::RN_OBJECT
+			&& _current_state == CLASS_DECL_CONTEXT && node->id == "construct")
 		{
 			throw std::runtime_error("Class constructor must return object type");
 		}
@@ -387,15 +386,14 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers)
 	}
 	else
 	{
-		node->type = "void";
+		node->type = std::make_shared<RnTypeComposite>(RnType::RN_VOID);
 	}
 
 	if (_current_scope->symbol_table->SymbolExists(node->id))
 	{
 		throw std::runtime_error("Redeclaration of symbol '" + node->id + "'");
 	}
-	_current_scope->symbol_table->AddSymbol(node->id,
-		std::make_shared<RnTypeComposite>(RnType::StringToType(node->type)));
+	_current_scope->symbol_table->AddSymbol(node->id, node->type);
 
 	// Get the function's scope
 	node->scope = ParseScope();
@@ -1424,8 +1422,6 @@ bool Parser::CanAssignTypeTo(const std::shared_ptr<RnTypeComposite>& destination
 	bool bounds_ok = true;
 	bool types_ok = true;
 	if (!source->IsWithinRange(*destination))
-//	if (destination_bounds.lower > source_bounds.lower
-//		|| destination_bounds.upper < source_bounds.upper)
 	{
 		if (_pragma_table["bounds"] == "strict")
 		{
@@ -1569,6 +1565,12 @@ std::shared_ptr<RnTypeComposite> Parser::ParseType()
 {
 	auto basic_type = RnType::StringToType(Current()->lexeme);
 	auto type = std::make_shared<RnTypeComposite>(basic_type);
+
+	if (_pragma_table["require"] == "bounds") {
+		if (Peek()->token_type != TokenType::R_CARAT) {
+			throw std::runtime_error("Missing bounds on type " + Current()->lexeme);
+		}
+	}
 	AdvanceBuffer(1);
 
 	if (Current()->token_type == TokenType::R_CARAT)

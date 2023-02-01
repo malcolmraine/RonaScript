@@ -31,6 +31,7 @@ class RnType
 		RN_CLASS_INSTANCE,
 		RN_OBJECT,
 		RN_NULL,
+		RN_VOID,
 		RN_UNKNOWN,
 	};
 

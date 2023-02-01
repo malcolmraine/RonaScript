@@ -67,6 +67,7 @@ RnObject* RnMemoryManager::CreateObject(RnType::Type type)
 	case RnType::RN_OBJECT:
 		return std::construct_at<RnClassObject>(reinterpret_cast<RnClassObject*>(address));
 	case RnType::RN_NULL:
+	case RnType::RN_VOID:
 	case RnType::RN_UNKNOWN:
 		return nullptr;
 	}
@@ -189,6 +190,7 @@ void RnMemoryManager::GCSweep()
 				std::destroy_at<RnClassObject>(reinterpret_cast<RnClassObject*>(address));
 				break;
 			case RnType::RN_NULL:
+			case RnType::RN_VOID:
 			case RnType::RN_UNKNOWN:
 				std::destroy_at<RnObject>(reinterpret_cast<RnObject*>(address));
 				break;

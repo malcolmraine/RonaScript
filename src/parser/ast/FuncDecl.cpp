@@ -27,7 +27,7 @@ FuncDecl::~FuncDecl()
 /*****************************************************************************/
 std::string FuncDecl::ToString(bool nl)
 {
-	std::string s = MakeTabStr() + "FuncDecl( " + id + ", " + type + " )";
+	std::string s = MakeTabStr() + "FuncDecl( " + id + ", " + type->ToString() + " )";
 	if (nl)
 	{
 		s += "\n";
