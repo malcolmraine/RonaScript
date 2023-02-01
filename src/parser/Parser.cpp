@@ -1420,8 +1420,8 @@ bool Parser::CanAssignTypeTo(RnTypeComposite destination, RnTypeComposite source
 		|| destination_bounds.upper < source_bounds.upper)
 	{
 		if (_pragma_table["bounds"] == "strict") {
-			throw std::runtime_error("Trying to assign out of bounds value");
 			bounds_ok = false;
+			throw std::runtime_error("Trying to assign out of bounds value");
 		} else if (_pragma_table["bounds"] == "relaxed") {
 			Log::WARN("Warning: Trying to assign out of bounds value");
 			bounds_ok = true;
@@ -1431,10 +1431,12 @@ bool Parser::CanAssignTypeTo(RnTypeComposite destination, RnTypeComposite source
 	}
 
 	if (_pragma_table["typing"] == "strict") {
-		std::cout << "Error: Trying to assign incompatible types";
 		types_ok = destination.GetType() == source.GetType();
+		if (!types_ok) {
+			throw std::runtime_error("Trying to assign incompatible types");
+		}
 	} else if (_pragma_table["typing"] == "relaxed") {
-		std::cout << "Warning: Trying to assign incompatible types";
+		Log::WARN("Warning: Trying to assign incompatible types");
 		types_ok = true;
 	}
 
@@ -1485,7 +1487,7 @@ RnTypeComposite Parser::EvaluateSubtreeType(std::shared_ptr<AstNode> subtree)
 	}
 	case AST_FLOAT_LITERAL:
 	{
-		auto node = std::dynamic_pointer_cast<IntLiteral>(subtree);
+		auto node = std::dynamic_pointer_cast<FloatLiteral>(subtree);
 		auto type = RnTypeComposite(RnType::RN_FLOAT);
 		type.SetBounds(node->data, node->data);
 		return type;
