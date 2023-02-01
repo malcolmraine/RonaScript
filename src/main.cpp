@@ -1,20 +1,16 @@
 #include <iostream>
 #include "lexer/Lexer.h"
 #include "parser/Parser.h"
-#include <map>
 #include <fstream>
-#include "util/FileInfo.h"
-#include "vm/RnInternment.h"
-#include <unordered_set>
 #include "vm/RnMemoryManager.h"
 #include "vm/RnObject.h"
 #include "codegen/RnCodeGenerator.h"
 #include "vm/RnVirtualMachine.h"
 #include "util/MLib/String.h"
-#include <dlfcn.h>
 #include "util/ArgParser.h"
 #include <set>
 #include "RnVersionInfo.h"
+#include "util/log.h"
 
 /*****************************************************************************/
 void RonaScriptMain(int argc, char* argv[])
@@ -51,7 +47,7 @@ void RonaScriptMain(int argc, char* argv[])
 	}
 	else if (arg_parser.GetInputFile().empty())
 	{
-		std::cout << "\033[31m" << "RonaScript: Error: No input file\n";
+		Log::ERROR("RonaScript: Error: No input file");
 		return;
 	}
 
@@ -67,7 +63,7 @@ void RonaScriptMain(int argc, char* argv[])
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << "\033[31m" << "Lexer Error: " << e.what() << std::endl;
+		Log::ERROR("Syntax Error: " + std::string(e.what()));
 		return;
 	}
 
@@ -90,7 +86,7 @@ void RonaScriptMain(int argc, char* argv[])
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << "\033[31m" << "Parse Error: " << e.what() << std::endl;
+		Log::ERROR("Parse Error: " + std::string(e.what()));
 		return;
 	}
 
@@ -121,7 +117,7 @@ void RonaScriptMain(int argc, char* argv[])
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << "\033[31m" << "Runtime Error: " << e.what() << std::endl;
+		Log::ERROR("Runtime Error: " + std::string(e.what()));
 		return;
 	}
 

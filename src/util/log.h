@@ -26,15 +26,9 @@ class Log
 {
  public:
 	static void INFO(const std::string& msg);
-	static void INFO(int value);
-	static void INFO(double value);
-	static void INFO(bool value);
+	static void WARN(const std::string& msg);
 	static void DEBUG(const std::string& msg);
-	static void DEBUG(int value);
-	static void DEBUG(double value);
-	static void DEBUG(bool value);
 	static void ERROR(const std::string& msg);
-
 };
 
 #endif //VARSTACKTEST_LOG_H

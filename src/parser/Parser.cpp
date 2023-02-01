@@ -50,6 +50,7 @@
 #include "ast/BoolLiteral.h"
 #include "ast/DeleteStmt.h"
 #include "ast/ExitStmt.h"
+#include "../util/log.h"
 
 /*****************************************************************************/
 Parser::Parser()
@@ -66,9 +67,6 @@ Parser::Parser()
 	_current_scope->symbol_table->AddSymbol("array_merge", RnType::RN_NULL);
 	_current_scope->symbol_table->AddSymbol("array_push", RnType::RN_NULL);
 	_current_scope->symbol_table->AddSymbol("array_pop", RnType::RN_NULL);
-//	_current_scope->symbol_table->AddSymbol("print", RnType::RN_NULL);
-//	_current_scope->symbol_table->AddSymbol("print", RnType::RN_NULL);
-//	_current_scope->symbol_table->AddSymbol("print", RnType::RN_NULL);
 
 	// Set up the associativity table
 	associativity[TokenType::R_PARAN] = NO_ASSOCIATIVITY;
@@ -1422,10 +1420,10 @@ bool Parser::CanAssignTypeTo(RnTypeComposite destination, RnTypeComposite source
 		|| destination_bounds.upper < source_bounds.upper)
 	{
 		if (_pragma_table["bounds"] == "strict") {
-			std::cout << "Error: Trying to assign out of bounds value";
+			throw std::runtime_error("Trying to assign out of bounds value");
 			bounds_ok = false;
 		} else if (_pragma_table["bounds"] == "relaxed") {
-			std::cout << "Warning: Trying to assign out of bounds value";
+			Log::WARN("Warning: Trying to assign out of bounds value");
 			bounds_ok = true;
 		} else {
 			bounds_ok = true;
