@@ -18,7 +18,6 @@ public:
     FloatLiteral();
     explicit FloatLiteral(double value);
     explicit FloatLiteral(bool value);
-    explicit FloatLiteral(const std::string& value);
     ~FloatLiteral() override;
     std::string ToString(bool nl) override;
 

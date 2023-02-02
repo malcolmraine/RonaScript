@@ -19,22 +19,22 @@ void RonaScriptMain(int argc, char* argv[]) {
     arg_parser.AddArgument("<file>", {}, "Input file (*.rn | *.rnc)");
     arg_parser.AddArgument("-c", {}, "Compile to *.rnc file");
     arg_parser.AddArgument("-norun", {}, "Compile to *.rnc file without running");
-    arg_parser.AddArgument("-past", {"--print-ast"}, "Print AST after parsing");
-    arg_parser.AddArgument("-ptok", {"--print-tokens"}, "Print tokens after lexing");
-    arg_parser.AddArgument("-pcode", {"--print-opcodes"},
+    arg_parser.AddArgument("-a", {"--print-ast"}, "Print AST after parsing");
+    arg_parser.AddArgument("-t", {"--print-tokens"}, "Print tokens after lexing");
+    arg_parser.AddArgument("-p", {"--print-opcodes"},
                            "Print opcodes after generation");
     arg_parser.AddArgument("-d", {"--debug"}, "Show various debug logging");
     arg_parser.AddArgument("-norun", {"--print-opcodes"},
                            "Compile to *.rnc file without running");
     arg_parser.AddArgument("-v", {"--version"}, "Show version information");
-    arg_parser.AddArgument("-h", {"--help"}, "Show help");
+    arg_parser.AddArgument("-h", {"--help", "help"}, "Show help");
     arg_parser.Parse(argc, argv);
 
     if (arg_parser.IsSet("-h")) {
         arg_parser.ShowHelp();
         return;
     } else if (arg_parser.IsSet("-v")) {
-        std::cout << "RonaScript " << RONASCRIPT_VERSION << "\n";
+        std::cout << "RonaScript " << std::string(RONASCRIPT_VERSION);
         return;
     } else if (arg_parser.GetInputFile().empty()) {
         Log::ERROR("RonaScript: Error: No input file");
@@ -56,7 +56,7 @@ void RonaScriptMain(int argc, char* argv[]) {
 
     if (arg_parser.IsSet("-ptok")) {
         for (auto& token : lexer.tokens) {
-            std::cout << token->ToString() << std::endl;
+            Log::INFO(token->ToString());
         }
     }
 
@@ -73,7 +73,7 @@ void RonaScriptMain(int argc, char* argv[]) {
     }
 
     if (arg_parser.IsSet("-past")) {
-        std::cout << parser.DumpsAst();
+        Log::INFO(parser.DumpsAst());
     }
 
     RnCodeGenerator code_generator;
@@ -82,8 +82,7 @@ void RonaScriptMain(int argc, char* argv[]) {
     if (arg_parser.IsSet("-past")) {
         size_t index = 0;
         for (auto& instruction : code_generator.GetInstructions()) {
-            std::cout << String::Pad(std::to_string(index++), 6)
-                      << instruction->ToString() << std::endl;
+            Log::INFO(String::Pad(std::to_string(index++), 6) + instruction->ToString());
         }
     }
     auto vm = RnVirtualMachine::GetInstance();

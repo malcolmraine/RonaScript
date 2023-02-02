@@ -17,7 +17,6 @@
 #include "RnFunctionObject.h"
 #include "RnIntObject.h"
 #include "RnStringObject.h"
-//#include <iostream>
 
 #define OBJECT_ALLOCATION_COUNT 1000000
 

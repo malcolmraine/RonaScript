@@ -15,6 +15,7 @@
 #include "RnMemoryManager.h"
 #include "RnObject.h"
 #include "RnSymbolTable.h"
+#include "../util/log.h"
 
 std::map<std::string, void*> RnScope::_handles;
 
@@ -105,8 +106,7 @@ void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library,
         for (const auto& info : functions) {
             function_names.push_back(RnObject::Create(std::get<0>(info)));
             auto name = std::get<0>(info);
-            std::cout << "Loading external function: " << std::get<0>(info)
-                      << std::endl;
+            Log::DEBUG("Loading external function: " + std::get<0>(info));
 
             auto func =
                 new RnBuiltinFunction(name, CastToBuiltin(dlsym(handle, name.c_str())));
@@ -132,6 +132,6 @@ void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library,
             scope->StoreObject(RnObject::InternValue("__version__"), version_obj);
         }
     } else {
-        std::cout << "Unable to load external library: " << library << std::endl;
+        Log::DEBUG("Unable to load external library: " + library);
     }
 }

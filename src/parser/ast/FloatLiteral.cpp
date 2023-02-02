@@ -36,11 +36,6 @@ std::string FloatLiteral::ToString(bool nl) {
 }
 
 /*****************************************************************************/
-FloatLiteral::FloatLiteral(const std::string& value) {
-    std::cout << value;
-}
-
-/*****************************************************************************/
 FloatLiteral::FloatLiteral(bool value) {
     data = value ? 1.0 : 0.0;
 }

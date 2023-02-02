@@ -27,6 +27,7 @@
 #include "RnMemoryManager.h"
 #include "RnOpCode.h"
 #include "RnSymbolTable.h"
+#include "../util/log.h"
 
 RnVirtualMachine* RnVirtualMachine::_instance = nullptr;
 RnIntNative RnVirtualMachine::_object_this_key = 0;
@@ -671,8 +672,7 @@ RnIntNative RnVirtualMachine::Run() {
     }
     stopwatch.Stop();
 
-    //	std::cout << "\nRuntime duration: " << stopwatch.Duration() <<
-    //std::endl;
+    Log::DEBUG("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
     return GetStack().back()->ToInt();
 }
 

@@ -13,6 +13,7 @@
 #include <iostream>
 #include <sstream>
 
+#include "../util/log.h"
 #include "MLib/String.h"
 
 /*****************************************************************************/
@@ -120,7 +121,7 @@ void ArgParser::ShowHelp() {
         }
         help << "  " << String::Pad(key_str, 20, ' ') << argument->GetDescription()
              << "\n";
-        std::cout << "Creating help" << std::endl;
+        Log::DEBUG("Creating help");
     }
 
     std::cout << help.str();

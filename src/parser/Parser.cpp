@@ -1087,7 +1087,7 @@ void Parser::Parse() {
                         AdvanceBuffer(2);
                         _pragma_table[key] = value;
                         ConditionalBufAdvance(TokenType::SEMICOLON);
-                        std::cout << "Pragma: " << key << ", " << value << std::endl;
+                        Log::DEBUG("Pragma: " + key + ", " + value);
                     } else {
                         if (!_current_scope->symbol_table->SymbolExists(
                                 Current()->lexeme)) {
