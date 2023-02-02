@@ -42,9 +42,13 @@ public:
     void SetData(RnIntNative data) override;
     void SetData(RnFloatNative data) override;
 
-    void SetData(RnObject* data) override { SetData(data->ToInt()); }
+    void SetData(RnObject* data) override {
+        SetData(data->ToInt());
+    }
 
-    [[nodiscard]] RnType::Type GetType() const override { return RnType::RN_INT; }
+    [[nodiscard]] RnType::Type GetType() const override {
+        return RnType::RN_INT;
+    }
 };
 
 #endif  //RONASCRIPT_RNINTOBJECT_H

@@ -52,10 +52,14 @@ public:
     ~JSONValue() override = default;
 
     /*************************************************************************/
-    [[nodiscard]] T GetData() const { return _data; }
+    [[nodiscard]] T GetData() const {
+        return _data;
+    }
 
     /*************************************************************************/
-    void SetData(T data) { _data = data; }
+    void SetData(T data) {
+        _data = data;
+    }
 
     /*************************************************************************/
     [[nodiscard]] std::string ToString() const override {
@@ -71,16 +75,24 @@ public:
     }
 
     /*************************************************************************/
-    [[nodiscard]] JSONNode* GetParent() const override { return _parent; }
+    [[nodiscard]] JSONNode* GetParent() const override {
+        return _parent;
+    }
 
     /*************************************************************************/
-    [[nodiscard]] size_t GetLevel() const override { return _level; }
+    [[nodiscard]] size_t GetLevel() const override {
+        return _level;
+    }
 
     /*************************************************************************/
-    void SetLevel(size_t level) override { _level = level; }
+    void SetLevel(size_t level) override {
+        _level = level;
+    }
 
     /*************************************************************************/
-    [[nodiscard]] TYPE GetType() const override { return DEFAULT; }
+    [[nodiscard]] TYPE GetType() const override {
+        return DEFAULT;
+    }
 
 protected:
     T _data;
@@ -103,7 +115,9 @@ public:
     void RemoveKeyValue(const std::string& key, JSONNode* value);
 
     /*************************************************************************/
-    [[nodiscard]] TYPE GetType() const override { return OBJECT; }
+    [[nodiscard]] TYPE GetType() const override {
+        return OBJECT;
+    }
 };
 
 /*****************************************************************************/
@@ -116,7 +130,9 @@ public:
     [[nodiscard]] std::string ToString() const override;
 
     /*************************************************************************/
-    [[nodiscard]] TYPE GetType() const override { return LIST; }
+    [[nodiscard]] TYPE GetType() const override {
+        return LIST;
+    }
 };
 
 /*****************************************************************************/
@@ -128,7 +144,9 @@ public:
     [[nodiscard]] std::string ToString() const override;
 
     /*************************************************************************/
-    [[nodiscard]] TYPE GetType() const override { return FLOAT; }
+    [[nodiscard]] TYPE GetType() const override {
+        return FLOAT;
+    }
 };
 
 /*****************************************************************************/
@@ -140,7 +158,9 @@ public:
     [[nodiscard]] std::string ToString() const override;
 
     /*************************************************************************/
-    [[nodiscard]] TYPE GetType() const override { return INTEGER; }
+    [[nodiscard]] TYPE GetType() const override {
+        return INTEGER;
+    }
 };
 
 /*****************************************************************************/
@@ -152,7 +172,9 @@ public:
     [[nodiscard]] std::string ToString() const override;
 
     /*************************************************************************/
-    [[nodiscard]] TYPE GetType() const override { return STRING; }
+    [[nodiscard]] TYPE GetType() const override {
+        return STRING;
+    }
 };
 
 /*****************************************************************************/
