@@ -20,7 +20,7 @@ RnMemoryGroup::RnMemoryGroup(RnMemoryGroup* parent) {
 }
 
 /*****************************************************************************/
-RnMemoryGroup::~RnMemoryGroup() {}
+RnMemoryGroup::~RnMemoryGroup() = default;
 
 /*****************************************************************************/
 std::vector<RnObject*> RnMemoryGroup::GetObjects() const {

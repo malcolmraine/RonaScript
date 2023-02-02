@@ -45,17 +45,17 @@ long RnObject::GetInternedInt(InternmentKey key) {
 }
 
 /*****************************************************************************/
-size_t RnObject::InternValue(RnFloatNative x) {
+RnIntNative RnObject::InternValue(RnFloatNative x) {
     return float_internment->InternItem(x);
 }
 
 /*****************************************************************************/
-size_t RnObject::InternValue(const RnStringNative& x) {
+RnIntNative RnObject::InternValue(const RnStringNative& x) {
     return string_internment->InternItem(x);
 }
 
 /*****************************************************************************/
-size_t RnObject::InternValue(RnIntNative x) {
+RnIntNative RnObject::InternValue(RnIntNative x) {
     return int_internment->InternItem(x);
 }
 

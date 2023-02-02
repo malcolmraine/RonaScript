@@ -9,7 +9,6 @@
 
 #include "RnScope.h"
 #include <dlfcn.h>
-#include <iostream>
 #include "../util/log.h"
 #include "RnFunction.h"
 #include "RnFunctionObject.h"

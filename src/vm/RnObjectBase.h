@@ -44,7 +44,7 @@ public:
     RnObjectBase() = default;
 
     /*************************************************************************/
-    ~RnObjectBase() = default;
+    ~RnObjectBase() override = default;
 
     /*************************************************************************/
     T GetData() const {

@@ -12,8 +12,9 @@
 
 #include <string>
 #include <unordered_map>
+#include "RnType.h"
 
-typedef size_t InternmentKey;
+typedef RnIntNative InternmentKey;
 
 template <typename T>
 class RnInternment {
@@ -37,7 +38,7 @@ public:
     }
 
 protected:
-    size_t _index = 0;
+    InternmentKey _index = 0;
     std::unordered_map<InternmentKey, T> _key_item_map;
     std::unordered_map<T, InternmentKey> _item_key_map;
 };
