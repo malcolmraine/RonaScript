@@ -71,17 +71,25 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::ResolveTypes(
 /*****************************************************************************/
 bool RnAstValidator::CanAssignTypeTo(
     const std::shared_ptr<RnTypeComposite>& destination,
-    const std::shared_ptr<RnTypeComposite>& source) {
+    const std::shared_ptr<RnTypeComposite>& source, ASSIGNMENT_TYPE assignment_type) {
     auto destination_bounds = destination->GetFloatBounds();
     auto source_bounds = source->GetFloatBounds();
     bool bounds_ok = true;
     bool types_ok = true;
+
+    std::string action_msg;
+    if (assignment_type == ASSIGNMENT_TYPE::ASSIGNMENT_VALUE) {
+        action_msg = "Trying to assign ";
+    } else {
+        action_msg = "Trying to return ";
+    }
+
     if (!source->IsWithinRange(*destination)) {
         if (_current_scope->pragma_table["bounds"] == "strict") {
             bounds_ok = false;
-            throw std::runtime_error("Trying to assign out of bounds value");
+            throw std::runtime_error(action_msg + "out of bounds value");
         } else if (_current_scope->pragma_table["bounds"] == "relaxed") {
-            Log::WARN("Warning: Trying to assign out of bounds value");
+            Log::WARN("Warning: " + action_msg + "out of bounds value");
             bounds_ok = true;
         } else {
             bounds_ok = true;
@@ -91,10 +99,10 @@ bool RnAstValidator::CanAssignTypeTo(
     if (_current_scope->pragma_table["typing"] == "strict") {
         types_ok = destination->GetType() == source->GetType();
         if (!types_ok) {
-            throw std::runtime_error("Trying to assign incompatible types");
+            throw std::runtime_error(action_msg + "incompatible type");
         }
     } else if (_current_scope->pragma_table["typing"] == "relaxed") {
-        Log::WARN("Warning: Trying to assign incompatible types");
+        Log::WARN("Warning: " + action_msg + "incompatible type");
         types_ok = true;
     }
 
@@ -165,7 +173,6 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
         default:
             throw std::runtime_error("Could not evaluate subtree");
     }
-    return std::make_shared<RnTypeComposite>(RnType::RN_NULL);
 }
 
 /*****************************************************************************/
@@ -246,7 +253,11 @@ bool RnAstValidator::GeneralVisit(AstNode* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::GeneralVisit(const std::shared_ptr<AstNode>& node) {
-    return true;
+    if (node) {
+        return GeneralVisit(node.get());
+    } else {
+        return {};
+    }
 }
 
 /*****************************************************************************/
@@ -272,16 +283,22 @@ bool RnAstValidator::Visit(ArrayLiteral* node) {
 /*****************************************************************************/
 bool RnAstValidator::Visit(ScopeNode* node) {
     _current_scope = node;
+
+    for (const auto& child : node->children) {
+        GeneralVisit(child);
+    }
     return true;
 }
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(ForLoop* node) {
+    GeneralVisit(node->scope);
     return true;
 }
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(WhileLoop* node) {
+    GeneralVisit(node->scope);
     return true;
 }
 
@@ -298,11 +315,14 @@ bool RnAstValidator::Visit(Module* node) {
 /*****************************************************************************/
 bool RnAstValidator::Visit(FuncDecl* node) {
     SymbolRedeclarationCheck(node->id);
+    _current_scope->symbol_table->AddSymbol(node->id, node->type);
 
     for (auto arg : node->args) {
         node->scope->symbol_table->AddSymbol(arg->id->value, arg->type);
     }
+    _current_type_reference = node->type;
     GeneralVisit(node->scope);
+    _current_type_reference = nullptr;
     return true;
 }
 
@@ -317,9 +337,11 @@ bool RnAstValidator::Visit(FuncCall* node) {
 /*****************************************************************************/
 bool RnAstValidator::Visit(VarDecl* node) {
     SymbolRedeclarationCheck(node->id);
+    _current_scope->symbol_table->AddSymbol(node->id, node->type);
 
     if (node->init_value) {
-        if (!CanAssignTypeTo(node->type, EvaluateSubtreeType(node->init_value))) {
+        if (!CanAssignTypeTo(node->type, EvaluateSubtreeType(node->init_value),
+                             ASSIGNMENT_VALUE)) {
             throw std::runtime_error("Type error.");
         }
     }
@@ -335,6 +357,8 @@ bool RnAstValidator::Visit(Name* node) {
 /*****************************************************************************/
 bool RnAstValidator::Visit(ClassDecl* node) {
     SymbolRedeclarationCheck(node->id);
+    _current_scope->symbol_table->AddSymbol(
+        node->id, std::make_shared<RnTypeComposite>(RnType::RN_CLASS_INSTANCE));
     GeneralVisit(node->scope);
     return true;
 }
@@ -346,11 +370,14 @@ bool RnAstValidator::Visit(ExitStmt* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(ReturnStmt* node) {
+    CanAssignTypeTo(_current_type_reference, EvaluateSubtreeType(node->expr),
+                    RETURN_VALUE);
     return true;
 }
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(AttributeAccess* node) {
+    SymbolExistsCheck(std::dynamic_pointer_cast<Name>(node->name)->value);
     return true;
 }
 
@@ -410,18 +437,23 @@ bool RnAstValidator::Visit(Expr* node) {
 /*****************************************************************************/
 bool RnAstValidator::Visit(AliasDecl* node) {
     SymbolRedeclarationCheck(node->alias_name->value);
+    _current_scope->symbol_table->AddSymbol(
+        node->alias_name->value,
+        _current_scope->symbol_table->GetSymbolEntry(node->base_name->value)
+            ->GetType());
     return true;
 }
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(ArgDecl* node) {
+    // Enforce bounds requirements here
     return true;
 }
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(AssignmentStmt* node) {
     if (!CanAssignTypeTo(EvaluateSubtreeType(node->lexpr),
-                         EvaluateSubtreeType(node->rexpr))) {
+                         EvaluateSubtreeType(node->rexpr), ASSIGNMENT_VALUE)) {
         throw std::runtime_error("Type error.");
     }
     return true;

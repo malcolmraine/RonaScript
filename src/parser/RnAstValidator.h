@@ -84,6 +84,10 @@ class AttributeAccess;
 
 class RnAstValidator {
 public:
+    enum ASSIGNMENT_TYPE {
+        RETURN_VALUE,
+        ASSIGNMENT_VALUE
+    };
     RnAstValidator() = default;
     ~RnAstValidator() = default;
 
@@ -95,7 +99,7 @@ public:
         const std::shared_ptr<RnTypeComposite>& type1,
         const std::shared_ptr<RnTypeComposite>& type2);
     bool CanAssignTypeTo(const std::shared_ptr<RnTypeComposite>& destination,
-                         const std::shared_ptr<RnTypeComposite>& source);
+                         const std::shared_ptr<RnTypeComposite>& source, ASSIGNMENT_TYPE assignment_type);
     bool GeneralVisit(AstNode* node);
     bool GeneralVisit(const std::shared_ptr<AstNode>& node);
     bool Visit(StringLiteral* node);
@@ -133,6 +137,7 @@ public:
     bool Visit(BreakStmt* node);
 
     ScopeNode* _current_scope = nullptr;
+    std::shared_ptr<RnTypeComposite> _current_type_reference;
 };
 
 #endif  //RONASCRIPT_RNASTVALIDATOR_H

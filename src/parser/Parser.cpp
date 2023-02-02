@@ -290,7 +290,6 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
     });
     AdvanceBuffer(1);
     node->type = ParseType();
-    _current_scope->symbol_table->AddSymbol(node->id, node->type);
 
     if (Current()->token_type == TokenType::EQUAL) {
         AdvanceBuffer(1);
@@ -370,15 +369,8 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
         node->type = std::make_shared<RnTypeComposite>(RnType::RN_VOID);
     }
 
-    _current_scope->symbol_table->AddSymbol(node->id, node->type);
-
     // Get the function's scope
     node->scope = ParseScope();
-
-    for (const auto& symbol : arg_symbols) {
-        node->scope->symbol_table->AddSymbol(symbol.first, symbol.second);
-    }
-
     return node;
 }
 
@@ -388,10 +380,6 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
     node->file_info = new FileInfo(Current()->file_info);
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
-
-    _current_scope->symbol_table->AddSymbol(
-        Current()->lexeme,
-        std::make_shared<RnTypeComposite>(RnType::RN_CLASS_INSTANCE));
 
     node->id = Current()->lexeme;
     Expect({TokenType::EXTENDS, TokenType::R_BRACE, TokenType::IS});
@@ -422,16 +410,10 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
 
     if ((Lookback() && Lookback()->IsOperator()) && Current()->IsUnaryOp() &&
         Peek()->token_type == TokenType::NAME) {
-//        if (!_current_scope->symbol_table->SymbolExists(Peek()->lexeme)) {
-//            throw std::runtime_error("Unknown symbol '" + Peek()->lexeme);
-//        }
         return ParseUnaryExpr();
     } else if (Current()->token_type == TokenType::R_BRACK) {
         node = ParseArrayLiteral();
     } else if (Current()->token_type == TokenType::NAME) {
-//        if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
-//            throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
-//        }
         node = ParseName();
         if (Current()->IsUnaryOp()) {
             node = ParseUnaryExpr(node);
@@ -507,9 +489,6 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         if (Current()->token_type == TokenType::R_BRACK) {
             if (Lookback()->token_type == TokenType::NAME ||
                 Current()->token_type == TokenType::L_PARAN) {
-//                if (!_current_scope->symbol_table->SymbolExists(Lookback()->lexeme)) {
-//                    throw std::runtime_error("Unknown symbol '" + Lookback()->lexeme);
-//                }
                 result_stack.push_back(ParseIndexedExpr(result_stack.Pop()));
             } else {
                 result_stack.Push(ParseArrayLiteral());
@@ -669,9 +648,6 @@ std::shared_ptr<DeleteStmt> Parser::ParseDeleteStmt() {
     auto node = std::make_shared<DeleteStmt>();
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
-//    if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
-//        throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
-//    }
 
     if (Current()->token_type == TokenType::SEMICOLON) {
         AdvanceBuffer(1);
@@ -783,14 +759,14 @@ std::shared_ptr<ScopeNode> Parser::ParseScope() {
     auto node = std::make_shared<ScopeNode>();
     node->parent = _current_scope;
     node->symbol_table->SetParent(_current_scope->symbol_table);
+
+    // Pragmas are carried downward until they are unset or out of scope
+    for (const auto& entry : _current_scope->pragma_table) {
+        node->pragma_table[entry.first] = entry.second;
+    }
     ConvertScope(node);
     ConditionalBufAdvance(TokenType::R_BRACE);
     ConditionalBufAdvance(TokenType::COLON);
-
-    if (_current_state == ParserState::CLASS_DECL_CONTEXT) {
-        _current_scope->symbol_table->AddSymbol(
-            "this", std::make_shared<RnTypeComposite>(RnType::RN_CLASS_INSTANCE));
-    }
     Parse();
 
     if (Current()->token_type == TokenType::L_BRACE ||
@@ -857,9 +833,6 @@ std::shared_ptr<ForLoop> Parser::ParseForLoop() {
         node->init = ParseVarDecl();
     } else if (Peek()->token_type == TokenType::NAME) {
         AdvanceBuffer(1);
-//        if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
-//            throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
-//        }
 
         if (Peek()->token_type == TokenType::EQUAL) {
             auto lexpr = ParseExpr(TokenType::EQUAL);
@@ -900,15 +873,8 @@ std::shared_ptr<AliasDecl> Parser::ParseAliasDecl() {
     node->alias_name = ParseName();
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
-//    if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
-//        throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
-//    }
 
     node->base_name = ParseName();
-    _current_scope->symbol_table->AddSymbol(
-        node->alias_name->value,
-        _current_scope->symbol_table->GetSymbolEntry(node->base_name->value)
-            ->GetType());
     AdvanceBuffer(1);
     return node;
 }
@@ -965,9 +931,6 @@ std::shared_ptr<CatchBlock> Parser::ParseCatchBlock() {
     if (Current()->token_type == TokenType::R_PARAN) {
         AdvanceBuffer(1);
         while (Current()->token_type == TokenType::NAME) {
-//            if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
-//                throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
-//            }
             node->exception_ids.emplace_back(ParseName());
             ConditionalBufAdvance(TokenType::COMMA);
         }
@@ -1091,12 +1054,6 @@ void Parser::Parse() {
                         ConditionalBufAdvance(TokenType::SEMICOLON);
                         Log::DEBUG("Pragma: " + key + ", " + value);
                     } else {
-//                        if (!_current_scope->symbol_table->SymbolExists(
-//                                Current()->lexeme)) {
-//                            throw std::runtime_error("Unknown symbol '" +
-//                                                     Current()->lexeme);
-//                        }
-
                         auto expr = ParseExpr(TokenType::EQUAL);
 
                         if (Current()->token_type == TokenType::EQUAL ||

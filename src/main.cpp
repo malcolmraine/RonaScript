@@ -54,7 +54,7 @@ void RonaScriptMain(int argc, char* argv[]) {
         return;
     }
 
-    if (arg_parser.IsSet("-ptok")) {
+    if (arg_parser.IsSet("-t")) {
         for (auto& token : lexer.tokens) {
             Log::INFO(token->ToString());
         }
@@ -74,14 +74,14 @@ void RonaScriptMain(int argc, char* argv[]) {
         return;
     }
 
-    if (arg_parser.IsSet("-past")) {
+    if (arg_parser.IsSet("-a")) {
         Log::INFO(parser.DumpsAst());
     }
 
     RnCodeGenerator code_generator;
     code_generator.Generate(parser.ast);
 
-    if (arg_parser.IsSet("-past")) {
+    if (arg_parser.IsSet("-p")) {
         size_t index = 0;
         for (auto& instruction : code_generator.GetInstructions()) {
             Log::INFO(String::Pad(std::to_string(index++), 6) +
