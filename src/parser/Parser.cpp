@@ -290,16 +290,11 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
     });
     AdvanceBuffer(1);
     node->type = ParseType();
-
-    SymbolRedeclarationCheck(node->id);
     _current_scope->symbol_table->AddSymbol(node->id, node->type);
 
     if (Current()->token_type == TokenType::EQUAL) {
         AdvanceBuffer(1);
         node->init_value = ParseExpr();
-        if (!CanAssignTypeTo(node->type, EvaluateSubtreeType(node->init_value))) {
-            throw std::runtime_error("Type error.");
-        }
     } else {
         ConditionalBufAdvance(TokenType::SEMICOLON);
     }
@@ -322,17 +317,25 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
     AdvanceBuffer(2);
 
     // Get the function arguments
+    std::map<std::string, std::shared_ptr<RnTypeComposite>> arg_symbols;
     while (Current()->token_type != TokenType::L_PARAN) {
         auto arg = new ArgDecl();
-        ConditionalBufAdvance(TokenType::VAR);
+        Expect(TokenType::NAME);
+        AdvanceBuffer(1);
 
         if (Current()->token_type == TokenType::NAME) {
             arg->id = ParseName();
+
+            if (arg_symbols.find(arg->id->value) != arg_symbols.end()) {
+                throw std::runtime_error("Redeclaration of argument '" +
+                                         arg->id->value + "' in routine '" + node->id +
+                                         "'");
+            }
         }
-        ConditionalBufAdvance(TokenType::COLON);
+        AdvanceBuffer(1);  // Advance past the ':' separating the name from the type
 
         if (Current()->IsType()) {
-            arg->type = Current()->lexeme;
+            arg->type = ParseType();
             AdvanceBuffer(1);
         } else {
             throw std::runtime_error("Invalid type '" + Current()->lexeme +
@@ -342,7 +345,12 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
 
         ConditionalBufAdvance(TokenType::COMMA);
         node->args.emplace_back(arg);
-        _current_scope->symbol_table->AddSymbol(node->id, node->type);
+        arg_symbols[arg->id->value] = arg->type;
+
+        if (Current()->token_type != TokenType::VAR) {
+            ConditionalBufAdvance(TokenType::COMMA);
+            break;
+        }
     }
 
     ConditionalBufAdvance(TokenType::L_PARAN);
@@ -362,11 +370,14 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
         node->type = std::make_shared<RnTypeComposite>(RnType::RN_VOID);
     }
 
-    SymbolRedeclarationCheck(node->id);
     _current_scope->symbol_table->AddSymbol(node->id, node->type);
 
     // Get the function's scope
     node->scope = ParseScope();
+
+    for (const auto& symbol : arg_symbols) {
+        node->scope->symbol_table->AddSymbol(symbol.first, symbol.second);
+    }
 
     return node;
 }
@@ -378,7 +389,6 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
 
-    SymbolRedeclarationCheck(Current()->lexeme);
     _current_scope->symbol_table->AddSymbol(
         Current()->lexeme,
         std::make_shared<RnTypeComposite>(RnType::RN_CLASS_INSTANCE));
@@ -399,6 +409,8 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
     }
     AdvanceBuffer(1);
 
+    _previous_state = _current_state;
+    _current_state = ParserState::CLASS_DECL_CONTEXT;
     node->scope = ParseScope();
 
     return node;
@@ -410,16 +422,16 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
 
     if ((Lookback() && Lookback()->IsOperator()) && Current()->IsUnaryOp() &&
         Peek()->token_type == TokenType::NAME) {
-        if (!_current_scope->symbol_table->SymbolExists(Peek()->lexeme)) {
-            throw std::runtime_error("Unknown symbol '" + Peek()->lexeme);
-        }
+//        if (!_current_scope->symbol_table->SymbolExists(Peek()->lexeme)) {
+//            throw std::runtime_error("Unknown symbol '" + Peek()->lexeme);
+//        }
         return ParseUnaryExpr();
     } else if (Current()->token_type == TokenType::R_BRACK) {
         node = ParseArrayLiteral();
     } else if (Current()->token_type == TokenType::NAME) {
-        if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
-            throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
-        }
+//        if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
+//            throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
+//        }
         node = ParseName();
         if (Current()->IsUnaryOp()) {
             node = ParseUnaryExpr(node);
@@ -495,9 +507,9 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         if (Current()->token_type == TokenType::R_BRACK) {
             if (Lookback()->token_type == TokenType::NAME ||
                 Current()->token_type == TokenType::L_PARAN) {
-                if (!_current_scope->symbol_table->SymbolExists(Lookback()->lexeme)) {
-                    throw std::runtime_error("Unknown symbol '" + Lookback()->lexeme);
-                }
+//                if (!_current_scope->symbol_table->SymbolExists(Lookback()->lexeme)) {
+//                    throw std::runtime_error("Unknown symbol '" + Lookback()->lexeme);
+//                }
                 result_stack.push_back(ParseIndexedExpr(result_stack.Pop()));
             } else {
                 result_stack.Push(ParseArrayLiteral());
@@ -657,9 +669,9 @@ std::shared_ptr<DeleteStmt> Parser::ParseDeleteStmt() {
     auto node = std::make_shared<DeleteStmt>();
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
-    if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
-        throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
-    }
+//    if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
+//        throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
+//    }
 
     if (Current()->token_type == TokenType::SEMICOLON) {
         AdvanceBuffer(1);
@@ -710,11 +722,6 @@ std::shared_ptr<AssignmentStmt> Parser::ParseAssignmentStatement(
     } else {
         ConditionalBufAdvance(TokenType::EQUAL);
         node->rexpr = ParseExpr();
-    }
-
-    if (!CanAssignTypeTo(EvaluateSubtreeType(node->lexpr),
-                         EvaluateSubtreeType(node->rexpr))) {
-        throw std::runtime_error("Type error.");
     }
 
     ConditionalBufAdvance(TokenType::SEMICOLON);
@@ -779,6 +786,11 @@ std::shared_ptr<ScopeNode> Parser::ParseScope() {
     ConvertScope(node);
     ConditionalBufAdvance(TokenType::R_BRACE);
     ConditionalBufAdvance(TokenType::COLON);
+
+    if (_current_state == ParserState::CLASS_DECL_CONTEXT) {
+        _current_scope->symbol_table->AddSymbol(
+            "this", std::make_shared<RnTypeComposite>(RnType::RN_CLASS_INSTANCE));
+    }
     Parse();
 
     if (Current()->token_type == TokenType::L_BRACE ||
@@ -845,9 +857,9 @@ std::shared_ptr<ForLoop> Parser::ParseForLoop() {
         node->init = ParseVarDecl();
     } else if (Peek()->token_type == TokenType::NAME) {
         AdvanceBuffer(1);
-        if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
-            throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
-        }
+//        if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
+//            throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
+//        }
 
         if (Peek()->token_type == TokenType::EQUAL) {
             auto lexpr = ParseExpr(TokenType::EQUAL);
@@ -885,13 +897,12 @@ std::shared_ptr<AliasDecl> Parser::ParseAliasDecl() {
     Expect(TokenType::NAME);
 
     AdvanceBuffer(1);
-    SymbolRedeclarationCheck(Current()->lexeme);
     node->alias_name = ParseName();
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
-    if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
-        throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
-    }
+//    if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
+//        throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
+//    }
 
     node->base_name = ParseName();
     _current_scope->symbol_table->AddSymbol(
@@ -954,9 +965,9 @@ std::shared_ptr<CatchBlock> Parser::ParseCatchBlock() {
     if (Current()->token_type == TokenType::R_PARAN) {
         AdvanceBuffer(1);
         while (Current()->token_type == TokenType::NAME) {
-            if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
-                throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
-            }
+//            if (!_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
+//                throw std::runtime_error("Unknown symbol '" + Current()->lexeme);
+//            }
             node->exception_ids.emplace_back(ParseName());
             ConditionalBufAdvance(TokenType::COMMA);
         }
@@ -1075,15 +1086,16 @@ void Parser::Parse() {
                         auto value = Current()->lexeme;
                         Expect(TokenType::L_PARAN);
                         AdvanceBuffer(2);
-                        _pragma_table[key] = value;
+                        _current_scope->pragma_table[key] = value;
+//                        _pragma_table[key] = value;
                         ConditionalBufAdvance(TokenType::SEMICOLON);
                         Log::DEBUG("Pragma: " + key + ", " + value);
                     } else {
-                        if (!_current_scope->symbol_table->SymbolExists(
-                                Current()->lexeme)) {
-                            throw std::runtime_error("Unknown symbol '" +
-                                                     Current()->lexeme);
-                        }
+//                        if (!_current_scope->symbol_table->SymbolExists(
+//                                Current()->lexeme)) {
+//                            throw std::runtime_error("Unknown symbol '" +
+//                                                     Current()->lexeme);
+//                        }
 
                         auto expr = ParseExpr(TokenType::EQUAL);
 
@@ -1189,117 +1201,7 @@ std::shared_ptr<Module> Parser::ParseModule() {
     return node;
 }
 
-/*****************************************************************************/
-std::shared_ptr<RnTypeComposite> Parser::ResolveTypes(
-    const std::shared_ptr<RnTypeComposite>& type1,
-    const std::shared_ptr<RnTypeComposite>& type2) {
-    auto type1_bounds = type1->GetFloatBounds();
-    auto type2_bounds = type2->GetFloatBounds();
-    auto lower_bound = std::min(type1_bounds.lower, type2_bounds.lower);
-    auto upper_bound = std::max(type1_bounds.upper, type2_bounds.upper);
-    auto resolved_type = std::make_shared<RnTypeComposite>(type1->GetType());
-    resolved_type->SetBounds(lower_bound, upper_bound);
-    return resolved_type;
-}
 
-/*****************************************************************************/
-bool Parser::CanAssignTypeTo(const std::shared_ptr<RnTypeComposite>& destination,
-                             const std::shared_ptr<RnTypeComposite>& source) {
-    auto destination_bounds = destination->GetFloatBounds();
-    auto source_bounds = source->GetFloatBounds();
-    bool bounds_ok = true;
-    bool types_ok = true;
-    if (!source->IsWithinRange(*destination)) {
-        if (_pragma_table["bounds"] == "strict") {
-            bounds_ok = false;
-            throw std::runtime_error("Trying to assign out of bounds value");
-        } else if (_pragma_table["bounds"] == "relaxed") {
-            Log::WARN("Warning: Trying to assign out of bounds value");
-            bounds_ok = true;
-        } else {
-            bounds_ok = true;
-        }
-    }
-
-    if (_pragma_table["typing"] == "strict") {
-        types_ok = destination->GetType() == source->GetType();
-        if (!types_ok) {
-            throw std::runtime_error("Trying to assign incompatible types");
-        }
-    } else if (_pragma_table["typing"] == "relaxed") {
-        Log::WARN("Warning: Trying to assign incompatible types");
-        types_ok = true;
-    }
-
-    return types_ok && bounds_ok;
-}
-
-/*****************************************************************************/
-std::shared_ptr<RnTypeComposite> Parser::EvaluateSubtreeType(
-    const std::shared_ptr<AstNode>& subtree) {
-    switch (subtree->node_type) {
-        case AST_BINARY_EXPR: {
-            auto node = std::dynamic_pointer_cast<BinaryExpr>(subtree);
-            return ResolveTypes(EvaluateSubtreeType(node->_left),
-                                EvaluateSubtreeType(node->_right));
-        }
-        case AST_INDEXED_EXPR:
-            // TODO: Evaluate type information for indexed expressions
-            return std::make_shared<RnTypeComposite>(RnType::RN_NULL);
-        case AST_FUNC_CALL: {
-            auto node = std::dynamic_pointer_cast<FuncCall>(subtree);
-            return EvaluateSubtreeType(node->expr);
-        }
-        case AST_LIST_LITERAL: {
-            auto node = std::dynamic_pointer_cast<ArrayLiteral>(subtree);
-            auto type = std::make_shared<RnTypeComposite>(RnType::RN_ARRAY);
-            auto value = static_cast<RnIntNative>(node->items.size());
-            type->SetBounds(value, value);
-            return type;
-        }
-        case AST_STRING_LITERAL: {
-            auto node = std::dynamic_pointer_cast<StringLiteral>(subtree);
-            auto type = std::make_shared<RnTypeComposite>(RnType::RN_STRING);
-            auto value = static_cast<RnIntNative>(node->data.length());
-            type->SetBounds(value, value);
-            return type;
-        }
-        case AST_BOOL_LITERAL: {
-            auto node = std::dynamic_pointer_cast<BoolLiteral>(subtree);
-            auto type = std::make_shared<RnTypeComposite>(RnType::RN_BOOLEAN);
-            auto value = static_cast<RnIntNative>(node->data ? 1 : 0);
-            type->SetBounds(value, value);
-            return type;
-        }
-        case AST_FLOAT_LITERAL: {
-            auto node = std::dynamic_pointer_cast<FloatLiteral>(subtree);
-            auto type = std::make_shared<RnTypeComposite>(RnType::RN_FLOAT);
-            type->SetBounds(node->data, node->data);
-            return type;
-        }
-        case AST_INT_LITERAL: {
-            auto node = std::dynamic_pointer_cast<IntLiteral>(subtree);
-            auto type = std::make_shared<RnTypeComposite>(RnType::RN_INT);
-            type->SetBounds(node->data, node->data);
-            return type;
-        }
-        case AST_RETURN_STMT: {
-            auto node = std::dynamic_pointer_cast<ReturnStmt>(subtree);
-            return EvaluateSubtreeType(node->expr);
-        }
-        case AST_UNARY_EXPR: {
-            auto node = std::dynamic_pointer_cast<UnaryExpr>(subtree);
-            return EvaluateSubtreeType(node->expr);
-        }
-        case AST_NAME: {
-            auto node = std::dynamic_pointer_cast<Name>(subtree);
-            return _current_scope->symbol_table->GetSymbolEntry(node->value)->GetType();
-        }
-        default:
-            throw std::runtime_error("Could not evaluate subtree");
-    }
-    return std::make_shared<RnTypeComposite>(RnType::RN_NULL);
-}
 
 /*****************************************************************************/
 TokenType Parser::GetCurrentAsExpectedType() {
@@ -1329,7 +1231,7 @@ std::shared_ptr<RnTypeComposite> Parser::ParseType() {
     auto basic_type = RnType::StringToType(Current()->lexeme);
     auto type = std::make_shared<RnTypeComposite>(basic_type);
 
-    if (_pragma_table["require"] == "bounds") {
+    if (_current_scope->pragma_table["require"] == "bounds") {
         if (Peek()->token_type != TokenType::R_CARAT) {
             throw std::runtime_error("Missing bounds on type " + Current()->lexeme);
         }
@@ -1349,11 +1251,4 @@ std::shared_ptr<RnTypeComposite> Parser::ParseType() {
         AdvanceBuffer(2);
     }
     return type;
-}
-
-/*****************************************************************************/
-void Parser::SymbolRedeclarationCheck(const std::string& symbol) {
-    if (_current_scope->symbol_table->SymbolExists(symbol)) {
-        throw std::runtime_error("Redeclaration of symbol '" + symbol + "'");
-    }
 }

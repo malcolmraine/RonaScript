@@ -416,7 +416,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(AliasDecl* node) {
 
 /*****************************************************************************/
 std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ArgDecl* node) {
-    return {new RnInstruction(OP_MAKE_ARG, RnType::StringToType(node->type),
+    return {new RnInstruction(OP_MAKE_ARG, node->type->GetType(),
                               RnObject::InternValue(node->id->value))};
 }
 

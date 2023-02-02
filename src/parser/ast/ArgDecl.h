@@ -10,10 +10,12 @@
 #ifndef RONASCRIPT_ARGDECL_H
 #define RONASCRIPT_ARGDECL_H
 
+#include <memory>
 #include <string>
 #include "AstNode.h"
 
 class Name;
+class RnTypeComposite;
 
 class ArgDecl : public AstNode {
 public:
@@ -21,7 +23,7 @@ public:
     ~ArgDecl() override;
     std::string ToString(bool nl) override;
     std::shared_ptr<Name> id{};
-    std::string type;
+    std::shared_ptr<RnTypeComposite> type;
 };
 
 #endif  //RONASCRIPT_ARGDECL_H

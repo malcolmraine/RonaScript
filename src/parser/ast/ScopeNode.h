@@ -14,6 +14,7 @@
 #include "../RnAstSymbolTable.h"
 #include "AstNode.h"
 #include "NodeType.h"
+#include <unordered_set>
 
 class ClassDecl;
 class FuncDecl;
@@ -34,6 +35,7 @@ public:
     //	std::vector<std::shared_ptr<FuncDecl>> func_decls;     // Function declarations
     std::shared_ptr<ScopeNode> parent = nullptr;
     std::shared_ptr<RnAstSymbolTable> symbol_table = nullptr;
+    std::unordered_map<std::string, std::string> pragma_table;
 };
 
 #endif  //RONASCRIPT_SCOPE_NODE_H

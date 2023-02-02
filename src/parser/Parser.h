@@ -113,19 +113,12 @@ public:
     void LoadTokens(std::vector<Token*> t);
     std::shared_ptr<AstNode> TransformBinaryExpr(
         std::shared_ptr<BinaryExpr> binary_expr);
-    std::shared_ptr<RnTypeComposite> EvaluateSubtreeType(
-        const std::shared_ptr<AstNode>& subtree);
-    static std::shared_ptr<RnTypeComposite> ResolveTypes(
-        const std::shared_ptr<RnTypeComposite>& type1,
-        const std::shared_ptr<RnTypeComposite>& type2);
-    bool CanAssignTypeTo(const std::shared_ptr<RnTypeComposite>& destination,
-                         const std::shared_ptr<RnTypeComposite>& source);
+
     TokenType GetCurrentAsExpectedType() override;
     size_t GetTokenCount();
     std::string ItemToString(Token* token) override;
     void HandleUnexpectedItem() override;
     std::shared_ptr<RnTypeComposite> ParseType();
-    void SymbolRedeclarationCheck(const std::string& symbol);
 
 public:
     std::string working_dir = ".";

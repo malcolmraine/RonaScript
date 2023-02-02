@@ -9,6 +9,7 @@
 
 #include "ArgDecl.h"
 #include "../../codegen/RnCodeGenVisitor.h"
+#include "../RnTypeComposite.h"
 #include "Name.h"
 
 /*****************************************************************************/
@@ -21,7 +22,8 @@ ArgDecl::~ArgDecl() = default;
 
 /*****************************************************************************/
 std::string ArgDecl::ToString(bool nl) {
-    std::string result = MakeTabStr() + "ArgDecl( " + id->value + ", " + type + " )";
+    std::string result =
+        MakeTabStr() + "ArgDecl( " + id->value + ", " + type->ToString() + " )";
     if (nl) {
         result += "\n";
     }

@@ -11,6 +11,7 @@
 #include "vm/RnMemoryManager.h"
 #include "vm/RnObject.h"
 #include "vm/RnVirtualMachine.h"
+#include "parser/RnAstValidator.h"
 
 /*****************************************************************************/
 void RonaScriptMain(int argc, char* argv[]) {
@@ -66,6 +67,8 @@ void RonaScriptMain(int argc, char* argv[]) {
 
     try {
         parser.Parse();
+        RnAstValidator validator;
+        validator.Visit(parser.ast->root.get());
     } catch (const std::exception& e) {
         Log::ERROR("Parse Error: " + std::string(e.what()));
         return;

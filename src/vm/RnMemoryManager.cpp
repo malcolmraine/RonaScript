@@ -131,11 +131,11 @@ RnScope* RnMemoryManager::CreateScope() {
 
 /*****************************************************************************/
 void RnMemoryManager::DestroyScope(RnScope* scope) {
-    _available_scope_addresses.push_back(scope);
-    _used_scope_addresses.erase(
-        std::find(_used_scope_addresses.begin(), _used_scope_addresses.end(), scope));
-
-    std::destroy_at<RnScope>(reinterpret_cast<RnScope*>(scope));
+//    _available_scope_addresses.push_back(scope);
+//    _used_scope_addresses.erase(
+//        std::find(_used_scope_addresses.begin(), _used_scope_addresses.end(), scope));
+//
+//    std::destroy_at<RnScope>(reinterpret_cast<RnScope*>(scope));
 }
 
 /*****************************************************************************/
