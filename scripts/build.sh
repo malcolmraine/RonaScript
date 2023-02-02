@@ -9,21 +9,7 @@ BUILD_DIR="./build"
 function build_project() {
     mkdir "$BUILD_DIR"
     cmake -S. -B "$BUILD_DIR"
-    cd "$BUILD_DIR" || exit 1
-    make "-j$PROC_COUNT"
-    cd ../
-
-    declare -a REMOVALS=(
-        "$BUILD_DIR/CMakeCache.txt"
-        "$BUILD_DIR/cmake_install.cmake")
-
-    for item in "${REMOVALS[@]}"; do
-        if [[ -d $item ]]; then
-            rm -R "$item"
-        elif [[ -f $item ]]; then
-            rm "$item"
-        fi
-    done
+    cmake --build "$BUILD_DIR" "-j $PROC_COUNT"
 }
 
 # -----------------------------------------------------------------------------
