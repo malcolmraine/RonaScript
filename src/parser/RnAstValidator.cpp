@@ -50,7 +50,7 @@ void RnAstValidator::SymbolRedeclarationCheck(const std::string& symbol) {
 
 /*****************************************************************************/
 void RnAstValidator::SymbolExistsCheck(const std::string& symbol) {
-    if (_current_scope->symbol_table->SymbolExists(symbol)) {
+    if (!_current_scope->symbol_table->SymbolExists(symbol)) {
         throw std::runtime_error("Unknown symbol '" + symbol + "'");
     }
 }
@@ -72,8 +72,6 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::ResolveTypes(
 bool RnAstValidator::CanAssignTypeTo(
     const std::shared_ptr<RnTypeComposite>& destination,
     const std::shared_ptr<RnTypeComposite>& source, ASSIGNMENT_TYPE assignment_type) {
-    auto destination_bounds = destination->GetFloatBounds();
-    auto source_bounds = source->GetFloatBounds();
     bool bounds_ok = true;
     bool types_ok = true;
 

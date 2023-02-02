@@ -165,7 +165,7 @@ InstructionBlock RnCodeGenVisitor::Visit(ScopeNode* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ForLoop* node) {
+InstructionBlock RnCodeGenVisitor::Visit(ForLoop* node) {
     InstructionBlock instructions;
     InstructionBlock init = GeneralVisit(node->init);
     InstructionBlock test = GeneralVisit(node->test);
@@ -191,7 +191,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ForLoop* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(WhileLoop* node) {
+InstructionBlock RnCodeGenVisitor::Visit(WhileLoop* node) {
     InstructionBlock instructions;
     InstructionBlock scope = GeneralVisit(node->scope);
     WrapContext(scope);
@@ -209,12 +209,12 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(WhileLoop* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ImportStmt* node) {
+InstructionBlock RnCodeGenVisitor::Visit(ImportStmt* node) {
     return {};
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(Module* node) {
+InstructionBlock RnCodeGenVisitor::Visit(Module* node) {
     InstructionBlock instructions = GeneralVisit(node->scope);
     instructions.insert(
         instructions.begin(),
@@ -224,7 +224,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(Module* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(FuncDecl* node) {
+InstructionBlock RnCodeGenVisitor::Visit(FuncDecl* node) {
     InstructionBlock instructions;
     InstructionBlock scope = GeneralVisit(node->scope);
     instructions.reserve(scope.size());
@@ -243,7 +243,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(FuncDecl* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(FuncCall* node) {
+InstructionBlock RnCodeGenVisitor::Visit(FuncCall* node) {
     InstructionBlock instructions;
     InstructionBlock expr = GeneralVisit(node->expr);
     for (auto& arg : node->args) {
@@ -258,7 +258,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(FuncCall* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(VarDecl* node) {
+InstructionBlock RnCodeGenVisitor::Visit(VarDecl* node) {
     InstructionBlock instructions;
     auto interned_id = RnObject::InternValue(node->id);
     if (node->is_const) {
@@ -278,12 +278,12 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(VarDecl* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(Name* node) {
+InstructionBlock RnCodeGenVisitor::Visit(Name* node) {
     return {new RnInstruction(OP_LOAD_VALUE, RnObject::InternValue(node->value))};
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ClassDecl* node) {
+InstructionBlock RnCodeGenVisitor::Visit(ClassDecl* node) {
     InstructionBlock instructions;
     InstructionBlock scope = GeneralVisit(node->scope);
     instructions.reserve(scope.size());
@@ -294,12 +294,12 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ClassDecl* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ExitStmt* node) {
+InstructionBlock RnCodeGenVisitor::Visit(ExitStmt* node) {
     return {new RnInstruction(OP_EXIT, node->exit_code->data)};
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ReturnStmt* node) {
+InstructionBlock RnCodeGenVisitor::Visit(ReturnStmt* node) {
     InstructionBlock instructions = GeneralVisit(node->expr);
     instructions.emplace_back(new RnInstruction(OP_RETURN));
 
@@ -307,24 +307,24 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ReturnStmt* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(AttributeAccess* node) {
+InstructionBlock RnCodeGenVisitor::Visit(AttributeAccess* node) {
     return {};
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(TryBlock* node) {
+InstructionBlock RnCodeGenVisitor::Visit(TryBlock* node) {
     // TODO: Generate code for TryBlock
     return {};
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(CatchBlock* node) {
+InstructionBlock RnCodeGenVisitor::Visit(CatchBlock* node) {
     // TODO: Generate code for CatchBlock
     return {};
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(IfStmt* node) {
+InstructionBlock RnCodeGenVisitor::Visit(IfStmt* node) {
     InstructionBlock instructions;
     InstructionBlock test = GeneralVisit(node->test);
     InstructionBlock consequent = GeneralVisit(node->consequent);
@@ -346,7 +346,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(IfStmt* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ElifStmt* node) {
+InstructionBlock RnCodeGenVisitor::Visit(ElifStmt* node) {
     InstructionBlock instructions = {new RnInstruction(OP_CREATE_CONTEXT)};
     InstructionBlock test = GeneralVisit(node->test);
     InstructionBlock consequent = GeneralVisit(node->consequent);
@@ -370,7 +370,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ElifStmt* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ElseStmt* node) {
+InstructionBlock RnCodeGenVisitor::Visit(ElseStmt* node) {
     InstructionBlock instructions;
     InstructionBlock consequent = GeneralVisit(node->consequent);
     WrapContext(consequent);
@@ -380,7 +380,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ElseStmt* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(DeleteStmt* node) {
+InstructionBlock RnCodeGenVisitor::Visit(DeleteStmt* node) {
     size_t internvalue =
         RnObject::InternValue(dynamic_pointer_cast<Name>(node->name)->value);
 
@@ -388,12 +388,12 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(DeleteStmt* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(BoolLiteral* node) {
+InstructionBlock RnCodeGenVisitor::Visit(BoolLiteral* node) {
     return {new RnInstruction(OP_LOAD_BOOL, node->data)};
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(UnaryExpr* node) {
+InstructionBlock RnCodeGenVisitor::Visit(UnaryExpr* node) {
     if (node->op == "++") {
         size_t internvalue =
             RnObject::InternValue(std::dynamic_pointer_cast<Name>(node->expr)->value);
@@ -403,25 +403,25 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(UnaryExpr* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(Expr* node) {
+InstructionBlock RnCodeGenVisitor::Visit(Expr* node) {
     return GeneralVisit(node->expr);
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(AliasDecl* node) {
+InstructionBlock RnCodeGenVisitor::Visit(AliasDecl* node) {
     return {new RnInstruction(OP_MAKE_ALIAS,
                               RnObject::InternValue(node->base_name->value),
                               RnObject::InternValue(node->alias_name->value))};
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ArgDecl* node) {
+InstructionBlock RnCodeGenVisitor::Visit(ArgDecl* node) {
     return {new RnInstruction(OP_MAKE_ARG, node->type->GetType(),
                               RnObject::InternValue(node->id->value))};
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(AssignmentStmt* node) {
+InstructionBlock RnCodeGenVisitor::Visit(AssignmentStmt* node) {
     InstructionBlock instructions;
     InstructionBlock lvalue = GeneralVisit(node->lexpr);
     InstructionBlock rvalue = GeneralVisit(node->rexpr);
@@ -432,7 +432,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(AssignmentStmt* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(BinaryExpr* node) {
+InstructionBlock RnCodeGenVisitor::Visit(BinaryExpr* node) {
     InstructionBlock instructions;
 
     if (node->_op == "::") {
@@ -460,13 +460,13 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(BinaryExpr* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(ContinueStmt* node) {
+InstructionBlock RnCodeGenVisitor::Visit(ContinueStmt* node) {
     // TODO: Generate code for ContinueStmt
     return {};
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(IndexedExpr* node) {
+InstructionBlock RnCodeGenVisitor::Visit(IndexedExpr* node) {
     InstructionBlock instructions;
     InstructionBlock expr = GeneralVisit(node->expr);
     InstructionBlock index = GeneralVisit(node->idx);
@@ -477,7 +477,7 @@ std::vector<RnInstruction*> RnCodeGenVisitor::Visit(IndexedExpr* node) {
 }
 
 /*****************************************************************************/
-std::vector<RnInstruction*> RnCodeGenVisitor::Visit(BreakStmt* node) {
+InstructionBlock RnCodeGenVisitor::Visit(BreakStmt* node) {
     // TODO: Generate code for BreakStmt
     return {};
 }

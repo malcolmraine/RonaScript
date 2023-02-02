@@ -11,78 +11,45 @@
 #define RONASCRIPT_RNASTVALIDATOR_H
 
 #include "RnTypeComposite.h"
-
+#include "RnAstVisitor.h"
 #include <vector>
 
 class StringLiteral;
-
 class ScopeNode;
-
 class ImportStmt;
-
 class ArgDecl;
-
 class AstNode;
-
 class ForLoop;
-
 class AliasDecl;
-
 class Expr;
-
 class VarDecl;
-
 class FloatLiteral;
-
 class UnaryExpr;
-
 class ReturnStmt;
-
 class FuncCall;
-
 class IndexedExpr;
-
 class ClassDecl;
-
 class WhileLoop;
-
 class BreakStmt;
-
 class IfStmt;
-
 class FuncDecl;
-
 class BinaryExpr;
-
 class AssignmentStmt;
-
 class ArrayLiteral;
-
 class ElifStmt;
-
 class IntLiteral;
-
 class ContinueStmt;
-
 class ElseStmt;
-
 class Name;
-
 class TryBlock;
-
 class CatchBlock;
-
 class BoolLiteral;
-
 class DeleteStmt;
-
 class Module;
-
 class ExitStmt;
-
 class AttributeAccess;
 
-class RnAstValidator {
+class RnAstValidator : public RnAstVisitor<bool> {
 public:
     enum ASSIGNMENT_TYPE {
         RETURN_VALUE,
@@ -91,6 +58,43 @@ public:
     RnAstValidator() = default;
     ~RnAstValidator() = default;
 
+    bool GeneralVisit(AstNode* node) override;
+    bool GeneralVisit(const std::shared_ptr<AstNode>& node) override;
+    bool Visit(StringLiteral* node) override;
+    bool Visit(FloatLiteral* node) override;
+    bool Visit(IntLiteral* node) override;
+    bool Visit(ArrayLiteral* node) override;
+    bool Visit(ScopeNode* node) override;
+    bool Visit(ForLoop* node) override;
+    bool Visit(WhileLoop* node) override;
+    bool Visit(ImportStmt* node) override;
+    bool Visit(Module* node) override;
+    bool Visit(FuncDecl* node) override;
+    bool Visit(FuncCall* node) override;
+    bool Visit(VarDecl* node) override;
+    bool Visit(Name* node) override;
+    bool Visit(ClassDecl* node) override;
+    bool Visit(ExitStmt* node) override;
+    bool Visit(ReturnStmt* node) override;
+    bool Visit(AttributeAccess* node) override;
+    bool Visit(TryBlock* node) override;
+    bool Visit(CatchBlock* node) override;
+    bool Visit(IfStmt* node) override;
+    bool Visit(ElifStmt* node) override;
+    bool Visit(ElseStmt* node) override;
+    bool Visit(DeleteStmt* node) override;
+    bool Visit(BoolLiteral* node) override;
+    bool Visit(UnaryExpr* node) override;
+    bool Visit(Expr* node) override;
+    bool Visit(AliasDecl* node) override;
+    bool Visit(ArgDecl* node) override;
+    bool Visit(AssignmentStmt* node) override;
+    bool Visit(BinaryExpr* node) override;
+    bool Visit(ContinueStmt* node) override;
+    bool Visit(IndexedExpr* node) override;
+    bool Visit(BreakStmt* node) override;
+
+private:
     void SymbolRedeclarationCheck(const std::string& symbol);
     void SymbolExistsCheck(const std::string& symbol);
     std::shared_ptr<RnTypeComposite> EvaluateSubtreeType(
@@ -100,42 +104,8 @@ public:
         const std::shared_ptr<RnTypeComposite>& type2);
     bool CanAssignTypeTo(const std::shared_ptr<RnTypeComposite>& destination,
                          const std::shared_ptr<RnTypeComposite>& source, ASSIGNMENT_TYPE assignment_type);
-    bool GeneralVisit(AstNode* node);
-    bool GeneralVisit(const std::shared_ptr<AstNode>& node);
-    bool Visit(StringLiteral* node);
-    bool Visit(FloatLiteral* node);
-    bool Visit(IntLiteral* node);
-    bool Visit(ArrayLiteral* node);
-    bool Visit(ScopeNode* node);
-    bool Visit(ForLoop* node);
-    bool Visit(WhileLoop* node);
-    bool Visit(ImportStmt* node);
-    bool Visit(Module* node);
-    bool Visit(FuncDecl* node);
-    bool Visit(FuncCall* node);
-    bool Visit(VarDecl* node);
-    bool Visit(Name* node);
-    bool Visit(ClassDecl* node);
-    bool Visit(ExitStmt* node);
-    bool Visit(ReturnStmt* node);
-    bool Visit(AttributeAccess* node);
-    bool Visit(TryBlock* node);
-    bool Visit(CatchBlock* node);
-    bool Visit(IfStmt* node);
-    bool Visit(ElifStmt* node);
-    bool Visit(ElseStmt* node);
-    bool Visit(DeleteStmt* node);
-    bool Visit(BoolLiteral* node);
-    bool Visit(UnaryExpr* node);
-    bool Visit(Expr* node);
-    bool Visit(AliasDecl* node);
-    bool Visit(ArgDecl* node);
-    bool Visit(AssignmentStmt* node);
-    bool Visit(BinaryExpr* node);
-    bool Visit(ContinueStmt* node);
-    bool Visit(IndexedExpr* node);
-    bool Visit(BreakStmt* node);
 
+private:
     ScopeNode* _current_scope = nullptr;
     std::shared_ptr<RnTypeComposite> _current_type_reference;
 };
