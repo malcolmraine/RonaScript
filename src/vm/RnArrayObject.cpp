@@ -17,127 +17,105 @@ RnArrayObject::RnArrayObject() = default;
 RnArrayObject::~RnArrayObject() = default;
 
 /*****************************************************************************/
-RnObject* RnArrayObject::operator+(RnObject* obj)
-{
-	std::vector<RnObject*> data;
-	auto result = RnObject::Create(RnType::RN_ARRAY);
+RnObject* RnArrayObject::operator+(RnObject* obj) {
+    std::vector<RnObject*> data;
+    auto result = RnObject::Create(RnType::RN_ARRAY);
 
-	for (auto& item : obj->ToArray())
-	{
-		data.emplace_back(item);
-	}
+    for (auto& item : obj->ToArray()) {
+        data.emplace_back(item);
+    }
 
-	for (auto& item : ToArray())
-	{
-		data.emplace_back(item);
-	}
-	result->SetData(data);
+    for (auto& item : ToArray()) {
+        data.emplace_back(item);
+    }
+    result->SetData(data);
 
-	return result;
+    return result;
 }
 
 /*****************************************************************************/
-RnObject* RnArrayObject::operator-(RnObject* obj)
-{
-	return nullptr;
+RnObject* RnArrayObject::operator-(RnObject* obj) {
+    return nullptr;
 }
 
 /*****************************************************************************/
-RnObject* RnArrayObject::operator==(RnObject* obj)
-{
-	return nullptr;
+RnObject* RnArrayObject::operator==(RnObject* obj) {
+    return nullptr;
 }
 
 /*****************************************************************************/
-RnObject* RnArrayObject::operator!=(RnObject* obj)
-{
-	return nullptr;
+RnObject* RnArrayObject::operator!=(RnObject* obj) {
+    return nullptr;
 }
 
 /*****************************************************************************/
-RnObject* RnArrayObject::operator/(RnObject* obj)
-{
-	return nullptr;
+RnObject* RnArrayObject::operator/(RnObject* obj) {
+    return nullptr;
 }
 
 /*****************************************************************************/
-RnObject* RnArrayObject::operator|(RnObject* obj)
-{
-	return nullptr;
+RnObject* RnArrayObject::operator|(RnObject* obj) {
+    return nullptr;
 }
 
 /*****************************************************************************/
-RnObject* RnArrayObject::operator&(RnObject* obj)
-{
-	return nullptr;
+RnObject* RnArrayObject::operator&(RnObject* obj) {
+    return nullptr;
 }
 
 /*****************************************************************************/
-void RnArrayObject::Append(RnObject* obj)
-{
-	_data.push_back(obj);
+void RnArrayObject::Append(RnObject* obj) {
+    _data.push_back(obj);
 }
 
 /*****************************************************************************/
-void RnArrayObject::SetData(RnStringNative data)
-{
-	RnObjectBase::SetData(data);
+void RnArrayObject::SetData(RnStringNative data) {
+    RnObjectBase::SetData(data);
 }
 
 /*****************************************************************************/
-void RnArrayObject::SetData(RnIntNative data)
-{
-	RnObjectBase::SetData(data);
+void RnArrayObject::SetData(RnIntNative data) {
+    RnObjectBase::SetData(data);
 }
 
 /*****************************************************************************/
-void RnArrayObject::SetData(RnFloatNative data)
-{
-	RnObjectBase::SetData(data);
+void RnArrayObject::SetData(RnFloatNative data) {
+    RnObjectBase::SetData(data);
 }
 
 /*****************************************************************************/
-void RnArrayObject::SetData(std::vector<RnObject*> data)
-{
-	SetDataInternal(data);
+void RnArrayObject::SetData(std::vector<RnObject*> data) {
+    SetDataInternal(data);
 }
 
 /*****************************************************************************/
-void RnArrayObject::SetData(RnObject* data)
-{
-	if (data->GetType() == RnType::RN_ARRAY)
-	{
-		auto list_obj = dynamic_cast<RnArrayObject*>(data);
-		SetDataInternal(list_obj->GetData());
-	}
-	else
-	{
-		throw std::runtime_error(
-			"Cannot assign value of type '" + RnType::TypeToString(data->GetType())
-				+ "' to symbol of type '" + RnType::TypeToString(GetType()) + "'");
-	}
+void RnArrayObject::SetData(RnObject* data) {
+    if (data->GetType() == RnType::RN_ARRAY) {
+        auto list_obj = dynamic_cast<RnArrayObject*>(data);
+        SetDataInternal(list_obj->GetData());
+    } else {
+        throw std::runtime_error(
+            "Cannot assign value of type '" + RnType::TypeToString(data->GetType()) +
+            "' to symbol of type '" + RnType::TypeToString(GetType()) + "'");
+    }
 }
 
 /*****************************************************************************/
-RnStringNative RnArrayObject::ToString() const
-{
-	std::string s;
-	for (auto& item : GetData())
-	{
-		s.append(item->ToString() + ", ");
-	}
+RnStringNative RnArrayObject::ToString() const {
+    std::string s;
+    for (auto& item : GetData()) {
+        s.append(item->ToString() + ", ");
+    }
 
-	return "[" + s.substr(0, s.length() - 2) + "]";
+    return "[" + s.substr(0, s.length() - 2) + "]";
 }
 
 /*****************************************************************************/
-std::vector<RnObject*> RnArrayObject::ToArray() const
-{
-	return GetData();
+std::vector<RnObject*> RnArrayObject::ToArray() const {
+    return GetData();
 }
 
 /*****************************************************************************/
-RnBoolNative RnArrayObject::ToBool() const
-{
-	return !_data.empty();
+RnBoolNative RnArrayObject::ToBool() const {
+    return !_data.empty();
 }

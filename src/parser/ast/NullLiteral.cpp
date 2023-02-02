@@ -11,7 +11,6 @@
 #include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
-std::string NullLiteral::ToString(bool nl)
-{
-	return MakeTabStr() + "NullLiteral( )" + (nl ? "\n" : "");
+std::string NullLiteral::ToString(bool nl) {
+    return MakeTabStr() + "NullLiteral( )" + (nl ? "\n" : "");
 }

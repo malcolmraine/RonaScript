@@ -11,18 +11,12 @@
 #include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
-FlowStmt::FlowStmt()
-{
-}
+FlowStmt::FlowStmt() {}
 
 /*****************************************************************************/
-FlowStmt::~FlowStmt()
-{
-
-}
+FlowStmt::~FlowStmt() {}
 
 /*****************************************************************************/
-std::string FlowStmt::ToString(bool nl)
-{
-	return AstNode::ToString(nl);
+std::string FlowStmt::ToString(bool nl) {
+    return AstNode::ToString(nl);
 }

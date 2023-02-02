@@ -15,13 +15,12 @@
 
 class ScopeNode;
 
-class ElseStmt : public AstNode
-{
- public:
-	ElseStmt();
-	~ElseStmt() override;
-	std::string ToString(bool nl) override;
-	std::shared_ptr<ScopeNode> consequent = nullptr;
+class ElseStmt : public AstNode {
+public:
+    ElseStmt();
+    ~ElseStmt() override;
+    std::string ToString(bool nl) override;
+    std::shared_ptr<ScopeNode> consequent = nullptr;
 };
 
-#endif //VARSTACKTEST_ELSESTMT_H
+#endif  //VARSTACKTEST_ELSESTMT_H

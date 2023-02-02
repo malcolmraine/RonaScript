@@ -13,16 +13,15 @@
 #include <string>
 #include "AstNode.h"
 
-class AttributeAccess : public AstNode
-{
- public:
-	AttributeAccess();
-	~AttributeAccess() override;
-	std::string ToString(bool nl) override;
+class AttributeAccess : public AstNode {
+public:
+    AttributeAccess();
+    ~AttributeAccess() override;
+    std::string ToString(bool nl) override;
 
-	std::shared_ptr<AstNode> parent = nullptr;
-	std::shared_ptr<AstNode> name = nullptr;
-	std::string op;
+    std::shared_ptr<AstNode> parent = nullptr;
+    std::shared_ptr<AstNode> name = nullptr;
+    std::string op;
 };
 
-#endif //RONASCRIPT_ATTRIBUTEACCESS_H
+#endif  //RONASCRIPT_ATTRIBUTEACCESS_H

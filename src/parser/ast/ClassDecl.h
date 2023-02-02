@@ -19,17 +19,16 @@ class RnCodeGenVisitor;
 
 class Name;
 
-class ClassDecl : public AstNode
-{
- public:
-	ClassDecl();
-	~ClassDecl();
-	std::string ToString(bool nl) override;
+class ClassDecl : public AstNode {
+public:
+    ClassDecl();
+    ~ClassDecl();
+    std::string ToString(bool nl) override;
 
-	std::string id;
-	std::shared_ptr<ScopeNode> scope = nullptr;
-	std::vector<std::shared_ptr<Name>>
-		parent_classes;  // Names of classes to inherit. Names are resolved at code generation time
+    std::string id;
+    std::shared_ptr<ScopeNode> scope = nullptr;
+    std::vector<std::shared_ptr<Name>>
+        parent_classes;  // Names of classes to inherit. Names are resolved at code generation time
 };
 
-#endif //RONASCRIPT_CLASSDECL_H
+#endif  //RONASCRIPT_CLASSDECL_H

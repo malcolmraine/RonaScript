@@ -16,14 +16,13 @@ class Name;
 
 class ScopeNode;
 
-class CatchBlock : public AstNode
-{
- public:
-	CatchBlock();
-	~CatchBlock();
-	std::string ToString(bool nl) override;
-	std::vector<std::shared_ptr<Name>> exception_ids;
-	std::shared_ptr<ScopeNode> scope = nullptr;
+class CatchBlock : public AstNode {
+public:
+    CatchBlock();
+    ~CatchBlock();
+    std::string ToString(bool nl) override;
+    std::vector<std::shared_ptr<Name>> exception_ids;
+    std::shared_ptr<ScopeNode> scope = nullptr;
 };
 
-#endif //VARSTACKTEST_CATCH_BLOCK_H
+#endif  //VARSTACKTEST_CATCH_BLOCK_H

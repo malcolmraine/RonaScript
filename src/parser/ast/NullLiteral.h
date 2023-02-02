@@ -14,12 +14,11 @@
 
 class RnCodeGenVisitor;
 
-class NullLiteral : public AstNode
-{
- public:
-	NullLiteral() = default;
-	~NullLiteral() override = default;
-	std::string ToString(bool nl) override;
+class NullLiteral : public AstNode {
+public:
+    NullLiteral() = default;
+    ~NullLiteral() override = default;
+    std::string ToString(bool nl) override;
 };
 
-#endif //RONASCRIPT_NULLLITERAL_H
+#endif  //RONASCRIPT_NULLLITERAL_H

@@ -13,15 +13,14 @@
 #include <string>
 #include "AstNode.h"
 
-class ElifStmt : public AstNode
-{
- public:
-	ElifStmt();
-	~ElifStmt() override;
-	std::string ToString(bool nl) override;
-	std::shared_ptr<AstNode> test = nullptr;
-	std::shared_ptr<AstNode> consequent = nullptr;
-	std::shared_ptr<AstNode> alternative = nullptr;
+class ElifStmt : public AstNode {
+public:
+    ElifStmt();
+    ~ElifStmt() override;
+    std::string ToString(bool nl) override;
+    std::shared_ptr<AstNode> test = nullptr;
+    std::shared_ptr<AstNode> consequent = nullptr;
+    std::shared_ptr<AstNode> alternative = nullptr;
 };
 
-#endif //RONASCRIPT_ELIFSTMT_H
+#endif  //RONASCRIPT_ELIFSTMT_H

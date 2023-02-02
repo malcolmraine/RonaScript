@@ -15,14 +15,13 @@
 
 class ScopeNode;
 
-class WhileLoop : public AstNode
-{
- public:
-	WhileLoop();
-	~WhileLoop() override;
-	std::string ToString(bool nl) override;
-	std::shared_ptr<AstNode> test = nullptr;
-	std::shared_ptr<ScopeNode> scope = nullptr;
+class WhileLoop : public AstNode {
+public:
+    WhileLoop();
+    ~WhileLoop() override;
+    std::string ToString(bool nl) override;
+    std::shared_ptr<AstNode> test = nullptr;
+    std::shared_ptr<ScopeNode> scope = nullptr;
 };
 
-#endif //RONASCRIPT_WHILELOOP_H
+#endif  //RONASCRIPT_WHILELOOP_H

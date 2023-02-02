@@ -12,16 +12,15 @@
 
 #include <string>
 
-class Log
-{
- public:
-	static std::string Info(const std::string& msg, bool print = true);
-	static std::string Warn(const std::string& msg, bool print = true);
-	static std::string Err(const std::string& msg, bool print = true);
+class Log {
+public:
+    static std::string Info(const std::string& msg, bool print = true);
+    static std::string Warn(const std::string& msg, bool print = true);
+    static std::string Err(const std::string& msg, bool print = true);
 
- private:
-	Log() = default;
-	~Log() = default;
+private:
+    Log() = default;
+    ~Log() = default;
 };
 
-#endif //MLIBTEST_LOG_H
+#endif  //MLIBTEST_LOG_H

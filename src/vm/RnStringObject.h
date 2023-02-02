@@ -10,27 +10,23 @@
 #ifndef RONASCRIPT_RNSTRINGOBJECT_H
 #define RONASCRIPT_RNSTRINGOBJECT_H
 
-#include "RnObjectBase.h"
 #include <string>
+#include "RnObjectBase.h"
 
-class RnStringObject : public RnObjectBase<RnStringNative>
-{
- public:
-	RnStringObject(RnStringNative data = "");
-	~RnStringObject();
+class RnStringObject : public RnObjectBase<RnStringNative> {
+public:
+    RnStringObject(RnStringNative data = "");
+    ~RnStringObject();
 
-	RnObject* operator+(RnObject* obj) override;
-	RnObject* operator==(RnObject* obj) override;
-	RnObject* operator!=(RnObject* obj) override;
-	RnObject* operator*(RnObject* obj) override;
-	[[nodiscard]] RnStringNative ToString() const override;
-	[[nodiscard]]  RnBoolNative ToBool() const override;
-	void SetData(RnStringNative data) override;
+    RnObject* operator+(RnObject* obj) override;
+    RnObject* operator==(RnObject* obj) override;
+    RnObject* operator!=(RnObject* obj) override;
+    RnObject* operator*(RnObject* obj) override;
+    [[nodiscard]] RnStringNative ToString() const override;
+    [[nodiscard]] RnBoolNative ToBool() const override;
+    void SetData(RnStringNative data) override;
 
-	[[nodiscard]] RnType::Type GetType() const override
-	{
-		return RnType::RN_STRING;
-	}
+    [[nodiscard]] RnType::Type GetType() const override { return RnType::RN_STRING; }
 };
 
-#endif //RONASCRIPT_RNSTRINGOBJECT_H
+#endif  //RONASCRIPT_RNSTRINGOBJECT_H

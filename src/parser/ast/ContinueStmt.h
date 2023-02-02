@@ -12,12 +12,11 @@
 
 #include "AstNode.h"
 
-class ContinueStmt : public AstNode
-{
- public:
-	ContinueStmt();
-	~ContinueStmt() override;
-	std::string ToString(bool nl) override;
+class ContinueStmt : public AstNode {
+public:
+    ContinueStmt();
+    ~ContinueStmt() override;
+    std::string ToString(bool nl) override;
 };
 
-#endif //RONASCRIPT_FLOWSTMT_H
+#endif  //RONASCRIPT_FLOWSTMT_H

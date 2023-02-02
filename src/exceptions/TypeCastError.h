@@ -33,12 +33,12 @@
 #include "../vm/rona_type.h"
 #include "BaseException.h"
 
-class TypeCastError : protected BaseException
-{
- private:
-	std::string message_;
- public:
-	TypeCastError(RonaType_t target, RonaType_t value, std::string message = "");
+class TypeCastError : protected BaseException {
+private:
+    std::string message_;
+
+public:
+    TypeCastError(RonaType_t target, RonaType_t value, std::string message = "");
 };
 
-#endif //RONASCRIPT_TYPECASTERROR_H
+#endif  //RONASCRIPT_TYPECASTERROR_H

@@ -28,18 +28,19 @@
 #ifndef RONASCRIPT_UNSUPPORTEDOPERATIONERROR_H
 #define RONASCRIPT_UNSUPPORTEDOPERATIONERROR_H
 
-#include <string>
 #include <exception>
+#include <string>
 #include "../vm/rona_type.h"
 #include "BaseException.h"
 
-class UnsupportedOperationError : public BaseException
-{
- private:
-	std::string message_;
- public:
-	UnsupportedOperationError(RonaType_t target, RonaType_t value,
-		const std::string& operation, const std::string& message = "");
+class UnsupportedOperationError : public BaseException {
+private:
+    std::string message_;
+
+public:
+    UnsupportedOperationError(RonaType_t target, RonaType_t value,
+                              const std::string& operation,
+                              const std::string& message = "");
 };
 
-#endif //RONASCRIPT_UNSUPPORTEDOPERATIONERROR_H
+#endif  //RONASCRIPT_UNSUPPORTEDOPERATIONERROR_H

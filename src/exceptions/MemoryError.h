@@ -30,10 +30,9 @@
 
 #include "BaseException.h"
 
-class MemoryError : public BaseException
-{
- public:
-	explicit MemoryError(const std::string& message = "");
+class MemoryError : public BaseException {
+public:
+    explicit MemoryError(const std::string& message = "");
 };
 
-#endif //RONASCRIPT_MEMORYERROR_H
+#endif  //RONASCRIPT_MEMORYERROR_H

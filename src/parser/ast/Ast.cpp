@@ -11,14 +11,11 @@
 #include "ScopeNode.h"
 
 /*****************************************************************************/
-Ast::Ast()
-{
-	root = std::make_shared<ScopeNode>();
+Ast::Ast() {
+    root = std::make_shared<ScopeNode>();
 }
 
 /*****************************************************************************/
-Ast::~Ast()
-{
-	root.reset();
+Ast::~Ast() {
+    root.reset();
 }
-

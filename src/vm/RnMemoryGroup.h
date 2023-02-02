@@ -14,25 +14,23 @@
 
 class RnObject;
 
-class RnMemoryGroup
-{
- public:
-	explicit RnMemoryGroup(RnMemoryGroup* parent);
-	~RnMemoryGroup();
-	[[nodiscard]] std::vector<RnObject*> GetObjects() const;
-	[[nodiscard]] std::vector<RnMemoryGroup*> GetChildGroups() const;
-	void RemoveChildGroup(RnMemoryGroup* group);
+class RnMemoryGroup {
+public:
+    explicit RnMemoryGroup(RnMemoryGroup* parent);
+    ~RnMemoryGroup();
+    [[nodiscard]] std::vector<RnObject*> GetObjects() const;
+    [[nodiscard]] std::vector<RnMemoryGroup*> GetChildGroups() const;
+    void RemoveChildGroup(RnMemoryGroup* group);
 
-	void AddObject(RnObject* obj);
-	void AddChildGroup(RnMemoryGroup* child);
-	[[nodiscard]] RnMemoryGroup* GetParent() const;
-	void SetParent(RnMemoryGroup* parent);
+    void AddObject(RnObject* obj);
+    void AddChildGroup(RnMemoryGroup* child);
+    [[nodiscard]] RnMemoryGroup* GetParent() const;
+    void SetParent(RnMemoryGroup* parent);
 
- private:
-	RnMemoryGroup* _parent = nullptr;
-	std::vector<RnMemoryGroup*> _child_groups;
-	std::vector<RnObject*> _objects;
-
+private:
+    RnMemoryGroup* _parent = nullptr;
+    std::vector<RnMemoryGroup*> _child_groups;
+    std::vector<RnObject*> _objects;
 };
 
-#endif //RONASCRIPT_RNMEMORYGROUP_H
+#endif  //RONASCRIPT_RNMEMORYGROUP_H

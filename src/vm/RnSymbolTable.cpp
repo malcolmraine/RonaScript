@@ -8,131 +8,100 @@
 ******************************************************************************/
 
 #include "RnSymbolTable.h"
-#include "RnObject.h"
 #include "RnMemoryGroup.h"
+#include "RnObject.h"
 
 /*****************************************************************************/
-RnSymbolTable::RnSymbolTable(RnSymbolTable* parent_table)
-{
-	SetParent(parent_table);
+RnSymbolTable::RnSymbolTable(RnSymbolTable* parent_table) {
+    SetParent(parent_table);
 }
 
 /*****************************************************************************/
-RnSymbolTable::~RnSymbolTable()
-{
-	_parent_table = nullptr;
+RnSymbolTable::~RnSymbolTable() {
+    _parent_table = nullptr;
 }
 
 /*****************************************************************************/
-bool RnSymbolTable::SetSymbol(RnIntNative symbol, RnObject* obj)
-{
-	if (_table.contains(symbol))
-	{
-		_table[symbol] = obj;
-		return true;
-	}
-	else if (_parent_table && _parent_table->SymbolExists(symbol))
-	{
-		if (!_parent_table->SetSymbol(symbol, obj))
-		{
-			return true;
-		}
-	}
-	_table[symbol] = obj;
-	return true;
-
+bool RnSymbolTable::SetSymbol(RnIntNative symbol, RnObject* obj) {
+    if (_table.contains(symbol)) {
+        _table[symbol] = obj;
+        return true;
+    } else if (_parent_table && _parent_table->SymbolExists(symbol)) {
+        if (!_parent_table->SetSymbol(symbol, obj)) {
+            return true;
+        }
+    }
+    _table[symbol] = obj;
+    return true;
 }
 
 /*****************************************************************************/
-RnObject* RnSymbolTable::GetObject(RnIntNative symbol, bool should_throw)
-{
-	auto iter = _table.find(symbol);
-	if (iter != _table.end())
-	{
-		return iter->second;
-	}
-	else if (_parent_table)
-	{
-		return _parent_table->GetObject(symbol);
-	}
-	else
-	{
-		if (!should_throw)
-		{
-			return nullptr;
-		}
-		throw std::runtime_error(
-			"Symbol not found: " + RnObject::GetInternedString(symbol));
-	}
+RnObject* RnSymbolTable::GetObject(RnIntNative symbol, bool should_throw) {
+    auto iter = _table.find(symbol);
+    if (iter != _table.end()) {
+        return iter->second;
+    } else if (_parent_table) {
+        return _parent_table->GetObject(symbol);
+    } else {
+        if (!should_throw) {
+            return nullptr;
+        }
+        throw std::runtime_error("Symbol not found: " +
+                                 RnObject::GetInternedString(symbol));
+    }
 }
 
 /*****************************************************************************/
-void RnSymbolTable::RemoveSymbol(RnIntNative symbol)
-{
-	auto iter = _table.find(symbol);
-	if (iter != _table.end())
-	{
-		_table.erase(iter);
-	}
-	else if (_parent_table)
-	{
-		_parent_table->RemoveSymbol(symbol);
-	}
-	else
-	{
-		throw std::runtime_error("Attempting to delete unknown symbol '"
-			+ RnObject::GetInternedString(symbol) + "'");
-	}
+void RnSymbolTable::RemoveSymbol(RnIntNative symbol) {
+    auto iter = _table.find(symbol);
+    if (iter != _table.end()) {
+        _table.erase(iter);
+    } else if (_parent_table) {
+        _parent_table->RemoveSymbol(symbol);
+    } else {
+        throw std::runtime_error("Attempting to delete unknown symbol '" +
+                                 RnObject::GetInternedString(symbol) + "'");
+    }
 }
 
 /*****************************************************************************/
-void RnSymbolTable::AliasSymbol(RnIntNative base, RnIntNative alias)
-{
-	auto obj = GetObject(base);
-	_table[alias] = obj;
+void RnSymbolTable::AliasSymbol(RnIntNative base, RnIntNative alias) {
+    auto obj = GetObject(base);
+    _table[alias] = obj;
 }
 
 /*****************************************************************************/
-bool RnSymbolTable::SymbolExists(RnIntNative key, bool search_parent) const
-{
-	if (_table.contains(key))
-	{
-		return true;
-	}
-	else if (_parent_table && search_parent)
-	{
-		return _parent_table->SymbolExists(key);
-	}
-	return false;
+bool RnSymbolTable::SymbolExists(RnIntNative key, bool search_parent) const {
+    if (_table.contains(key)) {
+        return true;
+    } else if (_parent_table && search_parent) {
+        return _parent_table->SymbolExists(key);
+    }
+    return false;
 }
 
 /*****************************************************************************/
-void RnSymbolTable::SetMemoryGroup(RnMemoryGroup* group)
-{
-	_memory_group = group;
+void RnSymbolTable::SetMemoryGroup(RnMemoryGroup* group) {
+    _memory_group = group;
 }
 
 /*****************************************************************************/
-void RnSymbolTable::SetParent(RnSymbolTable* parent)
-{
-	assert(parent != this);
-	_parent_table = parent;
+void RnSymbolTable::SetParent(RnSymbolTable* parent) {
+    assert(parent != this);
+    _parent_table = parent;
 }
 
 /*****************************************************************************/
-RnSymbolTable* RnSymbolTable::GetParent() const
-{
-	return _parent_table;
+RnSymbolTable* RnSymbolTable::GetParent() const {
+    return _parent_table;
 }
 
 /*****************************************************************************/
-std::vector<RnIntNative> RnSymbolTable::GetSymbols() const
-{
-	std::vector<RnIntNative> result;
-	result.reserve(_table.size());
-	for (const auto& pair : _table)
-	{
-		result.push_back(pair.first);
-	}
-	return result;
+std::vector<RnIntNative> RnSymbolTable::GetSymbols() const {
+    std::vector<RnIntNative> result;
+    result.reserve(_table.size());
+    for (const auto& pair : _table) {
+        result.push_back(pair.first);
+    }
+    return result;
 }

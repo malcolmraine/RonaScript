@@ -16,17 +16,16 @@ class VarDecl;
 
 class ScopeNode;
 
-class ForLoop : public AstNode
-{
- public:
-	ForLoop();
-	~ForLoop();
-	std::string ToString(bool nl) override;
+class ForLoop : public AstNode {
+public:
+    ForLoop();
+    ~ForLoop();
+    std::string ToString(bool nl) override;
 
-	std::shared_ptr<AstNode> init = nullptr;
-	std::shared_ptr<AstNode> test = nullptr;
-	std::shared_ptr<AstNode> update = nullptr;
-	std::shared_ptr<ScopeNode> scope = nullptr;
+    std::shared_ptr<AstNode> init = nullptr;
+    std::shared_ptr<AstNode> test = nullptr;
+    std::shared_ptr<AstNode> update = nullptr;
+    std::shared_ptr<ScopeNode> scope = nullptr;
 };
 
-#endif //RONASCRIPT_FORLOOP_H
+#endif  //RONASCRIPT_FORLOOP_H

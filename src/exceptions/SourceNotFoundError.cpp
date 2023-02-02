@@ -35,12 +35,10 @@
  * @param message
  */
 SourceNotFoundError::SourceNotFoundError(const std::string& path,
-	const std::string& message)
-{
-	message_ = formatted_msg("SourceNotFoundError: '" + path + "'");
+                                         const std::string& message) {
+    message_ = formatted_msg("SourceNotFoundError: '" + path + "'");
 
-	if (!message.empty())
-	{
-		message_ += ": " + message;
-	}
+    if (!message.empty()) {
+        message_ += ": " + message;
+    }
 }

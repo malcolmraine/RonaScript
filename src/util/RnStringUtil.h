@@ -13,38 +13,33 @@
 #include <string>
 #include <vector>
 
-namespace RnStringUtil
-{
+namespace RnStringUtil {
 /*************************************************************************/
-	static std::string Pad(const std::string& s, unsigned long len,
-		const std::string& pad_char = " ")
-	{
-		auto out = s;
-		unsigned long pad_len = len - s.length();
+static std::string Pad(const std::string& s, unsigned long len,
+                       const std::string& pad_char = " ") {
+    auto out = s;
+    unsigned long pad_len = len - s.length();
 
-		pad_len = pad_len >= 0 ? pad_len : 0;
+    pad_len = pad_len >= 0 ? pad_len : 0;
 
-		for (unsigned long i = 0; i < pad_len; i++)
-		{
-			out += pad_char;
-		}
+    for (unsigned long i = 0; i < pad_len; i++) {
+        out += pad_char;
+    }
 
-		return out;
-	}
-
-/*************************************************************************/
-	template<typename T = std::string>
-	static std::string Join(std::vector<T> v, const std::string& join_char = "")
-	{
-		std::string s;
-
-		for (auto& item : v)
-		{
-			s += std::to_string(item) + join_char;
-		}
-
-		return s;
-	}
-
+    return out;
 }
-#endif //RONASCRIPT_RNSTRINGUTIL_H
+
+/*************************************************************************/
+template <typename T = std::string>
+static std::string Join(std::vector<T> v, const std::string& join_char = "") {
+    std::string s;
+
+    for (auto& item : v) {
+        s += std::to_string(item) + join_char;
+    }
+
+    return s;
+}
+
+}  // namespace RnStringUtil
+#endif  //RONASCRIPT_RNSTRINGUTIL_H

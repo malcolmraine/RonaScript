@@ -45,19 +45,18 @@ class RnObject;
  *
  */
 
-class RnBuiltins_IO
-{
- public:
-	static void file_size(RnScope* scope, const std::vector<RnObject*>& args,
-		RnObject* ret_val);
-	static void file_write(RnScope* scope, const std::vector<RnObject*>& args,
-		RnObject* ret_val);
-	static void rn_builtin_print(RnScope* scope, const std::vector<RnObject*>& args,
-		RnObject* ret_val);
-	static void read(RnScope* scope, const std::vector<RnObject*>& args,
-		RnObject* ret_val);
-	static void rn_builtin_prompt(RnScope* scope, const std::vector<RnObject*>& args,
-		RnObject* ret_val);
+class RnBuiltins_IO {
+public:
+    static void file_size(RnScope* scope, const std::vector<RnObject*>& args,
+                          RnObject* ret_val);
+    static void file_write(RnScope* scope, const std::vector<RnObject*>& args,
+                           RnObject* ret_val);
+    static void rn_builtin_print(RnScope* scope, const std::vector<RnObject*>& args,
+                                 RnObject* ret_val);
+    static void read(RnScope* scope, const std::vector<RnObject*>& args,
+                     RnObject* ret_val);
+    static void rn_builtin_prompt(RnScope* scope, const std::vector<RnObject*>& args,
+                                  RnObject* ret_val);
 };
 
-#endif //RONASCRIPT_VM_BUILTINS_RNBUILTINS_IO_H_
+#endif  //RONASCRIPT_VM_BUILTINS_RNBUILTINS_IO_H_

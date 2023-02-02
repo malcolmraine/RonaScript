@@ -30,11 +30,11 @@
 
 #include "BaseException.h"
 
-class UnexpectedSymbolError : public BaseException
-{
- public:
-	UnexpectedSymbolError(const std::string& symbol, const std::string& expected,
-		long line_num, long char_num, const std::string& message = "");
+class UnexpectedSymbolError : public BaseException {
+public:
+    UnexpectedSymbolError(const std::string& symbol, const std::string& expected,
+                          long line_num, long char_num,
+                          const std::string& message = "");
 };
 
-#endif //RONASCRIPT_UNEXPECTEDSYMBOLERROR_H
+#endif  //RONASCRIPT_UNEXPECTEDSYMBOLERROR_H

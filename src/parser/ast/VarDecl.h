@@ -12,8 +12,8 @@
 
 #include <string>
 #include <vector>
-#include "AstNode.h"
 #include "../RnTypeComposite.h"
+#include "AstNode.h"
 
 class RnCodeGenVisitor;
 
@@ -23,19 +23,18 @@ class Token;
 
 class RnInstruction;
 
-class VarDecl : public AstNode
-{
- public:
-	VarDecl();
-	~VarDecl() override;
-	std::string ToString(bool nl) override;
-	std::string id;
-	std::shared_ptr<RnTypeComposite> type;
-	std::vector<Token*> qualifiers;
-	std::shared_ptr<AstNode> init_value = nullptr;
-	bool is_const = false;
-	bool is_local = false;
-	bool is_global = false;
+class VarDecl : public AstNode {
+public:
+    VarDecl();
+    ~VarDecl() override;
+    std::string ToString(bool nl) override;
+    std::string id;
+    std::shared_ptr<RnTypeComposite> type;
+    std::vector<Token*> qualifiers;
+    std::shared_ptr<AstNode> init_value = nullptr;
+    bool is_const = false;
+    bool is_local = false;
+    bool is_global = false;
 };
 
-#endif //RONASCRIPT_VARDECL_H
+#endif  //RONASCRIPT_VARDECL_H

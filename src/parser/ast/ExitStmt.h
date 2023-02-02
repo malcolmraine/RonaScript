@@ -11,19 +11,18 @@
 #define RONASCRIPT_EXITSTMT_H
 
 #include <string>
-#include "NodeType.h"
 #include "AstNode.h"
+#include "NodeType.h"
 
 class IntLiteral;
 
-class ExitStmt : public AstNode
-{
- public:
-	ExitStmt();
-	~ExitStmt() override;
-	std::string ToString(bool nl) override;
+class ExitStmt : public AstNode {
+public:
+    ExitStmt();
+    ~ExitStmt() override;
+    std::string ToString(bool nl) override;
 
-	std::shared_ptr<IntLiteral> exit_code = nullptr;
+    std::shared_ptr<IntLiteral> exit_code = nullptr;
 };
 
-#endif //RONASCRIPT_EXITSTMT_H
+#endif  //RONASCRIPT_EXITSTMT_H

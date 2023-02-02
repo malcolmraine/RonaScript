@@ -30,13 +30,13 @@
 
 #include "BaseException.h"
 
-class NameNotFoundError : public BaseException
-{
- protected:
-	std::string message_;
- public:
-	explicit NameNotFoundError(const std::string& name,
-		const std::string& message = "");
+class NameNotFoundError : public BaseException {
+protected:
+    std::string message_;
+
+public:
+    explicit NameNotFoundError(const std::string& name,
+                               const std::string& message = "");
 };
 
-#endif //RONASCRIPT_NAMENOTFOUNDERROR_H
+#endif  //RONASCRIPT_NAMENOTFOUNDERROR_H

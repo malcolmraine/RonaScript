@@ -13,17 +13,16 @@
 #include <string>
 #include "AstNode.h"
 
-class FloatLiteral : public AstNode
-{
- public:
-	FloatLiteral();
-	explicit FloatLiteral(double value);
-	explicit FloatLiteral(bool value);
-	explicit FloatLiteral(const std::string& value);
-	~FloatLiteral() override;
-	std::string ToString(bool nl) override;
+class FloatLiteral : public AstNode {
+public:
+    FloatLiteral();
+    explicit FloatLiteral(double value);
+    explicit FloatLiteral(bool value);
+    explicit FloatLiteral(const std::string& value);
+    ~FloatLiteral() override;
+    std::string ToString(bool nl) override;
 
-	double data = 0.0;
+    double data = 0.0;
 };
 
-#endif //RONASCRIPT_FLOATLITERAL_H
+#endif  //RONASCRIPT_FLOATLITERAL_H

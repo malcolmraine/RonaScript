@@ -28,40 +28,38 @@
 #ifndef RONASCRIPT_TOKEN_H
 #define RONASCRIPT_TOKEN_H
 
-#include <string>
 #include <map>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include "TokenType.h"
 #include "../util/FileInfo.h"
+#include "TokenType.h"
 
-struct FilePosition
-{
-	int line_num = 1;
-	int char_num = 1;
+struct FilePosition {
+    int line_num = 1;
+    int char_num = 1;
 };
 
-class Token
-{
- public:
-	static std::unordered_map<TokenType, std::string> token_type_string_names;
-	Token(std::string s, TokenType token, int line_num = -1, int char_num = -1);
-	~Token() = default;
-	[[nodiscard]] bool IsLiteral() const;
-	[[nodiscard]] bool IsBinaryOp() const;
-	[[nodiscard]] bool IsUnaryOp() const;
-	[[nodiscard]] bool IsCompoundOp() const;
-	[[nodiscard]] bool IsOperator() const;
-	[[nodiscard]] bool IsType() const;
-	[[nodiscard]] bool IsQualifier() const;
-	[[nodiscard]] std::string ToString() const;
-	bool IsOneOf(const std::unordered_set<TokenType>& tokens) const;
+class Token {
+public:
+    static std::unordered_map<TokenType, std::string> token_type_string_names;
+    Token(std::string s, TokenType token, int line_num = -1, int char_num = -1);
+    ~Token() = default;
+    [[nodiscard]] bool IsLiteral() const;
+    [[nodiscard]] bool IsBinaryOp() const;
+    [[nodiscard]] bool IsUnaryOp() const;
+    [[nodiscard]] bool IsCompoundOp() const;
+    [[nodiscard]] bool IsOperator() const;
+    [[nodiscard]] bool IsType() const;
+    [[nodiscard]] bool IsQualifier() const;
+    [[nodiscard]] std::string ToString() const;
+    bool IsOneOf(const std::unordered_set<TokenType>& tokens) const;
 
-	TokenType token_type = TokenType::UNDEFINED;
-	std::string lexeme;
-	FilePosition file_pos;
-	FileInfo file_info;
+    TokenType token_type = TokenType::UNDEFINED;
+    std::string lexeme;
+    FilePosition file_pos;
+    FileInfo file_info;
 };
 
-#endif //RONASCRIPT_TOKEN_H
+#endif  //RONASCRIPT_TOKEN_H

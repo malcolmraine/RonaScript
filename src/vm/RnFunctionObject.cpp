@@ -8,8 +8,8 @@
 ******************************************************************************/
 
 #include "RnFunctionObject.h"
-#include "RnFunction.h"
 #include <sstream>
+#include "RnFunction.h"
 
 /*****************************************************************************/
 RnFunctionObject::RnFunctionObject() = default;
@@ -18,15 +18,13 @@ RnFunctionObject::RnFunctionObject() = default;
 RnFunctionObject::~RnFunctionObject() = default;
 
 /*****************************************************************************/
-RnStringNative RnFunctionObject::ToString() const
-{
-	std::stringstream s;
-	s << "{routine @ " << std::hex << _data << "}";
-	return s.str();
+RnStringNative RnFunctionObject::ToString() const {
+    std::stringstream s;
+    s << "{routine @ " << std::hex << _data << "}";
+    return s.str();
 }
 
 /*****************************************************************************/
-void RnFunctionObject::SetData(RnFunction* data)
-{
-	SetDataInternal(data);
+void RnFunctionObject::SetData(RnFunction* data) {
+    SetDataInternal(data);
 }

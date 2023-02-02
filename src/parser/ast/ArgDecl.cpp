@@ -8,25 +8,22 @@
 ******************************************************************************/
 
 #include "ArgDecl.h"
-#include "Name.h"
 #include "../../codegen/RnCodeGenVisitor.h"
+#include "Name.h"
 
 /*****************************************************************************/
-ArgDecl::ArgDecl()
-{
-	node_type = AST_ARG_DECL;
+ArgDecl::ArgDecl() {
+    node_type = AST_ARG_DECL;
 }
 
 /*****************************************************************************/
 ArgDecl::~ArgDecl() = default;
 
 /*****************************************************************************/
-std::string ArgDecl::ToString(bool nl)
-{
-	std::string result = MakeTabStr() + "ArgDecl( " + id->value + ", " + type + " )";
-	if (nl)
-	{
-		result += "\n";
-	}
-	return result;
+std::string ArgDecl::ToString(bool nl) {
+    std::string result = MakeTabStr() + "ArgDecl( " + id->value + ", " + type + " )";
+    if (nl) {
+        result += "\n";
+    }
+    return result;
 }

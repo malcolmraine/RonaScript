@@ -35,12 +35,11 @@
  * @param value
  * @param message
  */
-TypeCastError::TypeCastError(RonaType_t target, RonaType_t value, std::string message)
-{
-	message_ = formatted_msg(
-		"TypeCastError: Attempting to cast '" + get_type_as_string(target) + "' to '"
-			+ get_type_as_string(value) + "'");
+TypeCastError::TypeCastError(RonaType_t target, RonaType_t value, std::string message) {
+    message_ = formatted_msg("TypeCastError: Attempting to cast '" +
+                             get_type_as_string(target) + "' to '" +
+                             get_type_as_string(value) + "'");
 
-	if (!message.empty())
-		message_ += ": " + message;
+    if (!message.empty())
+        message_ += ": " + message;
 }

@@ -28,13 +28,11 @@
 #include "InvalidIndexError.h"
 
 /*****************************************************************************/
-InvalidIndexError::InvalidIndexError(long index, const std::string& message)
-{
-	message_ = formatted_msg(
-		"InvalidIndexError: Index " + std::to_string(index) + " is out of bounds.");
+InvalidIndexError::InvalidIndexError(long index, const std::string& message) {
+    message_ = formatted_msg("InvalidIndexError: Index " + std::to_string(index) +
+                             " is out of bounds.");
 
-	if (!message.empty())
-	{
-		message_ += ": " + message;
-	}
+    if (!message.empty()) {
+        message_ += ": " + message;
+    }
 }

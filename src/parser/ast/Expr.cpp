@@ -11,21 +11,17 @@
 #include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
-Expr::Expr()
-{
-	node_type = AST_EXPR;
+Expr::Expr() {
+    node_type = AST_EXPR;
 }
 
 /*****************************************************************************/
-Expr::~Expr()
-{
-	expr.reset();
+Expr::~Expr() {
+    expr.reset();
 }
 
 /*****************************************************************************/
-std::string Expr::ToString(bool nl)
-{
-	expr->nest_lvl = nest_lvl;
-	return expr->ToString(nl);
+std::string Expr::ToString(bool nl) {
+    expr->nest_lvl = nest_lvl;
+    return expr->ToString(nl);
 }
-

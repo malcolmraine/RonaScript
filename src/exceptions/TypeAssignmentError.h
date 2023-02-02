@@ -33,13 +33,13 @@
 #include "../vm/RnType.h"
 #include "BaseException.h"
 
-class TypeAssignmentError : protected BaseException
-{
- private:
-	std::string message_;
- public:
-	TypeAssignmentError(RnType::Type target, RnType::Type value,
-		std::string message = "");
+class TypeAssignmentError : protected BaseException {
+private:
+    std::string message_;
+
+public:
+    TypeAssignmentError(RnType::Type target, RnType::Type value,
+                        std::string message = "");
 };
 
-#endif //RONASCRIPT_TYPEASSIGNMENTERROR_H
+#endif  //RONASCRIPT_TYPEASSIGNMENTERROR_H

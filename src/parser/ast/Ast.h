@@ -10,21 +10,20 @@
 #ifndef RONASCRIPT_AST_H
 #define RONASCRIPT_AST_H
 
-#include "../../util/FileInfo.h"
 #include <map>
+#include "../../util/FileInfo.h"
 
 class Module;
 
 class ScopeNode;
 
-class Ast
-{
- public:
-	Ast();
-	~Ast();
-	std::map<std::string, std::shared_ptr<Module>> modules;
-	std::shared_ptr<ScopeNode> root = nullptr;
-	FileInfo* file_info{};
+class Ast {
+public:
+    Ast();
+    ~Ast();
+    std::map<std::string, std::shared_ptr<Module>> modules;
+    std::shared_ptr<ScopeNode> root = nullptr;
+    FileInfo* file_info{};
 };
 
-#endif //RONASCRIPT_AST_H
+#endif  //RONASCRIPT_AST_H

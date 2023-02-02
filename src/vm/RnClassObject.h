@@ -10,8 +10,8 @@
 #ifndef RONASCRIPT_VM_RNCLASSOBJECT_H_
 #define RONASCRIPT_VM_RNCLASSOBJECT_H_
 
-#include "RnObjectBase.h"
 #include "RnClass.h"
+#include "RnObjectBase.h"
 #include "RnVirtualMachine.h"
 
 /**
@@ -33,67 +33,35 @@
 class RnScope;
 
 // This is a class instance
-class RnClassObject : public RnObjectBase<RnScope*>
-{
- public:
-	RnClassObject()
-	{
-		_data = RnVirtualMachine::GetInstance()->CreateScope();
-	}
+class RnClassObject : public RnObjectBase<RnScope*> {
+public:
+    RnClassObject() { _data = RnVirtualMachine::GetInstance()->CreateScope(); }
 
-	~RnClassObject()
-	{
+    ~RnClassObject() {}
 
-	}
+    [[nodiscard]] RnScope* GetScope() const { return GetData(); }
 
-	[[nodiscard]] RnScope* GetScope() const
-	{
-		return GetData();
-	}
+    [[nodiscard]] RnScope* ToObject() const override { return GetData(); }
 
-	[[nodiscard]]  RnScope* ToObject() const override
-	{
-		return GetData();
-	}
+    void SetData(RnScope* data) override { SetDataInternal(data); }
 
-	void SetData(RnScope* data) override
-	{
-		SetDataInternal(data);
-	}
+    [[nodiscard]] RnStringNative ToString() const override;
 
-	[[nodiscard]] RnStringNative ToString() const override;
+    [[nodiscard]] RnType::Type GetType() const override { return RnType::RN_OBJECT; }
 
-	[[nodiscard]] RnType::Type GetType() const override
-	{
-		return RnType::RN_OBJECT;
-	}
+    [[nodiscard]] std::string GetName() const { return _name; }
 
-	[[nodiscard]] std::string GetName() const
-	{
-		return _name;
-	}
+    void SetName(const std::string& name) { _name = name; }
 
-	void SetName(const std::string& name)
-	{
-		_name = name;
-	}
+    [[nodiscard]] bool IsModule() const { return _is_module; }
 
-	[[nodiscard]] bool IsModule() const
-	{
-		return _is_module;
-	}
+    void SetIsModule(bool flag) { _is_module = flag; }
 
-	void SetIsModule(bool flag)
-	{
-		_is_module = flag;
-	}
+    void CopySymbols(RnScope* target);
 
-	void CopySymbols(RnScope* target);
-
- private:
-	bool _is_module = false;
-	std::string _name;
-
+private:
+    bool _is_module = false;
+    std::string _name;
 };
 
-#endif //RONASCRIPT_VM_RNCLASSOBJECT_H_
+#endif  //RONASCRIPT_VM_RNCLASSOBJECT_H_

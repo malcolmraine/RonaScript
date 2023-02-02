@@ -8,43 +8,36 @@
 ******************************************************************************/
 
 #include "FuncDecl.h"
-#include "ScopeNode.h"
-#include "ArgDecl.h"
 #include "../../codegen/RnCodeGenVisitor.h"
+#include "ArgDecl.h"
+#include "ScopeNode.h"
 
 /*****************************************************************************/
-FuncDecl::FuncDecl()
-{
-	node_type = AST_FUNC_DECL;
+FuncDecl::FuncDecl() {
+    node_type = AST_FUNC_DECL;
 }
 
 /*****************************************************************************/
-FuncDecl::~FuncDecl()
-{
-	scope.reset();
+FuncDecl::~FuncDecl() {
+    scope.reset();
 }
 
 /*****************************************************************************/
-std::string FuncDecl::ToString(bool nl)
-{
-	std::string s = MakeTabStr() + "FuncDecl( " + id + ", " + type->ToString() + " )";
-	if (nl)
-	{
-		s += "\n";
-	}
+std::string FuncDecl::ToString(bool nl) {
+    std::string s = MakeTabStr() + "FuncDecl( " + id + ", " + type->ToString() + " )";
+    if (nl) {
+        s += "\n";
+    }
 
-	for (auto& arg : args)
-	{
-		arg->nest_lvl = nest_lvl + 1;
-		s += arg->ToString(true);
-	}
+    for (auto& arg : args) {
+        arg->nest_lvl = nest_lvl + 1;
+        s += arg->ToString(true);
+    }
 
-	if (scope != nullptr)
-	{
-		scope->nest_lvl = nest_lvl + 1;
-		s += scope->ToString(true);
-	}
+    if (scope != nullptr) {
+        scope->nest_lvl = nest_lvl + 1;
+        s += scope->ToString(true);
+    }
 
-	return s;
+    return s;
 }
-

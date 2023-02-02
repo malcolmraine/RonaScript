@@ -28,13 +28,9 @@
 #include "BaseException.h"
 
 /*****************************************************************************/
-BaseException::BaseException(std::string message) : message_(std::move(message))
-{
-
-}
+BaseException::BaseException(std::string message) : message_(std::move(message)) {}
 
 /*****************************************************************************/
-std::string BaseException::formatted_msg(const std::string& message)
-{
-	return color_fmt_prefix + message + color_fmt_suffix;
+std::string BaseException::formatted_msg(const std::string& message) {
+    return color_fmt_prefix + message + color_fmt_suffix;
 }

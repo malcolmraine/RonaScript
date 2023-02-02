@@ -13,19 +13,18 @@
 #include <string>
 #include "AstNode.h"
 
-class AssignmentStmt : public AstNode
-{
- public:
-	AssignmentStmt();
-	~AssignmentStmt();
-	std::string ToString(bool nl) override;
-	bool RunTypeCheck();
+class AssignmentStmt : public AstNode {
+public:
+    AssignmentStmt();
+    ~AssignmentStmt();
+    std::string ToString(bool nl) override;
+    bool RunTypeCheck();
 
- public:
-	std::shared_ptr<AstNode> rexpr{};
-	std::shared_ptr<AstNode> lexpr = nullptr;
-	std::shared_ptr<AstNode> offset = nullptr;
-	std::shared_ptr<AstNode> idx = nullptr;
+public:
+    std::shared_ptr<AstNode> rexpr{};
+    std::shared_ptr<AstNode> lexpr = nullptr;
+    std::shared_ptr<AstNode> offset = nullptr;
+    std::shared_ptr<AstNode> idx = nullptr;
 };
 
-#endif //RONASCRIPT_ASSIGNMENTSTMT_H
+#endif  //RONASCRIPT_ASSIGNMENTSTMT_H

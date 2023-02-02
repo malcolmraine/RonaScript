@@ -28,20 +28,18 @@
 #include "UnexpectedSymbolError.h"
 
 UnexpectedSymbolError::UnexpectedSymbolError(const std::string& symbol,
-	const std::string& expected, long line_num, long char_num,
-	const std::string& message)
-{
-	message_ =
-		"UnexpectedSymbolError: '" + symbol + "' at " + std::to_string(line_num + 2)
-			+ ":" + std::to_string(char_num - 2);
+                                             const std::string& expected, long line_num,
+                                             long char_num,
+                                             const std::string& message) {
+    message_ = "UnexpectedSymbolError: '" + symbol + "' at " +
+               std::to_string(line_num + 2) + ":" + std::to_string(char_num - 2);
 
-	if (!expected.empty())
-		message_ += "; expected '" + expected + "'";
+    if (!expected.empty())
+        message_ += "; expected '" + expected + "'";
 
-	message_ = formatted_msg(message_);
+    message_ = formatted_msg(message_);
 
-	if (!message.empty())
-	{
-		message_ += ": " + message;
-	}
+    if (!message.empty()) {
+        message_ += ": " + message;
+    }
 }

@@ -29,12 +29,10 @@
 
 /*****************************************************************************/
 NameNotFoundError::NameNotFoundError(const std::string& name,
-	const std::string& message)
-{
-	message_ = formatted_msg("NameNotFoundError: Name '" + name + "' not found.");
+                                     const std::string& message) {
+    message_ = formatted_msg("NameNotFoundError: Name '" + name + "' not found.");
 
-	if (!message.empty())
-	{
-		message_ += ": " + message;
-	}
+    if (!message.empty()) {
+        message_ += ": " + message;
+    }
 }

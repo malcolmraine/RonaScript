@@ -12,17 +12,16 @@
 
 #include <string>
 
-class File
-{
- public:
-	static std::string GetContents(const std::string& path);
-	static size_t LineCount(const std::string& path);
-	static size_t Size(const std::string& path);
-	static bool Remove(const std::string& path);
+class File {
+public:
+    static std::string GetContents(const std::string& path);
+    static size_t LineCount(const std::string& path);
+    static size_t Size(const std::string& path);
+    static bool Remove(const std::string& path);
 
- private:
-	File() = default;
-	~File() = default;
+private:
+    File() = default;
+    ~File() = default;
 };
 
-#endif //MLIB_FILE_H
+#endif  //MLIB_FILE_H

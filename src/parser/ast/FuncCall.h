@@ -10,19 +10,18 @@
 #ifndef VARSTACKTEST_FUNCCALL_H
 #define VARSTACKTEST_FUNCCALL_H
 
-#include <vector>
 #include <string>
+#include <vector>
 #include "AstNode.h"
 
-class FuncCall : public AstNode
-{
- public:
-	FuncCall();
-	~FuncCall() override;
-	std::string ToString(bool nl) override;
+class FuncCall : public AstNode {
+public:
+    FuncCall();
+    ~FuncCall() override;
+    std::string ToString(bool nl) override;
 
-	std::shared_ptr<AstNode> expr = nullptr;
-	std::vector<std::shared_ptr<AstNode>> args;
+    std::shared_ptr<AstNode> expr = nullptr;
+    std::vector<std::shared_ptr<AstNode>> args;
 };
 
-#endif //VARSTACKTEST_FUNCCALL_H
+#endif  //VARSTACKTEST_FUNCCALL_H

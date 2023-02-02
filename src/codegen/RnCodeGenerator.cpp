@@ -9,8 +9,8 @@
 
 #include "RnCodeGenerator.h"
 #include <memory>
-#include "../parser/ast/ScopeNode.h"
 #include "../parser/ast/Module.h"
+#include "../parser/ast/ScopeNode.h"
 
 /*****************************************************************************/
 RnCodeGenerator::RnCodeGenerator() = default;
@@ -19,24 +19,18 @@ RnCodeGenerator::RnCodeGenerator() = default;
 RnCodeGenerator::~RnCodeGenerator() = default;
 
 /*****************************************************************************/
-void RnCodeGenerator::Generate(Ast* ast)
-{
-	for (auto & module : ast->modules)
-	{
-		InstructionBlock module_instructions = visitor.GeneralVisit(module.second);
-		instructions.insert(instructions.end(),
-			module_instructions.begin(),
-			module_instructions.end());
-	}
+void RnCodeGenerator::Generate(Ast* ast) {
+    for (auto& module : ast->modules) {
+        InstructionBlock module_instructions = visitor.GeneralVisit(module.second);
+        instructions.insert(instructions.end(), module_instructions.begin(),
+                            module_instructions.end());
+    }
 
-	InstructionBlock root_instructions = visitor.GeneralVisit(ast->root);
-	instructions.insert(instructions.end(),
-		root_instructions.begin(),
-		root_instructions.end());
-	instructions.emplace_back(new RnInstruction(OP_EXIT, 0));
+    InstructionBlock root_instructions = visitor.GeneralVisit(ast->root);
+    instructions.insert(instructions.end(), root_instructions.begin(),
+                        root_instructions.end());
+    instructions.emplace_back(new RnInstruction(OP_EXIT, 0));
 }
 
 /*****************************************************************************/
-void RnCodeGenerator::Optimize()
-{
-}
+void RnCodeGenerator::Optimize() {}

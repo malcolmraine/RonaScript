@@ -31,11 +31,10 @@
 #include <string>
 #include "BaseException.h"
 
-class SourceNotFoundError : public BaseException
-{
- public:
-	explicit SourceNotFoundError(const std::string& path,
-		const std::string& message = "");
+class SourceNotFoundError : public BaseException {
+public:
+    explicit SourceNotFoundError(const std::string& path,
+                                 const std::string& message = "");
 };
 
-#endif //RONASCRIPT_SOURCENOTFOUNDERROR_H
+#endif  //RONASCRIPT_SOURCENOTFOUNDERROR_H

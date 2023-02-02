@@ -11,25 +11,18 @@
 #include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
-BreakStmt::BreakStmt()
-{
-	node_type = AST_BREAK_STMT;
+BreakStmt::BreakStmt() {
+    node_type = AST_BREAK_STMT;
 }
 
 /*****************************************************************************/
-BreakStmt::~BreakStmt()
-{
-
-}
+BreakStmt::~BreakStmt() {}
 
 /*****************************************************************************/
-std::string BreakStmt::ToString(bool nl)
-{
-	std::string s = MakeTabStr() + "BreakStmt( )";
-	if (nl)
-	{
-		s += "\n";
-	}
-	return s;
+std::string BreakStmt::ToString(bool nl) {
+    std::string s = MakeTabStr() + "BreakStmt( )";
+    if (nl) {
+        s += "\n";
+    }
+    return s;
 }
-

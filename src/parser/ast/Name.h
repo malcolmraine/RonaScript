@@ -18,15 +18,14 @@ class RnCodeGenVisitor;
 
 class RnCodeGenVisitor;
 
-class Name : public AstNode
-{
- public:
-	Name();
-	explicit Name(std::string name);
-	~Name() override;
-	std::string ToString(bool nl) override;
+class Name : public AstNode {
+public:
+    Name();
+    explicit Name(std::string name);
+    ~Name() override;
+    std::string ToString(bool nl) override;
 
-	std::string value;
+    std::string value;
 };
 
-#endif //VARSTACKTEST_NAME_H
+#endif  //VARSTACKTEST_NAME_H

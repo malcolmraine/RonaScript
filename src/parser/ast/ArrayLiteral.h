@@ -10,17 +10,16 @@
 #ifndef RONASCRIPT_LISTLITERAL_H
 #define RONASCRIPT_LISTLITERAL_H
 
-#include <vector>
 #include <string>
+#include <vector>
 #include "AstNode.h"
 
-class ArrayLiteral : public AstNode
-{
- public:
-	ArrayLiteral();
-	~ArrayLiteral();
-	std::string ToString(bool nl) override;
-	std::vector<std::shared_ptr<AstNode>> items;
+class ArrayLiteral : public AstNode {
+public:
+    ArrayLiteral();
+    ~ArrayLiteral();
+    std::string ToString(bool nl) override;
+    std::vector<std::shared_ptr<AstNode>> items;
 };
 
-#endif //RONASCRIPT_LISTLITERAL_H
+#endif  //RONASCRIPT_LISTLITERAL_H

@@ -11,21 +11,19 @@
 #define RONASCRIPT_REQUIRE_H
 
 #include <string>
-#include "NodeType.h"
 #include "AstNode.h"
 #include "Module.h"
+#include "NodeType.h"
 
-class ImportStmt : public AstNode
-{
- public:
-	ImportStmt();
-	~ImportStmt() override = default;
-	std::string ToString(bool nl) override;
-	[[nodiscard]] std::string GetFullSourceFile() const;
+class ImportStmt : public AstNode {
+public:
+    ImportStmt();
+    ~ImportStmt() override = default;
+    std::string ToString(bool nl) override;
+    [[nodiscard]] std::string GetFullSourceFile() const;
 
-	std::string source_file;
-	std::shared_ptr<Module> module = nullptr;
-
+    std::string source_file;
+    std::shared_ptr<Module> module = nullptr;
 };
 
-#endif //RONASCRIPT_REQUIRE_H
+#endif  //RONASCRIPT_REQUIRE_H

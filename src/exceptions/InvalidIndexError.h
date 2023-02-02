@@ -31,13 +31,12 @@
 #include "../vm/rona_type.h"
 #include "BaseException.h"
 
-class InvalidIndexError : protected BaseException
-{
- private:
-	std::string message_;
+class InvalidIndexError : protected BaseException {
+private:
+    std::string message_;
 
- public:
-	explicit InvalidIndexError(long index, const std::string& message = "");
+public:
+    explicit InvalidIndexError(long index, const std::string& message = "");
 };
 
-#endif //RONASCRIPT_INVALIDINDEXERROR_H
+#endif  //RONASCRIPT_INVALIDINDEXERROR_H

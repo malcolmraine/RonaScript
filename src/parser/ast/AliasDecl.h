@@ -15,21 +15,16 @@
 
 class Name;
 
-enum AliasType
-{
-	NAME_ALIAS,
-	TYPE_ALIAS
+enum AliasType { NAME_ALIAS, TYPE_ALIAS };
+
+class AliasDecl : public AstNode {
+public:
+    AliasDecl();
+    ~AliasDecl() override;
+    std::string ToString(bool nl) override;
+    std::shared_ptr<Name> base_name = nullptr;
+    std::shared_ptr<Name> alias_name = nullptr;
+    AliasType alias_type;
 };
 
-class AliasDecl : public AstNode
-{
- public:
-	AliasDecl();
-	~AliasDecl() override;
-	std::string ToString(bool nl) override;
-	std::shared_ptr<Name> base_name = nullptr;
-	std::shared_ptr<Name> alias_name = nullptr;
-	AliasType alias_type;
-};
-
-#endif //RONASCRIPT_ALIASDECL_H
+#endif  //RONASCRIPT_ALIASDECL_H

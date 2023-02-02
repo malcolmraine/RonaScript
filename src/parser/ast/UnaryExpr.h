@@ -13,14 +13,13 @@
 #include <string>
 #include "AstNode.h"
 
-class UnaryExpr : public AstNode
-{
- public:
-	UnaryExpr();
-	~UnaryExpr() override;
-	std::string ToString(bool nl) override;
-	std::shared_ptr<AstNode> expr = nullptr;
-	std::string op;
+class UnaryExpr : public AstNode {
+public:
+    UnaryExpr();
+    ~UnaryExpr() override;
+    std::string ToString(bool nl) override;
+    std::shared_ptr<AstNode> expr = nullptr;
+    std::string op;
 };
 
-#endif //RONASCRIPT_UNARYEXPR_H
+#endif  //RONASCRIPT_UNARYEXPR_H

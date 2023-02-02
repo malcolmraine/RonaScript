@@ -29,31 +29,26 @@
 #include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
-AssignmentStmt::AssignmentStmt()
-{
-	node_type = AST_ASSIGNMENT_STMT;
+AssignmentStmt::AssignmentStmt() {
+    node_type = AST_ASSIGNMENT_STMT;
 }
 
 /*****************************************************************************/
-AssignmentStmt::~AssignmentStmt()
-{
-	lexpr.reset();
+AssignmentStmt::~AssignmentStmt() {
+    lexpr.reset();
 }
 
 /*****************************************************************************/
-std::string AssignmentStmt::ToString(bool nl)
-{
-	std::string s = MakeTabStr() + "AssignmentStmt( )";
-	if (nl)
-	{
-		s += "\n";
-	}
+std::string AssignmentStmt::ToString(bool nl) {
+    std::string s = MakeTabStr() + "AssignmentStmt( )";
+    if (nl) {
+        s += "\n";
+    }
 
-	rexpr->nest_lvl = nest_lvl + 1;
-	lexpr->nest_lvl = nest_lvl + 1;
-	s.append(lexpr->ToString(true));
-	s.append(rexpr->ToString(true));
+    rexpr->nest_lvl = nest_lvl + 1;
+    lexpr->nest_lvl = nest_lvl + 1;
+    s.append(lexpr->ToString(true));
+    s.append(rexpr->ToString(true));
 
-	return s;
+    return s;
 }
-

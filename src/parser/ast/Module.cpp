@@ -11,31 +11,24 @@
 #include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
-Module::Module()
-{
-	node_type = AST_MODULE;
+Module::Module() {
+    node_type = AST_MODULE;
 }
 
 /*****************************************************************************/
-Module::~Module()
-{
-
-}
+Module::~Module() {}
 
 /*****************************************************************************/
-std::string Module::ToString(bool nl)
-{
-	std::string s = MakeTabStr() + "Module( " + name->value + " )";
-	if (nl)
-	{
-		s += "\n";
-	}
+std::string Module::ToString(bool nl) {
+    std::string s = MakeTabStr() + "Module( " + name->value + " )";
+    if (nl) {
+        s += "\n";
+    }
 
-	if (scope != nullptr)
-	{
-		scope->nest_lvl = nest_lvl + 1;
-		s += scope->ToString(true);
-	}
+    if (scope != nullptr) {
+        scope->nest_lvl = nest_lvl + 1;
+        s += scope->ToString(true);
+    }
 
-	return s;
+    return s;
 }

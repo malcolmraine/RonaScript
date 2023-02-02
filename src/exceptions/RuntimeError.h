@@ -30,9 +30,6 @@
 
 #include "BaseException.h"
 
-class RuntimeError : protected BaseException
-{
+class RuntimeError : protected BaseException {};
 
-};
-
-#endif //RONASCRIPT_RUNTIMEERROR_H
+#endif  //RONASCRIPT_RUNTIMEERROR_H

@@ -28,111 +28,110 @@
 #ifndef RONASCRIPT_TOKEN_TYPE_H
 #define RONASCRIPT_TOKEN_TYPE_H
 
-enum TokenType
-{
-	L_BRACE,        // {
-	R_BRACE,        // }
-	R_PARAN,        // (
-	L_PARAN,        // )
-	R_BRACK,        // [
-	L_BRACK,        // ]
-	R_CARAT,        // <
-	L_CARAT,        // >
-	SLASH,          // /
-	PLUS,           // +
-	STAR,           // *
-	MINUS,          // -
-	PERCENT,        // %
-	AMPER,          // %
-	BAR,            // |
-	UP_ARROW,       // ^
-	BLOCK_COMMENT,  // /*
-	INLINE_COMMENT, // //
-	DOLLAR,         // $
-	NOT,            // !
-	EQUAL,          // =
-	COMMA,          // ,
-	DOT,            // .
-	COLON,          // :
-	SEMICOLON,      // ;
-	DBL_QUOTE,      // "
-	DBL_PLUS,       // ++
-	DBL_MINUS,      // --
-	DBL_EQUAL,      // ==
-	NOT_EQUAL,      // !=
-	DBL_AMPER,      // &&
-	DBL_BAR,        // ||
-	DBL_COLON,      // ::
-	FLOAT,          // float
-	INT,            // int
-	STRING,         // string
-	ARRAY,           // list
-	CLASS,          // class
-	CALLABLE,
-	NAME,
-	SLASH_EQUAL,    // /=
-	MINUS_EQUAL,    // -=
-	PLUS_EQUAL,     // +=
-	PERCENT_EQUAL,  // %=
-	AMPER_EQUAL,    // &=
-	BAR_EQUAL,      // |=
-	STAR_EQUAL,     // *=
-	DBL_R_CARAT,    // >>
-	DBL_L_CARAT,    // <<
-	FUNC,       // func
-	ROUTINE, // routine
-	SUB, // subroutine
-	VAR,            // var
-	CONST,          // const
-	PUBLIC,
-	PROTECTED,
-	PRIVATE,
-	STATIC,
-	LITERAL,    // Indicates always pass by value
-	REFERENCE,  // Indicates always pass by reference
-	IMPORT,        // import
-	RETURN,         // return
-	BREAK,          // break
-	VOID,           // void
-	STRING_LITERAL,
-	DBL_STAR,       // **
-	UNDEFINED,
-	NULL_LITERAL,           // null
-	BOOL,           // bool
-	LEQ,            // <=
-	GEQ,            // >=
-	XOREQ,          // ^=
-	EMPTY_LIST,     // []
-	TILDE_EQUAL,    // ~=
-	TILDE,          // ~
-	CONSTRUCT,      // construct
-	DESTRUCT,       // destruct
-	R_ARROW,
-	DOUBLE_COLON,        // ->
-	IF,             // if
-	ELIF,           // elif
-	ELSE,           // else
-	IS,             // is
-	ALIAS,          // alias
-	WHILE,          // while
-	FOR,            // for
-	INT_LITERAL,
-	FLOAT_LITERAL,
-	BOOL_LITERAL,
-	CONTINUE,
-	OBJECT,
-	TYPE,
-	TRY,
-	CATCH,
-	GLOBAL,
-	LOCAL,
-	QUESTION_MARK,
-	DBL_QUESTION_MARK,
-	DELETE,
-	EXIT,
-	EXTENDS,
-	MODULE,
-	RANGE,
+enum TokenType {
+    L_BRACE,         // {
+    R_BRACE,         // }
+    R_PARAN,         // (
+    L_PARAN,         // )
+    R_BRACK,         // [
+    L_BRACK,         // ]
+    R_CARAT,         // <
+    L_CARAT,         // >
+    SLASH,           // /
+    PLUS,            // +
+    STAR,            // *
+    MINUS,           // -
+    PERCENT,         // %
+    AMPER,           // %
+    BAR,             // |
+    UP_ARROW,        // ^
+    BLOCK_COMMENT,   // /*
+    INLINE_COMMENT,  // //
+    DOLLAR,          // $
+    NOT,             // !
+    EQUAL,           // =
+    COMMA,           // ,
+    DOT,             // .
+    COLON,           // :
+    SEMICOLON,       // ;
+    DBL_QUOTE,       // "
+    DBL_PLUS,        // ++
+    DBL_MINUS,       // --
+    DBL_EQUAL,       // ==
+    NOT_EQUAL,       // !=
+    DBL_AMPER,       // &&
+    DBL_BAR,         // ||
+    DBL_COLON,       // ::
+    FLOAT,           // float
+    INT,             // int
+    STRING,          // string
+    ARRAY,           // list
+    CLASS,           // class
+    CALLABLE,
+    NAME,
+    SLASH_EQUAL,    // /=
+    MINUS_EQUAL,    // -=
+    PLUS_EQUAL,     // +=
+    PERCENT_EQUAL,  // %=
+    AMPER_EQUAL,    // &=
+    BAR_EQUAL,      // |=
+    STAR_EQUAL,     // *=
+    DBL_R_CARAT,    // >>
+    DBL_L_CARAT,    // <<
+    FUNC,           // func
+    ROUTINE,        // routine
+    SUB,            // subroutine
+    VAR,            // var
+    CONST,          // const
+    PUBLIC,
+    PROTECTED,
+    PRIVATE,
+    STATIC,
+    LITERAL,    // Indicates always pass by value
+    REFERENCE,  // Indicates always pass by reference
+    IMPORT,     // import
+    RETURN,     // return
+    BREAK,      // break
+    VOID,       // void
+    STRING_LITERAL,
+    DBL_STAR,  // **
+    UNDEFINED,
+    NULL_LITERAL,  // null
+    BOOL,          // bool
+    LEQ,           // <=
+    GEQ,           // >=
+    XOREQ,         // ^=
+    EMPTY_LIST,    // []
+    TILDE_EQUAL,   // ~=
+    TILDE,         // ~
+    CONSTRUCT,     // construct
+    DESTRUCT,      // destruct
+    R_ARROW,
+    DOUBLE_COLON,  // ->
+    IF,            // if
+    ELIF,          // elif
+    ELSE,          // else
+    IS,            // is
+    ALIAS,         // alias
+    WHILE,         // while
+    FOR,           // for
+    INT_LITERAL,
+    FLOAT_LITERAL,
+    BOOL_LITERAL,
+    CONTINUE,
+    OBJECT,
+    TYPE,
+    TRY,
+    CATCH,
+    GLOBAL,
+    LOCAL,
+    QUESTION_MARK,
+    DBL_QUESTION_MARK,
+    DELETE,
+    EXIT,
+    EXTENDS,
+    MODULE,
+    RANGE,
 };
 
-#endif //RONASCRIPT_TOKEN_TYPE_H
+#endif  //RONASCRIPT_TOKEN_TYPE_H

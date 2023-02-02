@@ -13,12 +13,11 @@
 #include <string>
 #include "AstNode.h"
 
-class BreakStmt : public AstNode
-{
- public:
-	BreakStmt();
-	~BreakStmt() override;
-	std::string ToString(bool nl) override;
+class BreakStmt : public AstNode {
+public:
+    BreakStmt();
+    ~BreakStmt() override;
+    std::string ToString(bool nl) override;
 };
 
-#endif //RONASCRIPT_BREAKSTMT_H
+#endif  //RONASCRIPT_BREAKSTMT_H

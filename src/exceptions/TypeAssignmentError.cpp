@@ -36,14 +36,13 @@
  * @param message
  */
 TypeAssignmentError::TypeAssignmentError(RnType target, RnType::Type value,
-	std::string message) : message_(std::move(message))
-{
-	message_ = formatted_msg(
-		"TypeAssignmentError: Attempting to assign '" + get_type_as_string(value)
-			+ "' to '" + get_type_as_string(target) + "'");
+                                         std::string message)
+    : message_(std::move(message)) {
+    message_ = formatted_msg("TypeAssignmentError: Attempting to assign '" +
+                             get_type_as_string(value) + "' to '" +
+                             get_type_as_string(target) + "'");
 
-	if (!message.empty())
-	{
-		message_ += ": " + message;
-	}
+    if (!message.empty()) {
+        message_ += ": " + message;
+    }
 }

@@ -15,14 +15,13 @@
 
 class Name;
 
-class ArgDecl : public AstNode
-{
- public:
-	ArgDecl();
-	~ArgDecl() override;
-	std::string ToString(bool nl) override;
-	std::shared_ptr<Name> id{};
-	std::string type;
+class ArgDecl : public AstNode {
+public:
+    ArgDecl();
+    ~ArgDecl() override;
+    std::string ToString(bool nl) override;
+    std::shared_ptr<Name> id{};
+    std::string type;
 };
 
-#endif //RONASCRIPT_ARGDECL_H
+#endif  //RONASCRIPT_ARGDECL_H
