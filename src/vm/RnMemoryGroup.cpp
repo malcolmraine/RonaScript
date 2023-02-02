@@ -8,6 +8,7 @@
 ******************************************************************************/
 
 #include "RnMemoryGroup.h"
+#include <algorithm>
 
 /*****************************************************************************/
 RnMemoryGroup::RnMemoryGroup(RnMemoryGroup* parent) {

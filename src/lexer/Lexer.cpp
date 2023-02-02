@@ -27,6 +27,7 @@
 #include "Lexer.h"
 #include <iostream>
 #include <utility>
+#include <algorithm>
 
 /*****************************************************************************/
 Lexer::Lexer() {

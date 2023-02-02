@@ -10,6 +10,7 @@
 #include "RnMemoryManager.h"
 #include <memory>
 #include <utility>
+#include <algorithm>
 #include "RnArrayObject.h"
 #include "RnBoolObject.h"
 #include "RnClassObject.h"

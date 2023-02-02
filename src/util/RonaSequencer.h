@@ -12,6 +12,7 @@
 
 #include <string>
 #include <utility>
+#include <algorithm>
 
 template <typename T, typename E>
 class RonaSequencer {
