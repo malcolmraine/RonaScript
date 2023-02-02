@@ -3,6 +3,7 @@ import sys
 import threading
 import time
 import os
+import datetime
 
 rn_executable = sys.argv[1]
 
@@ -46,15 +47,22 @@ class Test(object):
                     break
 
             if self.timeout_occurred:
-                msg = "\033[91mTIMEOUT"
+                msg = "TIMEOUT"
             elif not passed:
-                msg = "\033[91mFAILED"
+                msg = "FAILED"
             else:
-                msg = "\033[92mPASSED"
+                msg = "PASSED"
 
-            print(f"{msg} ({round(self.runtime, 6)}s) - {self.name}")
-            self.log(f"{msg} - {self.name}")
-            self.log(f"return code: {self.returncode}")
+            if passed:
+                print(f"\033[92m{msg} ({round(self.runtime, 6)}s) - {self.name}")
+            else:
+                print(f"\033[91m{msg} ({round(self.runtime, 6)}s) - {self.name}")
+
+            self.log(f"Test: {self.name}")
+            self.log(f"Status: {msg}")
+            self.log(f"Return code: {self.returncode}")
+            self.log(f"Timestamp: {datetime.datetime.now()}")
+            self.log()
             self.log("=========================================================")
             self.log("Expected")
             self.log("=========================================================")

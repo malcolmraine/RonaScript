@@ -76,6 +76,9 @@ Parser::Parser() {
     _current_scope->symbol_table->AddSymbol(
         "count", std::make_shared<RnTypeComposite>(RnType::RN_INT));
 
+    _current_scope->pragma_table["bounds"] = "not-enforced";
+    _current_scope->pragma_table["typing"] = "not-required";
+
     // Set up the associativity table
     associativity[TokenType::R_PARAN] = NO_ASSOCIATIVITY;
     associativity[TokenType::R_ARROW] = LEFT;
