@@ -672,7 +672,7 @@ RnIntNative RnVirtualMachine::Run() {
     }
     stopwatch.Stop();
 
-    Log::DEBUG("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
+    //Log::DEBUG("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
     return GetStack().back()->ToInt();
 }
 

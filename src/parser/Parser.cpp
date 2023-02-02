@@ -291,9 +291,7 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
     AdvanceBuffer(1);
     node->type = ParseType();
 
-    if (_current_scope->symbol_table->SymbolExists(node->id)) {
-        throw std::runtime_error("Redeclaration of symbol '" + node->id + "'");
-    }
+    SymbolRedeclarationCheck(node->id);
     _current_scope->symbol_table->AddSymbol(node->id, node->type);
 
     if (Current()->token_type == TokenType::EQUAL) {
@@ -364,9 +362,7 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
         node->type = std::make_shared<RnTypeComposite>(RnType::RN_VOID);
     }
 
-    if (_current_scope->symbol_table->SymbolExists(node->id)) {
-        throw std::runtime_error("Redeclaration of symbol '" + node->id + "'");
-    }
+    SymbolRedeclarationCheck(node->id);
     _current_scope->symbol_table->AddSymbol(node->id, node->type);
 
     // Get the function's scope
@@ -382,13 +378,10 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
 
-    if (_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
-        throw std::runtime_error("Redeclaration of symbol '" + Current()->lexeme);
-    } else {
-        _current_scope->symbol_table->AddSymbol(
-            Current()->lexeme,
-            std::make_shared<RnTypeComposite>(RnType::RN_CLASS_INSTANCE));
-    }
+    SymbolRedeclarationCheck(Current()->lexeme);
+    _current_scope->symbol_table->AddSymbol(
+        Current()->lexeme,
+        std::make_shared<RnTypeComposite>(RnType::RN_CLASS_INSTANCE));
 
     node->id = Current()->lexeme;
     Expect({TokenType::EXTENDS, TokenType::R_BRACE, TokenType::IS});
@@ -892,10 +885,7 @@ std::shared_ptr<AliasDecl> Parser::ParseAliasDecl() {
     Expect(TokenType::NAME);
 
     AdvanceBuffer(1);
-    if (_current_scope->symbol_table->SymbolExists(Current()->lexeme)) {
-        throw std::runtime_error("Redeclaration of '" + Current()->lexeme);
-    }
-
+    SymbolRedeclarationCheck(Current()->lexeme);
     node->alias_name = ParseName();
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
@@ -1333,6 +1323,8 @@ void Parser::HandleUnexpectedItem() {
     msg += "\n\n" + Current()->file_info.GetContextualBlock();
     throw std::runtime_error(msg);
 }
+
+/*****************************************************************************/
 std::shared_ptr<RnTypeComposite> Parser::ParseType() {
     auto basic_type = RnType::StringToType(Current()->lexeme);
     auto type = std::make_shared<RnTypeComposite>(basic_type);
@@ -1357,4 +1349,11 @@ std::shared_ptr<RnTypeComposite> Parser::ParseType() {
         AdvanceBuffer(2);
     }
     return type;
+}
+
+/*****************************************************************************/
+void Parser::SymbolRedeclarationCheck(const std::string& symbol) {
+    if (_current_scope->symbol_table->SymbolExists(symbol)) {
+        throw std::runtime_error("Redeclaration of symbol '" + symbol + "'");
+    }
 }
