@@ -26,7 +26,9 @@ public:
     [[nodiscard]] RnBoolNative ToBool() const override;
     void SetData(RnStringNative data) override;
 
-    [[nodiscard]] RnType::Type GetType() const override { return RnType::RN_STRING; }
+    [[nodiscard]] RnType::Type GetType() const override {
+        return RnType::RN_STRING;
+    }
 };
 
 #endif  //RONASCRIPT_RNSTRINGOBJECT_H

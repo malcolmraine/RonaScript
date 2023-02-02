@@ -10,12 +10,12 @@
 #include "RnScope.h"
 #include <dlfcn.h>
 #include <iostream>
+#include "../util/log.h"
 #include "RnFunction.h"
 #include "RnFunctionObject.h"
 #include "RnMemoryManager.h"
 #include "RnObject.h"
 #include "RnSymbolTable.h"
-#include "../util/log.h"
 
 std::map<std::string, void*> RnScope::_handles;
 

@@ -21,7 +21,9 @@ public:
     void Generate(Ast* ast);
     void Optimize();
 
-    InstructionBlock GetInstructions() { return instructions; }
+    InstructionBlock GetInstructions() {
+        return instructions;
+    }
 
 private:
     InstructionBlock instructions;

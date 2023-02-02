@@ -19,7 +19,9 @@ class RnInstruction {
 public:
     RnInstruction() = default;
 
-    explicit RnInstruction(RnOpCode opcode) { _opcode = opcode; }
+    explicit RnInstruction(RnOpCode opcode) {
+        _opcode = opcode;
+    }
 
     RnInstruction(RnOpCode opcode, uint32_t arg1) {
         _opcode = opcode;

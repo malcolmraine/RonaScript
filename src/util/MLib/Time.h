@@ -45,19 +45,29 @@ public:
     }
 
     /*************************************************************************/
-    static size_t Seconds() { return Now<std::chrono::seconds>(); }
+    static size_t Seconds() {
+        return Now<std::chrono::seconds>();
+    }
 
     /*************************************************************************/
-    static size_t Milliseconds() { return Now<std::chrono::milliseconds>(); }
+    static size_t Milliseconds() {
+        return Now<std::chrono::milliseconds>();
+    }
 
     /*************************************************************************/
-    static size_t Microseconds() { return Now<std::chrono::microseconds>(); }
+    static size_t Microseconds() {
+        return Now<std::chrono::microseconds>();
+    }
 
     /*************************************************************************/
-    static size_t Nanoseconds() { return Now<std::chrono::nanoseconds>(); }
+    static size_t Nanoseconds() {
+        return Now<std::chrono::nanoseconds>();
+    }
 
     /*************************************************************************/
-    static std::string Stamp() { return ""; }
+    static std::string Stamp() {
+        return "";
+    }
 };
 
 #endif  //MLIB_TIME_H

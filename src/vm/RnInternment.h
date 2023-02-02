@@ -32,7 +32,9 @@ public:
         return _index;
     }
 
-    T GetInternedItem(InternmentKey key) { return _key_item_map[key]; }
+    T GetInternedItem(InternmentKey key) {
+        return _key_item_map[key];
+    }
 
 protected:
     size_t _index = 0;

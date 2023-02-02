@@ -35,7 +35,9 @@ public:
     void SetData(RnIntNative data) override;
     void SetData(RnFloatNative data) override;
 
-    [[nodiscard]] RnType::Type GetType() const override { return RnType::RN_FLOAT; }
+    [[nodiscard]] RnType::Type GetType() const override {
+        return RnType::RN_FLOAT;
+    }
 };
 
 #endif  //RONASCRIPT_RNFLOATOBJECT_H

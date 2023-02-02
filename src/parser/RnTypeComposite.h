@@ -33,7 +33,9 @@ public:
     void SetBounds(RnFloatNative lower, RnFloatNative upper);
     std::string ToString();
 
-    [[nodiscard]] RnType::Type GetType() const { return _type; }
+    [[nodiscard]] RnType::Type GetType() const {
+        return _type;
+    }
 
 private:
     Bounds<RnFloatNative> _bounds{};

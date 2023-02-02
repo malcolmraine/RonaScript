@@ -56,7 +56,9 @@ public:
         FileInfo::CONTEXTUAL_BLOCK_TAB_LVL = n;
     }
 
-    static int GetContextualBlockTabLvl() { return FileInfo::CONTEXTUAL_BLOCK_TAB_LVL; }
+    static int GetContextualBlockTabLvl() {
+        return FileInfo::CONTEXTUAL_BLOCK_TAB_LVL;
+    }
 
     static bool IsCompiledFile(const std::string& file) {
         return file.ends_with(RN_COMPILED_FILE_EXT);
@@ -72,9 +74,13 @@ public:
         _next_line_start = current_line_start;
     }
 
-    [[nodiscard]] FileSize GetCurrentLineStart() const { return _current_line_start; }
+    [[nodiscard]] FileSize GetCurrentLineStart() const {
+        return _current_line_start;
+    }
 
-    [[nodiscard]] FileSize GetCharCount() const { return _char_cnt; }
+    [[nodiscard]] FileSize GetCharCount() const {
+        return _char_cnt;
+    }
 
 protected:
     static int CONTEXTUAL_BLOCK_TAB_LVL;

@@ -10,9 +10,9 @@
 #ifndef RONASCRIPT_RONASEQUENCER_H
 #define RONASCRIPT_RONASEQUENCER_H
 
+#include <algorithm>
 #include <string>
 #include <utility>
-#include <algorithm>
 
 template <typename T, typename E>
 class RonaSequencer {
@@ -46,10 +46,14 @@ public:
     [[nodiscard]] virtual bool EndOfSequence() const;
 
     /*************************************************************************/
-    void SetCaptureUnexpected(bool flag) { _capture_unexpected = flag; }
+    void SetCaptureUnexpected(bool flag) {
+        _capture_unexpected = flag;
+    }
 
     /*************************************************************************/
-    [[nodiscard]] bool GetCaptureUnexpected() const { return _capture_unexpected; }
+    [[nodiscard]] bool GetCaptureUnexpected() const {
+        return _capture_unexpected;
+    }
 
     /*************************************************************************/
     void SetItemTypeName(std::string item_type_name) {
@@ -57,7 +61,9 @@ public:
     }
 
     /*************************************************************************/
-    [[nodiscard]] std::string GetItemTypeName() const { return _item_type_name; }
+    [[nodiscard]] std::string GetItemTypeName() const {
+        return _item_type_name;
+    }
 
     /*************************************************************************/
     void SetBufferSize(size_t size) {
@@ -66,22 +72,34 @@ public:
     }
 
     /*************************************************************************/
-    [[nodiscard]] long GetBufferSize() const { return _buffer_size; }
+    [[nodiscard]] long GetBufferSize() const {
+        return _buffer_size;
+    }
 
     /*************************************************************************/
-    void ClearUnexpectedItems() { _unexpected_captures.clear(); }
+    void ClearUnexpectedItems() {
+        _unexpected_captures.clear();
+    }
 
     /*************************************************************************/
-    [[nodiscard]] size_t GetDataSize() const { return _data.size(); }
+    [[nodiscard]] size_t GetDataSize() const {
+        return _data.size();
+    }
 
     /*************************************************************************/
-    void SetWindowIdxCurrent(int i) { _window_idx_current = i; }
+    void SetWindowIdxCurrent(int i) {
+        _window_idx_current = i;
+    }
 
     /*************************************************************************/
-    [[nodiscard]] int GetWindowIdxCurrent() const { return _window_idx_current; }
+    [[nodiscard]] int GetWindowIdxCurrent() const {
+        return _window_idx_current;
+    }
 
     /*************************************************************************/
-    [[nodiscard]] size_t GetDataIdx() const { return _data_idx; }
+    [[nodiscard]] size_t GetDataIdx() const {
+        return _data_idx;
+    }
 
     /*************************************************************************/
     virtual void RunAdvanceBufferSideEffects() {}

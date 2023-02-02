@@ -35,7 +35,9 @@ public:
     [[nodiscard]] std::vector<RnObject*> ToArray() const override;
     [[nodiscard]] RnBoolNative ToBool() const override;
 
-    [[nodiscard]] RnType::Type GetType() const override { return RnType::RN_ARRAY; }
+    [[nodiscard]] RnType::Type GetType() const override {
+        return RnType::RN_ARRAY;
+    }
 };
 
 #endif  //RONASCRIPT_RNLISTOBJECT_H

@@ -26,9 +26,13 @@ public:
     [[nodiscard]] RnStringNative ToString() const override;
     [[nodiscard]] RnIntNative ToInt() const override;
     [[nodiscard]] RnBoolNative ToBool() const override;
-    void SetData(RnBoolNative data) override { SetDataInternal(data); }
+    void SetData(RnBoolNative data) override {
+        SetDataInternal(data);
+    }
 
-    [[nodiscard]] RnType::Type GetType() const override { return RnType::RN_BOOLEAN; }
+    [[nodiscard]] RnType::Type GetType() const override {
+        return RnType::RN_BOOLEAN;
+    }
 };
 
 #endif  //RONASCRIPT_RNBOOLOBJECT_H

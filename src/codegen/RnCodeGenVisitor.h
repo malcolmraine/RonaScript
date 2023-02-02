@@ -124,7 +124,9 @@ public:
     std::vector<RnInstruction*> Visit(IndexedExpr* node);
     std::vector<RnInstruction*> Visit(BreakStmt* node);
 
-    InstructionBlock GetInstructions() { return _instructions; }
+    InstructionBlock GetInstructions() {
+        return _instructions;
+    }
 
 private:
     void WrapContext(InstructionBlock& block);

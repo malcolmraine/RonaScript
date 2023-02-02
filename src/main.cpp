@@ -21,8 +21,7 @@ void RonaScriptMain(int argc, char* argv[]) {
     arg_parser.AddArgument("-norun", {}, "Compile to *.rnc file without running");
     arg_parser.AddArgument("-a", {"--print-ast"}, "Print AST after parsing");
     arg_parser.AddArgument("-t", {"--print-tokens"}, "Print tokens after lexing");
-    arg_parser.AddArgument("-p", {"--print-opcodes"},
-                           "Print opcodes after generation");
+    arg_parser.AddArgument("-p", {"--print-opcodes"}, "Print opcodes after generation");
     arg_parser.AddArgument("-d", {"--debug"}, "Show various debug logging");
     arg_parser.AddArgument("-norun", {"--print-opcodes"},
                            "Compile to *.rnc file without running");
@@ -82,7 +81,8 @@ void RonaScriptMain(int argc, char* argv[]) {
     if (arg_parser.IsSet("-past")) {
         size_t index = 0;
         for (auto& instruction : code_generator.GetInstructions()) {
-            Log::INFO(String::Pad(std::to_string(index++), 6) + instruction->ToString());
+            Log::INFO(String::Pad(std::to_string(index++), 6) +
+                      instruction->ToString());
         }
     }
     auto vm = RnVirtualMachine::GetInstance();

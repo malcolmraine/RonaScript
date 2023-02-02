@@ -20,6 +20,7 @@
 #include "../builtins/RnBuiltins_String.h"
 #include "../builtins/RnBuiltins_Type.h"
 #include "../util/MLib/StopWatch.h"
+#include "../util/log.h"
 #include "RnArrayObject.h"
 #include "RnClassObject.h"
 #include "RnFunction.h"
@@ -27,7 +28,6 @@
 #include "RnMemoryManager.h"
 #include "RnOpCode.h"
 #include "RnSymbolTable.h"
-#include "../util/log.h"
 
 RnVirtualMachine* RnVirtualMachine::_instance = nullptr;
 RnIntNative RnVirtualMachine::_object_this_key = 0;

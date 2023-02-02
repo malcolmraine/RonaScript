@@ -73,11 +73,17 @@ public:
     static RnObject* Copy(RnObject* obj);
     virtual void SetConstFlag(bool flag) = 0;
 
-    void Mark() { _is_marked = true; }
+    void Mark() {
+        _is_marked = true;
+    }
 
-    void Unmark() { _is_marked = false; }
+    void Unmark() {
+        _is_marked = false;
+    }
 
-    bool IsMarked() const { return _is_marked; }
+    bool IsMarked() const {
+        return _is_marked;
+    }
     //	bool IsCached() const
     //	{
     //		return _is_cached;

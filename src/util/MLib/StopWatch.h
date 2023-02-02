@@ -17,7 +17,9 @@ template <class DEFAULT = std::chrono::milliseconds>
 class StopWatch {
 public:
     /*************************************************************************/
-    StopWatch() { ASSERT_IS_TIME_TYPE(DEFAULT); }
+    StopWatch() {
+        ASSERT_IS_TIME_TYPE(DEFAULT);
+    }
 
     /*************************************************************************/
     ~StopWatch() = default;

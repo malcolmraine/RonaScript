@@ -35,7 +35,9 @@ public:
 
     ~RnVirtualMachine();
 
-    RnScope* GetScope() { return _scopes.back(); }
+    RnScope* GetScope() {
+        return _scopes.back();
+    }
 
     [[nodiscard]] std::vector<RnObject*>& GetStack() {
         return _scopes.back()->GetStack();

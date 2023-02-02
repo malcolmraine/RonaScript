@@ -47,13 +47,19 @@ public:
     ~RnObjectBase() = default;
 
     /*************************************************************************/
-    T GetData() const { return _data; }
+    T GetData() const {
+        return _data;
+    }
 
     /*************************************************************************/
-    [[nodiscard]] RnType::Type GetType() const override { return RnType::RN_UNKNOWN; }
+    [[nodiscard]] RnType::Type GetType() const override {
+        return RnType::RN_UNKNOWN;
+    }
 
     /*************************************************************************/
-    [[nodiscard]] std::vector<char> AsBytes() const override { return {}; }
+    [[nodiscard]] std::vector<char> AsBytes() const override {
+        return {};
+    }
 
     UNDEFINED_OPERATOR(+)
     UNDEFINED_OPERATOR(-)
@@ -93,7 +99,9 @@ public:
     UNDEFINED_ASSIGNMENT(RnFunction*, RnType::RN_FUNCTION, "")
 
     /*************************************************************************/
-    void SetConstFlag(bool flag) override { _is_const = flag; }
+    void SetConstFlag(bool flag) override {
+        _is_const = flag;
+    }
 
     /*************************************************************************/
     void CopyDataFromObject(RnObject* obj) override {

@@ -19,7 +19,9 @@ public:
     explicit RnStack() = default;
 
     /*************************************************************************/
-    ~RnStack() { Clear(); }
+    ~RnStack() {
+        Clear();
+    }
 
     /*************************************************************************/
     T Pop() {
@@ -30,28 +32,44 @@ public:
     }
 
     /*************************************************************************/
-    void pop_back() { Pop(); }
+    void pop_back() {
+        Pop();
+    }
 
     /*************************************************************************/
-    void Push(T value) { _data.push_back(value); }
+    void Push(T value) {
+        _data.push_back(value);
+    }
 
     /*************************************************************************/
-    void emplace_back(T value) { Push(value); }
+    void emplace_back(T value) {
+        Push(value);
+    }
 
     /*************************************************************************/
-    void push_back(T value) { Push(value); }
+    void push_back(T value) {
+        Push(value);
+    }
 
     /*************************************************************************/
-    long Size() { return _data.size(); }
+    long Size() {
+        return _data.size();
+    }
 
     /*************************************************************************/
-    bool IsEmpty() { return _data.empty(); }
+    bool IsEmpty() {
+        return _data.empty();
+    }
 
     /*************************************************************************/
-    T Top() { return _data.back(); }
+    T Top() {
+        return _data.back();
+    }
 
     /*************************************************************************/
-    T back() { return Top(); }
+    T back() {
+        return Top();
+    }
 
     /*************************************************************************/
     void Clear() {
@@ -61,10 +79,14 @@ public:
     }
 
     /*************************************************************************/
-    std::vector<T> GetData() { return _data; }
+    std::vector<T> GetData() {
+        return _data;
+    }
 
     /*************************************************************************/
-    void Reserve(size_t n) { _data.reserve(n); }
+    void Reserve(size_t n) {
+        _data.reserve(n);
+    }
 
 private:
     std::vector<T> _data;

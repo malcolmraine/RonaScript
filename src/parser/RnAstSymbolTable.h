@@ -20,9 +20,13 @@ public:
         _type = std::move(type);
     }
 
-    std::shared_ptr<RnTypeComposite> GetType() { return _type; }
+    std::shared_ptr<RnTypeComposite> GetType() {
+        return _type;
+    }
 
-    std::string GetSymbol() { return _name; }
+    std::string GetSymbol() {
+        return _name;
+    }
 
 private:
     std::string _name;
