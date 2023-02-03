@@ -64,6 +64,12 @@ class Test(object):
             self.log(f"Timestamp: {datetime.datetime.now()}")
             self.log()
             self.log("=========================================================")
+            self.log("stderr")
+            self.log("=========================================================")
+            for output in self.stdout:
+                self.log(output)
+            self.log()
+            self.log("=========================================================")
             self.log("Expected")
             self.log("=========================================================")
             self.log(expected)
