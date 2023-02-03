@@ -10,9 +10,9 @@ cmake_minimum_required(VERSION 3.20)
 project(RonaScript)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_COMPILER clang)
 add_compile_options(-Werror -o3)
 
+include(src/common/CMakeLists.txt)
 include(src/lexer/CMakeLists.txt)
 include(src/parser/CMakeLists.txt)
 include(src/parser/ast/CMakeLists.txt)
