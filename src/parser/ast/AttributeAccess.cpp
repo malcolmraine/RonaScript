@@ -25,9 +25,9 @@ std::string AttributeAccess::ToString(bool nl) {
     if (nl) {
         s += "\n";
     }
-    parent->nest_lvl = nest_lvl + 1;
-    name->nest_lvl = nest_lvl + 1;
-    s += parent->ToString(nl) + name->ToString(nl);
+    _parent->nest_lvl = nest_lvl + 1;
+    _name->nest_lvl = nest_lvl + 1;
+    s += _parent->ToString(nl) + _name->ToString(nl);
 
     return s;
 }

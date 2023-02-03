@@ -22,8 +22,26 @@ public:
     ArgDecl();
     ~ArgDecl() override;
     std::string ToString(bool nl) override;
-    std::shared_ptr<Name> id{};
-    std::shared_ptr<RnTypeComposite> type;
+
+    [[nodiscard]] const std::shared_ptr<Name>& GetId() const {
+        return _id;
+    }
+
+    void SetId(const std::shared_ptr<Name>& id) {
+        _id = id;
+    }
+
+    [[nodiscard]] const std::shared_ptr<RnTypeComposite>& GetType() const {
+        return _type;
+    }
+
+    void SetType(const std::shared_ptr<RnTypeComposite>& type) {
+        _type = type;
+    }
+
+private:
+    std::shared_ptr<Name> _id{};
+    std::shared_ptr<RnTypeComposite> _type;
 };
 
 #endif  //RONASCRIPT_ARGDECL_H

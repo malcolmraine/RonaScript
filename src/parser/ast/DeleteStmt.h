@@ -19,7 +19,17 @@ public:
     DeleteStmt();
     ~DeleteStmt() override;
     std::string ToString(bool nl) override;
-    std::shared_ptr<AstNode> name = nullptr;
+
+    [[nodiscard]] const std::shared_ptr<AstNode>& GetName() const {
+        return _name;
+    }
+
+    void SetName(const std::shared_ptr<AstNode>& name) {
+        _name = name;
+    }
+
+private:
+    std::shared_ptr<AstNode> _name = nullptr;
 };
 
 #endif  //RONASCRIPT_DELETESTMT_H

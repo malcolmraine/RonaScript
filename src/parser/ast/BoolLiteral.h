@@ -20,9 +20,19 @@ public:
     explicit BoolLiteral(long value);
     explicit BoolLiteral(double value);
     explicit BoolLiteral(const std::string& value);
-    ~BoolLiteral();
+    ~BoolLiteral() override;
     std::string ToString(bool nl) override;
-    bool data = false;
+
+    [[nodiscard]] bool GetData() const {
+        return _data;
+    }
+
+    void SetData(bool data) {
+        _data = data;
+    }
+
+private:
+    bool _data = false;
 };
 
 #endif  //VARSTACKTEST_BOOLLITERAL_H

@@ -35,7 +35,7 @@ AssignmentStmt::AssignmentStmt() {
 
 /*****************************************************************************/
 AssignmentStmt::~AssignmentStmt() {
-    lexpr.reset();
+    _lexpr.reset();
 }
 
 /*****************************************************************************/
@@ -45,10 +45,10 @@ std::string AssignmentStmt::ToString(bool nl) {
         s += "\n";
     }
 
-    rexpr->nest_lvl = nest_lvl + 1;
-    lexpr->nest_lvl = nest_lvl + 1;
-    s.append(lexpr->ToString(true));
-    s.append(rexpr->ToString(true));
+    _rexpr->nest_lvl = nest_lvl + 1;
+    _lexpr->nest_lvl = nest_lvl + 1;
+    s.append(_lexpr->ToString(true));
+    s.append(_rexpr->ToString(true));
 
     return s;
 }

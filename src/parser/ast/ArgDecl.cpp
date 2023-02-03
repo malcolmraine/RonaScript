@@ -23,7 +23,7 @@ ArgDecl::~ArgDecl() = default;
 /*****************************************************************************/
 std::string ArgDecl::ToString(bool nl) {
     std::string result =
-        MakeTabStr() + "ArgDecl( " + id->value + ", " + type->ToString() + " )";
+        MakeTabStr() + "ArgDecl( " + _id->value + ", " + _type->ToString() + " )";
     if (nl) {
         result += "\n";
     }

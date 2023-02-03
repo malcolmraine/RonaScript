@@ -19,6 +19,8 @@ public:
     ArrayLiteral();
     ~ArrayLiteral();
     std::string ToString(bool nl) override;
+
+public:
     std::vector<std::shared_ptr<AstNode>> items;
 };
 

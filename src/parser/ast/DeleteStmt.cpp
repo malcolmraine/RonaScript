@@ -24,8 +24,8 @@ std::string DeleteStmt::ToString(bool nl) {
     if (nl) {
         s += "\n";
     }
-    name->nest_lvl = nest_lvl + 1;
-    s += name->ToString(nl);
+    _name->nest_lvl = nest_lvl + 1;
+    s += _name->ToString(nl);
 
     return s;
 }

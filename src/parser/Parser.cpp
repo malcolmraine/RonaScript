@@ -326,28 +326,28 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
         AdvanceBuffer(1);
 
         if (Current()->token_type == TokenType::NAME) {
-            arg->id = ParseName();
+            arg->SetId(ParseName());
 
-            if (arg_symbols.find(arg->id->value) != arg_symbols.end()) {
+            if (arg_symbols.find(arg->GetId()->value) != arg_symbols.end()) {
                 throw std::runtime_error("Redeclaration of argument '" +
-                                         arg->id->value + "' in routine '" + node->id +
+                                         arg->GetId()->value + "' in routine '" + node->id +
                                          "'");
             }
         }
         AdvanceBuffer(1);  // Advance past the ':' separating the name from the type
 
         if (Current()->IsType()) {
-            arg->type = ParseType();
+            arg->SetType(ParseType());
             AdvanceBuffer(1);
         } else {
             throw std::runtime_error("Invalid type '" + Current()->lexeme +
-                                     "' for parameter '" + arg->id->value +
+                                     "' for parameter '" + arg->GetId()->value +
                                      "' while declaring routine '" + node->id + "'");
         }
 
         ConditionalBufAdvance(TokenType::COMMA);
         node->args.emplace_back(arg);
-        arg_symbols[arg->id->value] = arg->type;
+        arg_symbols[arg->GetId()->value] = arg->GetType();
 
         if (Current()->token_type != TokenType::VAR) {
             ConditionalBufAdvance(TokenType::COMMA);
@@ -658,7 +658,7 @@ std::shared_ptr<DeleteStmt> Parser::ParseDeleteStmt() {
     if (Current()->token_type == TokenType::SEMICOLON) {
         AdvanceBuffer(1);
     } else {
-        node->name = ParseExpr();
+        node->SetName(ParseExpr());
     }
 
     return node;
@@ -686,7 +686,7 @@ std::shared_ptr<ExitStmt> Parser::ParseExitStmt() {
 std::shared_ptr<AssignmentStmt> Parser::ParseAssignmentStatement(
     const std::shared_ptr<AstNode>& rexpr) {
     auto node = std::make_shared<AssignmentStmt>();
-    node->lexpr = rexpr ? rexpr : ParseExpr();
+    node->SetRexpr(rexpr ? rexpr : ParseExpr());
 
     std::string op;
     if (Current()->IsCompoundOp()) {
@@ -697,13 +697,13 @@ std::shared_ptr<AssignmentStmt> Parser::ParseAssignmentStatement(
     }
 
     if (!op.empty()) {
-        node->rexpr = std::make_shared<BinaryExpr>();
-        dynamic_cast<BinaryExpr*>(node->rexpr.get())->_left = rexpr;
-        dynamic_cast<BinaryExpr*>(node->rexpr.get())->_op = op;
-        dynamic_cast<BinaryExpr*>(node->rexpr.get())->_right = ParseExpr();
+        node->SetRexpr(std::make_shared<BinaryExpr>());
+        std::dynamic_pointer_cast<BinaryExpr>(node->GetRexpr())->_left = rexpr;
+        std::dynamic_pointer_cast<BinaryExpr>(node->GetRexpr())->_op = op;
+        std::dynamic_pointer_cast<BinaryExpr>(node->GetRexpr())->_right = ParseExpr();
     } else {
         ConditionalBufAdvance(TokenType::EQUAL);
-        node->rexpr = ParseExpr();
+        node->SetRexpr(ParseExpr());
     }
 
     ConditionalBufAdvance(TokenType::SEMICOLON);
@@ -921,7 +921,7 @@ std::shared_ptr<TryBlock> Parser::ParseTryBlock() {
     AdvanceBuffer(1);
     node->scope = ParseScope();
     node->catch_block = ParseCatchBlock();
-    node->exception_ids = node->catch_block->exception_ids;
+    node->exception_ids = node->catch_block->GetExceptionIds();
 
     return node;
 }
@@ -937,13 +937,13 @@ std::shared_ptr<CatchBlock> Parser::ParseCatchBlock() {
     if (Current()->token_type == TokenType::R_PARAN) {
         AdvanceBuffer(1);
         while (Current()->token_type == TokenType::NAME) {
-            node->exception_ids.emplace_back(ParseName());
+            node->AddExceptionId(ParseName());
             ConditionalBufAdvance(TokenType::COMMA);
         }
         AdvanceBuffer(1);
     }
 
-    node->scope = ParseScope();
+    node->SetScope(ParseScope());
 
     return node;
 }

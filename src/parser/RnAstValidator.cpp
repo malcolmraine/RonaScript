@@ -140,7 +140,7 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
         case AST_BOOL_LITERAL: {
             auto node = std::dynamic_pointer_cast<BoolLiteral>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_BOOLEAN);
-            auto value = static_cast<RnIntNative>(node->data ? 1 : 0);
+            auto value = static_cast<RnIntNative>(node->GetData() ? 1 : 0);
             type->SetBounds(value, value);
             return type;
         }
@@ -316,7 +316,7 @@ bool RnAstValidator::Visit(FuncDecl* node) {
     _current_scope->symbol_table->AddSymbol(node->id, node->type);
 
     for (auto arg : node->args) {
-        node->scope->symbol_table->AddSymbol(arg->id->value, arg->type);
+        node->scope->symbol_table->AddSymbol(arg->GetId()->value, arg->GetType());
     }
     _current_type_reference = node->type;
     GeneralVisit(node->scope);
@@ -375,7 +375,7 @@ bool RnAstValidator::Visit(ReturnStmt* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(AttributeAccess* node) {
-    SymbolExistsCheck(std::dynamic_pointer_cast<Name>(node->name)->value);
+    SymbolExistsCheck(std::dynamic_pointer_cast<Name>(node->GetName())->value);
     return true;
 }
 
@@ -411,8 +411,8 @@ bool RnAstValidator::Visit(ElseStmt* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(DeleteStmt* node) {
-    if (node->name->node_type == AST_NAME) {
-        SymbolExistsCheck(std::dynamic_pointer_cast<Name>(node->name)->value);
+    if (node->GetName()->node_type == AST_NAME) {
+        SymbolExistsCheck(std::dynamic_pointer_cast<Name>(node->GetName())->value);
     }
     return true;
 }
@@ -450,8 +450,8 @@ bool RnAstValidator::Visit(ArgDecl* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(AssignmentStmt* node) {
-    if (!CanAssignTypeTo(EvaluateSubtreeType(node->lexpr),
-                         EvaluateSubtreeType(node->rexpr), ASSIGNMENT_VALUE)) {
+    if (!CanAssignTypeTo(EvaluateSubtreeType(node->GetLexpr()),
+                         EvaluateSubtreeType(node->GetRexpr()), ASSIGNMENT_VALUE)) {
         throw std::runtime_error("Type error.");
     }
     return true;

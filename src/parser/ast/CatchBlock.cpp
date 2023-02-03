@@ -21,7 +21,7 @@ CatchBlock::~CatchBlock() = default;
 /*****************************************************************************/
 std::string CatchBlock::ToString(bool nl) {
     std::string s = MakeTabStr() + "Catch( ";
-    for (auto& exception_id : exception_ids) {
+    for (auto& exception_id : _exception_ids) {
         s += exception_id->value + " ";
     }
 
@@ -29,8 +29,8 @@ std::string CatchBlock::ToString(bool nl) {
     if (nl) {
         s += "\n";
     }
-    scope->nest_lvl = nest_lvl + 1;
-    s += scope->ToString(true);
+    _scope->nest_lvl = nest_lvl + 1;
+    s += _scope->ToString(true);
 
     return s;
 }

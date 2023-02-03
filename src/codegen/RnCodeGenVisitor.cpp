@@ -382,14 +382,14 @@ InstructionBlock RnCodeGenVisitor::Visit(ElseStmt* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(DeleteStmt* node) {
     size_t internvalue =
-        RnObject::InternValue(dynamic_pointer_cast<Name>(node->name)->value);
+        RnObject::InternValue(dynamic_pointer_cast<Name>(node->GetName())->value);
 
     return {new RnInstruction(OP_DELETE, internvalue)};
 }
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(BoolLiteral* node) {
-    return {new RnInstruction(OP_LOAD_BOOL, node->data)};
+    return {new RnInstruction(OP_LOAD_BOOL, node->GetData())};
 }
 
 /*****************************************************************************/
@@ -416,15 +416,15 @@ InstructionBlock RnCodeGenVisitor::Visit(AliasDecl* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ArgDecl* node) {
-    return {new RnInstruction(OP_MAKE_ARG, node->type->GetType(),
-                              RnObject::InternValue(node->id->value))};
+    return {new RnInstruction(OP_MAKE_ARG, node->GetType()->GetType(),
+                              RnObject::InternValue(node->GetId()->value))};
 }
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(AssignmentStmt* node) {
     InstructionBlock instructions;
-    InstructionBlock lvalue = GeneralVisit(node->lexpr);
-    InstructionBlock rvalue = GeneralVisit(node->rexpr);
+    InstructionBlock lvalue = GeneralVisit(node->GetLexpr());
+    InstructionBlock rvalue = GeneralVisit(node->GetRexpr());
     instructions.insert(instructions.end(), rvalue.begin(), rvalue.end());
     instructions.insert(instructions.end(), lvalue.begin(), lvalue.end());
     instructions.push_back(new RnInstruction(OP_STORE));
