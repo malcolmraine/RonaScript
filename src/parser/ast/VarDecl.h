@@ -12,7 +12,7 @@
 
 #include <string>
 #include <vector>
-#include "../RnTypeComposite.h"
+#include "../../common/RnType.h"
 #include "AstNode.h"
 
 class RnCodeGenVisitor;

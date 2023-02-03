@@ -13,7 +13,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "RnType.h"
+#include "../common/RnType.h"
 
 class RnMemoryGroup;
 

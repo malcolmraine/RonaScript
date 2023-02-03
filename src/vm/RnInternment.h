@@ -12,7 +12,7 @@
 
 #include <string>
 #include <unordered_map>
-#include "RnType.h"
+#include "../common/RnType.h"
 
 typedef RnIntNative InternmentKey;
 

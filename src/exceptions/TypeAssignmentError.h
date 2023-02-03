@@ -30,7 +30,7 @@
 
 #include <exception>
 #include <string>
-#include "../vm/RnType.h"
+#include "../common/RnType.h"
 #include "BaseException.h"
 
 class TypeAssignmentError : protected BaseException {

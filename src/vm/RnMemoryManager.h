@@ -12,8 +12,8 @@
 
 #include <set>
 #include <unordered_map>
+#include "../common/RnType.h"
 #include "RnMemoryGroup.h"
-#include "RnType.h"
 
 #define DEFAULT_MAX_HEAP_SIZE (1024000)
 #define DEFAULT_MIN_HEAP_SIZE (10)

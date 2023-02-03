@@ -8,8 +8,7 @@
 ******************************************************************************/
 
 #include "ArgDecl.h"
-#include "../../codegen/RnCodeGenVisitor.h"
-#include "../RnTypeComposite.h"
+#include "../../common/RnType.h"
 #include "Name.h"
 
 /*****************************************************************************/

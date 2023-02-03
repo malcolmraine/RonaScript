@@ -12,8 +12,8 @@
 
 #include <string>
 #include <variant>
+#include "../common/RnType.h"
 #include "RnInternment.h"
-#include "RnType.h"
 
 class RnFunction;
 class RnScope;

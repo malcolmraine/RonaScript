@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include "RnTypeComposite.h"
+#include "../common/RnType.h"
 #include "ast/AstNode.h"
 
 class SymbolTableEntry {

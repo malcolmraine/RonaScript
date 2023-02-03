@@ -10,9 +10,9 @@
 #ifndef RONASCRIPT_RNASTVALIDATOR_H
 #define RONASCRIPT_RNASTVALIDATOR_H
 
-#include "RnTypeComposite.h"
-#include "RnAstVisitor.h"
 #include <vector>
+#include "../common/RnType.h"
+#include "RnAstVisitor.h"
 
 class StringLiteral;
 class ScopeNode;
