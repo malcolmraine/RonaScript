@@ -12,7 +12,6 @@
 
 #include <string>
 #include "AstNode.h"
-#include "NodeType.h"
 
 class ReturnStmt : public AstNode {
 public:

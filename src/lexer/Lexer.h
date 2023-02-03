@@ -36,8 +36,6 @@
 #include <vector>
 #include "../util/FileInfo.h"
 #include "../util/RonaSequencer.h"
-#include "Token.h"
-#include "TokenType.h"
 
 #define STRING_LITERAL_MAX_LENGTH 1000000
 #define BLOCK_COMMENT_START "/*"
@@ -48,6 +46,9 @@
 #define HEX_LITERAL_PREFIX "0x"
 #define OCTAL_LITERAL_PREFIX "0o"
 #define IS_NEGATIVE_LITERAL(s) ((s)[0] == '-')
+
+class Token;
+enum TokenType : int;
 
 class Lexer : public RonaSequencer<char, char> {
 public:
@@ -83,7 +84,6 @@ public:
 
     std::vector<Token*> tokens;
     std::string _lexeme;
-
     int line_num = 1;
     int char_num = 1;
     FileInfo file_info;

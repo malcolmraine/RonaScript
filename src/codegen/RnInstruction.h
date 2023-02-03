@@ -17,36 +17,17 @@
 
 class RnInstruction {
 public:
-    RnInstruction() = default;
-
-    explicit RnInstruction(RnOpCode opcode) {
-        _opcode = opcode;
-    }
-
-    RnInstruction(RnOpCode opcode, uint32_t arg1) {
-        _opcode = opcode;
-        _arg1 = arg1;
-    }
-
-    RnInstruction(RnOpCode opcode, uint32_t arg1, uint32_t arg2) {
-        _opcode = opcode;
-        _arg1 = arg1;
-        _arg2 = arg2;
-    }
-
-    RnInstruction(RnOpCode opcode, uint32_t arg1, uint32_t arg2, uint32_t arg3) {
-        _opcode = opcode;
-        _arg1 = arg1;
-        _arg2 = arg2;
-        _arg3 = arg3;
-    }
-
-    ~RnInstruction() = default;
+    RnInstruction();
+    explicit RnInstruction(RnOpCode opcode);
+    RnInstruction(RnOpCode opcode, uint32_t arg1);
+    RnInstruction(RnOpCode opcode, uint32_t arg1, uint32_t arg2);
+    RnInstruction(RnOpCode opcode, uint32_t arg1, uint32_t arg2, uint32_t arg3);
+    ~RnInstruction();
 
     char* GetAsBytes() const;
     bool FromBytes(const char* bytes);
     std::string ToString();
-    RnOpCode _opcode;
+    RnOpCode _opcode = RnOpCode::OP_NOP;
     uint32_t _arg1 = 0;
     uint32_t _arg2 = 0;
     uint32_t _arg3 = 0;

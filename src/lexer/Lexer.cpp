@@ -25,6 +25,8 @@
 * SOFTWARE.
 *******************************************************************************/
 #include "Lexer.h"
+#include "Token.h"
+#include "TokenType.h"
 #include <algorithm>
 #include <iostream>
 #include <utility>

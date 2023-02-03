@@ -28,7 +28,7 @@
 #ifndef RONASCRIPT_TOKEN_TYPE_H
 #define RONASCRIPT_TOKEN_TYPE_H
 
-enum TokenType {
+enum TokenType : int {
     L_BRACE,         // {
     R_BRACE,         // }
     R_PARAN,         // (

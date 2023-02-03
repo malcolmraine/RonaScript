@@ -374,6 +374,9 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
 
     // Get the function's scope
     node->scope = ParseScope();
+    for (auto symbol : arg_symbols) {
+        node->scope->symbol_table->AddSymbol(symbol.first, symbol.second);
+    }
     return node;
 }
 
@@ -982,7 +985,7 @@ void Parser::Parse() {
                     AdvanceBuffer(1);
                     break;
                 case TokenType::IMPORT:
-                    _current_scope->add_subtree(ParseImportStmt(), true);
+                    _current_scope->AddSubTree(ParseImportStmt(), true);
                     break;
                 case TokenType::MODULE: {
                     auto node = ParseModule();
@@ -990,7 +993,7 @@ void Parser::Parse() {
                     break;
                 }
                 case TokenType::R_BRACE:
-                    _current_scope->add_subtree(ParseScope());
+                    _current_scope->AddSubTree(ParseScope());
                     break;
                 case TokenType::L_BRACE:
                 case TokenType::ELIF:
@@ -1008,37 +1011,37 @@ void Parser::Parse() {
                 case TokenType::GLOBAL:
                 case TokenType::LOCAL:
                 case TokenType::VAR:
-                    _current_scope->add_var_decl(ParseVarDecl(qualifiers));
+                    _current_scope->AddVarDecl(ParseVarDecl(qualifiers));
                     ConditionalBufAdvance(TokenType::SEMICOLON);
                     qualifiers.clear();
                     break;
                 case TokenType::TYPE:
                 case TokenType::ALIAS:
-                    _current_scope->add_subtree(ParseAliasDecl());
+                    _current_scope->AddSubTree(ParseAliasDecl());
                     break;
                 case TokenType::FUNC:
-                    _current_scope->add_func_decl(ParseFuncDecl(qualifiers));
+                    _current_scope->AddFuncDecl(ParseFuncDecl(qualifiers));
                     qualifiers.clear();
                     break;
                 case TokenType::RETURN:
-                    _current_scope->add_subtree(ParseReturnStmt());
+                    _current_scope->AddSubTree(ParseReturnStmt());
                     break;
                 case TokenType::DELETE:
-                    _current_scope->add_subtree(ParseDeleteStmt());
+                    _current_scope->AddSubTree(ParseDeleteStmt());
                     break;
                 case TokenType::EXIT:
-                    _current_scope->add_subtree(ParseExitStmt());
+                    _current_scope->AddSubTree(ParseExitStmt());
                     break;
                 case TokenType::BREAK:
-                    _current_scope->add_subtree(ParseBreakStmt());
+                    _current_scope->AddSubTree(ParseBreakStmt());
                     break;
                 case TokenType::CONTINUE:
-                    _current_scope->add_subtree(ParseContinueStmt());
+                    _current_scope->AddSubTree(ParseContinueStmt());
                     break;
                 case TokenType::CLASS: {
                     _previous_state = _current_state;
                     _current_state = CLASS_DECL_CONTEXT;
-                    _current_scope->add_class_decl(ParseClassDecl());
+                    _current_scope->AddClassDecl(ParseClassDecl());
                     _current_state = _previous_state;
                     _previous_state = GENERAL_CONTEXT;
                     break;
@@ -1062,39 +1065,39 @@ void Parser::Parse() {
                         if (Current()->token_type == TokenType::EQUAL ||
                             Lookback()->token_type == TokenType::EQUAL ||
                             Current()->IsCompoundOp()) {
-                            _current_scope->add_subtree(ParseAssignmentStatement(expr));
+                            _current_scope->AddSubTree(ParseAssignmentStatement(expr));
                         } else if (Current()->IsUnaryOp()) {
-                            _current_scope->add_subtree(ParseUnaryExpr(expr));
+                            _current_scope->AddSubTree(ParseUnaryExpr(expr));
                         } else if (Current()->token_type == TokenType::R_PARAN) {
-                            _current_scope->add_subtree(ParseFuncCall(expr));
+                            _current_scope->AddSubTree(ParseFuncCall(expr));
                         } else if (Current()->token_type == TokenType::R_BRACK) {
-                            _current_scope->add_subtree(ParseIndexedExpr(expr));
+                            _current_scope->AddSubTree(ParseIndexedExpr(expr));
                         } else if (Current()->IsUnaryOp()) {
                             if (Current()->IsOneOf(
                                     {TokenType::DBL_MINUS, TokenType::DBL_PLUS})) {
-                                _current_scope->add_subtree(ParseUnaryExpr(expr));
+                                _current_scope->AddSubTree(ParseUnaryExpr(expr));
                             }
                         } else {
-                            _current_scope->add_subtree(expr);
+                            _current_scope->AddSubTree(expr);
                         }
                     }
                     break;
                 }
                 case TokenType::IF:
-                    _current_scope->add_subtree(ParseIfStmt());
+                    _current_scope->AddSubTree(ParseIfStmt());
                     break;
                 case TokenType::WHILE:
-                    _current_scope->add_subtree(ParseWhileLoop());
+                    _current_scope->AddSubTree(ParseWhileLoop());
                     break;
                 case TokenType::FOR:
-                    _current_scope->add_subtree(ParseForLoop());
+                    _current_scope->AddSubTree(ParseForLoop());
                     break;
                 case TokenType::TRY:
-                    _current_scope->add_subtree(ParseTryBlock());
+                    _current_scope->AddSubTree(ParseTryBlock());
                     break;
                 case TokenType::DBL_MINUS:
                 case TokenType::DBL_PLUS:
-                    _current_scope->add_subtree(ParseUnaryExpr());
+                    _current_scope->AddSubTree(ParseUnaryExpr());
                     break;
                 case TokenType::SEMICOLON:
                     AdvanceBuffer(1);
