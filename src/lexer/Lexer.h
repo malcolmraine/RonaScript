@@ -58,11 +58,11 @@ public:
     Token* Emit();
     Token* MakeToken(TokenType type);
     Token* MakeToken(const std::string& s);
-    static bool IsIntLiteral(std::string s);
-    static bool IsFloatLiteral(std::string s);
-    static bool IsHexLiteral(std::string s);
-    static bool IsBoolLiteral(const std::string& s);
-    static bool IsStrLiteral(const std::string& s);
+    static bool IsIntLiteral(std::string s); // TODO: Unit test
+    static bool IsFloatLiteral(std::string s); // TODO: Unit test
+    static bool IsHexLiteral(std::string s); // TODO: Unit test
+    static bool IsBoolLiteral(const std::string& s); // TODO: Unit test
+    static bool IsStrLiteral(const std::string& s); // TODO: Unit test
     bool IsCompound() const;
     bool IsReservedWord(const std::string& s) const;
     std::string GetCompoundCandidate(int n = 2) const;
@@ -79,8 +79,8 @@ public:
     char GetCurrentAsExpectedType() override;
     void HandleUnexpectedItem() override;
     void RunAdvanceBufferSideEffects() override;
-    bool IsWhiteSpace(char c) const;
-    std::string ItemToString(char item) override;
+    bool IsWhiteSpace(char c) const; // TODO: Unit test
+    std::string ItemToString(char item) override; // TODO: Unit test
 
     std::vector<Token*> tokens;
     std::string _lexeme;

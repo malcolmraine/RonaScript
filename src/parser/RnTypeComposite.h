@@ -26,12 +26,12 @@ public:
     explicit RnTypeComposite(const std::string& type);
     explicit RnTypeComposite(RnType::Type type);
     ~RnTypeComposite();
-    [[nodiscard]] bool IsWithinRange(RnTypeComposite type) const;
+    [[nodiscard]] bool IsWithinRange(RnTypeComposite type) const; // TODO: Unit test
     [[nodiscard]] Bounds<RnIntNative> GetIntBounds() const;
     Bounds<RnFloatNative> GetFloatBounds();
     void SetBounds(RnIntNative lower, RnIntNative upper);
     void SetBounds(RnFloatNative lower, RnFloatNative upper);
-    std::string ToString();
+    std::string ToString(); // TODO: Unit test
 
     [[nodiscard]] RnType::Type GetType() const {
         return _type;
