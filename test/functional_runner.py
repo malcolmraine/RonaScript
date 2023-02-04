@@ -11,6 +11,13 @@ if os.name == "nt":
     os.system("colors")
 
 
+def strip_ansi_codes(s: str) -> str:
+    return s.strip("\0[33m") \
+            .strip("\0[33[0m")\
+            .strip("\0[31m")\
+            .strip("\0[31[0m")
+
+
 class Test(object):
     def __init__(self, name, source_dir: str, args: list, timeout: int = 5, invoke_count=1):
         self.stdout = []
@@ -66,8 +73,9 @@ class Test(object):
             self.log("=========================================================")
             self.log("stderr")
             self.log("=========================================================")
-            for output in self.stdout:
-                self.log(output)
+            if self.stderr != self.stdout:
+                for output in self.stdout:
+                    self.log(output)
             self.log()
             self.log("=========================================================")
             self.log("Expected")
@@ -121,11 +129,12 @@ class TestRunner(object):
 
 if __name__ == "__main__":
     runner = TestRunner()
+    runner.add_test(Test("Command Line Arguments", "functional/commandline_args", ["-h"], timeout=1, invoke_count=10))
     runner.add_test(Test("Recursive GCF", "functional/recursive_gcf", [], timeout=2, invoke_count=10))
-    runner.add_test(Test("Class Creation", "functional/class_creation", [], timeout=1))
-    runner.add_test(Test("Simple Array", "functional/simple_array", []))
+    runner.add_test(Test("Class Creation", "functional/class_creation", [], timeout=1, invoke_count=10))
+    runner.add_test(Test("Simple Array", "functional/simple_array", [], invoke_count=10))
     runner.add_test(Test("Loop Timeout", "functional/loop_timeout", []))
-    runner.add_test(Test("Matrix Multiplication", "functional/matrix_multiplication", []))
+    runner.add_test(Test("Matrix Multiplication", "functional/matrix_multiplication", [], invoke_count=10))
     runner.add_test(Test("Var Declaration Stress", "functional/var_decl_stress_test", [], timeout=10))
-    runner.add_test(Test("Multiple Invokes", "functional/multiple_invokes", [], timeout=10, invoke_count=10))
+    runner.add_test(Test("Multiple Invokes", "functional/multiple_invokes", [], timeout=10, invoke_count=100))
     runner.run()

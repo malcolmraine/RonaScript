@@ -106,25 +106,23 @@ std::string ArgParser::GetValue(const std::string& arg) {
 
 /*****************************************************************************/
 void ArgParser::ShowHelp() {
-    std::stringstream help;
-    help << _main_description + "\n";
+    std::string help;
+    help += _main_description + "\n";
     for (const auto& key : _ordered_args) {
-        if (_help_exclusions.contains(key)) {
+        if (_help_exclusions.find(key) != _help_exclusions.end()) {
             continue;
         }
-        //../examples/Test.rn -past -ptok -pcode
 
         auto argument = _arguments[key];
         std::string key_str = key;
         for (const auto& alternate_key : argument->GetAlternateKeys()) {
             key_str += ", " + alternate_key;
         }
-        help << "  " << String::Pad(key_str, 20, ' ') << argument->GetDescription()
-             << "\n";
-        Log::DEBUG("Creating help");
+        help += "  " + String::Pad(key_str, 20, ' ') + argument->GetDescription()
+             + "\n";
     }
 
-    std::cout << help.str();
+    std::cout << help;
 }
 
 /*****************************************************************************/

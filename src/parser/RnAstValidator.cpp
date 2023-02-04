@@ -135,6 +135,10 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
     switch (subtree->node_type) {
         case AST_BINARY_EXPR: {
             auto node = std::dynamic_pointer_cast<BinaryExpr>(subtree);
+            if (node->_op == "->") {
+                // We only care about the type of the attribute being accessed here
+                return EvaluateSubtreeType(node->_right);
+            }
             return ResolveTypes(EvaluateSubtreeType(node->_left),
                                 EvaluateSubtreeType(node->_right));
         }

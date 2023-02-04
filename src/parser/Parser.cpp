@@ -374,8 +374,13 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
 
     // Get the function's scope
     node->scope = ParseScope();
-    for (auto symbol : arg_symbols) {
+    for (const auto& symbol : arg_symbols) {
         node->scope->symbol_table->AddSymbol(symbol.first, symbol.second);
+    }
+
+    if (_current_state == CLASS_DECL_CONTEXT) {
+        node->scope->symbol_table->AddSymbol(
+            "this", std::make_shared<RnTypeComposite>(RnType::RN_OBJECT));
     }
     return node;
 }
@@ -406,6 +411,7 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
     _previous_state = _current_state;
     _current_state = ParserState::CLASS_DECL_CONTEXT;
     node->scope = ParseScope();
+    _current_state = _previous_state;
 
     return node;
 }

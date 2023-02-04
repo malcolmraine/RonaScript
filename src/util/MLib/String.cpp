@@ -272,8 +272,9 @@ bool String::EndsWith(const std::string& s, const std::string& key) {
 std::string String::Pad(const std::string& s, size_t len, char pad_char) {
     auto out = s;
     size_t pad_len = len - s.length();
-
-    pad_len = pad_len >= 0 ? pad_len : 0;
+    if (pad_len > s.length() + len) {
+        return s;
+    }
 
     for (size_t i = 0; i < pad_len; i++) {
         out += std::string(1, pad_char);
