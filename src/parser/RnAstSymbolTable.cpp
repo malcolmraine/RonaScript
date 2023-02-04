@@ -25,7 +25,7 @@ bool RnAstSymbolTable::SymbolExists(const std::string& symbol) {
 
 /*****************************************************************************/
 std::shared_ptr<SymbolTableEntry> RnAstSymbolTable::AddSymbol(
-    const std::string& symbol, std::shared_ptr<RnTypeComposite> type) {
+    const std::string& symbol, const std::shared_ptr<RnTypeComposite>& type) {
     auto entry = std::make_shared<SymbolTableEntry>(symbol, type);
     _table[symbol] = entry;
     return entry;
@@ -34,5 +34,11 @@ std::shared_ptr<SymbolTableEntry> RnAstSymbolTable::AddSymbol(
 /*****************************************************************************/
 std::shared_ptr<SymbolTableEntry> RnAstSymbolTable::GetSymbolEntry(
     const std::string& symbol) {
-    return _table[symbol];
+    auto iter = _table.find(symbol);
+    if (iter != _table.end()) {
+        return iter->second;
+    } else if (_parent) {
+        return _parent->GetSymbolEntry(symbol);
+    }
+    throw std::runtime_error("Fatal: could not find symbol '" + symbol + "'");
 }

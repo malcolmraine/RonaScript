@@ -38,7 +38,7 @@ public:
     explicit RnAstSymbolTable(RnAstSymbolTable* parent = nullptr);
     bool SymbolExists(const std::string& symbol);
     std::shared_ptr<SymbolTableEntry> AddSymbol(const std::string& symbol,
-                                                std::shared_ptr<RnTypeComposite> type);
+                                                const std::shared_ptr<RnTypeComposite>& type);
     std::shared_ptr<SymbolTableEntry> GetSymbolEntry(const std::string& symbol);
 
     void SetParent(std::shared_ptr<RnAstSymbolTable> parent) {
@@ -47,7 +47,7 @@ public:
 
 private:
     std::map<std::string, std::shared_ptr<SymbolTableEntry>> _table;
-    std::shared_ptr<RnAstSymbolTable> _parent = nullptr;
+    std::shared_ptr<RnAstSymbolTable> _parent;
 };
 
 #endif  //RONASCRIPT_SRC_PARSER_RNASTSYMBOLTABLE_H_
