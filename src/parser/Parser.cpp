@@ -686,7 +686,7 @@ std::shared_ptr<ExitStmt> Parser::ParseExitStmt() {
 std::shared_ptr<AssignmentStmt> Parser::ParseAssignmentStatement(
     const std::shared_ptr<AstNode>& rexpr) {
     auto node = std::make_shared<AssignmentStmt>();
-    node->SetRexpr(rexpr ? rexpr : ParseExpr());
+    node->SetLexpr(rexpr ? rexpr : ParseExpr());
 
     std::string op;
     if (Current()->IsCompoundOp()) {
@@ -706,7 +706,6 @@ std::shared_ptr<AssignmentStmt> Parser::ParseAssignmentStatement(
         node->SetRexpr(ParseExpr());
     }
 
-    ConditionalBufAdvance(TokenType::SEMICOLON);
     return node;
 }
 

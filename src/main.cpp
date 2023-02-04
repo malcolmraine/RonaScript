@@ -45,9 +45,8 @@ void RonaScriptMain(int argc, char* argv[]) {
     std::filesystem::path const cfile = file.string() + "c";
 
     Lexer lexer;
-    lexer.LoadFile(file);
-
     try {
+        lexer.LoadFile(file);
         lexer.ProcessTokens();
     } catch (const std::exception& e) {
         Log::ERROR("Syntax Error: " + std::string(e.what()));
@@ -60,13 +59,18 @@ void RonaScriptMain(int argc, char* argv[]) {
         }
     }
 
-    Parser parser;
-    parser.working_dir = file.parent_path();
-    parser.file = file;
-    parser.LoadTokens(lexer.tokens);
 
+    Parser parser;
     try {
+        parser.working_dir = file.parent_path();
+        parser.file = file;
+        parser.LoadTokens(lexer.tokens);
         parser.Parse();
+
+        if (arg_parser.IsSet("-a")) {
+            Log::INFO(parser.DumpsAst());
+        }
+
         RnAstValidator validator;
         validator.Visit(parser.ast->root.get());
     } catch (const std::exception& e) {
@@ -74,24 +78,24 @@ void RonaScriptMain(int argc, char* argv[]) {
         return;
     }
 
-    if (arg_parser.IsSet("-a")) {
-        Log::INFO(parser.DumpsAst());
-    }
-
     RnCodeGenerator code_generator;
-    code_generator.Generate(parser.ast);
-
-    if (arg_parser.IsSet("-p")) {
-        size_t index = 0;
-        for (auto& instruction : code_generator.GetInstructions()) {
-            Log::INFO(String::Pad(std::to_string(index++), 6) +
-                      instruction->ToString());
-        }
-    }
-    auto vm = RnVirtualMachine::GetInstance();
-    vm->LoadInstructions(code_generator.GetInstructions());
-
     try {
+        code_generator.Generate(parser.ast);
+        if (arg_parser.IsSet("-p")) {
+            size_t index = 0;
+            for (auto& instruction : code_generator.GetInstructions()) {
+                Log::INFO(String::Pad(std::to_string(index++), 6) +
+                          instruction->ToString());
+            }
+        }
+    } catch (const std::exception& e) {
+        Log::ERROR("Codegen Error: " + std::string(e.what()));
+        return;
+    }
+
+    auto vm = RnVirtualMachine::GetInstance();
+    try {
+        vm->LoadInstructions(code_generator.GetInstructions());
         std::ios_base::sync_with_stdio(false);
         RnIntNative exit_code = vm->Run();
     } catch (const std::exception& e) {
