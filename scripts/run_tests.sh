@@ -35,8 +35,7 @@ while true; do
     shift
 done
 
-
-RN_EXECUTABLE=$(realpath build/RonaScript)
+RN_EXECUTABLE=$(pwd)/build/RonaScript
 
 if [[ $REBUILD == 1 ]]; then
     echo "Rebuilding..."
@@ -54,5 +53,5 @@ if [[ $RUN_FUNCTIONAL == 1 ]]; then
         cd "test" || exit 1
     fi
 
-    python3 "$(realpath functional_runner.py)" "$RN_EXECUTABLE"
+    python3 "$(pwd)/functional_runner.py" "$RN_EXECUTABLE"
 fi
