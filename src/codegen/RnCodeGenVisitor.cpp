@@ -173,7 +173,8 @@ InstructionBlock RnCodeGenVisitor::Visit(ForLoop* node) {
     InstructionBlock scope = GeneralVisit(node->scope);
     test.push_back(new RnInstruction(OP_JUMPF_IF, scope.size() + update.size() + 2));
     scope.insert(scope.begin(), test.begin(), test.end());
-    WrapContext(scope);
+    scope.insert(scope.begin(), new RnInstruction(OP_CREATE_CONTEXT));
+    scope.push_back(new RnInstruction(OP_RESET_CONTEXT));
     instructions.reserve(scope.size() + test.size() + init.size() + update.size());
 
     if (!init.empty()) {
@@ -185,7 +186,8 @@ InstructionBlock RnCodeGenVisitor::Visit(ForLoop* node) {
         instructions.insert(instructions.end(), update.begin(), update.end());
     }
     instructions.emplace_back(
-        new RnInstruction(OP_JUMPB, scope.size() + update.size()));
+        new RnInstruction(OP_JUMPB, (scope.size() + update.size()) - 1));
+    instructions.push_back(new RnInstruction(OP_DESTROY_CONTEXT));
     WrapContext(instructions);
     return instructions;
 }
@@ -194,14 +196,13 @@ InstructionBlock RnCodeGenVisitor::Visit(ForLoop* node) {
 InstructionBlock RnCodeGenVisitor::Visit(WhileLoop* node) {
     InstructionBlock instructions;
     InstructionBlock scope = GeneralVisit(node->scope);
-    WrapContext(scope);
+    scope.insert(scope.begin(), new RnInstruction(OP_CREATE_CONTEXT));
+    scope.push_back(new RnInstruction(OP_RESET_CONTEXT));
     InstructionBlock test = GeneralVisit(node->test);
     instructions.reserve(scope.size() + test.size());
     instructions.insert(instructions.end(), test.begin(), test.end());
     instructions.emplace_back(new RnInstruction(OP_JUMPF_IF, scope.size() + 1));
-    //	instructions.push_back(new RnInstruction(OP_CREATE_CONTEXT));
     instructions.insert(instructions.end(), scope.begin(), scope.end());
-    //	instructions.push_back(new RnInstruction(OP_DESTROY_CONTEXT));
     instructions.emplace_back(
         new RnInstruction(OP_JUMPB, scope.size() + test.size() + 1));
 

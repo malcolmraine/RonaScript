@@ -104,6 +104,8 @@ std::string GetOpCodeAsString(RnOpCode opcode) {
             return "OP_CREATE_CONTEXT";
         case OP_DESTROY_CONTEXT:
             return "OP_DESTROY_CONTEXT";
+        case OP_RESET_CONTEXT:
+            return "OP_RESET_CONTEXT";
         case OP_DELETE:
             return "OP_DELETE";
         case OP_NOP:

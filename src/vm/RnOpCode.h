@@ -58,6 +58,7 @@ typedef enum {
     OP_MAKE_MODULE,     // op1: name     op2: instr. count
     OP_CREATE_CONTEXT,  // op1: flag     op2:
     OP_DESTROY_CONTEXT,
+    OP_RESET_CONTEXT,
     OP_DELETE,  // op1: name     op2:
     OP_NOP,     // op1:          op2:
     OP_JUMPF,   // op1: rel_idx  op2:

@@ -32,6 +32,9 @@ public:
     void SetParent(RnSymbolTable* parent);
     [[nodiscard]] RnSymbolTable* GetParent() const;
     [[nodiscard]] std::vector<RnIntNative> GetSymbols() const;
+    void Clear() {
+        _table.clear();
+    }
 
 private:
     RnSymbolTable* _parent_table = nullptr;

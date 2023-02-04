@@ -330,8 +330,8 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
 
             if (arg_symbols.find(arg->GetId()->value) != arg_symbols.end()) {
                 throw std::runtime_error("Redeclaration of argument '" +
-                                         arg->GetId()->value + "' in routine '" + node->id +
-                                         "'");
+                                         arg->GetId()->value + "' in routine '" +
+                                         node->id + "'");
             }
         }
         AdvanceBuffer(1);  // Advance past the ':' separating the name from the type
@@ -836,6 +836,7 @@ std::shared_ptr<ForLoop> Parser::ParseForLoop() {
     if (Peek()->token_type == TokenType::VAR) {
         AdvanceBuffer(1);
         node->init = ParseVarDecl();
+
     } else if (Peek()->token_type == TokenType::NAME) {
         AdvanceBuffer(1);
 
@@ -863,6 +864,11 @@ std::shared_ptr<ForLoop> Parser::ParseForLoop() {
     ConditionalBufAdvance(TokenType::L_PARAN);
     ConditionalBufAdvance(TokenType::R_BRACE);
     node->scope = ParseScope();
+
+    if (node->init->node_type == AST_VAR_DECL) {
+        auto var_decl = std::dynamic_pointer_cast<VarDecl>(node->init);
+        node->scope->symbol_table->AddSymbol(var_decl->id, var_decl->type);
+    }
 
     return node;
 }
@@ -1055,7 +1061,7 @@ void Parser::Parse() {
                         Expect(TokenType::L_PARAN);
                         AdvanceBuffer(2);
                         _current_scope->pragma_table[key] = value;
-//                        _pragma_table[key] = value;
+                        //                        _pragma_table[key] = value;
                         ConditionalBufAdvance(TokenType::SEMICOLON);
                         Log::DEBUG("Pragma: " + key + ", " + value);
                     } else {
@@ -1162,8 +1168,6 @@ std::shared_ptr<Module> Parser::ParseModule() {
 
     return node;
 }
-
-
 
 /*****************************************************************************/
 TokenType Parser::GetCurrentAsExpectedType() {

@@ -522,6 +522,11 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             _memory_manager->DestroyScope(scope);
             break;
         }
+        case OP_RESET_CONTEXT: {
+            GetScope()->GetSymbolTable()->Clear();
+            GetStack().clear();
+            break;
+        }
         case OP_DELETE: {
             GetScope()->GetSymbolTable()->RemoveSymbol(instruction->_arg1);
             break;
