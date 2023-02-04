@@ -114,7 +114,6 @@ public:
 private:
     Bounds<RnFloatNative> _bounds{};
     RnType::Type _type;
-    std::string _str_type;
 };
 
 #endif  //RONASCRIPT_RNTYPE_H

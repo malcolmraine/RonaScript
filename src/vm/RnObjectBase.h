@@ -92,8 +92,7 @@ public:
     UNDEFINED_ASSIGNMENT(RnIntNative, RnType::RN_INT, std::to_string(data))
     UNDEFINED_ASSIGNMENT(RnFloatNative, RnType::RN_FLOAT, std::to_string(data))
     UNDEFINED_ASSIGNMENT(RnBoolNative, RnType::RN_BOOLEAN, std::to_string(data))
-    UNDEFINED_ASSIGNMENT(std::vector<RnObject*>, RnType::RN_ARRAY,
-                         "array[" + std::to_string(data.size()) + "]")
+    UNDEFINED_ASSIGNMENT(std::vector<RnObject*>, RnType::RN_ARRAY, "[...]")
     UNDEFINED_ASSIGNMENT(RnObject*, data->GetType(), data->ToString())
     UNDEFINED_ASSIGNMENT(RnScope*, RnType::RN_OBJECT, "object")
     UNDEFINED_ASSIGNMENT(RnFunction*, RnType::RN_FUNCTION, "")

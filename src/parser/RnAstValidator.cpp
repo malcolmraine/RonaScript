@@ -72,6 +72,18 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::ResolveTypes(
 bool RnAstValidator::CanAssignTypeTo(
     const std::shared_ptr<RnTypeComposite>& destination,
     const std::shared_ptr<RnTypeComposite>& source, ASSIGNMENT_TYPE assignment_type) {
+
+    std::map<RnType::Type, std::unordered_set<RnType::Type>> compatibility_groups = {
+        {RnType::RN_INT, {RnType::RN_INT, RnType::RN_BOOLEAN, RnType::RN_FLOAT}},
+        {RnType::RN_FLOAT, {RnType::RN_FLOAT, RnType::RN_BOOLEAN, RnType::RN_INT}},
+        {RnType::RN_STRING, {RnType::RN_STRING}},
+        {RnType::RN_BOOLEAN,
+         {RnType::RN_FLOAT, RnType::RN_BOOLEAN, RnType::RN_INT, RnType::RN_STRING}},
+        {RnType::RN_OBJECT, {RnType::RN_OBJECT, RnType::RN_CLASS_INSTANCE}},
+        {RnType::RN_FUNCTION, {RnType::RN_FUNCTION}},
+        {RnType::RN_CLASS_INSTANCE, {RnType::RN_OBJECT, RnType::RN_CLASS_INSTANCE}},
+        {RnType::RN_ARRAY, {RnType::RN_ARRAY}}};
+
     bool bounds_ok = true;
     bool types_ok = true;
 
@@ -86,7 +98,7 @@ bool RnAstValidator::CanAssignTypeTo(
         if (_current_scope->pragma_table["bounds"] == "strict") {
             bounds_ok = false;
             throw std::runtime_error(action_msg + "out of bounds value");
-        } else if (_current_scope->pragma_table["bounds"] == "relaxed") {
+        } else if (_current_scope->pragma_table["bounds"] == "warn") {
             Log::WARN("Warning: " + action_msg + "out of bounds value");
             bounds_ok = true;
         } else {
@@ -94,14 +106,24 @@ bool RnAstValidator::CanAssignTypeTo(
         }
     }
 
+    types_ok = destination->GetType() == source->GetType();
     if (_current_scope->pragma_table["typing"] == "strict") {
-        types_ok = destination->GetType() == source->GetType();
         if (!types_ok) {
             throw std::runtime_error(action_msg + "incompatible type");
         }
-    } else if (_current_scope->pragma_table["typing"] == "relaxed") {
-        Log::WARN("Warning: " + action_msg + "incompatible type");
-        types_ok = true;
+    } else {
+        if (compatibility_groups[destination->GetType()].contains(source->GetType())) {
+            if (!types_ok && _current_scope->pragma_table["typing"] == "warn") {
+                Log::WARN("Warning: " + action_msg + "incompatible type");
+            }
+            types_ok = true;
+        } else {
+            if (!types_ok) {
+                throw std::runtime_error(action_msg + "incompatible type " +
+                                         source->ToString() + " to " +
+                                         destination->ToString());
+            }
+        }
     }
 
     return types_ok && bounds_ok;

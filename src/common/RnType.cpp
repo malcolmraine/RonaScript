@@ -62,7 +62,7 @@ void RnTypeComposite::SetBounds(RnFloatNative lower, RnFloatNative upper) {
 std::string RnTypeComposite::ToString() {
     if (_bounds.lower == -std::numeric_limits<double>::infinity() ||
         _bounds.upper == std::numeric_limits<double>::infinity()) {
-        return _str_type;
+        return RnType::TypeToString(_type);
     }
 
     switch (_type) {
@@ -70,11 +70,11 @@ std::string RnTypeComposite::ToString() {
         case RnType::RN_STRING:
         case RnType::RN_ARRAY: {
             auto bounds = GetIntBounds();
-            return _str_type + "<" + std::to_string(bounds.lower) + ".." +
+            return RnType::TypeToString(_type) + "<" + std::to_string(bounds.lower) + ".." +
                    std::to_string(bounds.upper) + ">";
         }
         default: {
-            return _str_type + "<" + std::to_string(_bounds.lower) + ".." +
+            return RnType::TypeToString(_type) + "<" + std::to_string(_bounds.lower) + ".." +
                    std::to_string(_bounds.upper) + ">";
         }
     }
