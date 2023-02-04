@@ -511,7 +511,20 @@ void Lexer::LoadFile(const std::string& path) {
 }
 
 /*****************************************************************************/
+void Lexer::LoadString(const std::string& input) {
+    _use_loaded_string = true;
+    _data.clear();
+    _data.reserve(input.length());
+    for (auto c : input ) {
+        _data.push_back(c);
+    }
+}
+
+/*****************************************************************************/
 bool Lexer::EndOfFile() const {
+    if (_use_loaded_string) {
+        return _data_idx == _data.size() - 1;
+    }
     return _file_obj.gcount() == 0;
 }
 
@@ -548,15 +561,19 @@ std::string Lexer::ItemToString(char item) {
 
 /*****************************************************************************/
 void Lexer::LoadNextItem() {
-    if (Current() == '\n') {
-        file_info.IncrementLineNum();
-        file_info.UpdateLineStartValues(file_info.GetCharCount());
-        file_info.SetCharNum(0);
+    if (_use_loaded_string) {
+        _buffer[2] = _data[_data_idx++];
     } else {
-        file_info.IncrementCharNum();
-    }
+        if (Current() == '\n') {
+            file_info.IncrementLineNum();
+            file_info.UpdateLineStartValues(file_info.GetCharCount());
+            file_info.SetCharNum(0);
+        } else {
+            file_info.IncrementCharNum();
+        }
 
-    _file_obj.get(_buffer[2]);
+        _file_obj.get(_buffer[2]);
+    }
 }
 
 /*****************************************************************************/

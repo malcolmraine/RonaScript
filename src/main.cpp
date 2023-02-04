@@ -5,13 +5,13 @@
 #include "codegen/RnCodeGenerator.h"
 #include "lexer/Lexer.h"
 #include "parser/Parser.h"
+#include "parser/RnAstValidator.h"
 #include "util/ArgParser.h"
 #include "util/MLib/String.h"
 #include "util/log.h"
 #include "vm/RnMemoryManager.h"
 #include "vm/RnObject.h"
 #include "vm/RnVirtualMachine.h"
-#include "parser/RnAstValidator.h"
 
 /*****************************************************************************/
 void RonaScriptMain(int argc, char* argv[]) {
@@ -58,7 +58,6 @@ void RonaScriptMain(int argc, char* argv[]) {
             Log::INFO(token->ToString());
         }
     }
-
 
     Parser parser;
     try {

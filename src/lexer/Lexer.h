@@ -74,6 +74,7 @@ public:
     Token* Consume();
     void ProcessTokens();
     void LoadFile(const std::string& path);
+    void LoadString(const std::string& input);
     bool EndOfFile() const;  // TODO: Use RonaSequencer
     bool EndOfSequence() const override;
     char GetCurrentAsExpectedType() override;
@@ -90,6 +91,7 @@ public:
     long file_char_cnt = -1;
 
 protected:
+    bool _use_loaded_string = false;
     std::string _file_path;
     long _char_idx = 0;
     std::ifstream _file_obj;
