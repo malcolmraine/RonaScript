@@ -1,11 +1,10 @@
 Usage: RonaScript <file> [options...]
   <file>                        Input file (*.rn | *.rnc)
   -c                            Compile to *.rnc file
-  -norun, --print-opcodes       Compile to *.rnc file without running
+  -r, --norun                   Compile to *.rnc file without running
   -a, --print-ast               Print AST after parsing
   -t, --print-tokens            Print tokens after lexing
   -p, --print-opcodes           Print opcodes after generation
   -d, --debug                   Show various debug logging
-  -norun, --print-opcodes       Compile to *.rnc file without running
   -v, --version                 Show version information
   -h, --help, help              Show help

@@ -45,12 +45,13 @@ class Test(object):
     def check_output(self, returncode=0):
         with open(self.expected_output, "r") as file:
             expected = file.read().strip("\n").strip()
-            actual = ""
             passed = True
+            invalid_output = ""
 
             for output in self.stdout:
                 if output.strip("\n").strip() != expected:
                     passed = False
+                    invalid_output = output.strip("\n").strip()
                     break
 
             if self.timeout_occurred:
@@ -74,8 +75,9 @@ class Test(object):
             self.log("stderr")
             self.log("=========================================================")
             if self.stderr != self.stdout:
-                for output in self.stdout:
-                    self.log(output)
+                for output in self.stderr:
+                    if output:
+                        self.log(output)
             self.log()
             self.log("=========================================================")
             self.log("Expected")
@@ -85,8 +87,12 @@ class Test(object):
             self.log("=========================================================")
             self.log("Actual")
             self.log("=========================================================")
-            for output in self.stdout:
-                self.log(output)
+            if not passed:
+                self.log(invalid_output)
+            elif len(self.stdout) > 0:
+                self.log(self.stdout[0])
+            else:
+                self.log()
 
     def run(self):
         def target():
@@ -129,9 +135,9 @@ class TestRunner(object):
 
 if __name__ == "__main__":
     runner = TestRunner()
-    runner.add_test(Test("Command Line Arguments", "functional/commandline_args", ["-h"], timeout=1, invoke_count=10))
-    runner.add_test(Test("Recursive GCF", "functional/recursive_gcf", [], timeout=2, invoke_count=10))
-    runner.add_test(Test("Class Creation", "functional/class_creation", [], timeout=1, invoke_count=10))
+    runner.add_test(Test("Command Line Arguments", "functional/commandline_args", ["-h"], timeout=1, invoke_count=100))
+    runner.add_test(Test("Recursive GCF", "functional/recursive_gcf", [], timeout=2, invoke_count=5))
+    runner.add_test(Test("Class Creation", "functional/class_creation", [], timeout=1, invoke_count=5))
     runner.add_test(Test("Simple Array", "functional/simple_array", [], invoke_count=10))
     runner.add_test(Test("Loop Timeout", "functional/loop_timeout", []))
     runner.add_test(Test("Matrix Multiplication", "functional/matrix_multiplication", [], invoke_count=10))

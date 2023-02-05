@@ -19,13 +19,11 @@ void RonaScriptMain(int argc, char* argv[]) {
     arg_parser.SetMainDescription("Usage: RonaScript <file> [options...]");
     arg_parser.AddArgument("<file>", {}, "Input file (*.rn | *.rnc)");
     arg_parser.AddArgument("-c", {}, "Compile to *.rnc file");
-    arg_parser.AddArgument("-norun", {}, "Compile to *.rnc file without running");
+    arg_parser.AddArgument("-r", {"--norun"}, "Compile to *.rnc file without running");
     arg_parser.AddArgument("-a", {"--print-ast"}, "Print AST after parsing");
     arg_parser.AddArgument("-t", {"--print-tokens"}, "Print tokens after lexing");
     arg_parser.AddArgument("-p", {"--print-opcodes"}, "Print opcodes after generation");
     arg_parser.AddArgument("-d", {"--debug"}, "Show various debug logging");
-    arg_parser.AddArgument("-norun", {"--print-opcodes"},
-                           "Compile to *.rnc file without running");
     arg_parser.AddArgument("-v", {"--version"}, "Show version information");
     arg_parser.AddArgument("-h", {"--help", "help"}, "Show help");
     arg_parser.Parse(argc, argv);
