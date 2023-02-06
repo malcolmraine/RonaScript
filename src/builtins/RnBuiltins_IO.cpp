@@ -33,7 +33,7 @@ void RnBuiltins_IO::rn_builtin_print(RnScope* scope, const std::vector<RnObject*
     for (auto arg : args) {
         s.append(arg->ToString());
     }
-    std::cout << s << "\n";
+    printf("%s\n", s.c_str());
 }
 
 /*****************************************************************************/

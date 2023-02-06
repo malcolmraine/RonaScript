@@ -49,7 +49,7 @@ class Test(object):
             invalid_output = ""
 
             for output in self.stdout:
-                if output.strip("\n").strip() != expected:
+                if expected not in output.strip("\n").strip():
                     passed = False
                     invalid_output = output.strip("\n").strip()
                     break

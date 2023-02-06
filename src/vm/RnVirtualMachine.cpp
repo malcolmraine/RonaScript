@@ -438,7 +438,45 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_CALL: {
             auto func_obj = dynamic_cast<RnFunctionObject*>(GetStack().back());
             GetStack().pop_back();
-            CallFunction(func_obj, instruction->_arg1);
+//            CallFunction(func_obj, instruction->_arg1);
+
+                std::vector<RnObject*> args;
+                auto func = func_obj->GetData();
+                args.reserve(instruction->_arg1);
+                for (uint32_t i = 0; i < instruction->_arg1; i++) {
+                    args.insert(args.begin(), GetStack().back());
+                    GetStack().pop_back();
+                }
+                RnObject* ret_val = _memory_manager->CreateObject(func_obj->GetReturnType());
+
+                if (func->IsBuiltIn()) {
+                    func->Call(args, ret_val);
+                    if (func_obj->GetReturnType() != RnType::RN_NULL) {
+                        GetStack().push_back(ret_val);
+                    }
+                } else {
+                    _call_stack.push_back(func->GetScope());
+                    _scopes.push_back(func->GetScope());
+
+                    func->PassArguments(args);
+                    bool has_returned = false;
+                    size_t func_index = func->GetIStart();
+                    size_t end_index = func->GetIStart() + func->GetICnt();
+                    for (; func_index < end_index; func_index++) {
+                        ExecuteInstruction(has_returned, func_index);
+                        if (has_returned) {
+                            break;
+                        }
+                    }
+
+                    _call_stack.pop_back();
+                    _scopes.pop_back();
+
+                    if (func->GetName() == "construct") {
+                        GetStack().push_back(func->GetScope()->GetObject(_object_this_key));
+                    }
+                    func->Reset();
+                }
             break;
         }
         case OP_MAKE_CONST: {
@@ -677,7 +715,7 @@ RnIntNative RnVirtualMachine::Run() {
     }
     stopwatch.Stop();
 
-    //Log::DEBUG("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
+    Log::DEBUG("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
     return GetStack().back()->ToInt();
 }
 

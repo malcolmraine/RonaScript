@@ -96,7 +96,6 @@ void RonaScriptMain(int argc, char* argv[]) {
     auto vm = RnVirtualMachine::GetInstance();
     try {
         vm->LoadInstructions(code_generator.GetInstructions());
-        std::ios_base::sync_with_stdio(false);
         RnIntNative exit_code = vm->Run();
     } catch (const std::exception& e) {
         Log::ERROR("Runtime Error: " + std::string(e.what()));
