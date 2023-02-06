@@ -10,6 +10,7 @@
 #include "RnBuiltins.h"
 #include <array>
 #include <cstdio>
+#include <cstdlib>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -89,4 +90,24 @@ void RnBuiltins::rn_builtin_bind(RnScope* scope, const std::vector<RnObject*>& a
     }
     func->GetData()->GetScope()->StoreObject(RnObject::InternValue(name), obj);
     ret_val->SetData(func->GetData());
+}
+
+/*****************************************************************************/
+static void rn_builtin_setenv(RnScope* scope, const std::vector<RnObject*>& args,
+                              RnObject* ret_val) {
+    ret_val->SetData(static_cast<RnIntNative>(
+        setenv(args[0]->ToString().c_str(), args[1]->ToString().c_str(), 1)));
+}
+
+/*****************************************************************************/
+static void rn_builtin_getenv(RnScope* scope, const std::vector<RnObject*>& args,
+                              RnObject* ret_val) {
+    ret_val->SetData(getenv(args[0]->ToString().c_str()));
+}
+
+/*****************************************************************************/
+static void rn_builtin_unsetenv(RnScope* scope, const std::vector<RnObject*>& args,
+                                RnObject* ret_val) {
+    ret_val->SetData(static_cast<RnIntNative>(
+        unsetenv(args[0]->ToString().c_str())));
 }

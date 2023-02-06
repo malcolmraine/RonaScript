@@ -762,6 +762,12 @@ void RnVirtualMachine::RegisterBuiltins() {
         {"count", CastToBuiltin(&RnBuiltins_Array::rn_builtin_count), RnType::RN_INT},
         {"array_push", CastToBuiltin(&RnBuiltins_Array::rn_builtin_array_push),
          RnType::RN_NULL},
+        {"setenv", CastToBuiltin(&RnBuiltins::rn_builtin_setenv),
+         RnType::RN_INT},
+        {"getenv", CastToBuiltin(&RnBuiltins::rn_builtin_getenv),
+         RnType::RN_STRING},
+        {"unsetenv", CastToBuiltin(&RnBuiltins::rn_builtin_unsetenv),
+         RnType::RN_INT},
     };
 
     for (auto parts : functions) {
