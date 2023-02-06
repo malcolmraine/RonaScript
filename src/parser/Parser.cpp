@@ -282,15 +282,6 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
     node->id = Current()->lexeme;
     Expect(TokenType::COLON);
     AdvanceBuffer(1);
-    Expect({
-        TokenType::STRING,
-        TokenType::INT,
-        TokenType::FLOAT,
-        TokenType::BOOL,
-        TokenType::ARRAY,
-        TokenType::CALLABLE,
-        TokenType::OBJECT,
-    });
     AdvanceBuffer(1);
     node->type = ParseType();
 
@@ -375,12 +366,12 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
     // Get the function's scope
     node->scope = ParseScope();
     for (const auto& symbol : arg_symbols) {
-        node->scope->symbol_table->AddSymbol(symbol.first, symbol.second);
+        node->scope->symbol_table->AddSymbol(symbol.first, symbol.second, node);
     }
 
     if (_current_state == CLASS_DECL_CONTEXT) {
         node->scope->symbol_table->AddSymbol(
-            "this", std::make_shared<RnTypeComposite>(RnType::RN_OBJECT));
+            "this", std::make_shared<RnTypeComposite>(RnType::RN_OBJECT), node);
     }
     return node;
 }
@@ -393,6 +384,8 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
     AdvanceBuffer(1);
 
     node->id = Current()->lexeme;
+    _user_defined_type_map[node->id] =
+        std::make_shared<RnTypeComposite>(RnType::RN_OBJECT);
     Expect({TokenType::EXTENDS, TokenType::R_BRACE, TokenType::IS});
     AdvanceBuffer(1);
 
@@ -873,7 +866,7 @@ std::shared_ptr<ForLoop> Parser::ParseForLoop() {
 
     if (node->init->node_type == AST_VAR_DECL) {
         auto var_decl = std::dynamic_pointer_cast<VarDecl>(node->init);
-        node->scope->symbol_table->AddSymbol(var_decl->id, var_decl->type);
+        node->scope->symbol_table->AddSymbol(var_decl->id, var_decl->type, var_decl);
     }
 
     return node;
@@ -882,17 +875,28 @@ std::shared_ptr<ForLoop> Parser::ParseForLoop() {
 /*****************************************************************************/
 std::shared_ptr<AliasDecl> Parser::ParseAliasDecl() {
     auto node = std::make_shared<AliasDecl>();
-    node->alias_type =
-        Current()->token_type == TokenType::TYPE ? TYPE_ALIAS : NAME_ALIAS;
-    Expect(TokenType::NAME);
 
+    Expect(TokenType::NAME);
     AdvanceBuffer(1);
     node->alias_name = ParseName();
-    Expect(TokenType::NAME);
-    AdvanceBuffer(1);
 
-    node->base_name = ParseName();
-    AdvanceBuffer(1);
+    node->alias_type =
+        Peek()->token_type == TokenType::TYPE ? TYPE_ALIAS : NAME_ALIAS;
+    
+
+    if (node->alias_type == NAME_ALIAS) {
+        Expect(TokenType::NAME);
+        AdvanceBuffer(1);
+        node->base_name = ParseName();
+        AdvanceBuffer(1);
+    } else {
+        Expect({TokenType::OBJECT, TokenType::STRING, TokenType::INT, TokenType::FLOAT,
+                TokenType::ARRAY, TokenType::CALLABLE});
+        AdvanceBuffer(1);
+        node->base_type = ParseType();
+        AdvanceBuffer(1);
+        _user_defined_type_map[node->alias_name->value] = node->base_type;
+    }
     return node;
 }
 
@@ -1201,8 +1205,16 @@ void Parser::HandleUnexpectedItem() {
 /*****************************************************************************/
 std::shared_ptr<RnTypeComposite> Parser::ParseType() {
     auto basic_type = RnType::StringToType(Current()->lexeme);
-    auto type = std::make_shared<RnTypeComposite>(basic_type);
+    if (basic_type == RnType::RN_UNKNOWN) {
+        if (_user_defined_type_map.find(Current()->lexeme) !=
+            _user_defined_type_map.end()) {
+            auto type_composite = _user_defined_type_map[Current()->lexeme];
+            AdvanceBuffer(1);
+            return type_composite;
+        }
+    }
 
+    auto type = std::make_shared<RnTypeComposite>(basic_type);
     if (_current_scope->pragma_table["require"] == "bounds") {
         if (Peek()->token_type != TokenType::R_CARAT) {
             throw std::runtime_error("Missing bounds on type " + Current()->lexeme);

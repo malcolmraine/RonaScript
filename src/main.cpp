@@ -20,6 +20,7 @@ void RonaScriptMain(int argc, char* argv[]) {
     arg_parser.AddArgument("<file>", {}, "Input file (*.rn | *.rnc)");
     arg_parser.AddArgument("-c", {}, "Compile to *.rnc file");
     arg_parser.AddArgument("-r", {"--norun"}, "Compile to *.rnc file without running");
+    arg_parser.AddArgument("--no-validation", {}, "Don't perform AST validation");
     arg_parser.AddArgument("-a", {"--print-ast"}, "Print AST after parsing");
     arg_parser.AddArgument("-t", {"--print-tokens"}, "Print tokens after lexing");
     arg_parser.AddArgument("-p", {"--print-opcodes"}, "Print opcodes after generation");
@@ -68,8 +69,10 @@ void RonaScriptMain(int argc, char* argv[]) {
             Log::INFO(parser.DumpsAst());
         }
 
-        RnAstValidator validator;
-        validator.Visit(parser.ast->root.get());
+        if (!arg_parser.IsSet("--no-validation")) {
+            RnAstValidator validator;
+            validator.Visit(parser.ast->root.get());
+        }
     } catch (const std::exception& e) {
         Log::ERROR("Parse Error: " + std::string(e.what()));
         return;

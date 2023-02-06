@@ -21,11 +21,12 @@ AliasDecl::~AliasDecl() = default;
 
 /*****************************************************************************/
 std::string AliasDecl::ToString(bool nl) {
-    std::string s =
-        MakeTabStr() + "AliasDecl( " + alias_name->value + " -> " + base_name->value;
-    s += ", ";
-    s += (alias_type == NAME_ALIAS ? "NAME_ALIAS" : "TYPE_ALIAS");
-    s += " )";
+    std::string s = MakeTabStr() + "AliasDecl( " + alias_name->value + " -> ";
+    if (alias_type == NAME_ALIAS) {
+        s += base_name->value + " )";
+    } else {
+        s += base_type->ToString() + " )";
+    }
 
     if (nl) {
         s += "\n";

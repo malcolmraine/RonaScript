@@ -35,20 +35,18 @@ public:
         return alias_name;
     }
 
+    [[nodiscard]] const std::shared_ptr<RnTypeComposite>& GetBaseType() const {
+        return base_type;
+    }
+
     void SetAliasName(const std::shared_ptr<Name>& aliasName) {
         alias_name = aliasName;
     }
 
-    [[nodiscard]] AliasType GetAliasType() const {
-        return alias_type;
-    }
-
-    void SetAliasType(AliasType aliasType) {
-        alias_type = aliasType;
-    }
 
     std::shared_ptr<Name> base_name = nullptr;
     std::shared_ptr<Name> alias_name = nullptr;
+    std::shared_ptr<RnTypeComposite> base_type;
     AliasType alias_type;
 };
 
