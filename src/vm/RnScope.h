@@ -11,11 +11,20 @@
 #define RONASCRIPT_RNSCOPE_H
 
 #include <map>
+#include <variant>
 #include <vector>
 #include "../util/RnStack.h"
 #include "RnMemoryGroup.h"
 #include "RnScope.h"
 #include "RnSymbolTable.h"
+
+class RnBoolObject;
+class RnIntObject;
+class RnFloatObject;
+class RnArrayObject;
+class RnClassObject;
+class RnStringObject;
+class RnFunctionObject;
 
 class RnScope {
 public:
@@ -32,12 +41,17 @@ public:
 
     static void LoadLibraryIntoScope(RnScope* scope, const std::string& library,
                                      bool add_data = false);
+    RnObject* MakeLocal(RnType::Type type);
+    void Reset();
 
 protected:
     RnScope* _parent = nullptr;
     std::vector<RnObject*> _stack;
     RnSymbolTable _symbolTable;
     RnMemoryGroup _memory_group;
+    std::vector<std::variant<RnBoolObject, RnStringObject, RnIntObject, RnFloatObject,
+                             RnFunctionObject, RnClassObject, RnArrayObject>>
+        _locals;  // OP_CREATE_CONTEXT can pass a local count to reserve memory for this
 
 private:
     static std::map<std::string, void*> _handles;

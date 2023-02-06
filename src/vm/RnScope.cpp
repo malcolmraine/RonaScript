@@ -12,6 +12,12 @@
 #include "../util/log.h"
 #include "RnFunction.h"
 #include "RnFunctionObject.h"
+#include "RnBoolObject.h"
+#include "RnIntObject.h"
+#include "RnFloatObject.h"
+#include "RnArrayObject.h"
+#include "RnStringObject.h"
+#include "RnClassObject.h"
 #include "RnMemoryManager.h"
 #include "RnObject.h"
 #include "RnSymbolTable.h"
@@ -133,4 +139,48 @@ void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library,
     } else {
         Log::DEBUG("Unable to load external library: " + library);
     }
+}
+
+/*****************************************************************************/
+RnObject* RnScope::MakeLocal(RnType::Type type) {
+    switch (type) {
+        case RnType::RN_BOOLEAN:
+            _locals.emplace_back(RnBoolObject());
+            return &std::get<RnBoolObject>(_locals.back());
+        case RnType::RN_STRING:
+            _locals.emplace_back(RnStringObject());
+            return &std::get<RnStringObject>(_locals.back());
+        case RnType::RN_FLOAT:
+            _locals.emplace_back(RnFloatObject());
+            return &std::get<RnFloatObject>(_locals.back());
+        case RnType::RN_INT:
+            _locals.emplace_back(RnIntObject());
+            return &std::get<RnIntObject>(_locals.back());
+        case RnType::RN_ARRAY:
+            _locals.emplace_back(RnArrayObject());
+            return &std::get<RnArrayObject>(_locals.back());
+        case RnType::RN_FUNCTION:
+            _locals.emplace_back(RnFunctionObject());
+            return &std::get<RnFunctionObject>(_locals.back());
+        case RnType::RN_CLASS_INSTANCE:
+            _locals.emplace_back(RnClassObject());
+            return &std::get<RnClassObject>(_locals.back());
+        case RnType::RN_OBJECT:
+            _locals.emplace_back(RnClassObject());
+            return &std::get<RnClassObject>(_locals.back());
+        case RnType::RN_NULL:
+            break;
+        case RnType::RN_VOID:
+            break;
+        case RnType::RN_UNKNOWN:
+            break;
+    }
+    return nullptr;
+}
+
+/*****************************************************************************/
+void RnScope::Reset() {
+    GetSymbolTable()->Clear();
+    GetStack().clear();
+    _locals.clear();
 }

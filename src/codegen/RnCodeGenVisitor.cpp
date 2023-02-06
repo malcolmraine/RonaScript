@@ -262,13 +262,15 @@ InstructionBlock RnCodeGenVisitor::Visit(FuncCall* node) {
 InstructionBlock RnCodeGenVisitor::Visit(VarDecl* node) {
     InstructionBlock instructions;
     auto interned_id = RnObject::InternValue(node->id);
+    RnOpCode opcode = OP_MAKE_VAR;
     if (node->is_const) {
-        instructions.emplace_back(
-            new RnInstruction(OP_MAKE_CONST, node->type->GetType(), interned_id));
-    } else {
-        instructions.emplace_back(
-            new RnInstruction(OP_MAKE_VAR, node->type->GetType(), interned_id));
+        opcode = OP_MAKE_CONST;
+    } else if (node->is_local) {
+        opcode = OP_MAKE_LOCAL;
     }
+    instructions.emplace_back(
+        new RnInstruction(opcode, node->type->GetType(), interned_id));
+
     if (node->init_value) {
         InstructionBlock expr = GeneralVisit(node->init_value);
         instructions.insert(instructions.end(), expr.begin(), expr.end());

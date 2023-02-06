@@ -487,6 +487,13 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             GetScope()->StoreObject(instruction->_arg2, obj);
             break;
         }
+        case OP_MAKE_LOCAL: {
+            auto type = static_cast<RnType::Type>(instruction->_arg1);
+            auto obj = GetScope()->MakeLocal(type);
+            GetScope()->GetMemoryGroup()->AddObject(obj);
+            GetScope()->StoreObject(instruction->_arg2, obj);
+            break;
+        }
         case OP_MAKE_VAR: {
             auto type = static_cast<RnType::Type>(instruction->_arg1);
             auto obj = _memory_manager->CreateObject(type);
@@ -561,8 +568,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_RESET_CONTEXT: {
-            GetScope()->GetSymbolTable()->Clear();
-            GetStack().clear();
+            GetScope()->Reset();
+//            GetScope()->GetSymbolTable()->Clear();
+//            GetStack().clear();
             break;
         }
         case OP_DELETE: {

@@ -122,6 +122,7 @@ auto RnInstruction::ToString() -> std::string {
             arg1_str = RnObject::GetInternedString(_arg1);
             s += std::to_string(_arg1) + "\t\t";
             break;
+        case OP_MAKE_LOCAL:
         case OP_MAKE_VAR:
             arg1_str = RnType::TypeToString(static_cast<RnType::Type>(_arg1));
             arg2_str = RnObject::GetInternedString(_arg2);
