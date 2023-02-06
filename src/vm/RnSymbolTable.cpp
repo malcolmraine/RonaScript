@@ -81,11 +81,6 @@ bool RnSymbolTable::SymbolExists(RnIntNative key, bool search_parent) const {
 }
 
 /*****************************************************************************/
-void RnSymbolTable::SetMemoryGroup(RnMemoryGroup* group) {
-    _memory_group = group;
-}
-
-/*****************************************************************************/
 void RnSymbolTable::SetParent(RnSymbolTable* parent) {
     assert(parent != this);
     _parent_table = parent;

@@ -569,8 +569,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_RESET_CONTEXT: {
             GetScope()->Reset();
-//            GetScope()->GetSymbolTable()->Clear();
-//            GetStack().clear();
             break;
         }
         case OP_DELETE: {

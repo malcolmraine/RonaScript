@@ -28,7 +28,6 @@ public:
     void RemoveSymbol(RnIntNative symbol);
     void AliasSymbol(RnIntNative base, RnIntNative alias);
     [[nodiscard]] bool SymbolExists(RnIntNative key, bool search_parent = true) const;
-    void SetMemoryGroup(RnMemoryGroup* group);
     void SetParent(RnSymbolTable* parent);
     [[nodiscard]] RnSymbolTable* GetParent() const;
     [[nodiscard]] std::vector<RnIntNative> GetSymbols() const;
@@ -38,7 +37,6 @@ public:
 
 private:
     RnSymbolTable* _parent_table = nullptr;
-    RnMemoryGroup* _memory_group = nullptr;
     std::unordered_map<RnIntNative, RnObject*> _table;
 };
 

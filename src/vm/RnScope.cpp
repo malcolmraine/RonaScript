@@ -31,7 +31,6 @@ RnScope::RnScope(RnScope* parent) : _memory_group(nullptr) {
         _symbolTable.SetParent(parent->GetSymbolTable());
         _memory_group.SetParent(parent->GetMemoryGroup());
     }
-    _symbolTable.SetMemoryGroup(&_memory_group);
     _stack.reserve(10);
 }
 
