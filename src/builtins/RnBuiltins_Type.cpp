@@ -12,16 +12,28 @@
 #include "../vm/RnScope.h"
 
 /*****************************************************************************/
-void RnBuiltins_Type::to_int(RnScope* scope, const std::vector<RnObject*>& args,
-                             RnObject* ret_val) {}
+void RnBuiltins_Type::rn_builtin_to_int(RnScope* scope, const std::vector<RnObject*>& args,
+                             RnObject* ret_val) {
+    ret_val->SetData(args[0]->ToInt());
+}
 
 /*****************************************************************************/
-void RnBuiltins_Type::to_float(RnScope* scope, const std::vector<RnObject*>& args,
-                               RnObject* ret_val) {}
+void RnBuiltins_Type::rn_builtin_to_float(RnScope* scope, const std::vector<RnObject*>& args,
+                               RnObject* ret_val) {
+    ret_val->SetData(args[0]->ToFloat());
+}
 
 /*****************************************************************************/
-void RnBuiltins_Type::to_string(RnScope* scope, const std::vector<RnObject*>& args,
-                                RnObject* ret_val) {}
+void RnBuiltins_Type::rn_builtin_to_string(RnScope* scope, const std::vector<RnObject*>& args,
+                                RnObject* ret_val) {
+    ret_val->SetData(args[0]->ToString());
+}
+
+/*****************************************************************************/
+void RnBuiltins_Type::rn_builtin_to_bool(RnScope* scope, const std::vector<RnObject*>& args,
+                                           RnObject* ret_val) {
+    ret_val->SetData(args[0]->ToBool());
+}
 
 /*****************************************************************************/
 void RnBuiltins_Type::rn_builtin_is_string(RnScope* scope,
