@@ -10,10 +10,10 @@
 #ifndef RONASCRIPT_RNCODEGENVISITOR_H
 #define RONASCRIPT_RNCODEGENVISITOR_H
 
+#include <vector>
+#include "../parser/RnAstVisitor.h"
 #include "../parser/ast/Ast.h"
 #include "RnInstruction.h"
-#include "../parser/RnAstVisitor.h"
-#include <vector>
 
 class StringLiteral;
 class ScopeNode;

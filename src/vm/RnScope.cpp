@@ -10,16 +10,16 @@
 #include "RnScope.h"
 #include <dlfcn.h>
 #include "../util/log.h"
+#include "RnArrayObject.h"
+#include "RnBoolObject.h"
+#include "RnClassObject.h"
+#include "RnFloatObject.h"
 #include "RnFunction.h"
 #include "RnFunctionObject.h"
-#include "RnBoolObject.h"
 #include "RnIntObject.h"
-#include "RnFloatObject.h"
-#include "RnArrayObject.h"
-#include "RnStringObject.h"
-#include "RnClassObject.h"
 #include "RnMemoryManager.h"
 #include "RnObject.h"
+#include "RnStringObject.h"
 #include "RnSymbolTable.h"
 
 std::map<std::string, void*> RnScope::_handles;

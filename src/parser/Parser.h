@@ -137,7 +137,8 @@ private:
     std::unordered_map<std::string, std::string> _pragma_table;
     ParserState _previous_state = GENERAL_CONTEXT;
     ParserState _current_state = GENERAL_CONTEXT;
-    std::unordered_map<std::string, std::shared_ptr<RnTypeComposite>> _user_defined_type_map;
+    std::unordered_map<std::string, std::shared_ptr<RnTypeComposite>>
+        _user_defined_type_map;
 };
 
 #endif  //RONASCRIPT_PARSER_H

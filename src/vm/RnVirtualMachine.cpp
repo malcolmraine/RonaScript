@@ -438,45 +438,46 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_CALL: {
             auto func_obj = dynamic_cast<RnFunctionObject*>(GetStack().back());
             GetStack().pop_back();
-//            CallFunction(func_obj, instruction->_arg1);
+            //            CallFunction(func_obj, instruction->_arg1);
 
-                std::vector<RnObject*> args;
-                auto func = func_obj->GetData();
-                args.reserve(instruction->_arg1);
-                for (uint32_t i = 0; i < instruction->_arg1; i++) {
-                    args.insert(args.begin(), GetStack().back());
-                    GetStack().pop_back();
+            std::vector<RnObject*> args;
+            auto func = func_obj->GetData();
+            args.reserve(instruction->_arg1);
+            for (uint32_t i = 0; i < instruction->_arg1; i++) {
+                args.insert(args.begin(), GetStack().back());
+                GetStack().pop_back();
+            }
+            RnObject* ret_val =
+                _memory_manager->CreateObject(func_obj->GetReturnType());
+
+            if (func->IsBuiltIn()) {
+                func->Call(args, ret_val);
+                if (func_obj->GetReturnType() != RnType::RN_NULL) {
+                    GetStack().push_back(ret_val);
                 }
-                RnObject* ret_val = _memory_manager->CreateObject(func_obj->GetReturnType());
+            } else {
+                _call_stack.push_back(func->GetScope());
+                _scopes.push_back(func->GetScope());
 
-                if (func->IsBuiltIn()) {
-                    func->Call(args, ret_val);
-                    if (func_obj->GetReturnType() != RnType::RN_NULL) {
-                        GetStack().push_back(ret_val);
+                func->PassArguments(args);
+                bool has_returned = false;
+                size_t func_index = func->GetIStart();
+                size_t end_index = func->GetIStart() + func->GetICnt();
+                for (; func_index < end_index; func_index++) {
+                    ExecuteInstruction(has_returned, func_index);
+                    if (has_returned) {
+                        break;
                     }
-                } else {
-                    _call_stack.push_back(func->GetScope());
-                    _scopes.push_back(func->GetScope());
-
-                    func->PassArguments(args);
-                    bool has_returned = false;
-                    size_t func_index = func->GetIStart();
-                    size_t end_index = func->GetIStart() + func->GetICnt();
-                    for (; func_index < end_index; func_index++) {
-                        ExecuteInstruction(has_returned, func_index);
-                        if (has_returned) {
-                            break;
-                        }
-                    }
-
-                    _call_stack.pop_back();
-                    _scopes.pop_back();
-
-                    if (func->GetName() == "construct") {
-                        GetStack().push_back(func->GetScope()->GetObject(_object_this_key));
-                    }
-                    func->Reset();
                 }
+
+                _call_stack.pop_back();
+                _scopes.pop_back();
+
+                if (func->GetName() == "construct") {
+                    GetStack().push_back(func->GetScope()->GetObject(_object_this_key));
+                }
+                func->Reset();
+            }
             break;
         }
         case OP_MAKE_CONST: {
@@ -774,15 +775,31 @@ void RnVirtualMachine::RegisterBuiltins() {
     // Would be nice to have each of these in separate namespaces based on their
     // category
     std::vector<std::tuple<std::string, BuiltinFunction, RnType::Type>> functions = {
-        {"print", CastToBuiltin(&RnBuiltins_IO::rn_builtin_print), RnType::RN_NULL},
-        {"read", CastToBuiltin(&RnBuiltins_IO::read), RnType::RN_STRING},
-        {"file_read", CastToBuiltin(&RnBuiltins_IO::read), RnType::RN_STRING},
-        {"file_write", CastToBuiltin(&RnBuiltins_IO::file_write), RnType::RN_BOOLEAN},
-        {"prompt", CastToBuiltin(&RnBuiltins_IO::rn_builtin_prompt), RnType::RN_STRING},
-        {"file_size", CastToBuiltin(&RnBuiltins_IO::file_size), RnType::RN_INT},
         {"sum", CastToBuiltin(&RnBuiltins_Math::rn_builtin_sum), RnType::RN_FLOAT},
-        {"pow", CastToBuiltin(&RnBuiltins_Math::pow), RnType::RN_FLOAT},
-        {"is_int", CastToBuiltin(&RnBuiltins_Type::rn_builtin_is_int),
+        {"pow", CastToBuiltin(&RnBuiltins_Math::rn_builtin_pow), RnType::RN_FLOAT},
+        {"mod", CastToBuiltin(&RnBuiltins_Math::rn_builtin_mod), RnType::RN_INT},
+        {"sqrt", CastToBuiltin(&RnBuiltins_Math::rn_builtin_sqrt), RnType::RN_FLOAT},
+        {"cbrt", CastToBuiltin(&RnBuiltins_Math::rn_builtin_cbrt), RnType::RN_FLOAT},
+        {"randf", CastToBuiltin(&RnBuiltins_Math::rn_builtin_randf), RnType::RN_FLOAT},
+        {"randint", CastToBuiltin(&RnBuiltins_Math::rn_builtin_randint),
+         RnType::RN_INT},
+        {"normal", CastToBuiltin(&RnBuiltins_Math::rn_builtin_normal),
+         RnType::RN_ARRAY},
+        {"file_size", CastToBuiltin(&RnBuiltins_IO::rn_builtin_file_size),
+         RnType::RN_INT},
+        {"file_write", CastToBuiltin(&RnBuiltins_IO::rn_builtin_file_write),
+         RnType::RN_INT},
+        {"print", CastToBuiltin(&RnBuiltins_IO::rn_builtin_print), RnType::RN_VOID},
+        {"read", CastToBuiltin(&RnBuiltins_IO::rn_builtin_read), RnType::RN_STRING},
+        {"prompt", CastToBuiltin(&RnBuiltins_IO::rn_builtin_prompt), RnType::RN_STRING},
+        {"to_int", CastToBuiltin(&RnBuiltins_Type::rn_builtin_to_int), RnType::RN_INT},
+        {"to_float", CastToBuiltin(&RnBuiltins_Type::rn_builtin_to_float),
+         RnType::RN_FLOAT},
+        {"to_string", CastToBuiltin(&RnBuiltins_Type::rn_builtin_to_string),
+         RnType::RN_STRING},
+        {"to_bool", CastToBuiltin(&RnBuiltins_Type::rn_builtin_to_bool),
+         RnType::RN_BOOLEAN},
+        {"is_string", CastToBuiltin(&RnBuiltins_Type::rn_builtin_is_string),
          RnType::RN_BOOLEAN},
         {"is_float", CastToBuiltin(&RnBuiltins_Type::rn_builtin_is_float),
          RnType::RN_BOOLEAN},
@@ -794,24 +811,56 @@ void RnVirtualMachine::RegisterBuiltins() {
          RnType::RN_BOOLEAN},
         {"is_callable", CastToBuiltin(&RnBuiltins_Type::rn_builtin_is_callable),
          RnType::RN_BOOLEAN},
+        {"is_int", CastToBuiltin(&RnBuiltins_Type::rn_builtin_is_int),
+         RnType::RN_BOOLEAN},
+        {"titlecase", CastToBuiltin(&RnBuiltins_String::rn_builtin_titlecase),
+         RnType::RN_STRING},
+        {"lower", CastToBuiltin(&RnBuiltins_String::rn_builtin_lower),
+         RnType::RN_STRING},
+        {"upper", CastToBuiltin(&RnBuiltins_String::rn_builtin_upper),
+         RnType::RN_STRING},
+        {"snakecase", CastToBuiltin(&RnBuiltins_String::rn_builtin_snakecase),
+         RnType::RN_STRING},
+        {"str_split", CastToBuiltin(&RnBuiltins_String::rn_builtin_str_split),
+         RnType::RN_STRING},
         {"str_merge", CastToBuiltin(&RnBuiltins_String::rn_builtin_str_merge),
          RnType::RN_STRING},
-        {"array_merge", CastToBuiltin(&RnBuiltins_Array::rn_builtin_array_merge),
+        {"str_substr", CastToBuiltin(&RnBuiltins_String::rn_builtin_str_substr),
+         RnType::RN_STRING},
+        {"str_startwith", CastToBuiltin(&RnBuiltins_String::rn_builtin_str_startwith),
+         RnType::RN_BOOLEAN},
+        {"str_endswith", CastToBuiltin(&RnBuiltins_String::rn_builtin_str_endswith),
+         RnType::RN_BOOLEAN},
+        {"str_join", CastToBuiltin(&RnBuiltins_String::rn_builtin_str_join),
+         RnType::RN_STRING},
+        {"array_filter", CastToBuiltin(&RnBuiltins_Array::rn_builtin_array_filter),
+         RnType::RN_ARRAY},
+        {"array_union", CastToBuiltin(&RnBuiltins_Array::rn_builtin_array_union),
+         RnType::RN_ARRAY},
+        {"array_intersect",
+         CastToBuiltin(&RnBuiltins_Array::rn_builtin_array_intersect),
          RnType::RN_ARRAY},
         {"count", CastToBuiltin(&RnBuiltins_Array::rn_builtin_count), RnType::RN_INT},
-        {"system", CastToBuiltin(&RnBuiltins::rn_builtin_system), RnType::RN_ARRAY},
-        {"lload", CastToBuiltin(&RnBuiltins::rn_builtin_lload),
-         RnType::RN_CLASS_INSTANCE},
-        {"bind", CastToBuiltin(&RnBuiltins::rn_builtin_bind), RnType::RN_FUNCTION},
-        {"count", CastToBuiltin(&RnBuiltins_Array::rn_builtin_count), RnType::RN_INT},
+        {"array_merge", CastToBuiltin(&RnBuiltins_Array::rn_builtin_array_merge),
+         RnType::RN_ARRAY},
         {"array_push", CastToBuiltin(&RnBuiltins_Array::rn_builtin_array_push),
-         RnType::RN_NULL},
-        {"setenv", CastToBuiltin(&RnBuiltins::rn_builtin_setenv),
-         RnType::RN_INT},
-        {"getenv", CastToBuiltin(&RnBuiltins::rn_builtin_getenv),
-         RnType::RN_STRING},
-        {"unsetenv", CastToBuiltin(&RnBuiltins::rn_builtin_unsetenv),
-         RnType::RN_INT},
+         RnType::RN_VOID},
+        {"array_pop", CastToBuiltin(&RnBuiltins_Array::rn_builtin_array_pop),
+         RnType::RN_VOID},
+        {"array_zeros", CastToBuiltin(&RnBuiltins_Array::rn_builtin_array_zeros),
+         RnType::RN_ARRAY},
+        {"array_fill", CastToBuiltin(&RnBuiltins_Array::rn_builtin_array_fill),
+         RnType::RN_ARRAY},
+        {"sequence", CastToBuiltin(&RnBuiltins_Array::rn_builtin_sequence),
+         RnType::RN_ARRAY},
+        {"unpack", CastToBuiltin(&RnBuiltins::rn_builtin_unpack), RnType::RN_VOID},
+        {"call", CastToBuiltin(&RnBuiltins::rn_builtin_call), RnType::RN_VOID},
+        {"system", CastToBuiltin(&RnBuiltins::rn_builtin_system), RnType::RN_VOID},
+        {"lload", CastToBuiltin(&RnBuiltins::rn_builtin_lload), RnType::RN_OBJECT},
+        {"bind", CastToBuiltin(&RnBuiltins::rn_builtin_bind), RnType::RN_VOID},
+        {"setenv", CastToBuiltin(&RnBuiltins::rn_builtin_setenv), RnType::RN_INT},
+        {"getenv", CastToBuiltin(&RnBuiltins::rn_builtin_getenv), RnType::RN_STRING},
+        {"unsetenv", CastToBuiltin(&RnBuiltins::rn_builtin_unsetenv), RnType::RN_INT},
     };
 
     for (auto parts : functions) {

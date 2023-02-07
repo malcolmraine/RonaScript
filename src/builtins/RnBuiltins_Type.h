@@ -18,14 +18,14 @@ class RnObject;
 class RnBuiltins_Type {
 public:
     // Casting
-    static void to_int(RnScope* scope, const std::vector<RnObject*>& args,
-                       RnObject* ret_val);
-
-    static void to_float(RnScope* scope, const std::vector<RnObject*>& args,
-                         RnObject* ret_val);
-
-    static void to_string(RnScope* scope, const std::vector<RnObject*>& args,
-                          RnObject* ret_val);
+    static void rn_builtin_to_int(RnScope* scope, const std::vector<RnObject*>& args,
+                                  RnObject* ret_val);
+    static void rn_builtin_to_float(RnScope* scope, const std::vector<RnObject*>& args,
+                                    RnObject* ret_val);
+    static void rn_builtin_to_string(RnScope* scope, const std::vector<RnObject*>& args,
+                                     RnObject* ret_val);
+    static void rn_builtin_to_bool(RnScope* scope, const std::vector<RnObject*>& args,
+                                   RnObject* ret_val);
 
     // type methods
     static void rn_builtin_is_string(RnScope* scope, const std::vector<RnObject*>& args,

@@ -51,10 +51,7 @@ class AttributeAccess;
 
 class RnAstValidator : public RnAstVisitor<bool> {
 public:
-    enum ASSIGNMENT_TYPE {
-        RETURN_VALUE,
-        ASSIGNMENT_VALUE
-    };
+    enum ASSIGNMENT_TYPE { RETURN_VALUE, ASSIGNMENT_VALUE };
     RnAstValidator() = default;
     ~RnAstValidator() = default;
 
@@ -101,9 +98,10 @@ private:
         const std::shared_ptr<AstNode>& subtree);
     static std::shared_ptr<RnTypeComposite> ResolveTypes(
         const std::shared_ptr<RnTypeComposite>& type1,
-        const std::shared_ptr<RnTypeComposite>& type2); // TODO: Unit test
+        const std::shared_ptr<RnTypeComposite>& type2);  // TODO: Unit test
     bool CanAssignTypeTo(const std::shared_ptr<RnTypeComposite>& destination,
-                         const std::shared_ptr<RnTypeComposite>& source, ASSIGNMENT_TYPE assignment_type); // TODO: Unit test
+                         const std::shared_ptr<RnTypeComposite>& source,
+                         ASSIGNMENT_TYPE assignment_type);  // TODO: Unit test
 
 private:
     ScopeNode* _current_scope = nullptr;

@@ -23,7 +23,7 @@ union argdata {
 RnInstruction::RnInstruction() = default;
 
 /*****************************************************************************/
- RnInstruction::RnInstruction(RnOpCode opcode) {
+RnInstruction::RnInstruction(RnOpCode opcode) {
     _opcode = opcode;
 }
 
@@ -41,7 +41,8 @@ RnInstruction::RnInstruction(RnOpCode opcode, uint32_t arg1, uint32_t arg2) {
 }
 
 /*****************************************************************************/
-RnInstruction::RnInstruction(RnOpCode opcode, uint32_t arg1, uint32_t arg2, uint32_t arg3) {
+RnInstruction::RnInstruction(RnOpCode opcode, uint32_t arg1, uint32_t arg2,
+                             uint32_t arg3) {
     _opcode = opcode;
     _arg1 = arg1;
     _arg2 = arg2;

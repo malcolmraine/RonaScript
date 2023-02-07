@@ -10,11 +10,11 @@
 #ifndef RONASCRIPT_SCOPE_NODE_H
 #define RONASCRIPT_SCOPE_NODE_H
 
+#include <unordered_set>
 #include <vector>
 #include "../RnAstSymbolTable.h"
 #include "AstNode.h"
 #include "NodeType.h"
-#include <unordered_set>
 
 class ClassDecl;
 class FuncDecl;

@@ -43,7 +43,6 @@ public:
         alias_name = aliasName;
     }
 
-
     std::shared_ptr<Name> base_name = nullptr;
     std::shared_ptr<Name> alias_name = nullptr;
     std::shared_ptr<RnTypeComposite> base_type;

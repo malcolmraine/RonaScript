@@ -42,7 +42,7 @@ class ExitStmt;
 class AttributeAccess;
 class Module;
 
-template<typename T>
+template <typename T>
 class RnAstVisitor {
     virtual T GeneralVisit(AstNode* node) = 0;
     virtual T GeneralVisit(const std::shared_ptr<AstNode>& node) = 0;

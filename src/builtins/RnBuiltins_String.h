@@ -18,28 +18,29 @@ class RnObject;
 class RnBuiltins_String {
 public:
     // String methods
-    static void titlecase(RnScope* scope, const std::vector<RnObject*>& args,
-                          RnObject* ret_val);
-    static void lower(RnScope* scope, const std::vector<RnObject*>& args,
-                      RnObject* ret_val);
-    static void upper(RnScope* scope, const std::vector<RnObject*>& args,
-                      RnObject* ret_val);
-    static void snakecase(RnScope* scope, const std::vector<RnObject*>& args,
-                          RnObject* ret_val);
-    static void str_split(RnScope* scope, const std::vector<RnObject*>& args,
-                          RnObject* ret_val);
-    static void str_merge(RnScope* scope, const std::vector<RnObject*>& args,
-                          RnObject* ret_val);
-    static void str_substr(RnScope* scope, const std::vector<RnObject*>& args,
-                           RnObject* ret_val);
-    static void str_startwith(RnScope* scope, const std::vector<RnObject*>& args,
-                              RnObject* ret_val);
-    static void str_endswith(RnScope* scope, const std::vector<RnObject*>& args,
-                             RnObject* ret_val);
-    static void str_join(RnScope* scope, const std::vector<RnObject*>& args,
-                         RnObject* ret_val);
+    static void rn_builtin_titlecase(RnScope* scope, const std::vector<RnObject*>& args,
+                                     RnObject* ret_val);
+    static void rn_builtin_lower(RnScope* scope, const std::vector<RnObject*>& args,
+                                 RnObject* ret_val);
+    static void rn_builtin_upper(RnScope* scope, const std::vector<RnObject*>& args,
+                                 RnObject* ret_val);
+    static void rn_builtin_snakecase(RnScope* scope, const std::vector<RnObject*>& args,
+                                     RnObject* ret_val);
+    static void rn_builtin_str_split(RnScope* scope, const std::vector<RnObject*>& args,
+                                     RnObject* ret_val);
     static void rn_builtin_str_merge(RnScope* scope, const std::vector<RnObject*>& args,
                                      RnObject* ret_val);
+    static void rn_builtin_str_substr(RnScope* scope,
+                                      const std::vector<RnObject*>& args,
+                                      RnObject* ret_val);
+    static void rn_builtin_str_startwith(RnScope* scope,
+                                         const std::vector<RnObject*>& args,
+                                         RnObject* ret_val);
+    static void rn_builtin_str_endswith(RnScope* scope,
+                                        const std::vector<RnObject*>& args,
+                                        RnObject* ret_val);
+    static void rn_builtin_str_join(RnScope* scope, const std::vector<RnObject*>& args,
+                                    RnObject* ret_val);
 };
 
 #endif  //RONASCRIPT_VM_BUILTINS_RNBUILTINS_STRING_H_

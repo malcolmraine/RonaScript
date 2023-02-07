@@ -25,11 +25,11 @@
 * SOFTWARE.
 *******************************************************************************/
 #include "Lexer.h"
-#include "Token.h"
-#include "TokenType.h"
 #include <algorithm>
 #include <iostream>
 #include <utility>
+#include "Token.h"
+#include "TokenType.h"
 
 /*****************************************************************************/
 Lexer::Lexer() {
@@ -515,7 +515,7 @@ void Lexer::LoadString(const std::string& input) {
     _use_loaded_string = true;
     _data.clear();
     _data.reserve(input.length());
-    for (auto c : input ) {
+    for (auto c : input) {
         _data.push_back(c);
     }
 }

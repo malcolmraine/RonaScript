@@ -137,18 +137,18 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
         case AST_BINARY_EXPR: {
             auto node = std::dynamic_pointer_cast<BinaryExpr>(subtree);
             if (node->_op == "->") {
-//                if (node->_left->node_type == AST_NAME) {
-//                    auto previous_scope = _current_scope;
-//                    auto name_node = std::dynamic_pointer_cast<Name>(node->_left);
-//                    _current_scope = std::dynamic_pointer_cast<ClassDecl>(
-//                                         _current_scope->symbol_table
-//                                             ->GetSymbolEntry(name_node->value)
-//                                             ->GetTypeDeclNode())
-//                                         ->scope.get();
-//                    auto subtree_type = EvaluateSubtreeType(name_node);
-//                    _current_scope = previous_scope;
-//                    return subtree_type;
-//                }
+                //                if (node->_left->node_type == AST_NAME) {
+                //                    auto previous_scope = _current_scope;
+                //                    auto name_node = std::dynamic_pointer_cast<Name>(node->_left);
+                //                    _current_scope = std::dynamic_pointer_cast<ClassDecl>(
+                //                                         _current_scope->symbol_table
+                //                                             ->GetSymbolEntry(name_node->value)
+                //                                             ->GetTypeDeclNode())
+                //                                         ->scope.get();
+                //                    auto subtree_type = EvaluateSubtreeType(name_node);
+                //                    _current_scope = previous_scope;
+                //                    return subtree_type;
+                //                }
                 return EvaluateSubtreeType(node->_right);
             }
             return ResolveTypes(EvaluateSubtreeType(node->_left),
