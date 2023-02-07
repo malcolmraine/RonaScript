@@ -1,6 +1,6 @@
-from glob import glob
-import re
 import os
+import re
+from glob import glob
 
 handle_rgx = re.compile(r"void rn_builtin_([a-zA-Z0-9_]+)\(")
 

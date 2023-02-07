@@ -14,37 +14,42 @@
 
 /*****************************************************************************/
 void RnBuiltins_Math::rn_builtin_pow(RnScope* scope, const std::vector<RnObject*>& args,
-                          RnObject* ret_val) {
+                                     RnObject* ret_val) {
     ret_val->SetData(std::pow(args.front()->ToFloat(), args.back()->ToFloat()));
 }
 
 /*****************************************************************************/
 void RnBuiltins_Math::rn_builtin_mod(RnScope* scope, const std::vector<RnObject*>& args,
-                          RnObject* ret_val) {}
+                                     RnObject* ret_val) {}
 
 /*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_sqrt(RnScope* scope, const std::vector<RnObject*>& args,
-                           RnObject* ret_val) {
+void RnBuiltins_Math::rn_builtin_sqrt(RnScope* scope,
+                                      const std::vector<RnObject*>& args,
+                                      RnObject* ret_val) {
     ret_val->SetData(std::sqrt(args.front()->ToFloat()));
 }
 
 /*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_cbrt(RnScope* scope, const std::vector<RnObject*>& args,
-                           RnObject* ret_val) {
+void RnBuiltins_Math::rn_builtin_cbrt(RnScope* scope,
+                                      const std::vector<RnObject*>& args,
+                                      RnObject* ret_val) {
     ret_val->SetData(std::cbrt(args.front()->ToFloat()));
 }
 
 /*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_randf(RnScope* scope, const std::vector<RnObject*>& args,
-                            RnObject* ret_val) {}
+void RnBuiltins_Math::rn_builtin_randf(RnScope* scope,
+                                       const std::vector<RnObject*>& args,
+                                       RnObject* ret_val) {}
 
 /*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_randint(RnScope* scope, const std::vector<RnObject*>& args,
-                              RnObject* ret_val) {}
+void RnBuiltins_Math::rn_builtin_randint(RnScope* scope,
+                                         const std::vector<RnObject*>& args,
+                                         RnObject* ret_val) {}
 
 /*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_normal(RnScope* scope, const std::vector<RnObject*>& args,
-                             RnObject* ret_val) {}
+void RnBuiltins_Math::rn_builtin_normal(RnScope* scope,
+                                        const std::vector<RnObject*>& args,
+                                        RnObject* ret_val) {}
 
 /*****************************************************************************/
 void RnBuiltins_Math::rn_builtin_sum(RnScope* scope, const std::vector<RnObject*>& args,

@@ -48,13 +48,14 @@ class RnObject;
 class RnBuiltins_IO {
 public:
     static void rn_builtin_file_size(RnScope* scope, const std::vector<RnObject*>& args,
-                          RnObject* ret_val);
-    static void rn_builtin_file_write(RnScope* scope, const std::vector<RnObject*>& args,
-                           RnObject* ret_val);
+                                     RnObject* ret_val);
+    static void rn_builtin_file_write(RnScope* scope,
+                                      const std::vector<RnObject*>& args,
+                                      RnObject* ret_val);
     static void rn_builtin_print(RnScope* scope, const std::vector<RnObject*>& args,
                                  RnObject* ret_val);
     static void rn_builtin_read(RnScope* scope, const std::vector<RnObject*>& args,
-                     RnObject* ret_val);
+                                RnObject* ret_val);
     static void rn_builtin_prompt(RnScope* scope, const std::vector<RnObject*>& args,
                                   RnObject* ret_val);
 };

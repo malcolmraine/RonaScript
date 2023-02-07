@@ -10,8 +10,8 @@
 #ifndef RONASCRIPT_RNTYPE_H
 #define RONASCRIPT_RNTYPE_H
 
-#include <string>
 #include <limits>
+#include <string>
 #include <utility>
 
 typedef long long RnIntNative;
@@ -100,12 +100,12 @@ public:
     explicit RnTypeComposite(const std::string& type);
     explicit RnTypeComposite(RnType::Type type);
     ~RnTypeComposite();
-    [[nodiscard]] bool IsWithinRange(RnTypeComposite type) const; // TODO: Unit test
+    [[nodiscard]] bool IsWithinRange(RnTypeComposite type) const;  // TODO: Unit test
     [[nodiscard]] Bounds<RnIntNative> GetIntBounds() const;
     Bounds<RnFloatNative> GetFloatBounds();
     void SetBounds(RnIntNative lower, RnIntNative upper);
     void SetBounds(RnFloatNative lower, RnFloatNative upper);
-    std::string ToString(); // TODO: Unit test
+    std::string ToString();  // TODO: Unit test
 
     [[nodiscard]] RnType::Type GetType() const {
         return _type;

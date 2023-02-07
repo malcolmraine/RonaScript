@@ -70,12 +70,12 @@ std::string RnTypeComposite::ToString() {
         case RnType::RN_STRING:
         case RnType::RN_ARRAY: {
             auto bounds = GetIntBounds();
-            return RnType::TypeToString(_type) + "<" + std::to_string(bounds.lower) + ".." +
-                   std::to_string(bounds.upper) + ">";
+            return RnType::TypeToString(_type) + "<" + std::to_string(bounds.lower) +
+                   ".." + std::to_string(bounds.upper) + ">";
         }
         default: {
-            return RnType::TypeToString(_type) + "<" + std::to_string(_bounds.lower) + ".." +
-                   std::to_string(_bounds.upper) + ">";
+            return RnType::TypeToString(_type) + "<" + std::to_string(_bounds.lower) +
+                   ".." + std::to_string(_bounds.upper) + ">";
         }
     }
 }

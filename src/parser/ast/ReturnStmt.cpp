@@ -8,8 +8,8 @@
 ******************************************************************************/
 
 #include "ReturnStmt.h"
-#include "NodeType.h"
 #include "../../codegen/RnCodeGenVisitor.h"
+#include "NodeType.h"
 
 /*****************************************************************************/
 ReturnStmt::ReturnStmt() {

@@ -832,7 +832,8 @@ std::shared_ptr<ForLoop> Parser::ParseForLoop() {
     Expect(TokenType::R_PARAN);
     AdvanceBuffer(1);
 
-    if (Peek()->token_type == TokenType::VAR || Peek()->token_type == TokenType::LOCAL) {
+    if (Peek()->token_type == TokenType::VAR ||
+        Peek()->token_type == TokenType::LOCAL) {
         AdvanceBuffer(1);
         node->init = ParseVarDecl();
 
@@ -880,9 +881,7 @@ std::shared_ptr<AliasDecl> Parser::ParseAliasDecl() {
     AdvanceBuffer(1);
     node->alias_name = ParseName();
 
-    node->alias_type =
-        Peek()->token_type == TokenType::TYPE ? TYPE_ALIAS : NAME_ALIAS;
-    
+    node->alias_type = Peek()->token_type == TokenType::TYPE ? TYPE_ALIAS : NAME_ALIAS;
 
     if (node->alias_type == NAME_ALIAS) {
         Expect(TokenType::NAME);
