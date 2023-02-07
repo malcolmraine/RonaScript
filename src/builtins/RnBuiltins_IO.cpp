@@ -16,14 +16,14 @@
 #include "../vm/RnScope.h"
 
 /*****************************************************************************/
-void RnBuiltins_IO::file_size(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_IO::rn_builtin_file_size(RnScope* scope, const std::vector<RnObject*>& args,
                               RnObject* ret_val) {
     std::string path = args.front()->ToString();
     ret_val->SetData(static_cast<RnIntNative>(std::filesystem::file_size(path)));
 }
 
 /*****************************************************************************/
-void RnBuiltins_IO::file_write(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_IO::rn_builtin_file_write(RnScope* scope, const std::vector<RnObject*>& args,
                                RnObject* ret_val) {}
 
 /*****************************************************************************/
@@ -37,7 +37,7 @@ void RnBuiltins_IO::rn_builtin_print(RnScope* scope, const std::vector<RnObject*
 }
 
 /*****************************************************************************/
-void RnBuiltins_IO::read(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_IO::rn_builtin_read(RnScope* scope, const std::vector<RnObject*>& args,
                          RnObject* ret_val) {
     std::ifstream file;
     file.open(args.front()->ToString());

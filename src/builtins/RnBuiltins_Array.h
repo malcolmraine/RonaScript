@@ -18,13 +18,11 @@ class RnObject;
 class RnBuiltins_Array {
 public:
     // Array functions
-    static void array_merge(RnScope* scope, const std::vector<RnObject*>& args,
-                            RnObject* ret_val);
-    static void array_filter(RnScope* scope, const std::vector<RnObject*>& args,
+    static void rn_builtin_array_filter(RnScope* scope, const std::vector<RnObject*>& args,
                              RnObject* ret_val);
-    static void array_union(RnScope* scope, const std::vector<RnObject*>& args,
+    static void rn_builtin_array_union(RnScope* scope, const std::vector<RnObject*>& args,
                             RnObject* ret_val);
-    static void array_intersect(RnScope* scope, const std::vector<RnObject*>& args,
+    static void rn_builtin_array_intersect(RnScope* scope, const std::vector<RnObject*>& args,
                                 RnObject* ret_val);
     static void rn_builtin_count(RnScope* scope, const std::vector<RnObject*>& args,
                                  RnObject* ret_val);

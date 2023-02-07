@@ -13,37 +13,33 @@
 #include "../vm/RnScope.h"
 
 /*****************************************************************************/
-void RnBuiltins_String::titlecase(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_String::rn_builtin_titlecase(RnScope* scope, const std::vector<RnObject*>& args,
                                   RnObject* ret_val) {}
 
 /*****************************************************************************/
-void RnBuiltins_String::lower(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_String::rn_builtin_lower(RnScope* scope, const std::vector<RnObject*>& args,
                               RnObject* ret_val) {}
 
 /*****************************************************************************/
-void RnBuiltins_String::upper(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_String::rn_builtin_upper(RnScope* scope, const std::vector<RnObject*>& args,
                               RnObject* ret_val) {}
 
 /*****************************************************************************/
-void RnBuiltins_String::snakecase(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_String::rn_builtin_snakecase(RnScope* scope, const std::vector<RnObject*>& args,
                                   RnObject* ret_val) {}
 
 /*****************************************************************************/
-void RnBuiltins_String::str_split(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_String::rn_builtin_str_split(RnScope* scope, const std::vector<RnObject*>& args,
                                   RnObject* ret_val) {}
 
 /*****************************************************************************/
-void RnBuiltins_String::str_merge(RnScope* scope, const std::vector<RnObject*>& args,
-                                  RnObject* ret_val) {}
-
-/*****************************************************************************/
-void RnBuiltins_String::str_substr(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_String::rn_builtin_str_substr(RnScope* scope, const std::vector<RnObject*>& args,
                                    RnObject* ret_val) {
     assert(args.size() == 2 || args.size() == 3);
 }
 
 /*****************************************************************************/
-void RnBuiltins_String::str_startwith(RnScope* scope,
+void RnBuiltins_String::rn_builtin_str_startwith(RnScope* scope,
                                       const std::vector<RnObject*>& args,
                                       RnObject* ret_val) {
     assert(args.size() == 2);
@@ -52,7 +48,7 @@ void RnBuiltins_String::str_startwith(RnScope* scope,
 }
 
 /*****************************************************************************/
-void RnBuiltins_String::str_endswith(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_String::rn_builtin_str_endswith(RnScope* scope, const std::vector<RnObject*>& args,
                                      RnObject* ret_val) {
     assert(args.size() == 2);
     ret_val->SetData(static_cast<bool>(
@@ -60,7 +56,7 @@ void RnBuiltins_String::str_endswith(RnScope* scope, const std::vector<RnObject*
 }
 
 /*****************************************************************************/
-void RnBuiltins_String::str_join(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_String::rn_builtin_str_join(RnScope* scope, const std::vector<RnObject*>& args,
                                  RnObject* ret_val) {
     assert(args.size() == 2 || args.size() == 3);
 }
