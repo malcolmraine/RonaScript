@@ -61,10 +61,10 @@ class Test(object):
             else:
                 msg = "PASSED"
 
-            if passed:
-                print(f"\033[92m{msg} ({round(self.runtime, 6)}s) - {self.name}")
+            if passed and not self.timeout_occurred:
+                print(f"\033[92m{msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m")
             else:
-                print(f"\033[91m{msg} ({round(self.runtime, 6)}s) - {self.name}")
+                print(f"\033[91m{msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m")
 
             self.log(f"Test: {self.name}")
             self.log(f"Status: {msg}")
