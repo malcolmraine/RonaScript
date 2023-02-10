@@ -9,9 +9,8 @@
 cmake_minimum_required(VERSION 3.20)
 project(RonaScript)
 
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 set(CMAKE_CXX_STANDARD 20)
-add_compile_options(-Werror -o3)
+add_compile_options(-Werror -o2)
 
 include(src/common/CMakeLists.txt)
 include(src/lexer/CMakeLists.txt)

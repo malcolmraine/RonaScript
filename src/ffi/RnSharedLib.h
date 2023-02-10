@@ -7,8 +7,8 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_SANDBOX_RNSHAREDLIB_H_
-#define RONASCRIPT_SANDBOX_RNSHAREDLIB_H_
+#ifndef RONASCRIPT_RNSHAREDLIB_H_
+#define RONASCRIPT_RNSHAREDLIB_H_
 
 #include <string>
 #include <vector>
@@ -34,4 +34,15 @@ RONA_EXPORT const char* LibraryVersion();
 RONA_EXPORT void LibraryFunctions(
     std::vector<std::tuple<std::string, RnType::Type>>& functions);
 
-#endif  //RONASCRIPT_SANDBOX_RNSHAREDLIB_H_
+#define DEFINE_LIBRARY(name, version) \
+    const char* LibraryName() {       \
+        return #name;                 \
+    }                                 \
+    const char* LibraryVersion() {    \
+        return #version;              \
+    }                                 \
+    void LibraryFunctions(std::vector<std::tuple<std::string, RnType::Type>>& functions)
+
+#define REGISTER_LIBRARY_FUNCTION(name, type) functions.emplace_back(#name, type);
+
+#endif  //RONASCRIPT_RNSHAREDLIB_H_

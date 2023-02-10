@@ -61,10 +61,10 @@ class Test(object):
             else:
                 msg = "PASSED"
 
-            if passed:
-                print(f"\033[92m{msg} ({round(self.runtime, 6)}s) - {self.name}")
+            if passed and not self.timeout_occurred:
+                print(f"\033[92m{msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m")
             else:
-                print(f"\033[91m{msg} ({round(self.runtime, 6)}s) - {self.name}")
+                print(f"\033[91m{msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m")
 
             self.log(f"Test: {self.name}")
             self.log(f"Status: {msg}")
@@ -136,6 +136,7 @@ class TestRunner(object):
 if __name__ == "__main__":
     runner = TestRunner()
     runner.add_test(Test("Command Line Arguments", "functional/commandline_args", ["-h"], timeout=1, invoke_count=100))
+    runner.add_test(Test("Binary Operators", "functional/binary_operators", [], timeout=2, invoke_count=1))
     runner.add_test(Test("Recursive GCF", "functional/recursive_gcf", [], timeout=2, invoke_count=3))
     runner.add_test(Test("Class Creation", "functional/class_creation", [], timeout=1, invoke_count=3))
     runner.add_test(Test("Simple Array", "functional/simple_array", [], invoke_count=3))
