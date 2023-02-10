@@ -1,23 +1,9 @@
-// hello.cpp
 #include <iostream>
 #include "../../src/ffi/RnSharedLib.h"
 
-/*****************************************************************************/
-const char* LibraryName()
+DEFINE_LIBRARY("HelloWorld", "1.0.0")
 {
-	return "HelloWorld";
-}
-
-/*****************************************************************************/
-const char* LibraryVersion()
-{
-	return "1.0.0";
-}
-
-/*****************************************************************************/
-void LibraryFunctions(std::vector<std::tuple<std::string, RnType::Type>>& functions)
-{
-	functions.emplace_back("hello", RnType::RN_STRING);
+	REGISTER_LIBRARY_FUNCTION(hello, RnType::RN_STRING)
 }
 
 /*****************************************************************************/
