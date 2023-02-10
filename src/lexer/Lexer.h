@@ -46,6 +46,7 @@
 #define HEX_LITERAL_PREFIX "0x"
 #define OCTAL_LITERAL_PREFIX "0o"
 #define IS_NEGATIVE_LITERAL(s) ((s)[0] == '-')
+#define IS_SIGNED_POSITIVE_LITERAL(s) ((s)[0] == '+')
 
 class Token;
 enum TokenType : int;

@@ -270,12 +270,32 @@ Token* Lexer::MakeToken(const std::string& s) {
     token->file_pos.char_num = char_num;
     token->file_pos.line_num = line_num;
 
+    // A number can have an abitrary number of signs in front of it
+    auto normalize_sign = [](const std::string& s) {
+        size_t i = 0;
+        int sign = 1;
+        for (; i < s.length(); i++) {
+            if (s[i] == '-') {
+                sign *= -1;
+                continue;
+            } else if (s[i] == '+') {
+                continue;
+            }
+            break;
+        }
+        if (sign == 1)
+            return s.substr(i);
+        return std::string(1, '-') + s.substr(i);
+    };
+
     if (_token_map.count(s) || (_token_map.count(s) && IsReservedWord(s))) {
         token->token_type = _token_map[s];
     } else if (IsIntLiteral(s)) {
         token->token_type = TokenType::INT_LITERAL;
+        token->lexeme = normalize_sign(s);
     } else if (IsFloatLiteral(s)) {
         token->token_type = TokenType::FLOAT_LITERAL;
+        token->lexeme = normalize_sign(s);
     } else if (IsStrLiteral(s)) {
         token->token_type = TokenType::STRING_LITERAL;
     } else if (IsBoolLiteral(s)) {
@@ -288,8 +308,16 @@ Token* Lexer::MakeToken(const std::string& s) {
 
 /*****************************************************************************/
 bool Lexer::IsIntLiteral(std::string s) {
-    for (size_t i = IS_NEGATIVE_LITERAL(s) ? 1 : 0; i < s.length(); ++i) {
-        if (!std::isdigit(s[i]))
+    size_t i = 0;
+    char c;
+    for (; i < s.length(); i++) {
+        c = s[i];
+        if (c != '+' && c != '-')
+            break;
+    }
+    for (; i < s.length(); i++) {
+        c = s[i];
+        if (!std::isdigit(c))
             return false;
     }
     return true;
@@ -298,9 +326,18 @@ bool Lexer::IsIntLiteral(std::string s) {
 /*****************************************************************************/
 bool Lexer::IsFloatLiteral(std::string s) {
     bool decimal_found = false;
-    for (size_t i = IS_NEGATIVE_LITERAL(s) ? 1 : 0; i < s.length(); ++i) {
-        if (!std::isdigit(s[i])) {
-            if (s[i] == '.' && !decimal_found)
+    size_t i = 0;
+    char c;
+    for (; i < s.length(); i++) {
+        c = s[i];
+        if (c != '+' && c != '-')
+            break;
+    }
+
+    for (; i < s.length(); ++i) {
+        c = s[i];
+        if (!std::isdigit(c)) {
+            if (c == '.' && !decimal_found)
                 decimal_found = true;
             else
                 return false;
@@ -330,7 +367,8 @@ bool Lexer::IsBoolLiteral(const std::string& s) {
 
 /*****************************************************************************/
 bool Lexer::IsStrLiteral(const std::string& s) {
-    return s[0] == '"' && s[s.length() - 1] == '"';
+    return (s[0] == '"' && s[s.length() - 1] == '"') ||
+           (s[0] == '\'' && s[s.length() - 1] == '\'');
 }
 
 /*****************************************************************************/
@@ -453,8 +491,6 @@ Token* Lexer::Consume() {
                 return ProcessComment(false);
             else
                 return ProcessOperator();
-        case '+':
-        case '-':
         case '*':
         case '^':
         case '%':
@@ -470,6 +506,11 @@ Token* Lexer::Consume() {
         case '\'':
         case '\"':
             return ProcessStringLiteral();
+        case '+':
+        case '-':
+            if (tokens.back()->token_type != TokenType::R_PARAN &&
+                !tokens.back()->IsBinaryOp())
+                return ProcessOperator();
         default: {
             if (Current() != '\r' && Current() != '\t' && Current() != '\n')
                 _lexeme.append(std::string(1, Current()));
