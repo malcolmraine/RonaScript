@@ -162,8 +162,8 @@ bool Token::IsBinaryOp() const {
 
 /*****************************************************************************/
 bool Token::IsUnaryOp() const {
-    return IsOneOf({TokenType::DBL_PLUS, TokenType::DBL_MINUS,
-                    TokenType::MINUS, TokenType::TILDE, TokenType::NOT});
+    return IsOneOf({TokenType::DBL_PLUS, TokenType::DBL_MINUS, TokenType::MINUS,
+                    TokenType::TILDE, TokenType::NOT});
 }
 
 /*****************************************************************************/
