@@ -10,7 +10,6 @@
 #include "RnCodeGenerator.h"
 #include <memory>
 #include "../parser/ast/Module.h"
-#include "../parser/ast/ScopeNode.h"
 
 /*****************************************************************************/
 RnCodeGenerator::RnCodeGenerator() = default;

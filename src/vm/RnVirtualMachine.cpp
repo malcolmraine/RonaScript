@@ -332,8 +332,11 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_UNARY_NOT: {
-            auto obj = GetScope()->GetObject(instruction->_arg1);
-            obj->SetData(!obj->ToBool());
+            auto obj = GetStack().back();
+            GetStack().pop_back();
+            auto result = RnObject::Create(!obj->ToBool());
+            GetScope()->GetMemoryGroup()->AddObject(result);
+            GetStack().push_back(result);
             break;
         }
         case OP_BREAK: {
@@ -346,6 +349,11 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_UNARY_INVERT: {
+            auto obj = GetStack().back();
+            GetStack().pop_back();
+            auto result = RnObject::Create(~obj->ToInt());
+            GetScope()->GetMemoryGroup()->AddObject(result);
+            GetStack().push_back(result);
             break;
         }
         case OP_UNARY_DECREMENT: {
@@ -359,6 +367,12 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_UNARY_NEGATION: {
+            auto obj = GetStack().back();
+            GetStack().pop_back();
+            auto result = RnObject::Create(-obj->ToFloat());
+            GetScope()->GetMemoryGroup()->AddObject(result);
+            GetStack().push_back(result);
+
             break;
         }
         case OP_RETURN: {
@@ -605,19 +619,12 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             }
             break;
         }
-        case OP_COMPARE: {
-            break;
-        }
         case OP_EXIT: {
             break_scope = true;
             auto obj = _memory_manager->CreateObject(RnType::RN_INT);
             GetScope()->GetMemoryGroup()->AddObject(obj);
             obj->SetData(static_cast<RnIntNative>(instruction->_arg1));
             GetStack().push_back(obj);
-            break;
-        }
-        case OP_ARRAY_STORE: {
-            // TODO: Remove OP_ARRAY_STORE
             break;
         }
         case OP_INDEX_ACCESS: {

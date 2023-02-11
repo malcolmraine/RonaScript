@@ -31,3 +31,8 @@ print("false and false = ", false and false);
 print("55 | 3 = ", 55 | 3);
 print("55 & 2 = ", 55 & 2);
 print((3));
+print(~(1) - ~-8);
+print(~(9 - -1) - ~-8);
+print(!true);
+print(!false);
+print(!1);

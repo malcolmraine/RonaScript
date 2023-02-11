@@ -413,8 +413,7 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
 std::shared_ptr<AstNode> Parser::GetExprComponent() {
     std::shared_ptr<AstNode> node = nullptr;
 
-    if ((Lookback() && Lookback()->IsOperator()) && Current()->IsUnaryOp() &&
-        Peek()->token_type == TokenType::NAME) {
+    if ((Lookback() && Lookback()->IsOperator()) && Current()->IsUnaryOp()) {
         return ParseUnaryExpr();
     } else if (Current()->token_type == TokenType::R_BRACK) {
         node = ParseArrayLiteral();
@@ -469,6 +468,20 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
     RnStack<Token*> op_stack;
     RnStack<std::shared_ptr<AstNode>> result_stack;
     result_stack.Push(std::shared_ptr<AstNode>());
+
+    // Grab any immediate unary operators and apply them to the closest
+    // expression. This may need some fine tuning.
+    if (Current()->IsUnaryOp()) {
+        auto node = std::make_shared<UnaryExpr>();
+        node->op = Current()->lexeme;
+        AdvanceBuffer(1);
+        if (Current()->token_type == TokenType::R_PARAN) {
+            node->expr = ParseExpr(TokenType::L_PARAN);
+        } else {
+            node->expr = GetExprComponent();
+        }
+        result_stack.push_back(node);
+    }
 
     auto make_binary_expr = [this, &result_stack, &op_stack]() mutable {
         auto node = std::make_shared<BinaryExpr>();

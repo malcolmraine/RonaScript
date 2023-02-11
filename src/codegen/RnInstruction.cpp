@@ -152,12 +152,10 @@ auto RnInstruction::ToString() -> std::string {
         case OP_TRY_CONTEXT:
         case OP_JUMPF:
         case OP_JUMPB:
-        case OP_COMPARE:
         case OP_EXIT:
         case OP_MAKE_ARRAY:
             s += std::to_string(_arg1) + "\t\t";
             break;
-        case OP_ARRAY_STORE:
         case OP_JUMPF_IF:
         case OP_JUMPB_IF:
         case OP_CALL:
