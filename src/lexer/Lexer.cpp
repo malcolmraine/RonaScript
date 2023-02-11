@@ -197,7 +197,6 @@ Lexer::Lexer() {
     _compounds.insert(">=");
     _compounds.insert("<=");
     _compounds.insert("==");
-    //    _compounds.insert("[]");
     _compounds.insert(">>");
     _compounds.insert("<<");
     _compounds.insert("::");
@@ -256,7 +255,15 @@ Lexer::~Lexer() {
 
 /*****************************************************************************/
 Token* Lexer::Emit() {
+
     auto token = MakeToken(_lexeme);
+
+    // This is a little awkward but it handles repeated unary operators
+    if (token->token_type == TokenType::NAME &&
+        (token->lexeme[0] == '+' || token->lexeme[0] == '-')) {
+        tokens.emplace_back(MakeToken(std::string(1, token->lexeme[0])));
+        token->lexeme = token->lexeme.substr(1);
+    }
     _lexeme.clear();
     tokens.emplace_back(token);
 
@@ -373,6 +380,11 @@ bool Lexer::IsStrLiteral(const std::string& s) {
 
 /*****************************************************************************/
 bool Lexer::IsCompound() const {
+    if ((Current() == '-' || Current() == '+') &&
+        (tokens.back()->IsLiteral() ||
+         _binary_ops.find(std::string(1, Peek())) == _binary_ops.end())) {
+        return false;
+    }
     return _compounds.find(GetCompoundCandidate()) != _compounds.end();
 }
 
@@ -508,8 +520,9 @@ Token* Lexer::Consume() {
             return ProcessStringLiteral();
         case '+':
         case '-':
-            if (tokens.back()->token_type != TokenType::R_PARAN &&
-                !tokens.back()->IsBinaryOp())
+            if ((tokens.back()->token_type != TokenType::R_PARAN &&
+                 !tokens.back()->IsBinaryOp()) ||
+                !_lexeme.empty())
                 return ProcessOperator();
         default: {
             if (Current() != '\r' && Current() != '\t' && Current() != '\n')

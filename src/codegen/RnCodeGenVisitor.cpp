@@ -397,12 +397,19 @@ InstructionBlock RnCodeGenVisitor::Visit(BoolLiteral* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(UnaryExpr* node) {
+    InstructionBlock instructions = GeneralVisit(node->expr);
     if (node->op == "++") {
-        size_t internvalue =
-            RnObject::InternValue(std::dynamic_pointer_cast<Name>(node->expr)->value);
-        return {new RnInstruction(OP_UNARY_INCREMENT, internvalue)};
+        instructions.push_back(new RnInstruction(OP_UNARY_INCREMENT));
+    } else if (node->op == "--") {
+        instructions.push_back(new RnInstruction(OP_UNARY_DECREMENT));
+    } else if (node->op == "-") {
+        instructions.push_back(new RnInstruction(OP_UNARY_NEGATION));
+    } else if (node->op == "~") {
+        instructions.push_back(new RnInstruction(OP_UNARY_INVERT));
+    } else if (node->op == "!") {
+        instructions.push_back(new RnInstruction(OP_UNARY_NOT));
     }
-    return {};
+    return instructions;
 }
 
 /*****************************************************************************/
