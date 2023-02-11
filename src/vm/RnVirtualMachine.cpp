@@ -619,9 +619,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             }
             break;
         }
-        case OP_COMPARE: {
-            break;
-        }
         case OP_EXIT: {
             break_scope = true;
             auto obj = _memory_manager->CreateObject(RnType::RN_INT);

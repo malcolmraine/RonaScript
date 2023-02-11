@@ -66,9 +66,7 @@ typedef enum {
     OP_JUMPB,
     OP_JUMPF_IF,
     OP_JUMPB_IF,
-    OP_COMPARE,       // op1:          op2:
     OP_EXIT,          // op1:      op2:
-    OP_ARRAY_STORE,   // op1: name     op2: offset
     OP_INDEX_ACCESS,  // op1: name     op2: offset
     OP_MAKE_ARG,      // op1: name       op2: type
     OP_MAKE_ALIAS,

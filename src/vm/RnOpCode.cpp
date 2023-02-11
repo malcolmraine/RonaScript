@@ -120,12 +120,8 @@ std::string GetOpCodeAsString(RnOpCode opcode) {
             return "OP_JUMPF_IF";
         case OP_JUMPB_IF:
             return "OP_JUMPB_IF";
-        case OP_COMPARE:
-            return "OP_COMPARE";
         case OP_EXIT:
             return "OP_EXIT";
-        case OP_ARRAY_STORE:
-            return "OP_ARRAY_STORE";
         case OP_INDEX_ACCESS:
             return "OP_INDEX_ACCESS";
         case OP_MAKE_ARG:
