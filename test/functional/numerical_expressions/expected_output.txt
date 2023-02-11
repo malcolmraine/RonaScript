@@ -27,3 +27,8 @@ false and false = false
 55 | 3 = true
 55 & 2 = true
 3
+-9
+-18
+false
+true
+false
