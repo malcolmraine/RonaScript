@@ -630,10 +630,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             GetStack().push_back(obj);
             break;
         }
-        case OP_ARRAY_STORE: {
-            // TODO: Remove OP_ARRAY_STORE
-            break;
-        }
         case OP_INDEX_ACCESS: {
             auto idx_value = GetStack().back()->ToInt();
             GetStack().pop_back();

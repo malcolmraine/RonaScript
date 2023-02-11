@@ -54,6 +54,9 @@ class Test(object):
                     invalid_output = output.strip("\n").strip()
                     break
 
+            if self.returncode != 0:
+                passed = False
+
             if self.timeout_occurred:
                 msg = "TIMEOUT"
             elif not passed:

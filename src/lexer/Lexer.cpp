@@ -255,7 +255,6 @@ Lexer::~Lexer() {
 
 /*****************************************************************************/
 Token* Lexer::Emit() {
-
     auto token = MakeToken(_lexeme);
 
     // This is a little awkward but it handles repeated unary operators

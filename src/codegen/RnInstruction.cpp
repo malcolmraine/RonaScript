@@ -157,7 +157,6 @@ auto RnInstruction::ToString() -> std::string {
         case OP_MAKE_ARRAY:
             s += std::to_string(_arg1) + "\t\t";
             break;
-        case OP_ARRAY_STORE:
         case OP_JUMPF_IF:
         case OP_JUMPB_IF:
         case OP_CALL:
