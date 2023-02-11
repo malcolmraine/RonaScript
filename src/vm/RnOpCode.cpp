@@ -156,13 +156,13 @@ RnOpCode GetOpCodeFromOperator(const std::string& op) {
     } else if (op == "**") {
         return OP_BINARY_POWER;
     } else if (op == "&") {
-        return OP_LOGICAL_AND;
-    } else if (op == "&&" || op == "and") {
         return OP_BINARY_AND;
+    } else if (op == "&&" || op == "and") {
+        return OP_LOGICAL_AND;
     } else if (op == "|") {
-        return OP_LOGICAL_OR;
-    } else if (op == "||" || op == "or") {
         return OP_BINARY_OR;
+    } else if (op == "||" || op == "or") {
+        return OP_LOGICAL_OR;
     } else if (op == "<") {
         return OP_BINARY_LT;
     } else if (op == ">") {
