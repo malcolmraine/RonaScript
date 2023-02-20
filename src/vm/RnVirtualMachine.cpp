@@ -122,8 +122,8 @@ void RnVirtualMachine::AddScope() {
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
     _gc_count++;
     if (_gc_count > 1000) {
-        _memory_manager->GCMark();
-        _memory_manager->GCSweep();
+//        _memory_manager->GCMark();
+//        _memory_manager->GCSweep();
         _gc_count = 0;
     }
 
@@ -389,22 +389,22 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_LOAD_INT: {
             auto value = RnObject::GetInternedInt(instruction->_arg1);
-            auto obj = CreateObject(static_cast<RnIntNative>(value));
-            GetScope()->GetMemoryGroup()->AddObject(obj);
+            auto obj = GetScope()->MakeLocal(RnType::RN_INT);
+            obj->SetData(static_cast<RnIntNative>(value));
             GetStack().push_back(obj);
             break;
         }
         case OP_LOAD_FLOAT: {
             auto value = RnObject::GetInternedFloat(instruction->_arg1);
-            auto obj = CreateObject(value);
-            GetScope()->GetMemoryGroup()->AddObject(obj);
+            auto obj = GetScope()->MakeLocal(RnType::RN_FLOAT);
+            obj->SetData(static_cast<RnFloatNative>(value));
             GetStack().push_back(obj);
             break;
         }
         case OP_LOAD_STRING: {
             auto value = RnObject::GetInternedString(instruction->_arg1);
-            auto obj = CreateObject(value);
-            GetScope()->GetMemoryGroup()->AddObject(obj);
+            auto obj = GetScope()->MakeLocal(RnType::RN_INT);
+            obj->SetData(value);
             GetStack().push_back(obj);
             break;
         }
@@ -444,8 +444,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_LOAD_BOOL: {
             auto value = static_cast<bool>(instruction->_arg1);
-            auto obj = CreateObject(value);
-            GetScope()->GetMemoryGroup()->AddObject(obj);
+            auto obj = GetScope()->MakeLocal(RnType::RN_BOOLEAN);
+            obj->SetData(value);
             GetStack().push_back(obj);
             break;
         }
@@ -505,7 +505,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_MAKE_LOCAL: {
             auto type = static_cast<RnType::Type>(instruction->_arg1);
             auto obj = GetScope()->MakeLocal(type);
-            GetScope()->GetMemoryGroup()->AddObject(obj);
             GetScope()->StoreObject(instruction->_arg2, obj);
             break;
         }
@@ -716,6 +715,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
 
 /*****************************************************************************/
 RnIntNative RnVirtualMachine::Run() {
+    std::setvbuf(stdout, nullptr, _IOFBF, 65536);
     bool has_returned = false;  // Placeholder
     auto stopwatch = StopWatch();
 
