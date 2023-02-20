@@ -52,6 +52,134 @@
 #include "ast/VarDecl.h"
 #include "ast/WhileLoop.h"
 
+std::unordered_map<TokenType, std::string> Parser::_char_map = {
+    {TokenType::R_BRACE, "{"},
+    {TokenType::L_BRACE, "}"},
+    {TokenType::R_PARAN, "("},
+    {TokenType::L_PARAN, ")"},
+    {TokenType::R_BRACK, "["},
+    {TokenType::L_BRACK, "]"},
+    {TokenType::R_CARAT, "<"},
+    {TokenType::L_CARAT, ">"},
+    {TokenType::SLASH, "/"},
+    {TokenType::PLUS, "+"},
+    {TokenType::STAR, "*"},
+    {TokenType::MINUS, "-"},
+    {TokenType::PERCENT, "%"},
+    {TokenType::AMPER, "&"},
+    {TokenType::BAR, "|"},
+    {TokenType::UP_ARROW, "^"},
+    {TokenType::TILDE, "~"},
+    {TokenType::BLOCK_COMMENT, "/*"},
+    {TokenType::INLINE_COMMENT, "//"},
+    {TokenType::DOLLAR, "$"},
+    {TokenType::NOT, "!"},
+    {TokenType::EQUAL, "="},
+    {TokenType::COMMA, ","},
+    {TokenType::DOT, "."},
+    {TokenType::COLON, ":"},
+    {TokenType::SEMICOLON, ":"},
+    {TokenType::DBL_QUOTE, "\""},
+    {TokenType::DBL_PLUS, "++"},
+    {TokenType::DBL_MINUS, "--"},
+    {TokenType::DBL_EQUAL, "=="},
+    {TokenType::PLUS_EQUAL, "+="},
+    {TokenType::MINUS_EQUAL, "-="},
+    {TokenType::PERCENT_EQUAL, "%="},
+    {TokenType::SLASH_EQUAL, "/="},
+    {TokenType::NOT_EQUAL, "!="},
+    {TokenType::AMPER_EQUAL, "&="},
+    {TokenType::BAR_EQUAL, "|="},
+    {TokenType::STAR_EQUAL, "*="},
+    {TokenType::DBL_STAR, "**"},
+    {TokenType::TILDE_EQUAL, "~="},
+    {TokenType::DBL_AMPER, "&&"},
+    {TokenType::DBL_BAR, "||"},
+    {TokenType::EMPTY_LIST, "{[]"},
+    {TokenType::LEQ, "<="},
+    {TokenType::GEQ, ">="},
+    {TokenType::XOREQ, "^="},
+    {TokenType::R_ARROW, "->"},
+    {TokenType::DOUBLE_COLON, "::"},
+    {TokenType::FLOAT, "float"},
+    {TokenType::BOOL, "bool"},
+    {TokenType::INT, "int"},
+    {TokenType::STRING, "string"},
+    {TokenType::OBJECT, "object"},
+    {TokenType::ARRAY, "array"},
+    {TokenType::CLASS, "class"},
+    {TokenType::VAR, "var"},
+    {TokenType::FUNC, "func"},
+    {TokenType::R_BRACE, "begin"},
+    {TokenType::L_BRACE, "end"},
+    {TokenType::IMPORT, "IMPORT"},
+    {TokenType::RETURN, "return"},
+    {TokenType::BREAK, "break"},
+    {TokenType::VOID, "void"},
+    {TokenType::NULL_LITERAL, "null"},
+    {TokenType::CONSTRUCT, "construct"},
+    {TokenType::DESTRUCT, "destruct"},
+    {TokenType::IF, "if"},
+    {TokenType::ELIF, "elif"},
+    {TokenType::ELSE, "else"},
+    {TokenType::IS, "is"},
+    {TokenType::ALIAS, "alias"},
+    {TokenType::WHILE, "while"},
+    {TokenType::FOR, "for"},
+    {TokenType::LOCAL, "local"},
+    {TokenType::GLOBAL, "global"},
+};
+
+std::unordered_map<TokenType, int> Parser::_prec_tbl = {
+    {TokenType::DBL_COLON, 200},
+    {TokenType::R_ARROW, 200},
+    {TokenType::R_PARAN, 100},
+    {TokenType::STAR, 90},
+    {TokenType::SLASH, 90},
+    {TokenType::PERCENT, 90},
+    {TokenType::PLUS, 80},
+    {TokenType::MINUS, 80},
+    {TokenType::DBL_R_CARAT, 70},
+    {TokenType::DBL_L_CARAT, 70},
+    {TokenType::L_CARAT, 60},
+    {TokenType::R_CARAT, 60},
+    {TokenType::LEQ, 60},
+    {TokenType::GEQ, 60},
+    {TokenType::DBL_EQUAL, 50},
+    {TokenType::NOT_EQUAL, 50},
+    {TokenType::AMPER, 40},
+    {TokenType::DBL_AMPER, 40},
+    {TokenType::UP_ARROW, 30},
+    {TokenType::BAR, 20},
+    {TokenType::DBL_BAR, 20},
+    {TokenType::L_PARAN, 0},
+};
+
+std::unordered_map<TokenType, Associativity> Parser::_operator_associativity = {
+    {TokenType::R_PARAN, NO_ASSOCIATIVITY},
+    {TokenType::R_ARROW, LEFT},
+    {TokenType::DOUBLE_COLON, LEFT},
+    {TokenType::STAR, LEFT},
+    {TokenType::SLASH, LEFT},
+    {TokenType::PERCENT, LEFT},
+    {TokenType::PLUS, LEFT},
+    {TokenType::MINUS, LEFT},
+    {TokenType::DBL_R_CARAT, LEFT},
+    {TokenType::DBL_L_CARAT, LEFT},
+    {TokenType::L_CARAT, LEFT},
+    {TokenType::R_CARAT, LEFT},
+    {TokenType::GEQ, LEFT},
+    {TokenType::LEQ, LEFT},
+    {TokenType::DBL_EQUAL, LEFT},
+    {TokenType::NOT_EQUAL, LEFT},
+    {TokenType::AMPER, LEFT},
+    {TokenType::DBL_AMPER, LEFT},
+    {TokenType::UP_ARROW, LEFT},
+    {TokenType::BAR, LEFT},
+    {TokenType::DBL_BAR, LEFT},
+    {TokenType::L_PARAN, NO_ASSOCIATIVITY},
+};
+
 /*****************************************************************************/
 Parser::Parser() {
     FillBuffer(nullptr);
@@ -78,132 +206,6 @@ Parser::Parser() {
 
     _current_scope->pragma_table["bounds"] = "not-enforced";
     _current_scope->pragma_table["typing"] = "not-enforced";
-
-    // Set up the associativity table
-    associativity[TokenType::R_PARAN] = NO_ASSOCIATIVITY;
-    associativity[TokenType::R_ARROW] = LEFT;
-    associativity[TokenType::DOUBLE_COLON] = LEFT;
-    associativity[TokenType::STAR] = LEFT;
-    associativity[TokenType::SLASH] = LEFT;
-    associativity[TokenType::PERCENT] = LEFT;
-    associativity[TokenType::PLUS] = LEFT;
-    associativity[TokenType::MINUS] = LEFT;
-    associativity[TokenType::DBL_R_CARAT] = LEFT;
-    associativity[TokenType::DBL_L_CARAT] = LEFT;
-    associativity[TokenType::L_CARAT] = LEFT;
-    associativity[TokenType::R_CARAT] = LEFT;
-    associativity[TokenType::GEQ] = LEFT;
-    associativity[TokenType::LEQ] = LEFT;
-    associativity[TokenType::DBL_EQUAL] = LEFT;
-    associativity[TokenType::NOT_EQUAL] = LEFT;
-    associativity[TokenType::AMPER] = LEFT;
-    associativity[TokenType::DBL_AMPER] = LEFT;
-    associativity[TokenType::UP_ARROW] = LEFT;
-    associativity[TokenType::BAR] = LEFT;
-    associativity[TokenType::DBL_BAR] = LEFT;
-    associativity[TokenType::L_PARAN] = NO_ASSOCIATIVITY;
-
-    // Set up the _prec_tbl table
-    _prec_tbl[TokenType::DBL_COLON] = 200;
-    _prec_tbl[TokenType::R_ARROW] = 200;
-    //_prec_tbl["["] = 150;
-    _prec_tbl[TokenType::R_PARAN] = 100;
-    _prec_tbl[TokenType::STAR] = 90;
-    _prec_tbl[TokenType::SLASH] = 90;
-    _prec_tbl[TokenType::PERCENT] = 90;
-    _prec_tbl[TokenType::PLUS] = 80;
-    _prec_tbl[TokenType::MINUS] = 80;
-    _prec_tbl[TokenType::DBL_R_CARAT] = 70;
-    _prec_tbl[TokenType::DBL_L_CARAT] = 70;
-    _prec_tbl[TokenType::L_CARAT] = 60;
-    _prec_tbl[TokenType::R_CARAT] = 60;
-    _prec_tbl[TokenType::LEQ] = 60;
-    _prec_tbl[TokenType::GEQ] = 60;
-    _prec_tbl[TokenType::DBL_EQUAL] = 50;
-    _prec_tbl[TokenType::NOT_EQUAL] = 50;
-    _prec_tbl[TokenType::AMPER] = 40;
-    _prec_tbl[TokenType::DBL_AMPER] = 40;
-    _prec_tbl[TokenType::UP_ARROW] = 30;
-    _prec_tbl[TokenType::BAR] = 20;
-    _prec_tbl[TokenType::DBL_BAR] = 20;
-    _prec_tbl[TokenType::L_PARAN] = 0;
-
-    // Set up the char map.rn
-    _char_map[TokenType::R_BRACE] = "{";
-    _char_map[TokenType::L_BRACE] = "}";
-    _char_map[TokenType::R_PARAN] = "(";
-    _char_map[TokenType::L_PARAN] = ")";
-    _char_map[TokenType::R_BRACK] = "[";
-    _char_map[TokenType::L_BRACK] = "]";
-    _char_map[TokenType::R_CARAT] = "<";
-    _char_map[TokenType::L_CARAT] = ">";
-    _char_map[TokenType::SLASH] = "/";
-    _char_map[TokenType::PLUS] = "+";
-    _char_map[TokenType::STAR] = "*";
-    _char_map[TokenType::MINUS] = "-";
-    _char_map[TokenType::PERCENT] = "%";
-    _char_map[TokenType::AMPER] = "&";
-    _char_map[TokenType::BAR] = "|";
-    _char_map[TokenType::UP_ARROW] = "^";
-    _char_map[TokenType::TILDE] = "~";
-    _char_map[TokenType::BLOCK_COMMENT] = "/*";
-    _char_map[TokenType::INLINE_COMMENT] = "//";
-    _char_map[TokenType::DOLLAR] = "$";
-    _char_map[TokenType::NOT] = "!";
-    _char_map[TokenType::EQUAL] = "=";
-    _char_map[TokenType::COMMA] = ",";
-    _char_map[TokenType::DOT] = ".";
-    _char_map[TokenType::COLON] = ":";
-    _char_map[TokenType::SEMICOLON] = ":";
-    _char_map[TokenType::DBL_QUOTE] = "\"";
-    _char_map[TokenType::DBL_PLUS] = "++";
-    _char_map[TokenType::DBL_MINUS] = "--";
-    _char_map[TokenType::DBL_EQUAL] = "==";
-    _char_map[TokenType::PLUS_EQUAL] = "+=";
-    _char_map[TokenType::MINUS_EQUAL] = "-=";
-    _char_map[TokenType::PERCENT_EQUAL] = "%=";
-    _char_map[TokenType::SLASH_EQUAL] = "/=";
-    _char_map[TokenType::NOT_EQUAL] = "!=";
-    _char_map[TokenType::AMPER_EQUAL] = "&=";
-    _char_map[TokenType::BAR_EQUAL] = "|=";
-    _char_map[TokenType::STAR_EQUAL] = "*=";
-    _char_map[TokenType::DBL_STAR] = "**";
-    _char_map[TokenType::TILDE_EQUAL] = "~=";
-    _char_map[TokenType::DBL_AMPER] = "&&";
-    _char_map[TokenType::DBL_BAR] = "||";
-    _char_map[TokenType::EMPTY_LIST] = "{[]";
-    _char_map[TokenType::LEQ] = "<=";
-    _char_map[TokenType::GEQ] = ">=";
-    _char_map[TokenType::XOREQ] = "^=";
-    _char_map[TokenType::R_ARROW] = "->";
-    _char_map[TokenType::DOUBLE_COLON] = "::";
-    _char_map[TokenType::FLOAT] = "float";
-    _char_map[TokenType::BOOL] = "bool";
-    _char_map[TokenType::INT] = "int";
-    _char_map[TokenType::STRING] = "string";
-    _char_map[TokenType::OBJECT] = "object";
-    _char_map[TokenType::ARRAY] = "array";
-    _char_map[TokenType::CLASS] = "class";
-    _char_map[TokenType::VAR] = "var";
-    _char_map[TokenType::FUNC] = "func";
-    _char_map[TokenType::R_BRACE] = "begin";
-    _char_map[TokenType::L_BRACE] = "end";
-    _char_map[TokenType::IMPORT] = "IMPORT";
-    _char_map[TokenType::RETURN] = "return";
-    _char_map[TokenType::BREAK] = "break";
-    _char_map[TokenType::VOID] = "void";
-    _char_map[TokenType::NULL_LITERAL] = "null";
-    _char_map[TokenType::CONSTRUCT] = "construct";
-    _char_map[TokenType::DESTRUCT] = "destruct";
-    _char_map[TokenType::IF] = "if";
-    _char_map[TokenType::ELIF] = "elif";
-    _char_map[TokenType::ELSE] = "else";
-    _char_map[TokenType::IS] = "is";
-    _char_map[TokenType::ALIAS] = "alias";
-    _char_map[TokenType::WHILE] = "while";
-    _char_map[TokenType::FOR] = "for";
-    _char_map[TokenType::LOCAL] = "local";
-    _char_map[TokenType::GLOBAL] = "global";
 }
 
 /*****************************************************************************/
@@ -569,9 +571,9 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
                     if (op_stack.back()->IsBinaryOp()) {
                         auto transformed_node = TransformBinaryExpr(make_binary_expr());
 
-                        // Handle _left associativity
+                        // Handle _left _operator_associativity
                         if (!op_stack.IsEmpty() and
-                            associativity[op_stack.back()->token_type] == LEFT) {
+                            _operator_associativity[op_stack.back()->token_type] == LEFT) {
                             auto expr2 = std::make_shared<BinaryExpr>();
                             expr2->_left = result_stack.Pop();
                             expr2->_right = transformed_node;

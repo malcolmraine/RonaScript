@@ -96,12 +96,12 @@ protected:
     std::string _file_path;
     long _char_idx = 0;
     std::ifstream _file_obj;
-    std::unordered_map<std::string, TokenType> _token_map{};
-    std::unordered_set<std::string> _compounds;
-    std::unordered_set<std::string> _binary_ops;
-    std::unordered_set<std::string> _unary_ops;
-    std::unordered_set<std::string> _reserved_words;
-    std::unordered_set<std::string> _compound_ops;
+    static std::unordered_map<std::string, TokenType> _token_map;
+    static std::unordered_set<std::string> _compounds;
+    static std::unordered_set<std::string> _binary_ops;
+    static std::unordered_set<std::string> _unary_ops;
+    static std::unordered_set<std::string> _reserved_words;
+    static std::unordered_set<std::string> _compound_ops;
     std::vector<std::string> _error_messages;
     char _buf[3]{};
 };
