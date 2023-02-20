@@ -31,224 +31,169 @@
 #include "Token.h"
 #include "TokenType.h"
 
+std::unordered_map<std::string, TokenType> Lexer::_token_map = {
+    {"{", TokenType::R_BRACE},
+    {"}", TokenType::L_BRACE},
+    {"(", TokenType::R_PARAN},
+    {")", TokenType::L_PARAN},
+    {"[", TokenType::R_BRACK},
+    {"]", TokenType::L_BRACK},
+    {"<", TokenType::R_CARAT},
+    {">", TokenType::L_CARAT},
+    {"/", TokenType::SLASH},
+    {"+", TokenType::PLUS},
+    {"*", TokenType::STAR},
+    {"-", TokenType::MINUS},
+    {"%", TokenType::PERCENT},
+    {"&", TokenType::AMPER},
+    {"|", TokenType::BAR},
+    {"^", TokenType::UP_ARROW},
+    {"~", TokenType::TILDE},
+    {"/*", TokenType::BLOCK_COMMENT},
+    {"//", TokenType::INLINE_COMMENT},
+    {"'$'", TokenType::DOLLAR},
+    {"!", TokenType::NOT},
+    {"=", TokenType::EQUAL},
+    {",", TokenType::COMMA},
+    {".", TokenType::DOT},
+    {":", TokenType::COLON},
+    {";", TokenType::SEMICOLON},
+    {"\"", TokenType::DBL_QUOTE},
+    {"++", TokenType::DBL_PLUS},
+    {"--", TokenType::DBL_MINUS},
+    {"==", TokenType::DBL_EQUAL},
+    {"+=", TokenType::PLUS_EQUAL},
+    {"-=", TokenType::MINUS_EQUAL},
+    {"%=", TokenType::PERCENT_EQUAL},
+    {"/=", TokenType::SLASH_EQUAL},
+    {"!=", TokenType::NOT_EQUAL},
+    {"&=", TokenType::AMPER_EQUAL},
+    {"|=", TokenType::BAR_EQUAL},
+    {"*=", TokenType::STAR_EQUAL},
+    {"**", TokenType::DBL_STAR},
+    {"~=", TokenType::TILDE_EQUAL},
+    {"&&", TokenType::DBL_AMPER},
+    {"||", TokenType::DBL_BAR},
+    {">>", TokenType::DBL_R_CARAT},
+    {"<<", TokenType::DBL_L_CARAT},
+    {"<=", TokenType::LEQ},
+    {">=", TokenType::GEQ},
+    {"^=", TokenType::XOREQ},
+    {"->", TokenType::R_ARROW},
+    {"::", TokenType::DOUBLE_COLON},
+    {"float", TokenType::FLOAT},
+    {"bool", TokenType::BOOL},
+    {"int", TokenType::INT},
+    {"string", TokenType::STRING},
+    {"object", TokenType::OBJECT},
+    {"array", TokenType::ARRAY},
+    {"class", TokenType::CLASS},
+    {"callable", TokenType::CALLABLE},
+    {"var", TokenType::VAR},
+    {"const", TokenType::CONST},
+    {"public", TokenType::PUBLIC},
+    {"protected", TokenType::PROTECTED},
+    {"private", TokenType::PRIVATE},
+    {"static", TokenType::STATIC},
+    {"literal", TokenType::LITERAL},
+    {"reference", TokenType::REFERENCE},
+    {"func", TokenType::FUNC},
+    {"routine", TokenType::FUNC},
+    {"sub", TokenType::FUNC},
+    {"begin", TokenType::R_BRACE},
+    {"end", TokenType::L_BRACE},
+    {"import", TokenType::IMPORT},
+    {"module", TokenType::MODULE},
+    {"return", TokenType::RETURN},
+    {"break", TokenType::BREAK},
+    {"continue", TokenType::CONTINUE},
+    {"delete", TokenType::DELETE},
+    {"extends", TokenType::EXTENDS},
+    {"exit", TokenType::EXIT},
+    {"void", TokenType::VOID},
+    {"null", TokenType::NULL_LITERAL},
+    {"if", TokenType::IF},
+    {"elif", TokenType::ELIF},
+    {"else", TokenType::ELSE},
+    {"is", TokenType::IS},
+    {"alias", TokenType::ALIAS},
+    {"while", TokenType::WHILE},
+    {"for", TokenType::FOR},
+    {"type", TokenType::TYPE},
+    {"try", TokenType::TRY},
+    {"global", TokenType::GLOBAL},
+    {"local", TokenType::LOCAL},
+    {"?", TokenType::QUESTION_MARK},
+    {"??", TokenType::DBL_QUESTION_MARK},
+};
+
+std::unordered_set<std::string> Lexer::_reserved_words = {
+    "float",    "string",  "int",       "bool",    "list",      "void",     "null",
+    "class",    "object",  "alias",     "is",      "require",   "class",    "func",
+    "routine",  "sub",     "begin",     "end",     "construct", "destruct", "var",
+    "const",    "public",  "protected", "private", "return",    "break",    "continue",
+    "inherits", "literal", "reference", "static",  "callable",  "type",     "try",
+    "catch",    "global",  "local",     "exit",    "delete",    "extends",  "import",
+    "module",
+};
+
+std::unordered_set<std::string> Lexer::_compounds = {
+    "++", "+=", "--", "-=", "&&", "%=", "||", "**", "&=", "|=", "/=", "*=",
+    "~=", "^=", "!=", "->", "::", ">=", "<=", "==", ">>", "<<", "::", "??",
+};
+
+std::unordered_set<std::string> Lexer::_compound_ops = {
+    "+="
+    "-="
+    "%="
+    "&="
+    "|="
+    "/="
+    "*="
+    "~="
+    "^="
+    ">="
+    "<="};
+
+std::unordered_set<std::string> Lexer::_unary_ops = {
+    "++"
+    "--"
+    "**"
+    "!"
+    "~"
+    "-"
+    "+"};
+
+std::unordered_set<std::string> Lexer::_binary_ops = {
+    "+"
+    "-"
+    "=="
+    ">="
+    "<="
+    "!="
+    ">"
+    "<"
+    "&"
+    "&&"
+    "|"
+    "||"
+    "^"
+    "/"
+    "%"
+    "*"
+    "??"
+    "->"
+    "::"};
+
 /*****************************************************************************/
 Lexer::Lexer() {
     file_info.SetFilePath(_file_path);
-    // Initialize the buffer with EOF characters.
     FillBuffer('\0');
-
-    // Set up the token map.rn
-    _token_map["{"] = TokenType::R_BRACE;
-    _token_map["}"] = TokenType::L_BRACE;
-    _token_map["("] = TokenType::R_PARAN;
-    _token_map[")"] = TokenType::L_PARAN;
-    _token_map["["] = TokenType::R_BRACK;
-    _token_map["]"] = TokenType::L_BRACK;
-    _token_map["<"] = TokenType::R_CARAT;
-    _token_map[">"] = TokenType::L_CARAT;
-    _token_map["/"] = TokenType::SLASH;
-    _token_map["+"] = TokenType::PLUS;
-    _token_map["*"] = TokenType::STAR;
-    _token_map["-"] = TokenType::MINUS;
-    _token_map["%"] = TokenType::PERCENT;
-    _token_map["&"] = TokenType::AMPER;
-    _token_map["|"] = TokenType::BAR;
-    _token_map["^"] = TokenType::UP_ARROW;
-    _token_map["~"] = TokenType::TILDE;
-    _token_map["/*"] = TokenType::BLOCK_COMMENT;
-    _token_map["//"] = TokenType::INLINE_COMMENT;
-    _token_map["'$'"] = TokenType::DOLLAR;
-    _token_map["!"] = TokenType::NOT;
-    _token_map["="] = TokenType::EQUAL;
-    _token_map[","] = TokenType::COMMA;
-    _token_map["."] = TokenType::DOT;
-    _token_map[":"] = TokenType::COLON;
-    _token_map[";"] = TokenType::SEMICOLON;
-    _token_map["\""] = TokenType::DBL_QUOTE;
-    _token_map["++"] = TokenType::DBL_PLUS;
-    _token_map["--"] = TokenType::DBL_MINUS;
-    _token_map["=="] = TokenType::DBL_EQUAL;
-    _token_map["+="] = TokenType::PLUS_EQUAL;
-    _token_map["-="] = TokenType::MINUS_EQUAL;
-    _token_map["%="] = TokenType::PERCENT_EQUAL;
-    _token_map["/="] = TokenType::SLASH_EQUAL;
-    _token_map["!="] = TokenType::NOT_EQUAL;
-    _token_map["&="] = TokenType::AMPER_EQUAL;
-    _token_map["|="] = TokenType::BAR_EQUAL;
-    _token_map["*="] = TokenType::STAR_EQUAL;
-    _token_map["**"] = TokenType::DBL_STAR;
-    _token_map["~="] = TokenType::TILDE_EQUAL;
-    _token_map["&&"] = TokenType::DBL_AMPER;
-    _token_map["||"] = TokenType::DBL_BAR;
-    _token_map[">>"] = TokenType::DBL_R_CARAT;
-    _token_map["<<"] = TokenType::DBL_L_CARAT;
-    _token_map["<="] = TokenType::LEQ;
-    _token_map[">="] = TokenType::GEQ;
-    _token_map["^="] = TokenType::XOREQ;
-    _token_map["->"] = TokenType::R_ARROW;
-    _token_map["::"] = TokenType::DOUBLE_COLON;
-    _token_map["float"] = TokenType::FLOAT;
-    _token_map["bool"] = TokenType::BOOL;
-    _token_map["int"] = TokenType::INT;
-    _token_map["string"] = TokenType::STRING;
-    _token_map["object"] = TokenType::OBJECT;
-    _token_map["array"] = TokenType::ARRAY;
-    _token_map["class"] = TokenType::CLASS;
-    _token_map["callable"] = TokenType::CALLABLE;
-    _token_map["var"] = TokenType::VAR;
-    _token_map["const"] = TokenType::CONST;
-    _token_map["public"] = TokenType::PUBLIC;
-    _token_map["protected"] = TokenType::PROTECTED;
-    _token_map["private"] = TokenType::PRIVATE;
-    _token_map["static"] = TokenType::STATIC;
-    _token_map["literal"] = TokenType::LITERAL;
-    _token_map["reference"] = TokenType::REFERENCE;
-    _token_map["func"] = TokenType::FUNC;
-    _token_map["routine"] = TokenType::FUNC;
-    _token_map["sub"] = TokenType::FUNC;
-    _token_map["begin"] = TokenType::R_BRACE;
-    _token_map["end"] = TokenType::L_BRACE;
-    _token_map["import"] = TokenType::IMPORT;
-    _token_map["module"] = TokenType::MODULE;
-    _token_map["return"] = TokenType::RETURN;
-    _token_map["break"] = TokenType::BREAK;
-    _token_map["continue"] = TokenType::CONTINUE;
-    _token_map["delete"] = TokenType::DELETE;
-    _token_map["extends"] = TokenType::EXTENDS;
-    _token_map["exit"] = TokenType::EXIT;
-    _token_map["void"] = TokenType::VOID;
-    _token_map["null"] = TokenType::NULL_LITERAL;
-    _token_map["if"] = TokenType::IF;
-    _token_map["elif"] = TokenType::ELIF;
-    _token_map["else"] = TokenType::ELSE;
-    _token_map["is"] = TokenType::IS;
-    _token_map["alias"] = TokenType::ALIAS;
-    _token_map["while"] = TokenType::WHILE;
-    _token_map["for"] = TokenType::FOR;
-    _token_map["type"] = TokenType::TYPE;
-    _token_map["try"] = TokenType::TRY;
-    _token_map["global"] = TokenType::GLOBAL;
-    _token_map["local"] = TokenType::LOCAL;
-    _token_map["?"] = TokenType::QUESTION_MARK;
-    _token_map["??"] = TokenType::DBL_QUESTION_MARK;
-
-    // Setup reserved words set
-    _reserved_words.insert("float");
-    _reserved_words.insert("string");
-    _reserved_words.insert("int");
-    _reserved_words.insert("bool");
-    _reserved_words.insert("list");
-    _reserved_words.insert("void");
-    _reserved_words.insert("null");
-    _reserved_words.insert("class");
-    _reserved_words.insert("object");
-    _reserved_words.insert("alias");
-    _reserved_words.insert("is");
-    _reserved_words.insert("require");
-    _reserved_words.insert("class");
-    _reserved_words.insert("func");
-    _reserved_words.insert("routine");
-    _reserved_words.insert("sub");
-    _reserved_words.insert("begin");
-    _reserved_words.insert("end");
-    _reserved_words.insert("construct");
-    _reserved_words.insert("destruct");
-    _reserved_words.insert("var");
-    _reserved_words.insert("const");
-    _reserved_words.insert("public");
-    _reserved_words.insert("protected");
-    _reserved_words.insert("private");
-    _reserved_words.insert("return");
-    _reserved_words.insert("break");
-    _reserved_words.insert("continue");
-    _reserved_words.insert("inherits");
-    _reserved_words.insert("literal");
-    _reserved_words.insert("reference");
-    _reserved_words.insert("static");
-    _reserved_words.insert("callable");
-    _reserved_words.insert("type");
-    _reserved_words.insert("try");
-    _reserved_words.insert("catch");
-    _reserved_words.insert("global");
-    _reserved_words.insert("local");
-    _reserved_words.insert("exit");
-    _reserved_words.insert("delete");
-    _reserved_words.insert("extends");
-    _reserved_words.insert("import");
-    _reserved_words.insert("module");
-
-    _compounds.insert("++");
-    _compounds.insert("+=");
-    _compounds.insert("--");
-    _compounds.insert("-=");
-    _compounds.insert("&&");
-    _compounds.insert("%=");
-    _compounds.insert("||");
-    _compounds.insert("**");
-    _compounds.insert("&=");
-    _compounds.insert("|=");
-    _compounds.insert("/=");
-    _compounds.insert("*=");
-    _compounds.insert("~=");
-    _compounds.insert("^=");
-    _compounds.insert("!=");
-    _compounds.insert("->");
-    _compounds.insert("::");
-    _compounds.insert(">=");
-    _compounds.insert("<=");
-    _compounds.insert("==");
-    _compounds.insert(">>");
-    _compounds.insert("<<");
-    _compounds.insert("::");
-    _compounds.insert("??");
-
-    // Setup compound operators set
-    _compound_ops.insert("+=");
-    _compound_ops.insert("-=");
-    _compound_ops.insert("%=");
-    _compound_ops.insert("&=");
-    _compound_ops.insert("|=");
-    _compound_ops.insert("/=");
-    _compound_ops.insert("*=");
-    _compound_ops.insert("~=");
-    _compound_ops.insert("^=");
-    _compound_ops.insert(">=");
-    _compound_ops.insert("<=");
-
-    _unary_ops.insert("++");
-    _unary_ops.insert("--");
-    _unary_ops.insert("**");
-    _unary_ops.insert("!");
-    _unary_ops.insert("~");
-    _unary_ops.insert("-");
-    _unary_ops.insert("+");
-
-    // Setup binary operators set
-    _binary_ops.insert("+");
-    _binary_ops.insert("-");
-    _binary_ops.insert("==");
-    _binary_ops.insert(">=");
-    _binary_ops.insert("<=");
-    _binary_ops.insert("!=");
-    _binary_ops.insert(">");
-    _binary_ops.insert("<");
-    _binary_ops.insert("&");
-    _binary_ops.insert("&&");
-    _binary_ops.insert("|");
-    _binary_ops.insert("||");
-    _binary_ops.insert("^");
-    _binary_ops.insert("/");
-    _binary_ops.insert("%");
-    _binary_ops.insert("*");
-    _binary_ops.insert("??");
-    _binary_ops.insert("->");
-    _binary_ops.insert("::");
 }
 
 /*****************************************************************************/
 Lexer::~Lexer() {
     _file_obj.close();
-
     for (auto& token : tokens)
         delete token;
 }

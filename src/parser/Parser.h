@@ -57,7 +57,7 @@ class ExitStmt;
 class AttributeAccess;
 class RnTypeComposite;
 
-enum Associativity_t {
+enum Associativity {
     LEFT,
     RIGHT,
     NO_ASSOCIATIVITY,
@@ -131,9 +131,9 @@ private:
     std::shared_ptr<ScopeNode> _current_scope = nullptr;
     std::unordered_set<TokenType> unary_lookback_set = {
         TokenType::EQUAL, TokenType::R_PARAN, TokenType::COMMA};
-    std::unordered_map<TokenType, std::string> _char_map;
-    std::unordered_map<TokenType, int> _prec_tbl;
-    std::unordered_map<TokenType, Associativity_t> associativity;
+    static std::unordered_map<TokenType, std::string> _char_map;
+    static std::unordered_map<TokenType, int> _prec_tbl;
+    static std::unordered_map<TokenType, Associativity> _operator_associativity;
     std::unordered_map<std::string, std::string> _pragma_table;
     ParserState _previous_state = GENERAL_CONTEXT;
     ParserState _current_state = GENERAL_CONTEXT;
