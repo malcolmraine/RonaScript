@@ -81,14 +81,17 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
 
     if (func->IsBuiltIn()) {
         func->Call(args, ret_val);
-        if (obj->GetReturnType() != RnType::RN_NULL) {
+        if (obj->GetReturnType() != RnType::RN_VOID) {
             GetStack().push_back(ret_val);
         }
     } else {
-        _call_stack.push_back(func->GetScope());
-        _scopes.push_back(func->GetScope());
+        auto scope = CreateScope();
+        scope->SetParent(GetScope());
+        func->InitScope(scope);
+        _call_stack.push_back(scope);
+        _scopes.push_back(scope);
 
-        func->PassArguments(args);
+        func->PassArguments(args, scope);
         bool has_returned = false;
         size_t func_index = func->GetIStart();
         size_t end_index = func->GetIStart() + func->GetICnt();
@@ -105,7 +108,6 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
         if (func->GetName() == "construct") {
             GetStack().push_back(func->GetScope()->GetObject(_object_this_key));
         }
-        func->Reset();
     }
 }
 
@@ -122,8 +124,8 @@ void RnVirtualMachine::AddScope() {
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
     _gc_count++;
     if (_gc_count > 1000) {
-//        _memory_manager->GCMark();
-//        _memory_manager->GCSweep();
+        _memory_manager->GCMark();
+        _memory_manager->GCSweep();
         _gc_count = 0;
     }
 
@@ -381,8 +383,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 throw std::runtime_error("Cannot return outside of a function");
             }
             // Have to get the parent of the working scope, not the argument scope
-            auto ret_scope = _scopes[_scopes.size() - 2];
-            ret_scope->GetStack().push_back(GetStack().back());
+            auto ret_scope = _scopes[_scopes.size() - 1];
+            GetScope()->GetParent()->GetStack().push_back(GetStack().back());
             GetStack().pop_back();
             break_scope = true;
             break;
@@ -403,7 +405,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_LOAD_STRING: {
             auto value = RnObject::GetInternedString(instruction->_arg1);
-            auto obj = GetScope()->MakeLocal(RnType::RN_INT);
+            auto obj = GetScope()->MakeLocal(RnType::RN_STRING);
             obj->SetData(value);
             GetStack().push_back(obj);
             break;
@@ -452,8 +454,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_CALL: {
             auto func_obj = dynamic_cast<RnFunctionObject*>(GetStack().back());
             GetStack().pop_back();
-            //            CallFunction(func_obj, instruction->_arg1);
-
             std::vector<RnObject*> args;
             auto func = func_obj->GetData();
             args.reserve(instruction->_arg1);
@@ -466,14 +466,17 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
 
             if (func->IsBuiltIn()) {
                 func->Call(args, ret_val);
-                if (func_obj->GetReturnType() != RnType::RN_NULL) {
+                if (func_obj->GetReturnType() != RnType::RN_VOID) {
                     GetStack().push_back(ret_val);
                 }
             } else {
-                _call_stack.push_back(func->GetScope());
-                _scopes.push_back(func->GetScope());
+                auto scope = CreateScope();
+                scope->SetParent(func->GetScope()->GetParent());
+                func->InitScope(scope);
+                _scopes.push_back(scope);
+                _call_stack.push_back(scope);
+                func->PassArguments(args, scope);
 
-                func->PassArguments(args);
                 bool has_returned = false;
                 size_t func_index = func->GetIStart();
                 size_t end_index = func->GetIStart() + func->GetICnt();
@@ -490,7 +493,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 if (func->GetName() == "construct") {
                     GetStack().push_back(func->GetScope()->GetObject(_object_this_key));
                 }
-                func->Reset();
             }
             break;
         }
@@ -715,7 +717,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
 
 /*****************************************************************************/
 RnIntNative RnVirtualMachine::Run() {
-    std::setvbuf(stdout, nullptr, _IOFBF, 65536);
+    std::setvbuf(stdout, nullptr, _IOLBF, 65536);
     bool has_returned = false;  // Placeholder
     auto stopwatch = StopWatch();
 

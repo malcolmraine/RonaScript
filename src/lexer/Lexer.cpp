@@ -324,12 +324,12 @@ bool Lexer::IsStrLiteral(const std::string& s) {
 
 /*****************************************************************************/
 bool Lexer::IsCompound() const {
-    if ((Current() == '-' || Current() == '+') &&
-        (tokens.back()->IsLiteral() ||
-         _binary_ops.find(std::string(1, Peek())) == _binary_ops.end()) &&
-        Peek() != '=') {
-        return false;
-    }
+//    if ((Current() == '-' || Current() == '+') &&
+//        (tokens.back()->IsLiteral() ||
+//         _binary_ops.find(std::string(1, Peek())) == _binary_ops.end()) &&
+//        Peek() != '=') {
+//        return false;
+//    }
     return _compounds.find(GetCompoundCandidate()) != _compounds.end();
 }
 
@@ -449,6 +449,8 @@ Token* Lexer::Consume() {
             else
                 return ProcessOperator();
         case '*':
+        case '+':
+        case '-':
         case '^':
         case '%':
         case '&':
@@ -463,12 +465,10 @@ Token* Lexer::Consume() {
         case '\'':
         case '\"':
             return ProcessStringLiteral();
-        case '+':
-        case '-':
-            if ((tokens.back()->token_type != TokenType::R_PARAN &&
-                 !tokens.back()->IsBinaryOp()) ||
-                !_lexeme.empty() || Peek() == '=')
-                return ProcessOperator();
+//            if ((tokens.back()->token_type != TokenType::R_PARAN &&
+//                 !tokens.back()->IsBinaryOp()) ||
+//                !_lexeme.empty() || Peek() == '=')
+//                return ProcessOperator();
         default: {
             if (Current() != '\r' && Current() != '\t' && Current() != '\n')
                 _lexeme.append(std::string(1, Current()));

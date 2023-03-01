@@ -19,16 +19,7 @@ RnFunction::RnFunction(std::string name, long i_start, long i_cnt) {
 }
 
 /*****************************************************************************/
-RnFunction::~RnFunction() {
-    Reset();
-}
-
-/*****************************************************************************/
-void RnFunction::Reset() {
-    SetScope(new RnScope(_scope->GetParent()));
-    //	auto parent_scope = _scope->GetParent()->GetParent();
-    //	delete _scope->GetParent();
-}
+RnFunction::~RnFunction() = default;
 
 /*****************************************************************************/
 std::string RnFunction::GetName() const {
@@ -52,16 +43,12 @@ long RnFunction::GetICnt() const {
 
 /*****************************************************************************/
 RnScope* RnFunction::GetScope() {
-    return _argument_scope;
+    return _scope;
 }
 
 /*****************************************************************************/
 void RnFunction::SetScope(RnScope* scope) {
-    delete _scope;
     _scope = scope;
-    if (_argument_scope) {
-        _argument_scope->SetParent(_scope);
-    }
 }
 
 /*****************************************************************************/
@@ -80,13 +67,7 @@ void RnFunction::CreateArgument(RnIntNative key, RnType::Type type, size_t index
 }
 
 /*****************************************************************************/
-void RnFunction::PassArguments(const std::vector<RnObject*>& args) {
-    if (!_argument_scope) {
-        throw std::runtime_error(
-            "Fatal error: uninitialized function argument scope for '" + GetName() +
-            "'");
-    }
-
+void RnFunction::PassArguments(const std::vector<RnObject*>& args, RnScope* scope) {
     if (args.size() < _argument_index_map.size()) {
         throw std::runtime_error("Expected " +
                                  std::to_string(_argument_index_map.size()) +
@@ -98,8 +79,16 @@ void RnFunction::PassArguments(const std::vector<RnObject*>& args) {
     } else {
         for (size_t i = 0; i < args.size(); i++) {
 
-            _argument_scope->StoreObject(_argument_index_map[i], args[i]);
+            scope->StoreObject(_argument_index_map[i], args[i]);
         }
+    }
+}
+
+/*****************************************************************************/
+void RnFunction::InitScope(RnScope* scope) {
+    for (const auto& symbol : _argument_scope->GetSymbolTable()->GetSymbols()) {
+        scope->StoreObject(
+            symbol, RnObject::Create(_argument_scope->GetObject(symbol)->GetType()));
     }
 }
 
