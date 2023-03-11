@@ -1107,6 +1107,8 @@ void Parser::Parse() {
                                 _current_scope->AddSubTree(ParseUnaryExpr(expr));
                             }
                         } else {
+                            if (expr->node_type == AST_FUNC_CALL)
+                                std::dynamic_pointer_cast<FuncCall>(expr)->SetDiscardReturnValue(true);
                             _current_scope->AddSubTree(expr);
                         }
                     }

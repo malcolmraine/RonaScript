@@ -452,8 +452,6 @@ Token* Lexer::Consume() {
             else
                 return ProcessOperator();
         case '*':
-        case '+':
-        case '-':
         case '^':
         case '%':
         case '&':

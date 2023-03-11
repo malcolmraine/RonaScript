@@ -255,6 +255,11 @@ InstructionBlock RnCodeGenVisitor::Visit(FuncCall* node) {
     instructions.insert(instructions.end(), expr.begin(), expr.end());
     instructions.emplace_back(
         new RnInstruction(OP_CALL, static_cast<long>(node->args.size())));
+
+    if (node->GetDiscardReturnValue()) {
+        instructions.push_back(new RnInstruction(OP_POP));
+    }
+
     return instructions;
 }
 
