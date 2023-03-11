@@ -127,7 +127,7 @@ std::unordered_map<std::string, TokenType> Lexer::_token_map = {
     {"??", TokenType::DBL_QUESTION_MARK},
 };
 
-std::unordered_set<std::string> Lexer::_reserved_words = {
+const std::unordered_set<std::string> Lexer::_reserved_words = {
     "float",    "string",  "int",       "bool",    "list",      "void",     "null",
     "class",    "object",  "alias",     "is",      "require",   "class",    "func",
     "routine",  "sub",     "begin",     "end",     "construct", "destruct", "var",
@@ -137,12 +137,12 @@ std::unordered_set<std::string> Lexer::_reserved_words = {
     "module",
 };
 
-std::unordered_set<std::string> Lexer::_compounds = {
+const std::unordered_set<std::string> Lexer::_compounds = {
     "++", "+=", "--", "-=", "&&", "%=", "||", "**", "&=", "|=", "/=", "*=",
     "~=", "^=", "!=", "->", "::", ">=", "<=", "==", ">>", "<<", "::", "??",
 };
 
-std::unordered_set<std::string> Lexer::_compound_ops = {
+const std::unordered_set<std::string> Lexer::_compound_ops = {
     "+="
     "-="
     "%="
@@ -155,7 +155,7 @@ std::unordered_set<std::string> Lexer::_compound_ops = {
     ">="
     "<="};
 
-std::unordered_set<std::string> Lexer::_unary_ops = {
+const std::unordered_set<std::string> Lexer::_unary_ops = {
     "++"
     "--"
     "**"
@@ -164,7 +164,7 @@ std::unordered_set<std::string> Lexer::_unary_ops = {
     "-"
     "+"};
 
-std::unordered_set<std::string> Lexer::_binary_ops = {
+const std::unordered_set<std::string> Lexer::_binary_ops = {
     "+"
     "-"
     "=="

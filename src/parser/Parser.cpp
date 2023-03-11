@@ -52,7 +52,7 @@
 #include "ast/VarDecl.h"
 #include "ast/WhileLoop.h"
 
-std::unordered_map<TokenType, std::string> Parser::_char_map = {
+const std::unordered_map<TokenType, std::string> Parser::_char_map = {
     {TokenType::R_BRACE, "{"},
     {TokenType::L_BRACE, "}"},
     {TokenType::R_PARAN, "("},

@@ -97,11 +97,11 @@ protected:
     long _char_idx = 0;
     std::ifstream _file_obj;
     static std::unordered_map<std::string, TokenType> _token_map;
-    static std::unordered_set<std::string> _compounds;
-    static std::unordered_set<std::string> _binary_ops;
-    static std::unordered_set<std::string> _unary_ops;
-    static std::unordered_set<std::string> _reserved_words;
-    static std::unordered_set<std::string> _compound_ops;
+    static const std::unordered_set<std::string> _compounds;
+    static const std::unordered_set<std::string> _binary_ops;
+    static const std::unordered_set<std::string> _unary_ops;
+    static const std::unordered_set<std::string> _reserved_words;
+    static const std::unordered_set<std::string> _compound_ops;
     std::vector<std::string> _error_messages;
     char _buf[3]{};
 };
