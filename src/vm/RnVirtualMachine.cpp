@@ -522,7 +522,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto obj = dynamic_cast<RnClassObject*>(
                 RnObject::Create(RnType::RN_CLASS_INSTANCE));
             obj->SetIsModule(true);
-            _namespaces[instruction->_arg1] = obj;
+            GetScope()->StoreObject(instruction->_arg1, obj);
+            //            _namespaces[instruction->_arg1] = obj;
             _scopes.push_back(obj->ToObject());
             index++;
             size_t stop_index = index + instruction->_arg2;
@@ -537,6 +538,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto name = RnObject::GetInternedString(instruction->_arg1);
             auto obj = dynamic_cast<RnClassObject*>(
                 RnObject::Create(RnType::RN_CLASS_INSTANCE));
+            //            GetScope()->StoreObject(instruction->_arg1, obj);
             _namespaces[instruction->_arg1] = obj;
             auto class_scope = obj->ToObject();
             class_scope->SetParent(GetScope());
@@ -707,11 +709,12 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             }
             break;
         }
-        case OP_RESOLVE_NAMESPACE:
+        case OP_RESOLVE_NAMESPACE: {
             // TODO: Fix this so that it pushes the correct object onto the stack
-            auto nspace = _namespaces[instruction->_arg1];
+            auto nspace = GetScope()->GetObject(instruction->_arg1);
             GetStack().push_back(nspace->ToObject()->GetObject(instruction->_arg2));
             break;
+        }
     }
 }
 
