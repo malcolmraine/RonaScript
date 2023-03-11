@@ -32,7 +32,8 @@ public:
     [[nodiscard]] virtual bool IsBuiltIn() const;
     virtual void Call(const std::vector<RnObject*>& args, RnObject* ret_val);
     void CreateArgument(RnIntNative key, RnType::Type type, size_t index);
-    void PassArguments(const std::vector<RnObject*>& args);
+    void PassArguments(const std::vector<RnObject*>& args, RnScope* scope);
+    void InitScope(RnScope* scope);
 
 private:
     std::unordered_map<size_t, RnIntNative> _argument_index_map;
