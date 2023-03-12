@@ -272,7 +272,10 @@ InstructionBlock RnCodeGenVisitor::Visit(VarDecl* node) {
         opcode = OP_MAKE_CONST;
     } else if (node->is_local) {
         opcode = OP_MAKE_LOCAL;
+    } else if (node->is_global) {
+        opcode = OP_MAKE_GLOBAL;
     }
+
     instructions.emplace_back(
         new RnInstruction(opcode, node->type->GetType(), interned_id));
 

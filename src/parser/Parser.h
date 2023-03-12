@@ -110,7 +110,6 @@ public:
     void ConvertScope(const std::shared_ptr<ScopeNode>& scope);
     [[nodiscard]] std::string DumpsAst() const;
     void Parse();
-    std::vector<Token*> GetQualifiers();
     void LoadTokens(std::vector<Token*> t);
     std::shared_ptr<AstNode> TransformBinaryExpr(
         std::shared_ptr<BinaryExpr> binary_expr);

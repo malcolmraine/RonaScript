@@ -53,6 +53,7 @@ typedef enum {
     OP_CALL,  // op1: name     op2: _arg1 count
     OP_MAKE_CONST,
     OP_MAKE_VAR,
+    OP_MAKE_GLOBAL,
     OP_MAKE_LOCAL,
     OP_MAKE_CLASS,
     OP_MAKE_FUNC,       // op1: name     op2: instr. count

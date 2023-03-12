@@ -96,6 +96,8 @@ std::string GetOpCodeAsString(RnOpCode opcode) {
             return "OP_MAKE_LOCAL";
         case OP_MAKE_VAR:
             return "OP_MAKE_VAR";
+        case OP_MAKE_GLOBAL:
+            return "OP_MAKE_GLOBAL";
         case OP_MAKE_CLASS:
             return "OP_MAKE_CLASS";
         case OP_MAKE_FUNC:

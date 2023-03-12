@@ -159,6 +159,7 @@ RnObject* RnScope::MakeLocal(RnType::Type type) {
             _locals.emplace_back(RnArrayObject());
             return &std::get<RnArrayObject>(_locals.back());
         case RnType::RN_FUNCTION:
+        case RnType::RN_CALLABLE:
             _locals.emplace_back(RnFunctionObject());
             return &std::get<RnFunctionObject>(_locals.back());
         case RnType::RN_CLASS_INSTANCE:

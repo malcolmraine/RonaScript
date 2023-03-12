@@ -517,6 +517,13 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             GetScope()->StoreObject(instruction->_arg2, obj);
             break;
         }
+        case OP_MAKE_GLOBAL: {
+            auto type = static_cast<RnType::Type>(instruction->_arg1);
+            auto obj = _memory_manager->CreateObject(type);
+            _scopes.front()->GetMemoryGroup()->AddObject(obj);
+            _scopes.front()->StoreObject(instruction->_arg2, obj);
+            break;
+        }
         case OP_MAKE_MODULE: {
             auto name = RnObject::GetInternedString(instruction->_arg1);
             auto obj = dynamic_cast<RnClassObject*>(

@@ -1028,14 +1028,6 @@ void Parser::Parse() {
                 case TokenType::ELIF:
                 case TokenType::ELSE:
                     return;
-                case TokenType::PUBLIC:
-                case TokenType::PROTECTED:
-                case TokenType::PRIVATE:
-                case TokenType::STATIC:
-                case TokenType::LITERAL:
-                case TokenType::REFERENCE:
-                    qualifiers = GetQualifiers();
-                    break;
                 case TokenType::CONST:
                 case TokenType::GLOBAL:
                 case TokenType::LOCAL:
@@ -1138,18 +1130,6 @@ void Parser::Parse() {
             }
         }
     }
-}
-
-/*****************************************************************************/
-std::vector<Token*> Parser::GetQualifiers() {
-    std::vector<Token*> qualifiers;
-
-    while (Current()->IsQualifier()) {
-        qualifiers.push_back(Current());
-        AdvanceBuffer(1);
-    }
-
-    return qualifiers;
 }
 
 /*****************************************************************************/

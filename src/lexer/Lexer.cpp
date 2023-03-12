@@ -91,15 +91,7 @@ std::unordered_map<std::string, TokenType> Lexer::_token_map = {
     {"callable", TokenType::CALLABLE},
     {"var", TokenType::VAR},
     {"const", TokenType::CONST},
-    {"public", TokenType::PUBLIC},
-    {"protected", TokenType::PROTECTED},
-    {"private", TokenType::PRIVATE},
-    {"static", TokenType::STATIC},
-    {"literal", TokenType::LITERAL},
-    {"reference", TokenType::REFERENCE},
-    {"func", TokenType::FUNC},
     {"routine", TokenType::FUNC},
-    {"sub", TokenType::FUNC},
     {"begin", TokenType::R_BRACE},
     {"end", TokenType::L_BRACE},
     {"import", TokenType::IMPORT},
@@ -129,12 +121,11 @@ std::unordered_map<std::string, TokenType> Lexer::_token_map = {
 
 const std::unordered_set<std::string> Lexer::_reserved_words = {
     "float",    "string",  "int",       "bool",    "list",      "void",     "null",
-    "class",    "object",  "alias",     "is",      "require",   "class",    "func",
-    "routine",  "sub",     "begin",     "end",     "construct", "destruct", "var",
+    "class",    "object",  "alias",     "is",      "require",   "class",
+    "routine",     "begin",     "end",     "construct", "destruct", "var",
     "const",    "public",  "protected", "private", "return",    "break",    "continue",
-    "inherits", "literal", "reference", "static",  "callable",  "type",     "try",
-    "catch",    "global",  "local",     "exit",    "delete",    "extends",  "import",
-    "module",
+    "static",  "callable",  "type",     "try",      "catch",
+    "global",  "local",     "exit",    "delete",    "extends",  "import",   "module",
 };
 
 const std::unordered_set<std::string> Lexer::_compounds = {

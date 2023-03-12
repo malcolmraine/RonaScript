@@ -63,6 +63,7 @@ RnObject* RnMemoryManager::CreateObject(RnType::Type type) {
             return std::construct_at<RnArrayObject>(
                 reinterpret_cast<RnArrayObject*>(address));
         case RnType::RN_FUNCTION:
+        case RnType::RN_CALLABLE:
             return std::construct_at<RnFunctionObject>(
                 reinterpret_cast<RnFunctionObject*>(address));
         case RnType::RN_CLASS_INSTANCE:
@@ -72,6 +73,7 @@ RnObject* RnMemoryManager::CreateObject(RnType::Type type) {
         case RnType::RN_NULL:
         case RnType::RN_VOID:
         case RnType::RN_UNKNOWN:
+        default:
             return nullptr;
     }
 }
@@ -173,6 +175,7 @@ void RnMemoryManager::GCSweep() {
                         reinterpret_cast<RnArrayObject*>(address));
                     break;
                 case RnType::RN_FUNCTION:
+                case RnType::RN_CALLABLE:
                     std::destroy_at<RnFunctionObject>(
                         reinterpret_cast<RnFunctionObject*>(address));
                     break;
@@ -184,6 +187,7 @@ void RnMemoryManager::GCSweep() {
                 case RnType::RN_NULL:
                 case RnType::RN_VOID:
                 case RnType::RN_UNKNOWN:
+                default:
                     std::destroy_at<RnObject>(reinterpret_cast<RnObject*>(address));
                     break;
             }

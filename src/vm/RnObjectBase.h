@@ -121,6 +121,7 @@ public:
                 SetData(obj->ToArray());
                 break;
             case RnType::RN_FUNCTION:
+            case RnType::RN_CALLABLE:
                 SetData(obj->ToFunction());
                 break;
             case RnType::RN_OBJECT:
