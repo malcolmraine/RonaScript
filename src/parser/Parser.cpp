@@ -51,6 +51,7 @@
 #include "ast/UnaryExpr.h"
 #include "ast/VarDecl.h"
 #include "ast/WhileLoop.h"
+#include "../util/LoopCounter.h"
 
 const std::unordered_map<TokenType, std::string> Parser::_char_map = {
     {TokenType::R_BRACE, "{"},
@@ -313,7 +314,9 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
 
     // Get the function arguments
     std::map<std::string, std::shared_ptr<RnTypeComposite>> arg_symbols;
+    MAKE_LOOP_COUNTER(1000)
     while (Current()->token_type != TokenType::L_PARAN) {
+        INCR_LOOP_COUNTER
         auto arg = new ArgDecl();
         Expect(TokenType::NAME);
         AdvanceBuffer(1);
@@ -396,7 +399,9 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
         Expect(TokenType::NAME);
         AdvanceBuffer(1);
 
+        MAKE_LOOP_COUNTER(1000)
         while (Current()->token_type == TokenType::NAME) {
+            INCR_LOOP_COUNTER
             node->parent_classes.emplace_back(ParseName());
             ConditionalBufAdvance(TokenType::COMMA);
         }
@@ -493,7 +498,9 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         return std::static_pointer_cast<BinaryExpr>(TransformBinaryExpr(node));
     };
 
+    MAKE_LOOP_COUNTER(1000)
     while (!result_stack.IsEmpty()) {
+        INCR_LOOP_COUNTER
         if (Lookback() &&
             (Lookback()->IsOperator() ||
              unary_lookback_set.contains(Lookback()->token_type)) &&
@@ -1007,7 +1014,9 @@ void Parser::Parse() {
     std::vector<Token*> qualifiers;
 
     if (GetTokenCount()) {
+        MAKE_LOOP_COUNTER(1000)
         while (!EndOfSequence()) {
+            INCR_LOOP_COUNTER
             switch (Current()->token_type) {
                 case TokenType::BLOCK_COMMENT:
                 case TokenType::INLINE_COMMENT:
@@ -1126,6 +1135,7 @@ void Parser::Parse() {
                     AdvanceBuffer(1);
                     break;
                 default:
+                    throw std::runtime_error("Unexpected token '" + Current()->lexeme + "'");
                     break;
             }
         }

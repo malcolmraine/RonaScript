@@ -461,11 +461,11 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 args.insert(args.begin(), GetStack().back());
                 GetStack().pop_back();
             }
-            RnObject* ret_val =
-                _memory_manager->CreateObject(func_obj->GetReturnType());
-            GetScope()->GetMemoryGroup()->AddObject(ret_val);
 
             if (func->IsBuiltIn()) {
+                RnObject* ret_val =
+                    _memory_manager->CreateObject(func_obj->GetReturnType());
+                GetScope()->GetMemoryGroup()->AddObject(ret_val);
                 func->Call(args, ret_val);
                 if (func_obj->GetReturnType() != RnType::RN_VOID) {
                     GetStack().push_back(ret_val);
@@ -481,7 +481,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 bool has_returned = false;
                 size_t func_index = func->GetIStart();
                 size_t end_index = func->GetIStart() + func->GetICnt();
-                for (; func_index < end_index; func_index++) {
+                for (; func_index <= end_index; func_index++) {
                     ExecuteInstruction(has_returned, func_index);
                     if (has_returned) {
                         break;
@@ -490,14 +490,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
 
                 _call_stack.pop_back();
                 _scopes.pop_back();
-
-                if (_instructions[index+1]->_opcode != OP_POP) {
-                    ret_val->CopyDataFromObject(GetStack().back());
-                    GetStack().pop_back();
-                    GetStack().push_back(ret_val);
-                }
-
-
 
                 if (func->GetName() == "construct") {
                     GetStack().push_back(func->GetScope()->GetObject(_object_this_key));
@@ -583,7 +575,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             uint32_t i = 0; // Argument count
             for (; _instructions[i + index + 1]->_opcode == OP_MAKE_ARG; i++) {
                 auto arg_instruction = _instructions[i + index + 1];
-                func->CreateArgument(scope_size, type, i);
+                func->CreateArgument(arg_instruction->_arg2, static_cast<RnType::Type>(arg_instruction->_arg1), i);
             }
 
             index += scope_size + i;

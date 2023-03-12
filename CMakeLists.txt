@@ -21,4 +21,4 @@ include(src/builtins/CMakeLists.txt)
 include(src/util/CMakeLists.txt)
 include(src/codegen/CMakeLists.txt)
 
-add_executable(RonaScript src/main.cpp ${RonaScript_SOURCES} src/RnVersionInfo.h)
+add_executable(RonaScript src/main.cpp ${RonaScript_SOURCES} src/RnVersionInfo.h src/util/LoopCounter.h src/build_info.h)
