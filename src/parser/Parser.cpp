@@ -817,7 +817,9 @@ std::shared_ptr<FuncCall> Parser::ParseFuncCall(const std::shared_ptr<AstNode>& 
     }
     ConditionalBufAdvance(TokenType::R_PARAN);
 
+    MAKE_LOOP_COUNTER(1000)
     while (!Current()->IsOneOf({TokenType::L_PARAN, TokenType::SEMICOLON})) {
+        INCR_LOOP_COUNTER
         node->args.emplace_back(ParseExpr(TokenType::COMMA));
     }
     AdvanceBuffer(1);

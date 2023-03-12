@@ -391,21 +391,24 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_LOAD_INT: {
             auto value = RnObject::GetInternedInt(instruction->_arg1);
-            auto obj = GetScope()->MakeLocal(RnType::RN_INT);
+            auto obj = _memory_manager->CreateObject(RnType::RN_INT);
+            GetScope()->GetMemoryGroup()->AddObject(obj);
             obj->SetData(static_cast<RnIntNative>(value));
             GetStack().push_back(obj);
             break;
         }
         case OP_LOAD_FLOAT: {
             auto value = RnObject::GetInternedFloat(instruction->_arg1);
-            auto obj = GetScope()->MakeLocal(RnType::RN_FLOAT);
+            auto obj = _memory_manager->CreateObject(RnType::RN_FLOAT);
+            GetScope()->GetMemoryGroup()->AddObject(obj);
             obj->SetData(static_cast<RnFloatNative>(value));
             GetStack().push_back(obj);
             break;
         }
         case OP_LOAD_STRING: {
             auto value = RnObject::GetInternedString(instruction->_arg1);
-            auto obj = GetScope()->MakeLocal(RnType::RN_STRING);
+            auto obj = _memory_manager->CreateObject(RnType::RN_STRING);
+            GetScope()->GetMemoryGroup()->AddObject(obj);
             obj->SetData(value);
             GetStack().push_back(obj);
             break;
@@ -446,7 +449,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_LOAD_BOOL: {
             auto value = static_cast<bool>(instruction->_arg1);
-            auto obj = GetScope()->MakeLocal(RnType::RN_BOOLEAN);
+            auto obj = _memory_manager->CreateObject(RnType::RN_BOOLEAN);
+            GetScope()->GetMemoryGroup()->AddObject(obj);
             obj->SetData(value);
             GetStack().push_back(obj);
             break;

@@ -1,6 +1,11 @@
-//
-// Created by Malcolm Hall on 3/11/23.
-//
+/*****************************************************************************
+* File: LoopCounter.cpp
+* Description:
+* Author: Malcolm Hall
+* Date: 3/11/23
+* Version: 1
+*
+*****************************************************************************/
 
 #ifndef RONASCRIPT_SRC_UTIL_LOOPCOUNTER_H_
 #define RONASCRIPT_SRC_UTIL_LOOPCOUNTER_H_
@@ -45,17 +50,28 @@ private:
     std::string _function;
 };
 
+#define ENABLE_LOOP_COUNTING
+#define COUNTER_NAME counter##__LINE__
+
 #ifndef MAKE_LOOP_COUNTER
+#ifdef ENABLE_LOOP_COUNTING
 #define MAKE_LOOP_COUNTER(max) \
-    LoopCounter counter(max, __FILE__, __FUNCTION__, __LINE__);
+    LoopCounter COUNTER_NAME(max, __FILE__, __FUNCTION__, __LINE__);
+#else
+#define MAKE_LOOP_COUNTER(max)
+#endif
 #endif
 
 #ifndef INCR_LOOP_COUNTER
+#ifdef ENABLE_LOOP_COUNTING
 #define INCR_LOOP_COUNTER       \
     {                           \
-        counter.Increment();    \
-        counter.CheckCount();   \
+        COUNTER_NAME.Increment();    \
+        COUNTER_NAME.CheckCount();   \
     }
+#else
+#define INCR_LOOP_COUNTER
+#endif
 #endif
 
 #endif  //RONASCRIPT_SRC_UTIL_LOOPCOUNTER_H_
