@@ -21,8 +21,8 @@ typedef bool RnBoolNative;
 
 class RnType {
 public:
-    enum Type {
-        RN_BOOLEAN,
+    enum Type : int {
+        RN_BOOLEAN = 0,
         RN_STRING,
         RN_FLOAT,
         RN_INT,

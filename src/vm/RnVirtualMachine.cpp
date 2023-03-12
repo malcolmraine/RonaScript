@@ -463,6 +463,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             }
             RnObject* ret_val =
                 _memory_manager->CreateObject(func_obj->GetReturnType());
+            GetScope()->GetMemoryGroup()->AddObject(ret_val);
 
             if (func->IsBuiltIn()) {
                 func->Call(args, ret_val);
@@ -489,6 +490,14 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
 
                 _call_stack.pop_back();
                 _scopes.pop_back();
+
+                if (_instructions[index+1]->_opcode != OP_POP) {
+                    ret_val->CopyDataFromObject(GetStack().back());
+                    GetStack().pop_back();
+                    GetStack().push_back(ret_val);
+                }
+
+
 
                 if (func->GetName() == "construct") {
                     GetStack().push_back(func->GetScope()->GetObject(_object_this_key));
@@ -564,21 +573,20 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 _memory_manager->CreateObject(RnType::RN_FUNCTION));
             GetScope()->GetMemoryGroup()->AddObject(obj);
             auto name = RnObject::GetInternedString(instruction->_arg1);
-            auto func = new RnFunction(name, index + 1 + instruction->_arg2,
-                                       instruction->_arg3);
+            auto type = static_cast<RnType::Type>(instruction->_arg2);
+            auto scope_size = instruction->_arg3;
+            auto func = new RnFunction(name, index + 1, scope_size);
             obj->SetData(func);
-            obj->SetReturnType(static_cast<RnType::Type>(instruction->_arg2));
+            obj->SetReturnType(type);
             func->SetScope(new RnScope(GetScope()));
 
-            for (uint32_t i = 0; _instructions[i + index + 1]->_opcode == OP_MAKE_ARG;
-                 i++) {
+            uint32_t i = 0; // Argument count
+            for (; _instructions[i + index + 1]->_opcode == OP_MAKE_ARG; i++) {
                 auto arg_instruction = _instructions[i + index + 1];
-                func->CreateArgument(arg_instruction->_arg2,
-                                     static_cast<RnType::Type>(arg_instruction->_arg1),
-                                     i);
+                func->CreateArgument(scope_size, type, i);
             }
 
-            index += instruction->_arg2 + func->GetICnt();
+            index += scope_size + i;
             GetScope()->StoreObject(instruction->_arg1, obj);
             break;
         }

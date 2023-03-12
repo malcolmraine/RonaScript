@@ -163,16 +163,13 @@ RnObject* RnScope::MakeLocal(RnType::Type type) {
             _locals.emplace_back(RnFunctionObject());
             return &std::get<RnFunctionObject>(_locals.back());
         case RnType::RN_CLASS_INSTANCE:
-            _locals.emplace_back(RnClassObject());
-            return &std::get<RnClassObject>(_locals.back());
         case RnType::RN_OBJECT:
             _locals.emplace_back(RnClassObject());
             return &std::get<RnClassObject>(_locals.back());
         case RnType::RN_NULL:
-            break;
         case RnType::RN_VOID:
-            break;
         case RnType::RN_UNKNOWN:
+        default:
             break;
     }
     return nullptr;
