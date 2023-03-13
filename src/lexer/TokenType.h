@@ -82,10 +82,10 @@ enum TokenType : int {
     ROUTINE,        // routine
     VAR,            // var
     CONST,          // const
-    IMPORT,     // import
-    RETURN,     // return
-    BREAK,      // break
-    VOID,       // void
+    IMPORT,         // import
+    RETURN,         // return
+    BREAK,          // break
+    VOID,           // void
     STRING_LITERAL,
     DBL_STAR,  // **
     UNDEFINED,

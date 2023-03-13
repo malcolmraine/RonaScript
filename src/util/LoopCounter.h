@@ -12,9 +12,9 @@
 
 #include <cstddef>
 #include <limits>
+#include <sstream>
 #include <stdexcept>
 #include <string>
-#include <sstream>
 
 class LoopCounter {
 public:
@@ -35,9 +35,8 @@ public:
     void CheckCount() const {
         if (_count >= _max_count) {
             std::stringstream ss;
-            ss << "Loop iteration max reached ("
-               << _count << "): " << _file
-               << ":" << _function << ":" << _line;
+            ss << "Loop iteration max reached (" << _count << "): " << _file << ":"
+               << _function << ":" << _line;
             throw std::runtime_error(ss.str());
         }
     }
@@ -64,10 +63,10 @@ private:
 
 #ifndef INCR_LOOP_COUNTER
 #ifdef ENABLE_LOOP_COUNTING
-#define INCR_LOOP_COUNTER       \
-    {                           \
-        COUNTER_NAME.Increment();    \
-        COUNTER_NAME.CheckCount();   \
+#define INCR_LOOP_COUNTER          \
+    {                              \
+        COUNTER_NAME.Increment();  \
+        COUNTER_NAME.CheckCount(); \
     }
 #else
 #define INCR_LOOP_COUNTER

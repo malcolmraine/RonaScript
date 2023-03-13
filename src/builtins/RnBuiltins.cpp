@@ -137,7 +137,7 @@ void RnBuiltins::rn_builtin_unsetenv(RnScope* scope, const std::vector<RnObject*
 
 /*****************************************************************************/
 void RnBuiltins::rn_builtin_listattr(RnScope* scope, const std::vector<RnObject*>& args,
-                                    RnObject* ret_val) {
+                                     RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
 

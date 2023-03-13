@@ -84,10 +84,10 @@ std::unordered_map<TokenType, std::string> Token::token_type_string_names{
     {TokenType::ROUTINE, "ROUTINE"},              // func
     {TokenType::VAR, "VAR"},                      // var
     {TokenType::CONST, "CONST"},                  // const
-    {TokenType::IMPORT, "IMPORT"},        // import
-    {TokenType::RETURN, "RETURN"},        // return
-    {TokenType::BREAK, "BREAK"},          // break
-    {TokenType::VOID, "VOID"},            // void
+    {TokenType::IMPORT, "IMPORT"},                // import
+    {TokenType::RETURN, "RETURN"},                // return
+    {TokenType::BREAK, "BREAK"},                  // break
+    {TokenType::VOID, "VOID"},                    // void
     {TokenType::STRING_LITERAL, "STRING_LITERAL"},
     {TokenType::DBL_STAR, "DBL_STAR"},  // **
     {TokenType::UNDEFINED, "UNDEFINED"},

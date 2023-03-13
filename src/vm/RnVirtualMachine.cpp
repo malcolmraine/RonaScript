@@ -591,10 +591,12 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             obj->SetReturnType(type);
             func->SetScope(new RnScope(GetScope()));
 
-            uint32_t i = 0; // Argument count
+            uint32_t i = 0;  // Argument count
             for (; _instructions[i + index + 1]->_opcode == OP_MAKE_ARG; i++) {
                 auto arg_instruction = _instructions[i + index + 1];
-                func->CreateArgument(arg_instruction->_arg2, static_cast<RnType::Type>(arg_instruction->_arg1), i);
+                func->CreateArgument(arg_instruction->_arg2,
+                                     static_cast<RnType::Type>(arg_instruction->_arg1),
+                                     i);
             }
 
             index += scope_size + i;
@@ -709,7 +711,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             if (scope->GetSymbolTable()->SymbolExists(instruction->_arg1, false)) {
                 result = scope->GetObject(instruction->_arg1);
                 GetStack().push_back(result);
-            } else if (scope->GetParent() && scope->GetParent()->GetSymbolTable()->SymbolExists(
+            } else if (scope->GetParent() &&
+                       scope->GetParent()->GetSymbolTable()->SymbolExists(
                            instruction->_arg1, false)) {
                 result = scope->GetParent()->GetObject(instruction->_arg1);
                 GetStack().push_back(result);
@@ -895,8 +898,8 @@ void RnVirtualMachine::RegisterBuiltins() {
         {"setenv", CastToBuiltin(&RnBuiltins::rn_builtin_setenv), RnType::RN_INT},
         {"getenv", CastToBuiltin(&RnBuiltins::rn_builtin_getenv), RnType::RN_STRING},
         {"unsetenv", CastToBuiltin(&RnBuiltins::rn_builtin_unsetenv), RnType::RN_INT},
-        {"listattr", CastToBuiltin(&RnBuiltins::rn_builtin_listattr), RnType::RN_ARRAY}
-    };
+        {"listattr", CastToBuiltin(&RnBuiltins::rn_builtin_listattr),
+         RnType::RN_ARRAY}};
 
     for (auto parts : functions) {
         auto func = new RnBuiltinFunction(std::get<0>(parts), std::get<1>(parts));

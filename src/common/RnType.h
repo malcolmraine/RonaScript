@@ -27,8 +27,8 @@ public:
         RN_FLOAT,
         RN_INT,
         RN_ARRAY,
-        RN_FUNCTION,    // Defined routines
-        RN_CALLABLE, // Assigned values
+        RN_FUNCTION,  // Defined routines
+        RN_CALLABLE,  // Assigned values
         RN_CLASS_INSTANCE,
         RN_OBJECT,
         RN_NULL,
