@@ -443,6 +443,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 instance->ToObject()->SetParent(class_obj->ToObject());
                 class_obj->CopySymbols(instance->GetScope());
                 BindThis(instance->GetScope(), instance);
+                BindCls(instance->GetScope(), class_obj);
                 auto func_obj = dynamic_cast<RnFunctionObject*>(
                     class_obj->ToObject()->GetObject(_object_construct_key));
                 auto func = func_obj->ToFunction();
@@ -727,11 +728,11 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_RESOLVE_NAMESPACE: {
-            // TODO: Fix this so that it pushes the correct object onto the stack
             auto nspace = _namespaces[instruction->_arg1];
             auto object = nspace->ToObject()->GetObject(instruction->_arg2);
             if (object->GetType() == RnType::RN_FUNCTION) {
                 BindCls(object->ToFunction()->GetScope(), nspace);
+                BindThis(object->ToFunction()->GetScope(), nspace);
             }
             GetStack().push_back(object);
             break;
