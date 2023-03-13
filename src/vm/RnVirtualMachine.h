@@ -59,6 +59,8 @@ private:
     inline void ExecuteInstruction(bool& break_scope, size_t& index);
     void RegisterBuiltins();
     RnVirtualMachine();
+    void BindCls(RnScope* scope, RnObject* binding);
+    void BindThis(RnScope* scope, RnObject* binding);
 
 private:
     static RnVirtualMachine* _instance;
@@ -76,6 +78,7 @@ protected:
     size_t i_idx = 0;
     size_t _gc_count = 0;
     static RnIntNative _object_this_key;
+    static RnIntNative _object_cls_key;
     static RnIntNative _object_construct_key;
 };
 

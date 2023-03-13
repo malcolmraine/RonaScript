@@ -72,7 +72,7 @@ void RnSymbolTable::AliasSymbol(RnIntNative base, RnIntNative alias) {
 
 /*****************************************************************************/
 bool RnSymbolTable::SymbolExists(RnIntNative key, bool search_parent) const {
-    if (_table.contains(key)) {
+    if (_table.find(key) != _table.end()) {
         return true;
     } else if (_parent_table && search_parent) {
         return _parent_table->SymbolExists(key);

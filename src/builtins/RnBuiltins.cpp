@@ -22,6 +22,9 @@
 /*****************************************************************************/
 void RnBuiltins::rn_builtin_unpack(RnScope* scope, const std::vector<RnObject*>& args,
                                    RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
     auto parent_scope = scope->GetParent();
     RnScope* unpack_scope = parent_scope;
     if (!unpack_scope) {
@@ -36,6 +39,9 @@ void RnBuiltins::rn_builtin_unpack(RnScope* scope, const std::vector<RnObject*>&
 /*****************************************************************************/
 void RnBuiltins::rn_builtin_call(RnScope* scope, const std::vector<RnObject*>& args,
                                  RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
     auto obj = scope->GetObject(RnObject::InternValue(args.front()->ToString()));
     auto func_obj = dynamic_cast<RnFunctionObject*>(obj);
     auto func = func_obj->GetData();
@@ -49,6 +55,9 @@ void RnBuiltins::rn_builtin_call(RnScope* scope, const std::vector<RnObject*>& a
 /*****************************************************************************/
 void RnBuiltins::rn_builtin_system(RnScope* scope, const std::vector<RnObject*>& args,
                                    RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
     std::array<char, 128> buffer{};
     std::string result;
     std::unique_ptr<FILE, decltype(&pclose)> pipe(
@@ -67,6 +76,9 @@ void RnBuiltins::rn_builtin_system(RnScope* scope, const std::vector<RnObject*>&
 /*****************************************************************************/
 void RnBuiltins::rn_builtin_lload(RnScope* scope, const std::vector<RnObject*>& args,
                                   RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
     // TODO: Add file existence check for library
     // TODO: Add check to make sure library actually loaded and return status accordingly
     auto scope_obj = new RnScope(nullptr);
@@ -77,6 +89,9 @@ void RnBuiltins::rn_builtin_lload(RnScope* scope, const std::vector<RnObject*>& 
 /*****************************************************************************/
 void RnBuiltins::rn_builtin_bind(RnScope* scope, const std::vector<RnObject*>& args,
                                  RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
     // arg 1: object to bind to
     // arg 2: function object
 
@@ -95,6 +110,9 @@ void RnBuiltins::rn_builtin_bind(RnScope* scope, const std::vector<RnObject*>& a
 /*****************************************************************************/
 void RnBuiltins::rn_builtin_setenv(RnScope* scope, const std::vector<RnObject*>& args,
                                    RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
     ret_val->SetData(static_cast<RnIntNative>(
         setenv(args[0]->ToString().c_str(), args[1]->ToString().c_str(), 1)));
 }
@@ -102,11 +120,30 @@ void RnBuiltins::rn_builtin_setenv(RnScope* scope, const std::vector<RnObject*>&
 /*****************************************************************************/
 void RnBuiltins::rn_builtin_getenv(RnScope* scope, const std::vector<RnObject*>& args,
                                    RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
     ret_val->SetData(getenv(args[0]->ToString().c_str()));
 }
 
 /*****************************************************************************/
 void RnBuiltins::rn_builtin_unsetenv(RnScope* scope, const std::vector<RnObject*>& args,
                                      RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
     ret_val->SetData(static_cast<RnIntNative>(unsetenv(args[0]->ToString().c_str())));
+}
+
+/*****************************************************************************/
+void RnBuiltins::rn_builtin_listattr(RnScope* scope, const std::vector<RnObject*>& args,
+                                    RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
+    std::vector<RnObject*> attrs;
+    for (const auto& attr : args.front()->ToObject()->GetSymbolTable()->GetSymbols()) {
+        attrs.push_back(RnObject::Create(RnObject::GetInternedString(attr)));
+    }
+    ret_val->SetData(attrs);
 }

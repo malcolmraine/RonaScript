@@ -17,6 +17,7 @@
 #include "RnFloatObject.h"
 #include "RnFunctionObject.h"
 #include "RnIntObject.h"
+#include "RnNullObject.h"
 #include "RnStringObject.h"
 
 #define OBJECT_ALLOCATION_COUNT 1000000
@@ -72,8 +73,11 @@ RnObject* RnMemoryManager::CreateObject(RnType::Type type) {
                 reinterpret_cast<RnClassObject*>(address));
         case RnType::RN_NULL:
         case RnType::RN_VOID:
+            return std::construct_at<RnNullObject>(
+                reinterpret_cast<RnNullObject*>(address));
         case RnType::RN_UNKNOWN:
         default:
+            assert(false);
             return nullptr;
     }
 }

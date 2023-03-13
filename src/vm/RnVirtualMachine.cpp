@@ -31,6 +31,7 @@
 
 RnVirtualMachine* RnVirtualMachine::_instance = nullptr;
 RnIntNative RnVirtualMachine::_object_this_key = 0;
+RnIntNative RnVirtualMachine::_object_cls_key = 0;
 RnIntNative RnVirtualMachine::_object_construct_key = 0;
 
 /*****************************************************************************/
@@ -40,6 +41,7 @@ RnVirtualMachine::RnVirtualMachine() {
     _memory_manager = new RnMemoryManager();
 
     _object_this_key = RnObject::InternValue("this");
+    _object_cls_key = RnObject::InternValue("cls");
     _object_construct_key = RnObject::InternValue("construct");
 }
 
@@ -54,6 +56,16 @@ void RnVirtualMachine::Init() {
     _scopes.push_back(scope);
     _memory_manager->SetRootMemoryGroup(GetScope()->GetMemoryGroup());
     RegisterBuiltins();
+}
+
+/*****************************************************************************/
+void RnVirtualMachine::BindCls(RnScope* scope, RnObject* binding) {
+    scope->StoreObject(_object_cls_key, binding);
+}
+
+/*****************************************************************************/
+void RnVirtualMachine::BindThis(RnScope* scope, RnObject* binding) {
+    scope->StoreObject(_object_this_key, binding);
 }
 
 /*****************************************************************************/
@@ -383,8 +395,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 throw std::runtime_error("Cannot return outside of a function");
             }
             // Have to get the parent of the working scope, not the argument scope
-            auto ret_scope = _scopes[_scopes.size() - 1];
-            GetScope()->GetParent()->GetStack().push_back(GetStack().back());
+            auto ret_scope = _scopes[_scopes.size() - 2];
+            ret_scope->GetStack().push_back(GetStack().back());
             GetStack().pop_back();
             break_scope = true;
             break;
@@ -430,12 +442,14 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 GetScope()->GetMemoryGroup()->AddObject(instance);
                 instance->ToObject()->SetParent(class_obj->ToObject());
                 class_obj->CopySymbols(instance->GetScope());
-                instance->GetScope()->StoreObject(_object_this_key, instance);
+                BindThis(instance->GetScope(), instance);
                 auto func_obj = dynamic_cast<RnFunctionObject*>(
                     class_obj->ToObject()->GetObject(_object_construct_key));
                 auto func = func_obj->ToFunction();
-
-                func->SetScope(new RnScope(instance->GetScope()));
+                auto func_scope = RnObject::Create(RnType::RN_OBJECT)->ToObject();
+                func_scope->SetParent(instance->GetScope());
+                BindThis(func_scope, instance);
+                func->SetScope(func_scope);
                 GetStack().push_back(func_obj);
             } else {
                 throw std::runtime_error("Symbol does not exist: " +
@@ -476,7 +490,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 }
             } else {
                 auto scope = CreateScope();
-                scope->SetParent(func->GetScope()->GetParent());
+                scope->SetParent(func->GetScope());
                 func->InitScope(scope);
                 _scopes.push_back(scope);
                 _call_stack.push_back(scope);
@@ -694,7 +708,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             if (scope->GetSymbolTable()->SymbolExists(instruction->_arg1, false)) {
                 result = scope->GetObject(instruction->_arg1);
                 GetStack().push_back(result);
-            } else if (scope->GetParent()->GetSymbolTable()->SymbolExists(
+            } else if (scope->GetParent() && scope->GetParent()->GetSymbolTable()->SymbolExists(
                            instruction->_arg1, false)) {
                 result = scope->GetParent()->GetObject(instruction->_arg1);
                 GetStack().push_back(result);
@@ -708,22 +722,18 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             // Otherwise, the user will need to bind the function
             if (result->GetType() == RnType::RN_FUNCTION) {
                 auto func = dynamic_cast<RnFunctionObject*>(result)->GetData();
-                if (_instructions[index + 1]->_opcode == OP_CALL) {
-                    func->GetScope()->GetSymbolTable()->SetSymbol(_object_this_key,
-                                                                  object);
-                } else {
-                    auto symbol_table = func->GetScope()->GetSymbolTable();
-                    if (symbol_table->SymbolExists(_object_this_key)) {
-                        symbol_table->RemoveSymbol(_object_this_key);
-                    }
-                }
+                BindThis(func->GetScope(), object);
             }
             break;
         }
         case OP_RESOLVE_NAMESPACE: {
             // TODO: Fix this so that it pushes the correct object onto the stack
-            auto nspace = GetScope()->GetObject(instruction->_arg1);
-            GetStack().push_back(nspace->ToObject()->GetObject(instruction->_arg2));
+            auto nspace = _namespaces[instruction->_arg1];
+            auto object = nspace->ToObject()->GetObject(instruction->_arg2);
+            if (object->GetType() == RnType::RN_FUNCTION) {
+                BindCls(object->ToFunction()->GetScope(), nspace);
+            }
+            GetStack().push_back(object);
             break;
         }
     }
@@ -884,6 +894,7 @@ void RnVirtualMachine::RegisterBuiltins() {
         {"setenv", CastToBuiltin(&RnBuiltins::rn_builtin_setenv), RnType::RN_INT},
         {"getenv", CastToBuiltin(&RnBuiltins::rn_builtin_getenv), RnType::RN_STRING},
         {"unsetenv", CastToBuiltin(&RnBuiltins::rn_builtin_unsetenv), RnType::RN_INT},
+        {"listattr", CastToBuiltin(&RnBuiltins::rn_builtin_listattr), RnType::RN_ARRAY}
     };
 
     for (auto parts : functions) {

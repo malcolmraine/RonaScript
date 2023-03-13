@@ -19,6 +19,8 @@
 void RnBuiltins_IO::rn_builtin_file_size(RnScope* scope,
                                          const std::vector<RnObject*>& args,
                                          RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
     std::string path = args.front()->ToString();
     ret_val->SetData(static_cast<RnIntNative>(std::filesystem::file_size(path)));
 }
@@ -26,13 +28,19 @@ void RnBuiltins_IO::rn_builtin_file_size(RnScope* scope,
 /*****************************************************************************/
 void RnBuiltins_IO::rn_builtin_file_write(RnScope* scope,
                                           const std::vector<RnObject*>& args,
-                                          RnObject* ret_val) {}
+                                          RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+}
 
 /*****************************************************************************/
 void RnBuiltins_IO::rn_builtin_print(RnScope* scope, const std::vector<RnObject*>& args,
                                      RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
     std::string s;
     for (auto arg : args) {
+        assert(arg);
         s.append(arg->ToString());
     }
     printf("%s\n", s.c_str());
@@ -41,6 +49,8 @@ void RnBuiltins_IO::rn_builtin_print(RnScope* scope, const std::vector<RnObject*
 /*****************************************************************************/
 void RnBuiltins_IO::rn_builtin_read(RnScope* scope, const std::vector<RnObject*>& args,
                                     RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
     std::ifstream file;
     file.open(args.front()->ToString());
 

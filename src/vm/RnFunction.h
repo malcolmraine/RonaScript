@@ -34,6 +34,7 @@ public:
     void CreateArgument(RnIntNative key, RnType::Type type, size_t index);
     void PassArguments(const std::vector<RnObject*>& args, RnScope* scope);
     void InitScope(RnScope* scope);
+    void Bind(RnIntNative this_key, RnObject* object);
 
 private:
     std::unordered_map<size_t, RnIntNative> _argument_index_map;
