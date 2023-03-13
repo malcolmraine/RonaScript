@@ -31,7 +31,7 @@
 
 #define UNDEFINED_ASSIGNMENT(type, rntype, strval)                               \
     auto SetData(type data)->void override {                                     \
-        throw std::runtime_error("Cannot assign value " + std::string(#strval) + \
+        throw std::runtime_error("Cannot assign value " + std::string(strval) + \
                                  " of type '" + RnType::TypeToString(rntype) +   \
                                  "' to symbol of type '" +                       \
                                  RnType::TypeToString(GetType()) + "'");         \
