@@ -44,6 +44,18 @@ public:
     RnObject* MakeLocal(RnType::Type type);
     void Reset();
 
+    void IncrLinkedScopeCount() {
+        _linked_scope_count++;
+    }
+
+    void DecrLinkedScopeCount() {
+        _linked_scope_count--;
+    }
+
+    [[nodiscard]] int GetLinkedScopeCount() const {
+        return _linked_scope_count;
+    }
+
 protected:
     RnScope* _parent = nullptr;
     std::vector<RnObject*> _stack;
@@ -54,7 +66,9 @@ protected:
         _locals;  // OP_CREATE_CONTEXT can pass a local count to reserve memory for this
 
 private:
+    int _linked_scope_count = 0;
     static std::map<std::string, void*> _handles;
+
 };
 
 #endif  //RONASCRIPT_RNSCOPE_H
