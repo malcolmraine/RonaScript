@@ -19,7 +19,7 @@ void Log::INFO(const std::string& msg) {
 /*****************************************************************************/
 void Log::DEBUG(const std::string& msg) {
 #ifdef ENABLE_DEBUG_LOGGING
-    std::cout << msg << "\n";
+    std::cout << "[DBG] " << msg << "\n";
 #endif
 }
 

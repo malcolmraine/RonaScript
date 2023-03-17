@@ -110,7 +110,6 @@ public:
     void ConvertScope(const std::shared_ptr<ScopeNode>& scope);
     [[nodiscard]] std::string DumpsAst() const;
     void Parse();
-    std::vector<Token*> GetQualifiers();
     void LoadTokens(std::vector<Token*> t);
     std::shared_ptr<AstNode> TransformBinaryExpr(
         std::shared_ptr<BinaryExpr> binary_expr);
@@ -131,7 +130,7 @@ private:
     std::shared_ptr<ScopeNode> _current_scope = nullptr;
     std::unordered_set<TokenType> unary_lookback_set = {
         TokenType::EQUAL, TokenType::R_PARAN, TokenType::COMMA};
-    static std::unordered_map<TokenType, std::string> _char_map;
+    static const std::unordered_map<TokenType, std::string> _char_map;
     static std::unordered_map<TokenType, int> _prec_tbl;
     static std::unordered_map<TokenType, Associativity> _operator_associativity;
     std::unordered_map<std::string, std::string> _pragma_table;

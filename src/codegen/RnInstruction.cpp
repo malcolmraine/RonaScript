@@ -125,6 +125,7 @@ auto RnInstruction::ToString() -> std::string {
             break;
         case OP_MAKE_LOCAL:
         case OP_MAKE_VAR:
+        case OP_MAKE_GLOBAL:
             arg1_str = RnType::TypeToString(static_cast<RnType::Type>(_arg1));
             arg2_str = RnObject::GetInternedString(_arg2);
             s += RnStringUtil::Join<uint32_t>({_arg1, _arg2}, "\t");
@@ -141,8 +142,8 @@ auto RnInstruction::ToString() -> std::string {
             break;
         case OP_MAKE_FUNC:
             arg1_str = RnObject::GetInternedString(_arg1);
-            arg2_str = RnType::TypeToString(static_cast<RnType::Type>(_arg1));
-            s += RnStringUtil::Join<uint32_t>({_arg1, _arg2}, "\t");
+            arg2_str = RnType::TypeToString(static_cast<RnType::Type>(_arg2));
+            s += RnStringUtil::Join<uint32_t>({_arg1, _arg2, _arg3}, "\t");
             break;
         case OP_MAKE_ARG:
             arg1_str = RnType::TypeToString(static_cast<RnType::Type>(_arg1));

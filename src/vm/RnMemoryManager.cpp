@@ -17,6 +17,7 @@
 #include "RnFloatObject.h"
 #include "RnFunctionObject.h"
 #include "RnIntObject.h"
+#include "RnNullObject.h"
 #include "RnStringObject.h"
 
 #define OBJECT_ALLOCATION_COUNT 1000000
@@ -63,6 +64,7 @@ RnObject* RnMemoryManager::CreateObject(RnType::Type type) {
             return std::construct_at<RnArrayObject>(
                 reinterpret_cast<RnArrayObject*>(address));
         case RnType::RN_FUNCTION:
+        case RnType::RN_CALLABLE:
             return std::construct_at<RnFunctionObject>(
                 reinterpret_cast<RnFunctionObject*>(address));
         case RnType::RN_CLASS_INSTANCE:
@@ -71,7 +73,11 @@ RnObject* RnMemoryManager::CreateObject(RnType::Type type) {
                 reinterpret_cast<RnClassObject*>(address));
         case RnType::RN_NULL:
         case RnType::RN_VOID:
+            return std::construct_at<RnNullObject>(
+                reinterpret_cast<RnNullObject*>(address));
         case RnType::RN_UNKNOWN:
+        default:
+            assert(false);
             return nullptr;
     }
 }
@@ -173,6 +179,7 @@ void RnMemoryManager::GCSweep() {
                         reinterpret_cast<RnArrayObject*>(address));
                     break;
                 case RnType::RN_FUNCTION:
+                case RnType::RN_CALLABLE:
                     std::destroy_at<RnFunctionObject>(
                         reinterpret_cast<RnFunctionObject*>(address));
                     break;
@@ -184,6 +191,7 @@ void RnMemoryManager::GCSweep() {
                 case RnType::RN_NULL:
                 case RnType::RN_VOID:
                 case RnType::RN_UNKNOWN:
+                default:
                     std::destroy_at<RnObject>(reinterpret_cast<RnObject*>(address));
                     break;
             }

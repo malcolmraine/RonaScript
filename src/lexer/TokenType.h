@@ -80,19 +80,12 @@ enum TokenType : int {
     DBL_L_CARAT,    // <<
     FUNC,           // func
     ROUTINE,        // routine
-    SUB,            // subroutine
     VAR,            // var
     CONST,          // const
-    PUBLIC,
-    PROTECTED,
-    PRIVATE,
-    STATIC,
-    LITERAL,    // Indicates always pass by value
-    REFERENCE,  // Indicates always pass by reference
-    IMPORT,     // import
-    RETURN,     // return
-    BREAK,      // break
-    VOID,       // void
+    IMPORT,         // import
+    RETURN,         // return
+    BREAK,          // break
+    VOID,           // void
     STRING_LITERAL,
     DBL_STAR,  // **
     UNDEFINED,

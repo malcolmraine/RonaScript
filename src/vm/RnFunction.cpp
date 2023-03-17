@@ -78,7 +78,6 @@ void RnFunction::PassArguments(const std::vector<RnObject*>& args, RnScope* scop
                                  "'");
     } else {
         for (size_t i = 0; i < args.size(); i++) {
-
             scope->StoreObject(_argument_index_map[i], args[i]);
         }
     }

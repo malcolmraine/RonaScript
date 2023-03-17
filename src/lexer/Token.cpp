@@ -82,19 +82,12 @@ std::unordered_map<TokenType, std::string> Token::token_type_string_names{
     {TokenType::DBL_L_CARAT, "DBL_L_CARAT"},      // <<
     {TokenType::FUNC, "FUNC"},                    // func
     {TokenType::ROUTINE, "ROUTINE"},              // func
-    {TokenType::SUB, "SUB"},                      // func
     {TokenType::VAR, "VAR"},                      // var
     {TokenType::CONST, "CONST"},                  // const
-    {TokenType::PUBLIC, "PUBLIC"},
-    {TokenType::PROTECTED, "PROTECTED"},
-    {TokenType::PRIVATE, "PRIVATE"},
-    {TokenType::STATIC, "STATIC"},
-    {TokenType::LITERAL, "LITERAL"},      // Indicates always pass by value
-    {TokenType::REFERENCE, "REFERENCE"},  // Indicates always pass by reference
-    {TokenType::IMPORT, "IMPORT"},        // import
-    {TokenType::RETURN, "RETURN"},        // return
-    {TokenType::BREAK, "BREAK"},          // break
-    {TokenType::VOID, "VOID"},            // void
+    {TokenType::IMPORT, "IMPORT"},                // import
+    {TokenType::RETURN, "RETURN"},                // return
+    {TokenType::BREAK, "BREAK"},                  // break
+    {TokenType::VOID, "VOID"},                    // void
     {TokenType::STRING_LITERAL, "STRING_LITERAL"},
     {TokenType::DBL_STAR, "DBL_STAR"},  // **
     {TokenType::UNDEFINED, "UNDEFINED"},
@@ -190,13 +183,6 @@ bool Token::IsType() const {
 std::string Token::ToString() const {
     return "Token('" + lexeme + "', " + Token::token_type_string_names[token_type] +
            ")";
-}
-
-/*****************************************************************************/
-bool Token::IsQualifier() const {
-    return IsOneOf({TokenType::PUBLIC, TokenType::PROTECTED, TokenType::PRIVATE,
-                    TokenType::STATIC, TokenType::LITERAL, TokenType::REFERENCE,
-                    TokenType::CONST});
 }
 
 /*****************************************************************************/

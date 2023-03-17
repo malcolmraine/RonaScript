@@ -14,22 +14,34 @@
 /*****************************************************************************/
 void RnBuiltins_Array::rn_builtin_array_filter(RnScope* scope,
                                                const std::vector<RnObject*>& args,
-                                               RnObject* ret_val) {}
+                                               RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+}
 
 /*****************************************************************************/
 void RnBuiltins_Array::rn_builtin_array_union(RnScope* scope,
                                               const std::vector<RnObject*>& args,
-                                              RnObject* ret_val) {}
+                                              RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+}
 
 /*****************************************************************************/
 void RnBuiltins_Array::rn_builtin_array_intersect(RnScope* scope,
                                                   const std::vector<RnObject*>& args,
-                                                  RnObject* ret_val) {}
+                                                  RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+}
 
 /*****************************************************************************/
 void RnBuiltins_Array::rn_builtin_array_merge(RnScope* scope,
                                               const std::vector<RnObject*>& args,
                                               RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
     std::vector<RnObject*> data;
     for (auto arg : args) {
         for (auto& item : arg->ToArray()) {
@@ -43,6 +55,9 @@ void RnBuiltins_Array::rn_builtin_array_merge(RnScope* scope,
 void RnBuiltins_Array::rn_builtin_count(RnScope* scope,
                                         const std::vector<RnObject*>& args,
                                         RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
     auto obj = args.front();
     if (obj->GetType() == RnType::RN_STRING) {
         ret_val->SetData(static_cast<RnIntNative>(obj->ToString().length()));
@@ -55,6 +70,9 @@ void RnBuiltins_Array::rn_builtin_count(RnScope* scope,
 void RnBuiltins_Array::rn_builtin_array_push(RnScope* scope,
                                              const std::vector<RnObject*>& args,
                                              RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
     auto array_obj = dynamic_cast<RnArrayObject*>(args.front());
     for (size_t i = 1; i < args.size(); i++) {
         array_obj->Append(args.at(i));
@@ -64,12 +82,18 @@ void RnBuiltins_Array::rn_builtin_array_push(RnScope* scope,
 /*****************************************************************************/
 void RnBuiltins_Array::rn_builtin_array_pop(RnScope* scope,
                                             const std::vector<RnObject*>& args,
-                                            RnObject* ret_val) {}
+                                            RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+}
 
 /*****************************************************************************/
 void RnBuiltins_Array::rn_builtin_array_zeros(RnScope* scope,
                                               const std::vector<RnObject*>& args,
                                               RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
     assert(args.size() == 1);
     std::vector<RnObject*> data;
     data.reserve(args.front()->ToInt());
@@ -83,6 +107,8 @@ void RnBuiltins_Array::rn_builtin_array_zeros(RnScope* scope,
 void RnBuiltins_Array::rn_builtin_array_fill(RnScope* scope,
                                              const std::vector<RnObject*>& args,
                                              RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
     assert(args.size() == 2);
 }
 
@@ -90,6 +116,8 @@ void RnBuiltins_Array::rn_builtin_array_fill(RnScope* scope,
 void RnBuiltins_Array::rn_builtin_sequence(RnScope* scope,
                                            const std::vector<RnObject*>& args,
                                            RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
     assert(args.size() > 2 && args.size() < 4);
     /**
 	 * arg1: array

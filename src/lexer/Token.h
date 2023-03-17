@@ -52,7 +52,6 @@ public:
     [[nodiscard]] bool IsCompoundOp() const;
     [[nodiscard]] bool IsOperator() const;
     [[nodiscard]] bool IsType() const;
-    [[nodiscard]] bool IsQualifier() const;
     [[nodiscard]] std::string ToString() const;
     bool IsOneOf(const std::unordered_set<TokenType>& tokens) const;
 

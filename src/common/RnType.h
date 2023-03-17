@@ -21,13 +21,14 @@ typedef bool RnBoolNative;
 
 class RnType {
 public:
-    enum Type {
-        RN_BOOLEAN,
+    enum Type : int {
+        RN_BOOLEAN = 0,
         RN_STRING,
         RN_FLOAT,
         RN_INT,
         RN_ARRAY,
-        RN_FUNCTION,
+        RN_FUNCTION,  // Defined routines
+        RN_CALLABLE,  // Assigned values
         RN_CLASS_INSTANCE,
         RN_OBJECT,
         RN_NULL,
@@ -71,12 +72,12 @@ public:
             return RN_FLOAT;
         } else if (type == "array") {
             return RN_ARRAY;
-        } else if (type == "func") {
+        } else if (type == "routine") {
             return RN_FUNCTION;
         } else if (type == "int") {
             return RN_INT;
         } else if (type == "callable") {
-            return RN_FUNCTION;
+            return RN_CALLABLE;
         } else if (type == "object") {
             return RN_OBJECT;
         } else if (type == "null" || type == "void") {

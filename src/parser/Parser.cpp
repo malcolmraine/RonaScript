@@ -13,6 +13,7 @@
 #include <utility>
 #include "../exceptions/UnexpectedSymbolError.h"
 #include "../lexer/Lexer.h"
+#include "../util/LoopCounter.h"
 #include "../util/RnStack.h"
 #include "../util/log.h"
 #include "ast/AliasDecl.h"
@@ -52,7 +53,7 @@
 #include "ast/VarDecl.h"
 #include "ast/WhileLoop.h"
 
-std::unordered_map<TokenType, std::string> Parser::_char_map = {
+const std::unordered_map<TokenType, std::string> Parser::_char_map = {
     {TokenType::R_BRACE, "{"},
     {TokenType::L_BRACE, "}"},
     {TokenType::R_PARAN, "("},
@@ -131,28 +132,17 @@ std::unordered_map<TokenType, std::string> Parser::_char_map = {
 };
 
 std::unordered_map<TokenType, int> Parser::_prec_tbl = {
-    {TokenType::DBL_COLON, 200},
-    {TokenType::R_ARROW, 200},
-    {TokenType::R_PARAN, 100},
-    {TokenType::STAR, 90},
-    {TokenType::SLASH, 90},
-    {TokenType::PERCENT, 90},
-    {TokenType::PLUS, 80},
-    {TokenType::MINUS, 80},
-    {TokenType::DBL_R_CARAT, 70},
-    {TokenType::DBL_L_CARAT, 70},
-    {TokenType::L_CARAT, 60},
-    {TokenType::R_CARAT, 60},
-    {TokenType::LEQ, 60},
-    {TokenType::GEQ, 60},
-    {TokenType::DBL_EQUAL, 50},
-    {TokenType::NOT_EQUAL, 50},
-    {TokenType::AMPER, 40},
-    {TokenType::DBL_AMPER, 40},
-    {TokenType::UP_ARROW, 30},
-    {TokenType::BAR, 20},
-    {TokenType::DBL_BAR, 20},
-    {TokenType::L_PARAN, 0},
+    {TokenType::DBL_COLON, 200},  {TokenType::R_ARROW, 200},
+    {TokenType::R_PARAN, 100},    {TokenType::STAR, 90},
+    {TokenType::SLASH, 90},       {TokenType::PERCENT, 90},
+    {TokenType::PLUS, 80},        {TokenType::MINUS, 80},
+    {TokenType::DBL_R_CARAT, 70}, {TokenType::DBL_L_CARAT, 70},
+    {TokenType::L_CARAT, 60},     {TokenType::R_CARAT, 60},
+    {TokenType::LEQ, 60},         {TokenType::GEQ, 60},
+    {TokenType::DBL_EQUAL, 50},   {TokenType::NOT_EQUAL, 50},
+    {TokenType::AMPER, 40},       {TokenType::DBL_AMPER, 40},
+    {TokenType::UP_ARROW, 30},    {TokenType::BAR, 20},
+    {TokenType::DBL_BAR, 20},     {TokenType::L_PARAN, 0},
 };
 
 std::unordered_map<TokenType, Associativity> Parser::_operator_associativity = {
@@ -313,7 +303,9 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
 
     // Get the function arguments
     std::map<std::string, std::shared_ptr<RnTypeComposite>> arg_symbols;
+    MAKE_LOOP_COUNTER(1000)
     while (Current()->token_type != TokenType::L_PARAN) {
+        INCR_LOOP_COUNTER
         auto arg = new ArgDecl();
         Expect(TokenType::NAME);
         AdvanceBuffer(1);
@@ -398,6 +390,7 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
 
         MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
         while (Current()->token_type == TokenType::NAME) {
+            INCR_LOOP_COUNTER
             node->parent_classes.emplace_back(ParseName());
             ConditionalBufAdvance(TokenType::COMMA);
         }
@@ -496,6 +489,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
 
     MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
     while (!result_stack.IsEmpty()) {
+        INCR_LOOP_COUNTER
         if (Lookback() &&
             (Lookback()->IsOperator() ||
              unary_lookback_set.contains(Lookback()->token_type)) &&
@@ -575,7 +569,8 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
 
                         // Handle _left _operator_associativity
                         if (!op_stack.IsEmpty() and
-                            _operator_associativity[op_stack.back()->token_type] == LEFT) {
+                            _operator_associativity[op_stack.back()->token_type] ==
+                                LEFT) {
                             auto expr2 = std::make_shared<BinaryExpr>();
                             expr2->_left = result_stack.Pop();
                             expr2->_right = transformed_node;
@@ -814,6 +809,7 @@ std::shared_ptr<FuncCall> Parser::ParseFuncCall(const std::shared_ptr<AstNode>& 
 
     MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
     while (!Current()->IsOneOf({TokenType::L_PARAN, TokenType::SEMICOLON})) {
+        INCR_LOOP_COUNTER
         node->args.emplace_back(ParseExpr(TokenType::COMMA));
     }
     AdvanceBuffer(1);
@@ -1012,6 +1008,7 @@ void Parser::Parse() {
     if (GetTokenCount()) {
         MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
         while (!EndOfSequence()) {
+            INCR_LOOP_COUNTER
             switch (Current()->token_type) {
                 case TokenType::BLOCK_COMMENT:
                 case TokenType::INLINE_COMMENT:
@@ -1032,14 +1029,6 @@ void Parser::Parse() {
                 case TokenType::ELIF:
                 case TokenType::ELSE:
                     return;
-                case TokenType::PUBLIC:
-                case TokenType::PROTECTED:
-                case TokenType::PRIVATE:
-                case TokenType::STATIC:
-                case TokenType::LITERAL:
-                case TokenType::REFERENCE:
-                    qualifiers = GetQualifiers();
-                    break;
                 case TokenType::CONST:
                 case TokenType::GLOBAL:
                 case TokenType::LOCAL:
@@ -1112,7 +1101,8 @@ void Parser::Parse() {
                             }
                         } else {
                             if (expr->node_type == AST_FUNC_CALL)
-                                std::dynamic_pointer_cast<FuncCall>(expr)->SetDiscardReturnValue(true);
+                                std::dynamic_pointer_cast<FuncCall>(expr)
+                                    ->SetDiscardReturnValue(true);
                             _current_scope->AddSubTree(expr);
                         }
                     }
@@ -1138,22 +1128,12 @@ void Parser::Parse() {
                     AdvanceBuffer(1);
                     break;
                 default:
+                    throw std::runtime_error("Unexpected token '" + Current()->lexeme +
+                                             "'");
                     break;
             }
         }
     }
-}
-
-/*****************************************************************************/
-std::vector<Token*> Parser::GetQualifiers() {
-    std::vector<Token*> qualifiers;
-
-    while (Current()->IsQualifier()) {
-        qualifiers.push_back(Current());
-        AdvanceBuffer(1);
-    }
-
-    return qualifiers;
 }
 
 /*****************************************************************************/

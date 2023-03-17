@@ -231,7 +231,7 @@ InstructionBlock RnCodeGenVisitor::Visit(FuncDecl* node) {
     instructions.reserve(scope.size());
     auto make_instruction = new RnInstruction(
         OP_MAKE_FUNC, RnObject::InternValue(node->id),
-        static_cast<long>(node->args.size()), static_cast<long>(scope.size()));
+        static_cast<long>(node->type->GetType()), static_cast<long>(scope.size()));
     instructions.emplace_back(make_instruction);
 
     for (auto& arg : node->args) {
@@ -272,7 +272,10 @@ InstructionBlock RnCodeGenVisitor::Visit(VarDecl* node) {
         opcode = OP_MAKE_CONST;
     } else if (node->is_local) {
         opcode = OP_MAKE_LOCAL;
+    } else if (node->is_global) {
+        opcode = OP_MAKE_GLOBAL;
     }
+
     instructions.emplace_back(
         new RnInstruction(opcode, node->type->GetType(), interned_id));
 
