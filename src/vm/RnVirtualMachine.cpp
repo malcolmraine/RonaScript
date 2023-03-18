@@ -345,7 +345,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             }
             // Have to get the parent of the working scope, not the argument scope
             auto ret_scope = _scopes[_scopes.size() - 2];
-            ret_scope->GetStack().push_back(GetStack().back());
+            function_scope->GetStack().push_back(GetStack().back());
             GetStack().pop_back();
             break_scope = true;
             break;
@@ -462,9 +462,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                     _memory_manager->CreateObject(func_obj->GetReturnType());
                 GetScope()->GetMemoryGroup()->AddObject(ret_val);
                 func->Call(args, ret_val);
-                if (func_obj->GetReturnType() != RnType::RN_VOID) {
-                    GetStack().push_back(ret_val);
-                }
+                GetStack().push_back(ret_val);
             } else {
                 auto scope = CreateScope();
                 scope->SetParent(func->GetScope());
@@ -651,7 +649,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_INDEX_ACCESS: {
             auto idx_value = StackPop()->ToInt();
-            auto obj = dynamic_cast<RnArrayObject*>(StackPop());
+            auto uncast = StackPop();
+            auto obj = dynamic_cast<RnArrayObject*>(uncast);
 
             // try/catch is used here to handle out of bounds access for performance
             // reasons. Checking the bounds for each access would be unnecessarily
