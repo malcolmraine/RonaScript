@@ -1,0 +1,25 @@
+
+var x: int = 0;
+x++;
+print(x);
+x++;
+print(x);
+x++;
+print(x);
+x++;
+print(x);
+x++;
+print(x);
+x--;
+print(x);
+x--;
+print(x);
+x--;
+print(x);
+x--;
+print(x);
+var f: float = 0.9;
+f++;
+print(f);
+f--;
+print(f);

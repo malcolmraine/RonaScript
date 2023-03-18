@@ -1,0 +1,31 @@
+
+class Animal is
+begin
+    var name: string;
+    var family: string = "Unknown";
+    var weight: float = 0.0;
+    var locations: array = [];
+
+    routine construct(var name: string): object
+    begin
+        this->name = name;
+    end
+
+    routine GetWeight(): float
+    begin
+        return this->weight;
+    end
+
+    routine GetLocations(): array
+    begin
+        return this->locations;
+    end
+end // class Animal
+
+var dog: object = Animal("Dog");
+dog->weight = 100;
+dog->family = "Canine";
+dog->locations = ["Here"];
+
+print(listattr(dog));
+print(attrpairs(dog));
