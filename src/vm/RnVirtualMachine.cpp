@@ -289,7 +289,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_STORE: {
             auto obj = StackPop();
             auto value = StackPop();
-            Log::DEBUG("Storing (" + RnType::TypeToString(obj->GetType()) + " <- " + RnType::TypeToString(value->GetType()) + ")");
+            Log::DEBUG("Storing (" + RnType::TypeToString(obj->GetType()) + " <- " +
+                       RnType::TypeToString(value->GetType()) + ")");
             obj->CopyDataFromObject(value);
             break;
         }
@@ -379,7 +380,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto object = GetScope()->GetObject(key);
 
             if (object) {
-//                Log::DEBUG("Loading (" + RnObject::GetInternedString(key) + ", " + RnType::TypeToString(object->GetType()) + ")");
+                //                Log::DEBUG("Loading (" + RnObject::GetInternedString(key) + ", " + RnType::TypeToString(object->GetType()) + ")");
                 GetStack().push_back(object);
             } else if (_namespaces.contains(key)) {
                 auto class_obj = dynamic_cast<RnClassObject*>(_namespaces[key]);
@@ -544,7 +545,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto name = RnObject::GetInternedString(instruction->_arg1);
             auto obj = dynamic_cast<RnClassObject*>(
                 RnObject::Create(RnType::RN_CLASS_INSTANCE));
-            obj->GetScope()->StoreObject(RnObject::InternValue("__class"), RnObject::Create(name));
+            obj->GetScope()->StoreObject(RnObject::InternValue("__class"),
+                                         RnObject::Create(name));
             _namespaces[instruction->_arg1] = obj;
             auto class_scope = obj->ToObject();
             class_scope->SetParent(GetScope());
@@ -884,8 +886,7 @@ void RnVirtualMachine::RegisterBuiltins() {
         {"setenv", CastToBuiltin(&RnBuiltins::rn_builtin_setenv), RnType::RN_INT},
         {"getenv", CastToBuiltin(&RnBuiltins::rn_builtin_getenv), RnType::RN_STRING},
         {"unsetenv", CastToBuiltin(&RnBuiltins::rn_builtin_unsetenv), RnType::RN_INT},
-        {"listattr", CastToBuiltin(&RnBuiltins::rn_builtin_listattr),
-         RnType::RN_ARRAY},
+        {"listattr", CastToBuiltin(&RnBuiltins::rn_builtin_listattr), RnType::RN_ARRAY},
         {"attrpairs", CastToBuiltin(&RnBuiltins::rn_builtin_attrpairs),
          RnType::RN_ARRAY}};
 

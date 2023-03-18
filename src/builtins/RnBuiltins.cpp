@@ -15,9 +15,9 @@
 #include <sstream>
 #include <stdexcept>
 #include "../util/MLib/String.h"
+#include "../vm/RnArrayObject.h"
 #include "../vm/RnFunction.h"
 #include "../vm/RnFunctionObject.h"
-#include "../vm/RnArrayObject.h"
 #include "../vm/RnScope.h"
 
 /*****************************************************************************/
@@ -150,8 +150,9 @@ void RnBuiltins::rn_builtin_listattr(RnScope* scope, const std::vector<RnObject*
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_attrpairs(RnScope* scope, const std::vector<RnObject*>& args,
-                                 RnObject* ret_val) {
+void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
+                                      const std::vector<RnObject*>& args,
+                                      RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
 
@@ -162,12 +163,13 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope, const std::vector<RnObject
     std::vector<RnObject*> attrs;
     auto target_scope = args.front()->ToObject();
     for (const auto& attr : target_scope->GetSymbolTable()->GetSymbols()) {
-        auto pair_obj = dynamic_cast<RnArrayObject*>(RnObject::Create(RnType::RN_ARRAY));
-        std::vector<RnObject*> data = {RnObject::Create(RnObject::GetInternedString(attr)),
-                                       target_scope->GetObject(attr)};
+        auto pair_obj =
+            dynamic_cast<RnArrayObject*>(RnObject::Create(RnType::RN_ARRAY));
+        std::vector<RnObject*> data = {
+            RnObject::Create(RnObject::GetInternedString(attr)),
+            target_scope->GetObject(attr)};
         pair_obj->SetData(data);
         attrs.push_back(pair_obj);
     }
     ret_val->SetData(attrs);
-
 }

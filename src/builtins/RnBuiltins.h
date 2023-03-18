@@ -38,7 +38,7 @@ public:
                                     RnObject* ret_val);
 
     static void rn_builtin_attrpairs(RnScope* scope, const std::vector<RnObject*>& args,
-                                    RnObject* ret_val);
+                                     RnObject* ret_val);
 };
 
 #endif  //RONASCRIPT_RNBUILTINS_H

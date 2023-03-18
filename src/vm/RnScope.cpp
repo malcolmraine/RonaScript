@@ -177,11 +177,7 @@ RnObject* RnScope::MakeLocal(RnType::Type type) {
 
 /*****************************************************************************/
 void RnScope::Reset() {
-//    GetSymbolTable()->Clear();
-    _symbolTable = RnSymbolTable(_symbolTable.GetParent());
+    GetSymbolTable()->Clear();
     _stack.Clear();
-//    _stack = {};
-//    _stack.clear();
-//    GetStack().clear();
     _locals.clear();
 }

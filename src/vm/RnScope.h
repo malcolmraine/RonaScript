@@ -13,11 +13,11 @@
 #include <map>
 #include <variant>
 #include <vector>
+#include "../util/PtrStack.h"
 #include "../util/RnStack.h"
 #include "RnMemoryGroup.h"
 #include "RnScope.h"
 #include "RnSymbolTable.h"
-#include "../util/PtrStack.h"
 
 class RnBoolObject;
 class RnIntObject;
@@ -69,7 +69,6 @@ protected:
 private:
     int _linked_scope_count = 0;
     static std::map<std::string, void*> _handles;
-
 };
 
 #endif  //RONASCRIPT_RNSCOPE_H

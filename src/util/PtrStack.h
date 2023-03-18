@@ -7,8 +7,7 @@
 
 #include <cstdlib>
 
-
-template<typename T>
+template <typename T>
 class PtrStack {
 public:
     explicit PtrStack(size_t reserve = 10) {
@@ -72,13 +71,11 @@ public:
         _stack_ptr = _data + _size;
     }
 
-
 private:
     T* _data = nullptr;
     size_t _size = 0;
     size_t _max_size = 0;
     T* _stack_ptr = nullptr;
 };
-
 
 #endif  //RONASCRIPT_SRC_UTIL_PTRSTACK_H_
