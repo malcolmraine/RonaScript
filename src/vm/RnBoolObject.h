@@ -30,6 +30,18 @@ public:
         SetDataInternal(data);
     }
 
+    void SetData(RnIntNative data) override {
+        SetDataInternal(data);
+    }
+
+    void SetData(RnFloatNative data) override {
+        SetDataInternal(static_cast<bool>(data));
+    }
+
+    void SetData(RnStringNative data) override {
+        SetDataInternal(static_cast<bool>(!data.empty()));
+    }
+
     [[nodiscard]] RnType::Type GetType() const override {
         return RnType::RN_BOOLEAN;
     }

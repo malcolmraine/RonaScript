@@ -63,6 +63,9 @@ class Test(object):
         self.log("=" * 80)
 
     def check_output(self):
+        if not self.enabled:
+            return
+
         with open(self.expected_output, "r") as file:
             expected = file.read().strip("\n").strip()
             passed = True

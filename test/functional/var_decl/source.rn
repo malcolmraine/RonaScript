@@ -1,0 +1,27 @@
+
+var x: float = 1.099;
+print(x);
+
+var y: int = 199842;
+print(y);
+var z: string = "Test String";
+print(z);
+
+var data: array = [x, y, "Another string"];
+print(data);
+print(data[0]);
+print(data[1]);
+print(data[2]);
+data[0] = x * y;
+data[1] = data[0] * 2;
+print(data);
+
+var fn: callable = print;
+fn("This is a test");
+
+var flag: bool = true;
+print(flag);
+flag = flag && false;
+print(flag);
+flag |= true;
+print(flag);

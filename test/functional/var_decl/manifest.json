@@ -1,0 +1,9 @@
+{
+  "name": "var_decl",
+  "title": "Variable Declaration",
+  "args": [],
+  "timeout": 5,
+  "invoke_count": 3,
+  "enabled": true,
+  "expected_output": "expected_output.txt"
+}
