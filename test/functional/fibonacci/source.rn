@@ -1,0 +1,14 @@
+
+routine fibonacci(var n: int): int
+begin
+    if n <= 1:
+        return n;
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2);
+    end
+end
+
+for (var n: int = 0; n < 10; n += 1):
+    print(fibonacci(n));
+end
+
