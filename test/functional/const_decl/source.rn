@@ -1,0 +1,4 @@
+
+const PI: float = 3.14;
+print(PI);
+PI = 85.0;

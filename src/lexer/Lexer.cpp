@@ -458,11 +458,21 @@ Token* Lexer::Consume() {
         case '\"':
             return ProcessStringLiteral();
         case '+':
-        case '-':
-            if ((tokens.back()->token_type != TokenType::R_PARAN &&
-                 !tokens.back()->IsBinaryOp()) ||
-                !_lexeme.empty() || Peek() == '=' || Peek() == '>')
-                return ProcessOperator();
+        case '-': {
+            if (Peek() == Current() && tokens.back()->IsOneOf({TokenType::NAME})) {
+                if (!_lexeme.empty()) {
+                    Emit();
+                }
+                _lexeme = GetCompoundCandidate();
+                AdvanceBuffer(2);
+                return Emit();
+            } else {
+                if ((tokens.back()->token_type != TokenType::R_PARAN &&
+                     !tokens.back()->IsBinaryOp()) ||
+                    !_lexeme.empty() || Peek() == '=' || Peek() == '>')
+                    return ProcessOperator();
+            }
+        }
         default: {
             if (Current() != '\r' && Current() != '\t' && Current() != '\n')
                 _lexeme.append(std::string(1, Current()));

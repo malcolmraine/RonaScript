@@ -1,0 +1,6 @@
+
+
+var x: float = 1.09;
+print(x);
+delete x;
+print(x);

@@ -492,8 +492,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
             (Lookback()->IsOperator() ||
              unary_lookback_set.contains(Lookback()->token_type)) &&
             Current()->IsUnaryOp()) {
-            if (Peek()->token_type == TokenType::INT_LITERAL ||
-                Peek()->token_type == TokenType::FLOAT_LITERAL) {
+            if (Peek()->IsOneOf({TokenType::INT_LITERAL, TokenType::FLOAT_LITERAL})) {
                 result_stack.push_back(GetExprComponent());
             } else {
                 result_stack.Push(ParseUnaryExpr());
@@ -509,9 +508,8 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
             }
         }
 
-        if (Current()->token_type == TokenType::R_BRACE ||
-            Current()->token_type == TokenType::SEMICOLON ||
-            Current()->token_type == TokenType::L_BRACK ||
+        if (Current()->IsOneOf(
+                {TokenType::R_BRACE, TokenType::SEMICOLON, TokenType::L_BRACK}) ||
             (Current()->token_type == TokenType::L_PARAN && op_stack.IsEmpty()) ||
             Current()->token_type == stop_token || Current()->IsCompoundOp()) {
             // We should only get here at the end of an expression and at
@@ -524,8 +522,8 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
                 return result_stack.Pop();
             } else {
                 if (!op_stack.IsEmpty() &&
-                    (op_stack.back()->token_type == TokenType::L_PARAN ||
-                     op_stack.back()->token_type == TokenType::R_PARAN)) {
+                    op_stack.back()->IsOneOf(
+                        {TokenType::L_PARAN, TokenType::R_PARAN})) {
                     op_stack.Pop();
                 }
 
@@ -608,8 +606,14 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
                 }
             }
         }
+        if (EndOfSequence()) {
+            break;
+        }
     }
 
+    if (!result_stack.IsEmpty()) {
+        return result_stack.back();
+    }
     return std::make_shared<Expr>();
 }
 
