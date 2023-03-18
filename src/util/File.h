@@ -7,8 +7,8 @@
 *
 ******************************************************************************/
 
-#ifndef MLIB_FILE_H
-#define MLIB_FILE_H
+#ifndef RONASCRIPT_SRC_UTIL_FILE_H
+#define RONASCRIPT_SRC_UTIL_FILE_H
 
 #include <string>
 
@@ -24,4 +24,4 @@ private:
     ~File() = default;
 };
 
-#endif  //MLIB_FILE_H
+#endif  //RONASCRIPT_SRC_UTIL_FILE_H

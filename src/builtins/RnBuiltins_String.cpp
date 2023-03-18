@@ -8,7 +8,7 @@
 ******************************************************************************/
 
 #include "RnBuiltins_String.h"
-#include "../util/MLib/String.h"
+#include "../util/String.h"
 #include "../vm/RnObject.h"
 #include "../vm/RnScope.h"
 

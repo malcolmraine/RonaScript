@@ -88,7 +88,7 @@ std::string String::Trim(const std::string& subject) {
         bool start_found = false;
 
         for (size_t i = 0; i < subject.length(); ++i) {
-            if (_IsWhiteSpace(subject[i])) {
+            if (IsWhiteSpace(subject[i])) {
                 if (!start_found) {
                     start_idx++;
                 }
@@ -138,16 +138,11 @@ bool String::Contains(const std::string& subject, const std::string& search) {
 
 /*****************************************************************************/
 bool String::IsWhiteSpace(const std::string& subject) {
-    return _IsWhiteSpace(subject.c_str()[0]);
+    return IsWhiteSpace(subject.c_str()[0]);
 }
 
 /*****************************************************************************/
 bool String::IsWhiteSpace(char c) {
-    return _IsWhiteSpace(c);
-}
-
-/*****************************************************************************/
-bool String::_IsWhiteSpace(char c) {
     switch (c) {
         case ' ':
         case '\n':
@@ -167,7 +162,7 @@ std::string String::Condense(const std::string& subject) {
     char last_ws;
 
     for (char c : subject) {
-        if (_IsWhiteSpace(c)) {
+        if (IsWhiteSpace(c)) {
             if (!ws || c != last_ws) {
                 result += c;
                 last_ws = c;

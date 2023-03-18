@@ -7,7 +7,7 @@
 #include "parser/Parser.h"
 #include "parser/RnAstValidator.h"
 #include "util/ArgParser.h"
-#include "util/MLib/String.h"
+#include "util/String.h"
 #include "util/log.h"
 #include "vm/RnMemoryManager.h"
 #include "vm/RnObject.h"

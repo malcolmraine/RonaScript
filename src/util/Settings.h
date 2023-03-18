@@ -7,8 +7,8 @@
 *
 ******************************************************************************/
 
-#ifndef MLIB_SETTINGS_H
-#define MLIB_SETTINGS_H
+#ifndef RONASCRIPT_SRC_UTIL_SETTINGS_H
+#define RONASCRIPT_SRC_UTIL_SETTINGS_H
 
 #include <map>
 #include <string>
@@ -40,4 +40,4 @@ private:
     std::map<std::string, SettingsVariant*> _settings;
 };
 
-#endif  //MLIB_SETTINGS_H
+#endif  //RONASCRIPT_SRC_UTIL_SETTINGS_H

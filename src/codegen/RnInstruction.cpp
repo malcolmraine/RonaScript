@@ -8,7 +8,7 @@
 ******************************************************************************/
 
 #include "RnInstruction.h"
-#include "../util/RnStringUtil.h"
+#include "../util/String.h"
 #include "../vm/RnObject.h"
 
 #define OPCODE_BYTES_CNT 1
@@ -64,7 +64,7 @@ char* RnInstruction::GetAsBytes() const {
 /*****************************************************************************/
 auto RnInstruction::ToString() -> std::string {
     std::string s = GetOpCodeAsString(_opcode);
-    s = RnStringUtil::Pad(s, 20);
+    s = String::Pad(s, 20);
     std::string arg1_str;
     std::string arg2_str;
 
@@ -98,7 +98,7 @@ auto RnInstruction::ToString() -> std::string {
         case OP_MAKE_GLOBAL:
             arg1_str = RnType::TypeToString(static_cast<RnType::Type>(_arg1));
             arg2_str = RnObject::GetInternedString(_arg2);
-            s += RnStringUtil::Join<uint32_t>({_arg1, _arg2}, "\t");
+            s += String::Join<uint32_t>({_arg1, _arg2}, "\t");
             break;
         case OP_LOAD_BOOL:
             arg1_str = _arg1 == 1 ? "false" : "true";
@@ -108,17 +108,17 @@ auto RnInstruction::ToString() -> std::string {
         case OP_RESOLVE_NAMESPACE:
             arg1_str = RnObject::GetInternedString(_arg1);
             arg2_str = RnObject::GetInternedString(_arg2);
-            s += RnStringUtil::Join<uint32_t>({_arg1, _arg2}, "\t");
+            s += String::Join<uint32_t>({_arg1, _arg2}, "\t");
             break;
         case OP_MAKE_FUNC:
             arg1_str = RnObject::GetInternedString(_arg1);
             arg2_str = RnType::TypeToString(static_cast<RnType::Type>(_arg2));
-            s += RnStringUtil::Join<uint32_t>({_arg1, _arg2, _arg3}, "\t");
+            s += String::Join<uint32_t>({_arg1, _arg2, _arg3}, "\t");
             break;
         case OP_MAKE_ARG:
             arg1_str = RnType::TypeToString(static_cast<RnType::Type>(_arg1));
             arg2_str = RnObject::GetInternedString(_arg2);
-            s += RnStringUtil::Join<uint32_t>({_arg1, _arg2}, "\t");
+            s += String::Join<uint32_t>({_arg1, _arg2}, "\t");
             break;
         case OP_TRY_CONTEXT:
         case OP_JUMPF:
@@ -134,7 +134,7 @@ auto RnInstruction::ToString() -> std::string {
         case OP_MAKE_CLASS:
         case OP_MAKE_MODULE:
         case OP_DELETE:
-            s += RnStringUtil::Join<uint32_t>({_arg1, _arg2}, "\t");
+            s += String::Join<uint32_t>({_arg1, _arg2}, "\t");
             break;
         default:
             break;

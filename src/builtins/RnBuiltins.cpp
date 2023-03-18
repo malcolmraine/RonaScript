@@ -14,7 +14,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
-#include "../util/MLib/String.h"
+#include "../util/String.h"
 #include "../vm/RnArrayObject.h"
 #include "../vm/RnFunction.h"
 #include "../vm/RnFunctionObject.h"

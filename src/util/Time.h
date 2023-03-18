@@ -7,8 +7,8 @@
 *
 ******************************************************************************/
 
-#ifndef MLIB_TIME_H
-#define MLIB_TIME_H
+#ifndef RONASCRIPT_SRC_UTIL_TIME_H
+#define RONASCRIPT_SRC_UTIL_TIME_H
 
 #include <chrono>
 #include <type_traits>
@@ -29,8 +29,8 @@
 #define SECONDS_PER_MINUTE (60)
 #define MINUTES_PER_HOUR (60)
 
-#ifndef MLIB_CLOCK
-#define MLIB_CLOCK std::chrono::high_resolution_clock
+#ifndef RN_TIME_CLOCK
+#define RN_TIME_CLOCK std::chrono::high_resolution_clock
 #endif
 
 /*****************************************************************************/
@@ -39,8 +39,8 @@ public:
     /*************************************************************************/
     template <class T = std::chrono::milliseconds>
     static size_t Now() {
-        ASSERT_IS_TIME_TYPE(T);
-        auto duration = MLIB_CLOCK::now().time_since_epoch();
+        ASSERT_IS_TIME_TYPE(T)
+        auto duration = RN_TIME_CLOCK::now().time_since_epoch();
         return std::chrono::duration_cast<T>(duration).count();
     }
 
@@ -70,4 +70,4 @@ public:
     }
 };
 
-#endif  //MLIB_TIME_H
+#endif  //RONASCRIPT_SRC_UTIL_TIME_H

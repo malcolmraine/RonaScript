@@ -19,7 +19,7 @@
 #include "../builtins/RnBuiltins_Math.h"
 #include "../builtins/RnBuiltins_String.h"
 #include "../builtins/RnBuiltins_Type.h"
-#include "../util/MLib/StopWatch.h"
+#include "../util/StopWatch.h"
 #include "../util/log.h"
 #include "RnArrayObject.h"
 #include "RnClassObject.h"

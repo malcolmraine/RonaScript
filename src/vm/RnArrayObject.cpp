@@ -8,7 +8,7 @@
 ******************************************************************************/
 
 #include "RnArrayObject.h"
-#include "../util/RnStringUtil.h"
+#include "../util/String.h"
 
 /*****************************************************************************/
 RnArrayObject::RnArrayObject() = default;

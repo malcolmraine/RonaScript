@@ -7,8 +7,8 @@
 *
 ******************************************************************************/
 
-#ifndef MLIB_STOPWATCH_H
-#define MLIB_STOPWATCH_H
+#ifndef RONASCRIPT_SRC_UTIL_STOPWATCH_H
+#define RONASCRIPT_SRC_UTIL_STOPWATCH_H
 
 #include <chrono>
 #include "Time.h"
@@ -27,7 +27,7 @@ public:
     /*************************************************************************/
     template <class T = DEFAULT>
     static size_t Time() {
-        ASSERT_IS_TIME_TYPE(T);
+        ASSERT_IS_TIME_TYPE(T)
         return Time::Now<T>();
     }
 
@@ -77,6 +77,6 @@ private:
     std::vector<size_t> _splits;
 };
 
-#undef MLIB_CLOCK
+#undef RONASCRIPT_SRC_UTIL_CLOCK
 
-#endif  //MLIB_STOPWATCH_H
+#endif  //RONASCRIPT_SRC_UTIL_STOPWATCH_H

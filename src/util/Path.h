@@ -7,8 +7,8 @@
 *
 ******************************************************************************/
 
-#ifndef MLIB_PATH_H
-#define MLIB_PATH_H
+#ifndef RONASCRIPT_SRC_UTIL_PATH_H
+#define RONASCRIPT_SRC_UTIL_PATH_H
 
 #include <string>
 #include <vector>
@@ -30,4 +30,4 @@ private:
     ~Path() = default;
 };
 
-#endif  //MLIB_PATH_H
+#endif  //RONASCRIPT_SRC_UTIL_PATH_H

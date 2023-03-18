@@ -7,8 +7,8 @@
 *
 ******************************************************************************/
 
-#ifndef MLIB_STRING_H
-#define MLIB_STRING_H
+#ifndef RONASCRIPT_SRC_UTIL_STRING_H
+#define RONASCRIPT_SRC_UTIL_STRING_H
 
 #include <string>
 #include <vector>
@@ -50,10 +50,20 @@ public:
     static std::string Pad(const std::string& s, size_t len,
                            char pad_char = ' ');  // TODO: Unit test
 
+    template <typename T = std::string>
+    static std::string Join(std::vector<T> v, const std::string& join_char = "") {
+        std::string s;
+
+        for (auto& item : v) {
+            s += std::to_string(item) + join_char;
+        }
+
+        return s;
+    }
+
 private:
-    static bool _IsWhiteSpace(char c);
     String() = default;
     ~String() = default;
 };
 
-#endif  //MLIB_STRING_H
+#endif  //RONASCRIPT_SRC_UTIL_STRING_H
