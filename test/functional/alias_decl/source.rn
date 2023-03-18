@@ -1,11 +1,10 @@
-
 var x: string = "This is a test";
 alias newName is x;
-print(x == newName);
-print(x);
-print(newName);
+print("Original equals alias: ", x == newName);
+print("Original: ", x);
+print("Alias: ", newName);
 newName = "Set the alias value";
 alias secondIndirection is newName;
-print(x == secondIndirection);
-print(x);
-print(secondIndirection);
+print("Original equals second indirection: ", x == secondIndirection);
+print("Original: ", x);
+print("Second Indirection: ", secondIndirection);

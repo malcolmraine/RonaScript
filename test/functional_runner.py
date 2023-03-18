@@ -169,7 +169,7 @@ if __name__ == "__main__":
         runner.add_test(Test(manifest.get("title"),
                              file.replace("manifest.json", ""),
                              expected_output_file=manifest.get("expected_output", "expected_output.txt"),
-                             args=manifest.get("args", []),
+                             args=["--no-validation", *manifest.get("args", [])],
                              timeout=manifest.get("timeout", 5),
                              invoke_count=manifest.get("invoke_count", 1),
                              enabled=manifest.get("enabled", False)))

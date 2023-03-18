@@ -1,6 +1,6 @@
-true
-This is a test
-This is a test
-true
-Set the alias value
-Set the alias value
+Original equals alias:  true
+Original:  This is a test
+Alias:  This is a test
+Original equals second indirection:  true
+Original:  Set the alias value
+Second Indirection:  Set the alias value
