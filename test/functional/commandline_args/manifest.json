@@ -1,0 +1,9 @@
+{
+  "name": "commandline_args",
+  "title": "Command Line Arguments",
+  "args": ["-h"],
+  "timeout": 1,
+  "invoke_count": 100,
+  "enabled": true,
+  "expected_output": "expected_output.txt"
+}

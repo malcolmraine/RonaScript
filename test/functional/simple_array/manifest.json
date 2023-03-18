@@ -1,0 +1,9 @@
+{
+  "name": "simple_array",
+  "title": "Simple Array",
+  "args": [],
+  "timeout": 5,
+  "invoke_count": 3,
+  "enabled": true,
+  "expected_output": "expected_output.txt"
+}

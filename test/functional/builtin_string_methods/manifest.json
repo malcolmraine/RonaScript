@@ -1,0 +1,9 @@
+{
+  "name": "builtin_string_methods",
+  "title": "Builtin String Methods",
+  "args": [],
+  "timeout": 5,
+  "invoke_count": 1,
+  "enabled": false,
+  "expected_output": "expected_output.txt"
+}

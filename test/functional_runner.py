@@ -1,4 +1,6 @@
 import datetime
+import glob
+import json
 import os
 import subprocess
 import sys
@@ -20,13 +22,25 @@ def strip_ansi_codes(s: str) -> str:
 
 
 class Test(object):
-    def __init__(self, name, source_dir: str, args: list, timeout: int = 5, invoke_count=1):
+    def __init__(self,
+                 name,
+                 source_dir: str,
+                 expected_output_file: str = "",
+                 args: list = None,
+                 timeout: int = 5,
+                 invoke_count=1,
+                 enabled=False):
         self.stdout = []
         self.stderr = []
         self.source_dir = source_dir
         self.source_file = f"{source_dir}/source.rn"
-        self.expected_output = f"{source_dir}/expected_output.txt"
-        self.args = args
+        self.expected_output = f"{source_dir}/{expected_output_file}"
+        self.enabled = enabled
+
+        if args is None:
+            self.args = []
+        else:
+            self.args = args
         self.timeout = timeout
         self.returncode = -1
         self.name = name
@@ -102,6 +116,10 @@ class Test(object):
                 self.log("\n".join(ndiff(expected.splitlines(), invalid_output.splitlines())))
 
     def run(self):
+        if not self.enabled:
+            # print(f"DISABLED ({round(self.runtime, 6)}s) - {self.name}\033[0m")
+            return
+
         def target():
             self.process = subprocess.Popen([rn_executable, self.source_file, *self.args], stderr=subprocess.PIPE,
                                             stdout=subprocess.PIPE)
@@ -142,13 +160,14 @@ class TestRunner(object):
 
 if __name__ == "__main__":
     runner = TestRunner()
-    runner.add_test(Test("Command Line Arguments", "functional/commandline_args", ["-h"], timeout=1, invoke_count=100))
-    runner.add_test(Test("Numerical Expressions", "functional/numerical_expressions", [], timeout=2, invoke_count=1))
-    runner.add_test(Test("Recursive GCF", "functional/recursive_gcf", [], timeout=2, invoke_count=3))
-    runner.add_test(Test("Class Creation", "functional/class_creation", [], timeout=1, invoke_count=3))
-    runner.add_test(Test("Simple Array", "functional/simple_array", [], invoke_count=3))
-    runner.add_test(Test("Loop Timeout", "functional/loop_timeout", []))
-    runner.add_test(Test("Matrix Multiplication", "functional/matrix_multiplication", [], invoke_count=3))
-    runner.add_test(Test("Var Declaration Stress", "functional/var_decl_stress_test", [], timeout=3))
-    runner.add_test(Test("Multiple Invokes", "functional/multiple_invokes", [], timeout=10, invoke_count=100))
+    for file in glob.glob("functional/**/manifest.json"):
+        with open(file, "r") as manifest_file:
+            manifest = json.load(manifest_file)
+        runner.add_test(Test(manifest.get("title"),
+                             file.replace("manifest.json", ""),
+                             expected_output_file=manifest.get("expected_output", "expected_output.txt"),
+                             args=manifest.get("args", []),
+                             timeout=manifest.get("timeout", 5),
+                             invoke_count=manifest.get("invoke_count", 1),
+                             enabled=manifest.get("enabled", False)))
     runner.run()

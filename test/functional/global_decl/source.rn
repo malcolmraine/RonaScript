@@ -1,0 +1,9 @@
+
+routine MakeGlobal(var value: int): void
+begin
+    global x_glb: int = value;
+end
+
+MakeGlobal(12345);
+print(x_glb);
+print(x_glb == 12345);
