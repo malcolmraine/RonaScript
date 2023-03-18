@@ -19,7 +19,7 @@
 #include "../common/RnType.h"
 #include "../lexer/Token.h"
 #include "../lexer/TokenType.h"
-#include "../util/RonaSequencer.h"
+#include "../util/RnSequencer.h"
 #include "ast/Ast.h"
 
 class StringLiteral;
@@ -69,7 +69,7 @@ enum ParserState {
     FUNC_DECL_CONTEXT,
 };
 
-class Parser : public RonaSequencer<Token*, TokenType> {
+class Parser : public RnSequencer<Token*, TokenType> {
 public:
     Parser();
     ~Parser();

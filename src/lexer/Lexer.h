@@ -35,7 +35,7 @@
 #include <unordered_set>
 #include <vector>
 #include "../util/FileInfo.h"
-#include "../util/RonaSequencer.h"
+#include "../util/RnSequencer.h"
 
 #define STRING_LITERAL_MAX_LENGTH 1000000
 #define BLOCK_COMMENT_START "/*"
@@ -51,7 +51,7 @@
 class Token;
 enum TokenType : int;
 
-class Lexer : public RonaSequencer<char, char> {
+class Lexer : public RnSequencer<char, char> {
 public:
     Lexer();
     ~Lexer();
@@ -76,7 +76,7 @@ public:
     void ProcessTokens();
     void LoadFile(const std::string& path);
     void LoadString(const std::string& input);
-    bool EndOfFile() const;  // TODO: Use RonaSequencer
+    bool EndOfFile() const;  // TODO: Use RnSequencer
     bool EndOfSequence() const override;
     char GetCurrentAsExpectedType() override;
     void HandleUnexpectedItem() override;

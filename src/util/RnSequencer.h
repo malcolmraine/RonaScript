@@ -1,5 +1,5 @@
 /*****************************************************************************
-* File: RonaSequencer.h
+* File: RnSequencer.h
 * Description:
 * Author: Malcolm Hall
 * Date: 5/16/22
@@ -15,12 +15,12 @@
 #include <utility>
 
 template <typename T, typename E>
-class RonaSequencer {
+class RnSequencer {
 public:
     static const int DEFAULT_BUFFER_SIZE = 3;
 
-    RonaSequencer();
-    ~RonaSequencer() = default;
+    RnSequencer();
+    ~RnSequencer() = default;
     T Peek(int n = 1) const;
     T Current() const;
     T Lookback(int n = 1) const;
@@ -144,44 +144,44 @@ private:
 
 /*****************************************************************************/
 template <class T, typename E>
-RonaSequencer<T, E>::RonaSequencer() {
+RnSequencer<T, E>::RnSequencer() {
     SetBufferSize(DEFAULT_BUFFER_SIZE);
 }
 
 /*****************************************************************************/
 template <class T, typename E>
-T RonaSequencer<T, E>::Peek(int n) const {
+T RnSequencer<T, E>::Peek(int n) const {
     return _buffer[ClampIndex(GetWindowIdxCurrent() + n)];
 }
 
 /*****************************************************************************/
 template <class T, typename E>
-T RonaSequencer<T, E>::Current() const {
+T RnSequencer<T, E>::Current() const {
     return _buffer[ClampIndex(GetWindowIdxCurrent())];
 }
 
 /*****************************************************************************/
 template <class T, typename E>
-T RonaSequencer<T, E>::Lookback(int n) const {
+T RnSequencer<T, E>::Lookback(int n) const {
     return _buffer[ClampIndex(GetWindowIdxCurrent() - n)];
 }
 
 /*****************************************************************************/
 template <class T, typename E>
-void RonaSequencer<T, E>::Expect(E item) {
+void RnSequencer<T, E>::Expect(E item) {
     _expected_items.push_back(item);
 }
 
 /*****************************************************************************/
 template <class T, typename E>
-void RonaSequencer<T, E>::Expect(std::vector<E> items) {
+void RnSequencer<T, E>::Expect(std::vector<E> items) {
     _expected_items.insert(std::end(_expected_items), std::begin(items),
                            std::end(items));
 }
 
 /*****************************************************************************/
 template <class T, typename E>
-void RonaSequencer<T, E>::AdvanceBuffer(int n) {
+void RnSequencer<T, E>::AdvanceBuffer(int n) {
     for (int i = 0; i < n; ++i) {
         for (size_t j = 0; j < _buffer.size() - 1; ++j) {
             _buffer[j] = _buffer[j + 1];
@@ -201,7 +201,7 @@ void RonaSequencer<T, E>::AdvanceBuffer(int n) {
 
 /*****************************************************************************/
 template <class T, typename E>
-bool RonaSequencer<T, E>::CheckExpected() {
+bool RnSequencer<T, E>::CheckExpected() {
     if (_expected_items.empty()) {
         return true;
     }
@@ -219,13 +219,13 @@ bool RonaSequencer<T, E>::CheckExpected() {
 
 /*****************************************************************************/
 template <class T, typename E>
-bool RonaSequencer<T, E>::EndOfSequence() const {
+bool RnSequencer<T, E>::EndOfSequence() const {
     return GetDataIdx() == GetDataSize();
 }
 
 /*****************************************************************************/
 template <class T, typename E>
-void RonaSequencer<T, E>::LoadNextItem() {
+void RnSequencer<T, E>::LoadNextItem() {
     if (!EndOfSequence()) {
         _buffer[GetBufferSize() - 1] = _data[_data_idx++];
     }
