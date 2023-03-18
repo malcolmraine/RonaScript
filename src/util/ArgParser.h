@@ -51,7 +51,7 @@ public:
     [[nodiscard]] std::string GetInputFile() const;
 
 private:
-    std::map<std::string, std::shared_ptr<Argument>> _arguments{};
+    std::map<std::string, Argument*> _arguments{};
     std::string _main_description;
     std::string _input_file;
     std::unordered_set<std::string> _help_exclusions{};

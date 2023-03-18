@@ -51,6 +51,7 @@ private:
 
 #define ENABLE_LOOP_COUNTING
 #define COUNTER_NAME counter##__LINE__
+#define DEFAULT_ITERATION_MAX 100000
 
 #ifndef MAKE_LOOP_COUNTER
 #ifdef ENABLE_LOOP_COUNTING

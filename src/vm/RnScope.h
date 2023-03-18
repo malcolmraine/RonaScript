@@ -17,6 +17,7 @@
 #include "RnMemoryGroup.h"
 #include "RnScope.h"
 #include "RnSymbolTable.h"
+#include "../util/PtrStack.h"
 
 class RnBoolObject;
 class RnIntObject;
@@ -34,7 +35,7 @@ public:
     [[nodiscard]] RnObject* GetObject(RnIntNative key);
     void RemoveObject(RnIntNative key);
     [[nodiscard]] RnSymbolTable* GetSymbolTable();
-    [[nodiscard]] std::vector<RnObject*>& GetStack();
+    [[nodiscard]] PtrStack<RnObject*>& GetStack();
     void SetParent(RnScope* scope);
     [[nodiscard]] RnScope* GetParent() const;
     [[nodiscard]] RnMemoryGroup* GetMemoryGroup();
@@ -44,9 +45,21 @@ public:
     RnObject* MakeLocal(RnType::Type type);
     void Reset();
 
+    void IncrLinkedScopeCount() {
+        _linked_scope_count++;
+    }
+
+    void DecrLinkedScopeCount() {
+        _linked_scope_count--;
+    }
+
+    [[nodiscard]] int GetLinkedScopeCount() const {
+        return _linked_scope_count;
+    }
+
 protected:
     RnScope* _parent = nullptr;
-    std::vector<RnObject*> _stack;
+    PtrStack<RnObject*> _stack;
     RnSymbolTable _symbolTable;
     RnMemoryGroup _memory_group;
     std::vector<std::variant<RnBoolObject, RnStringObject, RnIntObject, RnFloatObject,
@@ -54,7 +67,9 @@ protected:
         _locals;  // OP_CREATE_CONTEXT can pass a local count to reserve memory for this
 
 private:
+    int _linked_scope_count = 0;
     static std::map<std::string, void*> _handles;
+
 };
 
 #endif  //RONASCRIPT_RNSCOPE_H

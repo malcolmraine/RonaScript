@@ -42,6 +42,9 @@ void RnBuiltins_IO::rn_builtin_print(RnScope* scope, const std::vector<RnObject*
     for (auto arg : args) {
         assert(arg);
         s.append(arg->ToString());
+        if (arg != args.back()) {
+            s.append(" ");
+        }
     }
     printf("%s\n", s.c_str());
 }

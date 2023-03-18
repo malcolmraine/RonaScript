@@ -76,7 +76,7 @@ void ArgParser::AddArgument(const std::string& arg,
                             const std::vector<std::string>& alternates,
                             const std::string& description, bool has_value,
                             const std::string& defaultValue) {
-    auto argument = std::make_shared<Argument>(arg, description, has_value);
+    auto argument = new Argument(arg, description, has_value);
     _arguments[arg] = argument;
     _ordered_args.push_back(arg);
 

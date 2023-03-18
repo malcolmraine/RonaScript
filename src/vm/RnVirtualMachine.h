@@ -27,24 +27,26 @@ class RnMemoryManager;
 
 class RnVirtualMachine {
 public:
-    enum State {
-        FUNCTION_CALL,
-        CLASS_DECLARATION,
-        GENERAL_EXECUTION,
-    };
-
     ~RnVirtualMachine();
 
     RnScope* GetScope() {
         return _scopes.back();
     }
 
-    [[nodiscard]] std::vector<RnObject*>& GetStack() {
+    [[nodiscard]] PtrStack<RnObject*>& GetStack() {
         return _scopes.back()->GetStack();
     }
 
+    RnObject* StackPop() {
+        auto item = _scopes.back()->GetStack().Pop();
+        assert(item);
+        return item;
+//        auto obj = _scopes.back()->GetStack().back();
+//        _scopes.back()->GetStack().pop_back();
+//        return obj;
+    }
+
     void CallFunction(RnFunctionObject* obj, uint32_t arg_cnt);
-    void AddScope();
     RnIntNative Run();
     void LoadInstructions(std::vector<RnInstruction*> instructions);
     static RnVirtualMachine* GetInstance();
@@ -59,8 +61,8 @@ private:
     inline void ExecuteInstruction(bool& break_scope, size_t& index);
     void RegisterBuiltins();
     RnVirtualMachine();
-    void BindCls(RnScope* scope, RnObject* binding);
-    void BindThis(RnScope* scope, RnObject* binding);
+    static void BindCls(RnScope* scope, RnObject* binding);
+    static void BindThis(RnScope* scope, RnObject* binding);
 
 private:
     static RnVirtualMachine* _instance;

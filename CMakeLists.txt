@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.20)
 project(RonaScript)
 
 set(CMAKE_CXX_STANDARD 20)
-add_compile_options(-Werror -o2)
+add_compile_options(-Werror)
 
 include(src/common/CMakeLists.txt)
 include(src/lexer/CMakeLists.txt)
@@ -21,4 +21,5 @@ include(src/builtins/CMakeLists.txt)
 include(src/util/CMakeLists.txt)
 include(src/codegen/CMakeLists.txt)
 
-add_executable(RonaScript src/main.cpp ${RonaScript_SOURCES} src/RnVersionInfo.h src/util/LoopCounter.h src/build_info.h)
+add_executable(RonaScript src/main.cpp ${RonaScript_SOURCES}
+        src/RnVersionInfo.h src/util/LoopCounter.h src/RnBuildInfo.h src/util/PtrStack.h)

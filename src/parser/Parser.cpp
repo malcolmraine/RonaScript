@@ -388,7 +388,7 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
         Expect(TokenType::NAME);
         AdvanceBuffer(1);
 
-        MAKE_LOOP_COUNTER(1000)
+        MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
         while (Current()->token_type == TokenType::NAME) {
             INCR_LOOP_COUNTER
             node->parent_classes.emplace_back(ParseName());
@@ -487,7 +487,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         return std::static_pointer_cast<BinaryExpr>(TransformBinaryExpr(node));
     };
 
-    MAKE_LOOP_COUNTER(1000)
+    MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
     while (!result_stack.IsEmpty()) {
         INCR_LOOP_COUNTER
         if (Lookback() &&
@@ -807,7 +807,7 @@ std::shared_ptr<FuncCall> Parser::ParseFuncCall(const std::shared_ptr<AstNode>& 
     }
     ConditionalBufAdvance(TokenType::R_PARAN);
 
-    MAKE_LOOP_COUNTER(1000)
+    MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
     while (!Current()->IsOneOf({TokenType::L_PARAN, TokenType::SEMICOLON})) {
         INCR_LOOP_COUNTER
         node->args.emplace_back(ParseExpr(TokenType::COMMA));
@@ -1006,7 +1006,7 @@ void Parser::Parse() {
     std::vector<Token*> qualifiers;
 
     if (GetTokenCount()) {
-        MAKE_LOOP_COUNTER(1000)
+        MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
         while (!EndOfSequence()) {
             INCR_LOOP_COUNTER
             switch (Current()->token_type) {

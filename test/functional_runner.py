@@ -4,6 +4,7 @@ import threading
 import time
 import os
 import datetime
+from difflib import ndiff
 
 rn_executable = sys.argv[1]
 
@@ -42,7 +43,12 @@ class Test(object):
                 file.write(arg)
             file.write("\n")
 
-    def check_output(self, returncode=0):
+    def log_header(self, header: str):
+        self.log("=" * 80)
+        self.log(" " + header)
+        self.log("=" * 80)
+
+    def check_output(self):
         with open(self.expected_output, "r") as file:
             expected = file.read().strip("\n").strip()
             passed = True
@@ -74,28 +80,26 @@ class Test(object):
             self.log(f"Return code: {self.returncode}")
             self.log(f"Timestamp: {datetime.datetime.now()}")
             self.log()
-            self.log("=========================================================")
-            self.log("stderr")
-            self.log("=========================================================")
+            self.log_header("stderr")
             if self.stderr != self.stdout:
                 for output in self.stderr:
                     if output:
                         self.log(output)
             self.log()
-            self.log("=========================================================")
-            self.log("Expected")
-            self.log("=========================================================")
+            self.log_header("Expected")
             self.log(expected)
             self.log()
-            self.log("=========================================================")
-            self.log("Actual")
-            self.log("=========================================================")
+            self.log_header("Actual")
             if not passed:
                 self.log(invalid_output)
             elif len(self.stdout) > 0:
                 self.log(self.stdout[0])
             else:
                 self.log()
+                self.log()
+            self.log_header("Diff")
+            if not passed:
+                self.log("\n".join(ndiff(expected.splitlines(), invalid_output.splitlines())))
 
     def run(self):
         def target():
@@ -121,7 +125,7 @@ class Test(object):
             self.stdout.append(stdout.decode("utf-8"))
         end = time.time()
         self.runtime = end - start
-        self.check_output(self.returncode)
+        self.check_output()
 
 
 class TestRunner(object):
