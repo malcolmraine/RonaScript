@@ -140,15 +140,17 @@ public:
 protected:
     /*************************************************************************/
     void SetDataInternal(T data) {
-        if (_is_const) {
+        if (_is_const && _initialized) {
             throw std::runtime_error("Cannot set value of const");
         }
         _data = data;
+        _initialized = true;
     }
 
 protected:
     T _data;
     bool _is_const = false;
+    bool _initialized = false;
 };
 
 #endif  //RONASCRIPT_RNOBJECTBASE_H
