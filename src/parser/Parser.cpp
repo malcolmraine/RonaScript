@@ -8,7 +8,6 @@
 ******************************************************************************/
 
 #include "Parser.h"
-#include <iostream>
 #include <memory>
 #include <utility>
 #include "../exceptions/UnexpectedSymbolError.h"
@@ -466,7 +465,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
     result_stack.Push(std::shared_ptr<AstNode>());
 
     // Grab any immediate unary operators and apply them to the closest
-    // expression. This may need some fine tuning.
+    // expression. This may need some fine-tuning.
     if (Current()->IsUnaryOp()) {
         auto node = std::make_shared<UnaryExpr>();
         node->op = Current()->lexeme;
@@ -537,7 +536,12 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
                     }
                     auto node = make_binary_expr();
                     if (Current()->token_type == TokenType::R_BRACK) {
-                        result_stack.Push(ParseIndexedExpr(node));
+                        if (Lookback()->IsOneOf({TokenType::EQUAL, TokenType::R_PARAN,
+                                                 TokenType::COMMA})) {
+                            result_stack.Push(ParseArrayLiteral());
+                        } else {
+                            result_stack.Push(ParseIndexedExpr(node));
+                        }
                     } else if (Current()->token_type == TokenType::R_PARAN) {
                         result_stack.Push(ParseFuncCall(node));
                     } else {

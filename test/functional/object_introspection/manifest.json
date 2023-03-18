@@ -4,6 +4,7 @@
   "args": [],
   "timeout": 5,
   "invoke_count": 1,
-  "enabled": false,
-  "expected_output": "expected_output.txt"
+  "enabled": true,
+  "expected_output": "expected_output.txt",
+  "similarity_threshold": 0.75
 }

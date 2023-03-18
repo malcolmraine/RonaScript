@@ -1,5 +1,5 @@
 
 var x: float = 0;
-for (var n: int = 0; n < 1000000; n++):
+for (var n: int = 0; n < 50000; n++):
     x = n;
 end

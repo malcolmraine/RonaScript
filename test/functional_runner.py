@@ -6,7 +6,8 @@ import subprocess
 import sys
 import threading
 import time
-from difflib import ndiff
+from difflib import ndiff, SequenceMatcher
+
 
 rn_executable = sys.argv[1]
 
@@ -29,13 +30,16 @@ class Test(object):
                  args: list = None,
                  timeout: int = 5,
                  invoke_count=1,
-                 enabled=False):
+                 enabled=False,
+                 similarity=1.0):
         self.stdout = []
         self.stderr = []
         self.source_dir = source_dir
         self.source_file = f"{source_dir}/source.rn"
         self.expected_output = f"{source_dir}/{expected_output_file}"
         self.enabled = enabled
+        self.similarity_threshold = similarity
+        self.passed = False
 
         if args is None:
             self.args = []
@@ -50,6 +54,7 @@ class Test(object):
         self.timeout_occurred = False
         self.invoke_count = invoke_count
         self.runtime = 0
+        self.similarity_scores = []
 
     def log(self, *args):
         with open(self.log_file, "a+") as file:
@@ -68,26 +73,35 @@ class Test(object):
 
         with open(self.expected_output, "r") as file:
             expected = file.read().strip("\n").strip()
-            passed = True
+            self.passed = True
             invalid_output = ""
 
             for output in self.stdout:
-                if expected not in output.strip("\n").strip():
-                    passed = False
-                    invalid_output = output.strip("\n").strip()
+                actual = output.strip("\n").strip()
+                similarity = SequenceMatcher(None, expected, actual).ratio()
+                self.similarity_scores.append(similarity)
+
+                if self.similarity_threshold < 1.0:
+                    if similarity < self.similarity_threshold:
+                        self.passed = False
+                        invalid_output = actual
+                        break
+                elif expected not in actual:
+                    self.passed = False
+                    invalid_output = actual
                     break
 
             if self.returncode != 0:
-                passed = False
+                self.passed = False
 
             if self.timeout_occurred:
                 msg = "TIMEOUT"
-            elif not passed:
+            elif not self.passed:
                 msg = "FAILED"
             else:
                 msg = "PASSED"
 
-            if passed and not self.timeout_occurred:
+            if self.passed and not self.timeout_occurred:
                 print(f"\033[92m{msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m")
             else:
                 print(f"\033[91m{msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m")
@@ -96,6 +110,7 @@ class Test(object):
             self.log(f"Status: {msg}")
             self.log(f"Return code: {self.returncode}")
             self.log(f"Timestamp: {datetime.datetime.now()}")
+            self.log(f"Similarities: {self.similarity_scores}")
             self.log()
             self.log_header("stderr")
             if self.stderr != self.stdout:
@@ -107,7 +122,7 @@ class Test(object):
             self.log(expected)
             self.log()
             self.log_header("Actual")
-            if not passed:
+            if not self.passed:
                 self.log(invalid_output)
             elif len(self.stdout) > 0:
                 self.log(self.stdout[0])
@@ -115,7 +130,7 @@ class Test(object):
                 self.log()
                 self.log()
             self.log_header("Diff")
-            if not passed:
+            if not self.passed:
                 self.log("\n".join(ndiff(expected.splitlines(), invalid_output.splitlines())))
 
     def run(self):
@@ -128,6 +143,7 @@ class Test(object):
                                             stdout=subprocess.PIPE)
             self.process.communicate()
 
+        self.similarity_scores = []
         start = time.time()
         for n in range(self.invoke_count):
             thread = threading.Thread(target=target)
@@ -152,13 +168,34 @@ class Test(object):
 class TestRunner(object):
     def __init__(self):
         self.tests = []
+        self.enabled_count = 0
+        self.disabled_count = 0
+        self.passed_count = 0
+        self.timeout_count = 0
+        self.failed_count = 0
 
     def add_test(self, test: Test):
         self.tests.append(test)
+        if test.enabled:
+            self.enabled_count += 1
+        else:
+            self.disabled_count += 1
 
     def run(self):
         for test in self.tests:
             test.run()
+            if test.timeout_occurred:
+                self.timeout_count += 1
+            elif test.passed:
+                self.passed_count += 1
+            elif test.enabled:
+                self.failed_count += 1
+        print("-------------------------------------------------------")
+        print(f"Total tests: {len(self.tests)}")
+        print(f"Enabled/Disabled: {self.enabled_count}/{self.disabled_count}")
+        print(f"Passed: {self.passed_count}")
+        print(f"Failed: {self.failed_count}")
+        print(f"\nPass rate: {round(self.passed_count / self.enabled_count, 3)}")
 
 
 if __name__ == "__main__":
@@ -172,5 +209,6 @@ if __name__ == "__main__":
                              args=["--no-validation", *manifest.get("args", [])],
                              timeout=manifest.get("timeout", 5),
                              invoke_count=manifest.get("invoke_count", 1),
-                             enabled=manifest.get("enabled", False)))
+                             enabled=manifest.get("enabled", False),
+                             similarity=manifest.get("similarity_threshold", 1.0)))
     runner.run()

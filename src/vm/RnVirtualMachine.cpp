@@ -380,7 +380,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto object = GetScope()->GetObject(key);
 
             if (object) {
-                //                Log::DEBUG("Loading (" + RnObject::GetInternedString(key) + ", " + RnType::TypeToString(object->GetType()) + ")");
+                Log::DEBUG("Loading (" + RnObject::GetInternedString(key) + ", " + RnType::TypeToString(object->GetType()) + ")");
                 GetStack().push_back(object);
             } else if (_namespaces.contains(key)) {
                 auto class_obj = dynamic_cast<RnClassObject*>(_namespaces[key]);
@@ -488,7 +488,12 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 for (int i = 0; i < scope->GetLinkedScopeCount(); i++) {
                     _scopes.pop_back();
                 }
-                GetStack().push_back(scope->GetStack().back());
+
+                if (has_returned) {
+                    GetStack().push_back(scope->GetStack().back());
+                } else {
+                   GetStack().push_back(RnObject::Create(RnType::RN_NULL));
+                }
 
                 if (func->GetName() == "construct") {
                     GetStack().push_back(func->GetScope()->GetObject(_object_this_key));
@@ -545,8 +550,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto name = RnObject::GetInternedString(instruction->GetArg1());
             auto obj = dynamic_cast<RnClassObject*>(
                 RnObject::Create(RnType::RN_CLASS_INSTANCE));
-            obj->GetScope()->StoreObject(RnObject::InternValue("__class"),
-                                         RnObject::Create(name));
+            auto name_obj = RnObject::Create(name);
+            name_obj->SetConstFlag(true);
+            obj->GetScope()->StoreObject(RnObject::InternValue("__class"), name_obj);
             _namespaces[instruction->GetArg1()] = obj;
             auto class_scope = obj->ToObject();
             class_scope->SetParent(GetScope());
