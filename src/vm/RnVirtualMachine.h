@@ -16,7 +16,6 @@
 #include <utility>
 #include <vector>
 #include "../codegen/RnInstruction.h"
-#include "../util/RnStack.h"
 #include "RnInternment.h"
 #include "RnScope.h"
 
@@ -41,9 +40,6 @@ public:
         auto item = _scopes.back()->GetStack().Pop();
         assert(item);
         return item;
-        //        auto obj = _scopes.back()->GetStack().back();
-        //        _scopes.back()->GetStack().pop_back();
-        //        return obj;
     }
 
     void CallFunction(RnFunctionObject* obj, uint32_t arg_cnt);

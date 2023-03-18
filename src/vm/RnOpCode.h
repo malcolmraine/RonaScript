@@ -12,7 +12,7 @@
 
 #include <string>
 
-typedef enum {
+typedef enum : int {
     OP_ATTR_ACCESS,
     OP_RESOLVE_NAMESPACE,
     OP_BINARY_ADD,    // op1:          op2:

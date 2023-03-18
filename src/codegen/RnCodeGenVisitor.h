@@ -97,7 +97,7 @@ public:
     }
 
 private:
-    void WrapContext(InstructionBlock& block);
+    static void WrapContext(InstructionBlock& block);
 
 private:
     InstructionBlock _instructions;

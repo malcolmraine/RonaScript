@@ -9,9 +9,9 @@
 
 #include "RnInstruction.h"
 #include "../util/RnStringUtil.h"
+#include "../vm/RnObject.h"
 
 #define OPCODE_BYTES_CNT 1
-#define ARGCNT_BYTES_CNT 1
 #define ARG_BYTES_CNT 1
 
 union argdata {
@@ -23,53 +23,23 @@ union argdata {
 RnInstruction::RnInstruction() = default;
 
 /*****************************************************************************/
-RnInstruction::RnInstruction(RnOpCode opcode) {
-    _opcode = opcode;
-}
+RnInstruction::RnInstruction(RnOpCode opcode) : _opcode(opcode) {}
 
 /*****************************************************************************/
-RnInstruction::RnInstruction(RnOpCode opcode, uint32_t arg1) {
-    _opcode = opcode;
-    _arg1 = arg1;
-}
+RnInstruction::RnInstruction(RnOpCode opcode, uint32_t arg1)
+    : _opcode(opcode), _arg1(arg1) {}
 
 /*****************************************************************************/
-RnInstruction::RnInstruction(RnOpCode opcode, uint32_t arg1, uint32_t arg2) {
-    _opcode = opcode;
-    _arg1 = arg1;
-    _arg2 = arg2;
-}
+RnInstruction::RnInstruction(RnOpCode opcode, uint32_t arg1, uint32_t arg2)
+    : _opcode(opcode), _arg1(arg1), _arg2(arg2) {}
 
 /*****************************************************************************/
 RnInstruction::RnInstruction(RnOpCode opcode, uint32_t arg1, uint32_t arg2,
-                             uint32_t arg3) {
-    _opcode = opcode;
-    _arg1 = arg1;
-    _arg2 = arg2;
-    _arg3 = arg3;
-}
+                             uint32_t arg3)
+    : _opcode(opcode), _arg1(arg1), _arg2(arg2), _arg3(arg3) {}
 
 /*****************************************************************************/
 RnInstruction::~RnInstruction() = default;
-
-/*****************************************************************************/
-auto RnInstruction::FromBytes(const char* bytes) -> bool {
-    _opcode = static_cast<RnOpCode>(bytes[0]);
-    argdata data{};
-    int i = 0;
-
-    for (char& byte : data.bytes) {
-        byte = bytes[i++];
-    }
-    _arg1 = data.data;
-
-    for (char& byte : data.bytes) {
-        byte = bytes[i++];
-    }
-    _arg2 = data.data;
-
-    return true;
-}
 
 /*****************************************************************************/
 char* RnInstruction::GetAsBytes() const {

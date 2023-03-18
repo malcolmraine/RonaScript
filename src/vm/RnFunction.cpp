@@ -9,6 +9,8 @@
 
 #include "RnFunction.h"
 #include <utility>
+#include "RnObject.h"
+#include "RnScope.h"
 
 /*****************************************************************************/
 RnFunction::RnFunction(std::string name, long i_start, long i_cnt) {

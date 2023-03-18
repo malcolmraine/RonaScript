@@ -33,12 +33,12 @@
 #include "../parser/ast/IndexedExpr.h"
 #include "../parser/ast/IntLiteral.h"
 #include "../parser/ast/ReturnStmt.h"
-#include "../parser/ast/ScopeNode.h"
 #include "../parser/ast/StringLiteral.h"
 #include "../parser/ast/TryBlock.h"
 #include "../parser/ast/UnaryExpr.h"
 #include "../parser/ast/VarDecl.h"
 #include "../parser/ast/WhileLoop.h"
+#include "../vm/RnObject.h"
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
@@ -348,7 +348,7 @@ InstructionBlock RnCodeGenVisitor::Visit(IfStmt* node) {
     instructions.insert(instructions.end(), consequent.begin(), consequent.end());
 
     if (!alternative.empty()) {
-        jumpf->_arg1++;
+        jumpf->SetArg1(jumpf->GetArg1() + 1);
         instructions.emplace_back(new RnInstruction(OP_JUMPF, alternative.size()));
         instructions.insert(instructions.end(), alternative.begin(), alternative.end());
     }
@@ -371,7 +371,7 @@ InstructionBlock RnCodeGenVisitor::Visit(ElifStmt* node) {
     //	instructions.emplace_back(new RnInstruction(OP_JUMPF, alternative.size()));
 
     if (!alternative.empty()) {
-        jumpf->_arg1++;
+        jumpf->SetArg1(jumpf->GetArg1() + 1);
         instructions.emplace_back(new RnInstruction(OP_JUMPF, alternative.size()));
         instructions.insert(instructions.end(), alternative.begin(), alternative.end());
     }

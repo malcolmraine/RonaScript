@@ -37,6 +37,8 @@
                                  RnType::TypeToString(GetType()) + "'");        \
     }
 
+class RnScope;
+
 template <class T>
 class RnObjectBase : public RnObject {
 public:

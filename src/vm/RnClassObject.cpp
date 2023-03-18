@@ -10,6 +10,15 @@
 #include "RnClassObject.h"
 #include <iomanip>
 #include <sstream>
+#include "RnVirtualMachine.h"
+
+/*****************************************************************************/
+RnClassObject::RnClassObject() {
+    _data = RnVirtualMachine::GetInstance()->CreateScope();
+}
+
+/*****************************************************************************/
+RnClassObject::~RnClassObject() = default;
 
 /*****************************************************************************/
 auto RnClassObject::ToString() const -> RnStringNative {

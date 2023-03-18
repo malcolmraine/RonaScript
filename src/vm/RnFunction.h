@@ -14,8 +14,10 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "RnObject.h"
-#include "RnScope.h"
+#include "../common/RnType.h"
+
+class RnScope;
+class RnObject;
 
 /*****************************************************************************/
 class RnFunction {

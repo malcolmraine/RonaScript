@@ -1,9 +1,9 @@
+import datetime
+import os
 import subprocess
 import sys
 import threading
 import time
-import os
-import datetime
 from difflib import ndiff
 
 rn_executable = sys.argv[1]
@@ -14,9 +14,9 @@ if os.name == "nt":
 
 def strip_ansi_codes(s: str) -> str:
     return s.strip("\0[33m") \
-            .strip("\0[33[0m")\
-            .strip("\0[31m")\
-            .strip("\0[31[0m")
+        .strip("\0[33[0m") \
+        .strip("\0[31m") \
+        .strip("\0[31[0m")
 
 
 class Test(object):

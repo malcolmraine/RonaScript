@@ -11,6 +11,7 @@
 #define RONASCRIPT_ALIASDECL_H
 
 #include <string>
+#include "../../common/RnType.h"
 #include "AstNode.h"
 
 class Name;

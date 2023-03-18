@@ -10,6 +10,7 @@
 #ifndef RONASCRIPT_INTLITERAL_H
 #define RONASCRIPT_INTLITERAL_H
 
+#include "../../common/RnType.h"
 #include "AstNode.h"
 
 class IntLiteral : public AstNode {
@@ -18,7 +19,6 @@ public:
     explicit IntLiteral(long value);
     explicit IntLiteral(bool value);
     explicit IntLiteral(double value);
-    //	explicit IntLiteral(const std::string& value);
     ~IntLiteral();
     std::string ToString(bool nl) override;
     RnIntNative data;

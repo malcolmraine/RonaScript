@@ -12,7 +12,6 @@
 
 #include "RnClass.h"
 #include "RnObjectBase.h"
-#include "RnVirtualMachine.h"
 
 /**
  * class objects are object with a scope data type
@@ -35,11 +34,10 @@ class RnScope;
 // This is a class instance
 class RnClassObject : public RnObjectBase<RnScope*> {
 public:
-    RnClassObject() {
-        _data = RnVirtualMachine::GetInstance()->CreateScope();
-    }
-
-    ~RnClassObject() {}
+    RnClassObject();
+    ~RnClassObject();
+    [[nodiscard]] RnStringNative ToString() const override;
+    void CopySymbols(RnScope* target);
 
     [[nodiscard]] RnScope* GetScope() const {
         return GetData();
@@ -53,18 +51,12 @@ public:
         SetDataInternal(data);
     }
 
-    [[nodiscard]] RnStringNative ToString() const override;
-
     [[nodiscard]] RnType::Type GetType() const override {
         return RnType::RN_OBJECT;
     }
 
     [[nodiscard]] std::string GetName() const {
         return _name;
-    }
-
-    void SetName(const std::string& name) {
-        _name = name;
     }
 
     [[nodiscard]] bool IsModule() const {
@@ -74,8 +66,6 @@ public:
     void SetIsModule(bool flag) {
         _is_module = flag;
     }
-
-    void CopySymbols(RnScope* target);
 
 private:
     bool _is_module = false;
