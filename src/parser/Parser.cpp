@@ -10,7 +10,6 @@
 #include "Parser.h"
 #include <memory>
 #include <utility>
-#include "../exceptions/UnexpectedSymbolError.h"
 #include "../lexer/Lexer.h"
 #include "../util/LoopCounter.h"
 #include "../util/RnStack.h"
