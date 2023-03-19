@@ -7,7 +7,7 @@ import sys
 import threading
 import time
 from difflib import ndiff, SequenceMatcher
-
+import junit_reporter
 
 rn_executable = sys.argv[1]
 
@@ -24,6 +24,7 @@ def remove_ansi_codes(s: str) -> str:
 class Test(object):
     def __init__(self,
                  name,
+                 id,
                  source_dir: str,
                  expected_output_file: str = "",
                  args: list = None,
@@ -31,6 +32,7 @@ class Test(object):
                  invoke_count=1,
                  enabled=False,
                  similarity=1.0):
+        self.id = id
         self.stdout = []
         self.stderr = []
         self.source_dir = source_dir
@@ -54,6 +56,7 @@ class Test(object):
         self.invoke_count = invoke_count
         self.runtime = 0
         self.similarity_scores = []
+        self.msg = ""
 
     def log(self, *args):
         with open(self.log_file, "a+") as file:
@@ -94,19 +97,19 @@ class Test(object):
                 self.passed = False
 
             if self.timeout_occurred:
-                msg = "TIMEOUT"
+                self.msg = "TIMEOUT"
             elif not self.passed:
-                msg = "FAILED"
+                self.msg = "FAILED"
             else:
-                msg = "PASSED"
+                self.msg = "PASSED"
 
             if self.passed and not self.timeout_occurred:
-                print(f"\033[92m{msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m")
+                print(f"\033[92m{self.msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m")
             else:
-                print(f"\033[91m{msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m")
+                print(f"\033[91m{self.msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m")
 
             self.log(f"Test: {self.name}")
-            self.log(f"Status: {msg}")
+            self.log(f"Status: {self.msg}")
             self.log(f"Return code: {self.returncode}")
             self.log(f"Timestamp: {datetime.datetime.now()}")
             self.log(f"Similarities: {self.similarity_scores}")
@@ -135,7 +138,9 @@ class Test(object):
 
     def run(self):
         if not self.enabled:
-            print(f"DISABLED ({round(self.runtime, 6)}s) - {self.name}\033[0m")
+            self.msg = "DISABLED"
+            self.passed = True
+            print(f"{self.msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m")
             return
 
         def target():
@@ -208,6 +213,7 @@ if __name__ == "__main__":
         with open(file, "r") as manifest_file:
             manifest = json.load(manifest_file)
         runner.add_test(Test(manifest.get("title"),
+                             manifest.get("name"),
                              file.replace("manifest.json", ""),
                              expected_output_file=manifest.get("expected_output", "expected_output.txt"),
                              args=["--no-validation", *manifest.get("args", [])],
@@ -216,3 +222,16 @@ if __name__ == "__main__":
                              enabled=manifest.get("enabled", False),
                              similarity=manifest.get("similarity_threshold", 1.0)))
     runner.run()
+    reporter = junit_reporter.JUnitReporter()
+    suite = junit_reporter.TestSuite("1", "Functional Tests", runner.total_runtime)
+    for test in runner.tests:
+        testcase = junit_reporter.TestCase(test.id, test.name, round(test.runtime, 6))
+        if not test.passed:
+            failure_detail = f"Return code: {test.returncode}"
+            testcase.failures.append(junit_reporter.TestFailure(test.msg, "Error", failure_detail))
+        suite.add_testcase(testcase)
+
+    reporter.test_suites.append(suite)
+
+    with open("rona_test.junit.xml", "w") as report_file:
+        report_file.write(reporter.to_xml())
