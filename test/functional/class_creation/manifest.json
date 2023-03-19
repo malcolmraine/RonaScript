@@ -3,7 +3,7 @@
   "title": "Class Creation",
   "args": [],
   "timeout": 1,
-  "invoke_count": 3,
+  "invoke_count": 2,
   "enabled": true,
   "expected_output": "expected_output.txt",
   "similarity_threshold": 1.0

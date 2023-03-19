@@ -8,7 +8,7 @@ begin
     end
 end
 
-for (var n: int = 0; n < 10; n += 1):
+for (var n: int = 0; n < 10; n++):
     print(fibonacci(n));
 end
 

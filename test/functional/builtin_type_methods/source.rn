@@ -1,0 +1,67 @@
+
+
+print("--------------------------------------------------------");
+print("--------------------------------------------------------");
+print("is_int");
+var a: int = 23;
+print(a, ": ", is_int(a));
+print(9.8242, ": ", is_int(9.8242));
+
+print();
+print("--------------------------------------------------------");
+print("--------------------------------------------------------");
+print("is_float");
+var b: float = 1.99288213;
+print(b, ": ", is_float(b));
+print(9.8242, ": ", is_float(9.8242));
+print(a, ": ", is_float(a));
+
+print();
+print("--------------------------------------------------------");
+print("--------------------------------------------------------");
+print("is_bool");
+var c: bool = true;
+print(c, ": ", is_bool(c));
+print(true, ": ", is_bool(true));
+print(9.8242, ": ", is_bool(9.8242));
+
+print();
+print("--------------------------------------------------------");
+print("--------------------------------------------------------");
+print("is_string");
+var d: string = "The quick brown fox jumped over the lazy dog.";
+print(d, ": ", is_string(d));
+print("foo", ": ", is_string("foo"));
+print(true, ": ", is_string(true));
+
+print();
+print("--------------------------------------------------------");
+print("--------------------------------------------------------");
+print("is_array");
+var e: array = [1, 2, 3, "Foo"];
+print(e, ": ", is_array(e));
+print([3, 5, 2], ": ", is_array([3, 5, 2]));
+print("foo", ": ", is_array("foo"));
+
+print();
+print("--------------------------------------------------------");
+print("--------------------------------------------------------");
+print("is_callable");
+var f: callable = print;
+print(f, ": ", is_callable(f));
+
+print();
+print("--------------------------------------------------------");
+print("--------------------------------------------------------");
+print("is_object");
+class Test is
+begin
+    routine construct(): object
+    begin
+        return this;
+    end;
+end
+
+var g: object = Test();
+print("Test: ", is_object(g));
+print(5232, ": ", is_object(5232));

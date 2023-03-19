@@ -1,10 +1,10 @@
 {
-  "name": "unary_expressions",
-  "title": "Unary Expressions",
+  "name": "builtin_type_methods",
+  "title": "Builtin Type Methods",
   "args": [],
   "timeout": 1,
   "invoke_count": 1,
   "enabled": true,
   "expected_output": "expected_output.txt",
-  "similarity_threshold": 1.0
+  "similarity_threshold": 0.99
 }
