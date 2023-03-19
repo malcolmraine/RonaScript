@@ -39,6 +39,14 @@ public:
 
     static void rn_builtin_attrpairs(RnScope* scope, const std::vector<RnObject*>& args,
                                      RnObject* ret_val);
+    static void rn_builtin_hasattr(RnScope* scope, const std::vector<RnObject*>& args,
+                                     RnObject* ret_val);
+    static void rn_builtin_getattr(RnScope* scope, const std::vector<RnObject*>& args,
+                                     RnObject* ret_val);
+    static void rn_builtin_setattr(RnScope* scope, const std::vector<RnObject*>& args,
+                                     RnObject* ret_val);
+    static void rn_builtin_delattr(RnScope* scope, const std::vector<RnObject*>& args,
+                                   RnObject* ret_val);
 };
 
 #endif  //RONASCRIPT_RNBUILTINS_H

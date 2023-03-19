@@ -173,3 +173,66 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
     }
     ret_val->SetData(attrs);
 }
+
+/*****************************************************************************/
+ void rn_builtin_hasattr(RnScope* scope, const std::vector<RnObject*>& args,
+                               RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
+    auto obj = args[0]->ToObject();
+    auto attr_key = RnObject::InternValue(args[1]->ToString());
+    ret_val->SetData(obj->GetSymbolTable()->SymbolExists(attr_key));
+ }
+
+ /*****************************************************************************/
+ void rn_builtin_getattr(RnScope* scope, const std::vector<RnObject*>& args,
+                               RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
+    auto obj = args[0]->ToObject();
+    auto attr_key = RnObject::InternValue(args[1]->ToString());
+    if (obj->GetSymbolTable()->SymbolExists(attr_key)) {
+        auto original = obj->GetObject(attr_key);
+        auto result = RnObject::Create(original->GetType());
+        result->CopyDataFromObject(original);
+        std::vector<RnObject*> array_data = {result};
+        ret_val->SetData(array_data);
+    }
+ }
+
+ /*****************************************************************************/
+ void rn_builtin_setattr(RnScope* scope, const std::vector<RnObject*>& args,
+                               RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
+    auto obj = args[0]->ToObject();
+    auto attr_key = RnObject::InternValue(args[1]->ToString());
+    if (obj->GetSymbolTable()->SymbolExists(attr_key)) {
+        auto original = obj->GetObject(attr_key);
+        original->CopyDataFromObject(args[2]);
+    } else {
+        auto copy = RnObject::Create(args[2]->GetType());
+        copy->CopyDataFromObject(args[2]);
+        obj->StoreObject(attr_key, copy);
+    }
+    ret_val->SetData(true);
+ }
+
+ /*****************************************************************************/
+ void rn_builtin_delattr(RnScope* scope, const std::vector<RnObject*>& args,
+                               RnObject* ret_val) {
+    assert(ret_val);
+    assert(scope);
+
+    auto obj = args[0]->ToObject();
+    auto attr_key = RnObject::InternValue(args[1]->ToString());
+    if (obj->GetSymbolTable()->SymbolExists(attr_key)) {
+        obj->RemoveObject(attr_key);
+        ret_val->SetData(true);
+    } else {
+        ret_val->SetData(false);
+    }
+ }

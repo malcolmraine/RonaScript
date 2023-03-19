@@ -380,7 +380,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto object = GetScope()->GetObject(key);
 
             if (object) {
-                Log::DEBUG("Loading (" + RnObject::GetInternedString(key) + ", " + RnType::TypeToString(object->GetType()) + ")");
+                Log::DEBUG("Loading (" + RnObject::GetInternedString(key) + ", " +
+                           RnType::TypeToString(object->GetType()) + ")");
                 GetStack().push_back(object);
             } else if (_namespaces.contains(key)) {
                 auto class_obj = dynamic_cast<RnClassObject*>(_namespaces[key]);
@@ -492,7 +493,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 if (has_returned) {
                     GetStack().push_back(scope->GetStack().back());
                 } else {
-                   GetStack().push_back(RnObject::Create(RnType::RN_NULL));
+                    GetStack().push_back(RnObject::Create(RnType::RN_NULL));
                 }
 
                 if (func->GetName() == "construct") {
@@ -581,9 +582,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             uint32_t i = 0;  // Argument count
             for (; _instructions[i + index + 1]->GetOpcode() == OP_MAKE_ARG; i++) {
                 auto arg_instruction = _instructions[i + index + 1];
-                func->CreateArgument(arg_instruction->GetArg2(),
-                                     static_cast<RnType::Type>(arg_instruction->GetArg1()),
-                                     i);
+                func->CreateArgument(
+                    arg_instruction->GetArg2(),
+                    static_cast<RnType::Type>(arg_instruction->GetArg1()), i);
             }
 
             index += scope_size + i;
@@ -892,7 +893,12 @@ void RnVirtualMachine::RegisterBuiltins() {
         {"unsetenv", CastToBuiltin(&RnBuiltins::rn_builtin_unsetenv), RnType::RN_INT},
         {"listattr", CastToBuiltin(&RnBuiltins::rn_builtin_listattr), RnType::RN_ARRAY},
         {"attrpairs", CastToBuiltin(&RnBuiltins::rn_builtin_attrpairs),
-         RnType::RN_ARRAY}};
+         RnType::RN_ARRAY},
+        {"getattr", CastToBuiltin(&RnBuiltins::rn_builtin_getattr), RnType::RN_ARRAY},
+        {"setattr", CastToBuiltin(&RnBuiltins::rn_builtin_setattr), RnType::RN_BOOLEAN},
+        {"hasattr", CastToBuiltin(&RnBuiltins::rn_builtin_hasattr), RnType::RN_BOOLEAN},
+        {"delattr", CastToBuiltin(&RnBuiltins::rn_builtin_delattr),
+         RnType::RN_BOOLEAN}};
 
     for (auto parts : functions) {
         auto func = new RnBuiltinFunction(std::get<0>(parts), std::get<1>(parts));
