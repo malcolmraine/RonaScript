@@ -175,7 +175,7 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
 }
 
 /*****************************************************************************/
- void rn_builtin_hasattr(RnScope* scope, const std::vector<RnObject*>& args,
+ void RnBuiltins::rn_builtin_hasattr(RnScope* scope, const std::vector<RnObject*>& args,
                                RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -186,7 +186,7 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
  }
 
  /*****************************************************************************/
- void rn_builtin_getattr(RnScope* scope, const std::vector<RnObject*>& args,
+ void RnBuiltins::rn_builtin_getattr(RnScope* scope, const std::vector<RnObject*>& args,
                                RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -203,7 +203,7 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
  }
 
  /*****************************************************************************/
- void rn_builtin_setattr(RnScope* scope, const std::vector<RnObject*>& args,
+ void RnBuiltins::rn_builtin_setattr(RnScope* scope, const std::vector<RnObject*>& args,
                                RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -222,7 +222,7 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
  }
 
  /*****************************************************************************/
- void rn_builtin_delattr(RnScope* scope, const std::vector<RnObject*>& args,
+ void RnBuiltins::rn_builtin_delattr(RnScope* scope, const std::vector<RnObject*>& args,
                                RnObject* ret_val) {
     assert(ret_val);
     assert(scope);

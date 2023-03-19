@@ -36,7 +36,6 @@ public:
                                     RnObject* ret_val);
     static void rn_builtin_listattr(RnScope* scope, const std::vector<RnObject*>& args,
                                     RnObject* ret_val);
-
     static void rn_builtin_attrpairs(RnScope* scope, const std::vector<RnObject*>& args,
                                      RnObject* ret_val);
     static void rn_builtin_hasattr(RnScope* scope, const std::vector<RnObject*>& args,

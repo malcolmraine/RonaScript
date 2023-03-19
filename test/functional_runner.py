@@ -193,10 +193,11 @@ class TestRunner(object):
             self.total_runtime += test.runtime
             if test.timeout_occurred:
                 self.timeout_count += 1
-            elif test.passed:
-                self.passed_count += 1
             elif test.enabled:
-                self.failed_count += 1
+                if test.passed:
+                    self.passed_count += 1
+                else:
+                    self.failed_count += 1
         print("-------------------------------------------------------")
         print(f"Total tests: {len(self.tests)}")
         print(f"Enabled/Disabled: {self.enabled_count}/{self.disabled_count}")
