@@ -111,6 +111,7 @@ class Test(object):
             self.log(f"Return code: {self.returncode}")
             self.log(f"Timestamp: {datetime.datetime.now()}")
             self.log(f"Similarities: {self.similarity_scores}")
+            self.log(f"Runtime: {self.runtime}s")
             self.log()
             self.log_header("stderr")
             if self.stderr != self.stdout:
@@ -173,6 +174,7 @@ class TestRunner(object):
         self.passed_count = 0
         self.timeout_count = 0
         self.failed_count = 0
+        self.total_runtime = 0.0
 
     def add_test(self, test: Test):
         self.tests.append(test)
@@ -184,6 +186,7 @@ class TestRunner(object):
     def run(self):
         for test in self.tests:
             test.run()
+            self.total_runtime += test.runtime
             if test.timeout_occurred:
                 self.timeout_count += 1
             elif test.passed:
@@ -195,6 +198,8 @@ class TestRunner(object):
         print(f"Enabled/Disabled: {self.enabled_count}/{self.disabled_count}")
         print(f"Passed: {self.passed_count}")
         print(f"Failed: {self.failed_count}")
+        print(f"Total runtime: {self.total_runtime}s")
+        print(f"Avg. runtime: {self.total_runtime / self.enabled_count}s")
         print(f"\nPass rate: {round(self.passed_count / self.enabled_count, 3)}")
 
 
