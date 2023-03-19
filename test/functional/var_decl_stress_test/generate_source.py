@@ -35,12 +35,12 @@ def make_rand_decl():
 
 def make_rand_array():
     result = []
-    for n in range(random.randint(0, 5)):
+    for r in range(random.randint(0, 5)):
         result.append(make_rand_float())
         result.append(make_rand_bool())
         result.append(make_rand_int())
         result.append(make_rand_string())
-    return str(result)
+    return "[" + ", ".join([str(_) for _ in result]) + "]"
 
 
 if __name__ == "__main__":
