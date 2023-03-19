@@ -1,0 +1,70 @@
+
+print();
+print("--------------------------------------------------------");
+print("str_lower");
+print("ABCDEFGHIJKLMNOPQRSTUVQXYZ", " -> ", str_lower("ABCDEFGHIJKLMNOPQRSTUVQXYZ"));
+print("abcdefghijklmnopqrstuvwxyz", " -> ", str_lower("abcdefghijklmnopqrstuvwxyz"));
+print("AbCdEfGhIjKlMnOpQrStUvWxYz", " -> ", str_lower("AbCdEfGhIjKlMnOpQrStUvWxYz"));
+print("0123456789", " -> ", str_lower("0123456789"));
+print("0123456789ABCD", " -> ", str_lower("0123456789ABCD"));
+print("The quick brown fox jumped over the lazy dog", " -> ", str_lower("The quick brown fox jumped over the lazy dog"));
+
+print();
+print("--------------------------------------------------------");
+print("str_upper");
+print("ABCDEFGHIJKLMNOPQRSTUVQXYZ", " -> ", str_upper("ABCDEFGHIJKLMNOPQRSTUVQXYZ"));
+print("abcdefghijklmnopqrstuvwxyz", " -> ", str_upper("abcdefghijklmnopqrstuvwxyz"));
+print("AbCdEfGhIjKlMnOpQrStUvWxYz", " -> ", str_upper("AbCdEfGhIjKlMnOpQrStUvWxYz"));
+print("0123456789", " -> ", str_upper("0123456789"));
+print("0123456789abcd", " -> ", str_upper("0123456789ABCD"));
+print("The quick brown fox jumped over the lazy dog", " -> ", str_upper("The quick brown fox jumped over the lazy dog"));
+
+print();
+print("--------------------------------------------------------");
+print("str_title_case");
+    // Not implemented
+
+print();
+print("--------------------------------------------------------");
+print("str_snakecase");
+    // Not implemented
+
+print();
+print("--------------------------------------------------------");
+print("str_split");
+print("1,2,3,4,5", " -> ", str_split("1,2,3,4,5", ","));
+print("1-2-3-4-5", " -> ", str_split("1-2-3-4-5", "-"));
+print("1-2-3-4-5", " -> ", str_split("1-2-3-4-5", ","));
+print("This is a test", " -> ", str_split("This is a test", " "));
+print("splitallchars", "->", str_split("splitallchars", ""));
+print("splitallchars", "->", str_split("splitallchars"));
+
+
+print();
+print("--------------------------------------------------------");
+print("str_substr");
+print(str_substr("123", 0));
+print(str_substr("123", 1));
+print(str_substr("123", 2));
+print(str_substr("---This is a test", 3, 5));
+
+print();
+print("--------------------------------------------------------");
+print("str_endswith");
+print("file.txt", "-> (.txt)", str_endswith("file.txt", ".txt"));
+print("file.txt", "-> (.mp4)", str_endswith("file.txt", ".mp4"));
+print("file.txt", "-> (file.txt)", str_endswith("file.txt", "file.txt"));
+print("file.txt", "-> ()", str_endswith("file.txt", ""));
+
+print();
+print("--------------------------------------------------------");
+print("str_startswith");
+print("onetwothree", "-> (one)", str_startswith("onetwothree", "one"));
+print("onetwothree", "-> (two)", str_startswith("onetwothree", "two"));
+
+print();
+print("--------------------------------------------------------");
+print("str_join");
+print([1, 2, 3, 4, 5], "->", str_join([1, 2, 3, 4, 5]));
+print(["this", "is", "a", "test"], "->", str_join(["this", "is", "a", "test"], ""));
+print([], "->", str_join([]));

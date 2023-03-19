@@ -111,7 +111,7 @@ class Test(object):
             self.log(f"Return code: {self.returncode}")
             self.log(f"Timestamp: {datetime.datetime.now()}")
             self.log(f"Similarities: {self.similarity_scores}")
-            self.log(f"Runtime: {self.runtime}s")
+            self.log(f"Runtime: {round(self.runtime, 6)}s")
             self.log()
             self.log_header("stderr")
             if self.stderr != self.stdout:
@@ -136,7 +136,7 @@ class Test(object):
 
     def run(self):
         if not self.enabled:
-            # print(f"DISABLED ({round(self.runtime, 6)}s) - {self.name}\033[0m")
+            print(f"DISABLED ({round(self.runtime, 6)}s) - {self.name}\033[0m")
             return
 
         def target():
@@ -198,8 +198,8 @@ class TestRunner(object):
         print(f"Enabled/Disabled: {self.enabled_count}/{self.disabled_count}")
         print(f"Passed: {self.passed_count}")
         print(f"Failed: {self.failed_count}")
-        print(f"Total runtime: {self.total_runtime}s")
-        print(f"Avg. runtime: {self.total_runtime / self.enabled_count}s")
+        print(f"Total runtime: {round(self.total_runtime, 3)}s")
+        print(f"Avg. runtime: {round(self.total_runtime / self.enabled_count, 3)}s")
         print(f"\nPass rate: {round(self.passed_count / self.enabled_count, 3)}")
 
 

@@ -1,0 +1,58 @@
+
+--------------------------------------------------------
+str_lower
+ABCDEFGHIJKLMNOPQRSTUVQXYZ  ->  abcdefghijklmnopqrstuvqxyz
+abcdefghijklmnopqrstuvwxyz  ->  abcdefghijklmnopqrstuvwxyz
+AbCdEfGhIjKlMnOpQrStUvWxYz  ->  abcdefghijklmnopqrstuvwxyz
+0123456789  ->  0123456789
+0123456789ABCD  ->  0123456789abcd
+The quick brown fox jumped over the lazy dog  ->  the quick brown fox jumped over the lazy dog
+
+--------------------------------------------------------
+str_upper
+ABCDEFGHIJKLMNOPQRSTUVQXYZ  ->  ABCDEFGHIJKLMNOPQRSTUVQXYZ
+abcdefghijklmnopqrstuvwxyz  ->  ABCDEFGHIJKLMNOPQRSTUVWXYZ
+AbCdEfGhIjKlMnOpQrStUvWxYz  ->  ABCDEFGHIJKLMNOPQRSTUVWXYZ
+0123456789  ->  0123456789
+0123456789abcd  ->  0123456789ABCD
+The quick brown fox jumped over the lazy dog  ->  THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG
+
+--------------------------------------------------------
+str_title_case
+
+--------------------------------------------------------
+str_snakecase
+
+--------------------------------------------------------
+str_split
+1,2,3,4,5  ->  [1, 2, 3, 4, 5]
+1-2-3-4-5  ->  [1, 2, 3, 4, 5]
+1-2-3-4-5  ->  [1-2-3-4-5]
+This is a test  ->  [This, is, a, test]
+splitallchars -> [s, p, l, i, t, a, l, l, c, h, a, r, s]
+splitallchars -> [s, p, l, i, t, a, l, l, c, h, a, r, s]
+
+--------------------------------------------------------
+str_substr
+123
+23
+3
+This 
+
+--------------------------------------------------------
+str_endswith
+file.txt -> (.txt) true
+file.txt -> (.mp4) false
+file.txt -> (file.txt) true
+file.txt -> () true
+
+--------------------------------------------------------
+str_startswith
+onetwothree -> (one) false
+onetwothree -> (two) false
+
+--------------------------------------------------------
+str_join
+[1, 2, 3, 4, 5] -> 12345
+[this, is, a, test] -> thisisatest
+[] -> 

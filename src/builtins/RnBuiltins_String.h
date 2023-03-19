@@ -18,22 +18,20 @@ class RnObject;
 class RnBuiltins_String {
 public:
     // String methods
-    static void rn_builtin_titlecase(RnScope* scope, const std::vector<RnObject*>& args,
+    static void rn_builtin_str_titlecase(RnScope* scope, const std::vector<RnObject*>& args,
                                      RnObject* ret_val);
-    static void rn_builtin_lower(RnScope* scope, const std::vector<RnObject*>& args,
+    static void rn_builtin_str_lower(RnScope* scope, const std::vector<RnObject*>& args,
                                  RnObject* ret_val);
-    static void rn_builtin_upper(RnScope* scope, const std::vector<RnObject*>& args,
+    static void rn_builtin_str_upper(RnScope* scope, const std::vector<RnObject*>& args,
                                  RnObject* ret_val);
-    static void rn_builtin_snakecase(RnScope* scope, const std::vector<RnObject*>& args,
+    static void rn_builtin_str_snakecase(RnScope* scope, const std::vector<RnObject*>& args,
                                      RnObject* ret_val);
     static void rn_builtin_str_split(RnScope* scope, const std::vector<RnObject*>& args,
-                                     RnObject* ret_val);
-    static void rn_builtin_str_merge(RnScope* scope, const std::vector<RnObject*>& args,
                                      RnObject* ret_val);
     static void rn_builtin_str_substr(RnScope* scope,
                                       const std::vector<RnObject*>& args,
                                       RnObject* ret_val);
-    static void rn_builtin_str_startwith(RnScope* scope,
+    static void rn_builtin_str_startswith(RnScope* scope,
                                          const std::vector<RnObject*>& args,
                                          RnObject* ret_val);
     static void rn_builtin_str_endswith(RnScope* scope,
