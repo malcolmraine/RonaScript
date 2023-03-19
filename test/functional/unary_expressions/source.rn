@@ -19,6 +19,7 @@ print(x);
 x--;
 print(x);
 var f: float = 0.9;
+print(f);
 f++;
 print(f);
 f--;

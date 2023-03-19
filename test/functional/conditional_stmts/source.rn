@@ -1,2 +1,45 @@
 
+routine foo(var x: int): int
+begin
+    if x > 3:
+        if x > 4:
+            if x > 5:
+                print("x > 5");
+                return x * 5;
+            end
+        else:
+            print("x is 4");
+            return x; * 4
+        end
+    elif x < 3:
+        if x == 1:
+            print("x is 1");
+            return x * 1;
+        elif x == 2:
+            print("x is 2");
+            return x * 2;
+        end
+    else:
+        print("x is 3");
+        return x * 3;
+    end
+    return -999;
+end
 
+
+if 1 == 2:
+    print("Invalid: 1 == 2");
+else:
+    print("Valid: 1 != 2");
+end
+
+
+foo(0);
+foo(1);
+foo(2);
+foo(3);
+foo(4);
+foo(5);
+foo(6);
+foo(7);
+foo(8);

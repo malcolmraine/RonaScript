@@ -15,11 +15,10 @@ if os.name == "nt":
     os.system("colors")
 
 
-def strip_ansi_codes(s: str) -> str:
-    return s.strip("\0[33m") \
-        .strip("\0[33[0m") \
-        .strip("\0[31m") \
-        .strip("\0[31[0m")
+def remove_ansi_codes(s: str) -> str:
+    return s.replace("\0[33m", "") \
+        .replace("\033[31m", "") \
+        .replace("\033[0m", "")
 
 
 class Test(object):
@@ -77,7 +76,7 @@ class Test(object):
             invalid_output = ""
 
             for output in self.stdout:
-                actual = output.strip("\n").strip()
+                actual = remove_ansi_codes(output.strip("\n").strip())
                 similarity = SequenceMatcher(None, expected, actual).ratio()
                 self.similarity_scores.append(similarity)
 
@@ -86,7 +85,7 @@ class Test(object):
                         self.passed = False
                         invalid_output = actual
                         break
-                elif expected not in actual:
+                elif expected not in actual or len(expected) == 0 and len(actual) != 0:
                     self.passed = False
                     invalid_output = actual
                     break
