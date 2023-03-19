@@ -11,6 +11,7 @@
 #define RONASCRIPT_RNCODEGENVISITOR_H
 
 #include <vector>
+#include <utility>
 #include "../parser/RnAstVisitor.h"
 #include "../parser/ast/Ast.h"
 #include "RnInstruction.h"
@@ -102,6 +103,8 @@ private:
 private:
     InstructionBlock _instructions;
     std::vector<int> _scope_start_indices;
+    std::vector<std::vector<RnInstruction*>> _break_instructions;
+    std::vector<std::vector<RnInstruction*>> _continue_instructions;
 };
 
 #endif  //RONASCRIPT_RNCODEGENVISITOR_H

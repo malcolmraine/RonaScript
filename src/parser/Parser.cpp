@@ -630,9 +630,8 @@ std::shared_ptr<UnaryExpr> Parser::ParseUnaryExpr(
 /*****************************************************************************/
 std::shared_ptr<BreakStmt> Parser::ParseBreakStmt() {
     auto node = std::make_shared<BreakStmt>();
-    AdvanceBuffer(1);
     Expect(TokenType::SEMICOLON);
-    AdvanceBuffer(1);
+    AdvanceBuffer(2);
 
     return node;
 }
@@ -640,9 +639,8 @@ std::shared_ptr<BreakStmt> Parser::ParseBreakStmt() {
 /*****************************************************************************/
 std::shared_ptr<ContinueStmt> Parser::ParseContinueStmt() {
     auto node = std::make_shared<ContinueStmt>();
-    AdvanceBuffer(1);
     Expect(TokenType::SEMICOLON);
-    AdvanceBuffer(1);
+    AdvanceBuffer(2);
 
     return node;
 }

@@ -1,0 +1,15 @@
+for (var n: int = 0; n < 24; n++):
+    if n > 20:
+        break;
+    elif n > 12:
+        print(n);
+    else:
+        continue;
+    end
+end
+
+for (var i: int = 0; i < 10; i++):
+begin
+    break;
+    print("Should not get here");
+end

@@ -166,6 +166,8 @@ InstructionBlock RnCodeGenVisitor::Visit(ScopeNode* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ForLoop* node) {
+    _break_instructions.emplace_back();
+    _continue_instructions.emplace_back();
     InstructionBlock instructions;
     InstructionBlock init = GeneralVisit(node->init);
     InstructionBlock test = GeneralVisit(node->test);
@@ -189,6 +191,31 @@ InstructionBlock RnCodeGenVisitor::Visit(ForLoop* node) {
         new RnInstruction(OP_JUMPB, (scope.size() + update.size()) - 1));
     instructions.push_back(new RnInstruction(OP_DESTROY_CONTEXT));
     WrapContext(instructions);
+
+    // Fill in jump offsets for continue and break statements
+    auto break_instructions = _break_instructions.back();
+    if (!break_instructions.empty()) {
+        for (size_t i = 0; i < instructions.size(); i++) {
+            auto it = std::find(break_instructions.begin(), break_instructions.end(),
+                                instructions[i]);
+            if (it != break_instructions.end()) {
+                (*it)->SetArg1((instructions.size() - 2) - i);
+            }
+        }
+    }
+    _break_instructions.pop_back();
+
+    auto continue_instructions = _continue_instructions.back();
+    if (!continue_instructions.empty()) {
+        for (size_t i = 0; i < instructions.size(); i++) {
+            auto it = std::find(continue_instructions.begin(),
+                                continue_instructions.end(), instructions[i]);
+            if (it != continue_instructions.end()) {
+                (*it)->SetArg1((instructions.size() - update.size() - 4) - i);
+            }
+        }
+    }
+    _continue_instructions.pop_back();
     return instructions;
 }
 
@@ -486,8 +513,9 @@ InstructionBlock RnCodeGenVisitor::Visit(BinaryExpr* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ContinueStmt* node) {
-    // TODO: Generate code for ContinueStmt
-    return {};
+    auto instruction = new RnInstruction(OP_JUMPF);
+    _continue_instructions.back().push_back(instruction);
+    return {instruction};
 }
 
 /*****************************************************************************/
@@ -503,8 +531,9 @@ InstructionBlock RnCodeGenVisitor::Visit(IndexedExpr* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(BreakStmt* node) {
-    // TODO: Generate code for BreakStmt
-    return {};
+    auto instruction = new RnInstruction(OP_JUMPF);
+    _break_instructions.back().push_back(instruction);
+    return {instruction};
 }
 
 /*****************************************************************************/
