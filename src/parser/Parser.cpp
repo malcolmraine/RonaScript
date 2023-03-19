@@ -485,6 +485,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         return std::static_pointer_cast<BinaryExpr>(TransformBinaryExpr(node));
     };
 
+    bool break_next_iteration = false;
     MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
     while (!result_stack.IsEmpty()) {
         INCR_LOOP_COUNTER
@@ -606,13 +607,19 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
                 }
             }
         }
-        if (EndOfSequence()) {
+        if (break_next_iteration) {
             break;
+        } else {
+            break_next_iteration = EndOfSequence();
         }
     }
 
-    if (!result_stack.IsEmpty()) {
-        return result_stack.back();
+    if (result_stack.Size() == 3) {
+        return make_binary_expr();
+    } else {
+        if (!result_stack.IsEmpty()) {
+            return result_stack.back();
+        }
     }
     return std::make_shared<Expr>();
 }
