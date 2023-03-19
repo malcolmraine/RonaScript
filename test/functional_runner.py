@@ -9,6 +9,7 @@ import time
 from difflib import ndiff, SequenceMatcher
 import junit_reporter
 
+
 rn_executable = sys.argv[1]
 
 if os.name == "nt":
@@ -22,6 +23,8 @@ def remove_ansi_codes(s: str) -> str:
 
 
 class Test(object):
+    fixed_args = []
+
     def __init__(self,
                  name,
                  id,
@@ -41,6 +44,7 @@ class Test(object):
         self.enabled = enabled
         self.similarity_threshold = similarity
         self.passed = False
+        self.timestamp = ""
 
         if args is None:
             self.args = []
@@ -137,6 +141,7 @@ class Test(object):
                 self.log("\n".join(ndiff(expected.splitlines(), invalid_output.splitlines())))
 
     def run(self):
+        self.timestamp = str(datetime.datetime.now().replace(microsecond=0).isoformat())
         if not self.enabled:
             self.msg = "DISABLED"
             self.passed = True
@@ -144,8 +149,10 @@ class Test(object):
             return
 
         def target():
-            self.process = subprocess.Popen([rn_executable, self.source_file, *self.args], stderr=subprocess.PIPE,
-                                            stdout=subprocess.PIPE)
+            self.process = subprocess.Popen(
+                [rn_executable, self.source_file, *self.fixed_args, *self.args],
+                stderr=subprocess.PIPE,
+                stdout=subprocess.PIPE)
             self.process.communicate()
 
         self.similarity_scores = []
@@ -210,6 +217,8 @@ class TestRunner(object):
 
 if __name__ == "__main__":
     runner = TestRunner()
+    Test.fixed_args.append("--no-validation")
+
     for file in glob.glob("functional/**/manifest.json"):
         with open(file, "r") as manifest_file:
             manifest = json.load(manifest_file)
@@ -217,22 +226,34 @@ if __name__ == "__main__":
                              manifest.get("name"),
                              file.replace("manifest.json", ""),
                              expected_output_file=manifest.get("expected_output", "expected_output.txt"),
-                             args=["--no-validation", *manifest.get("args", [])],
+                             args=[*manifest.get("args", [])],
                              timeout=manifest.get("timeout", 5),
                              invoke_count=manifest.get("invoke_count", 1),
                              enabled=manifest.get("enabled", False),
                              similarity=manifest.get("similarity_threshold", 1.0)))
+    timestamp = str(datetime.datetime.now().replace(microsecond=0).isoformat())
     runner.run()
     reporter = junit_reporter.JUnitReporter()
+    reporter.attributes["timestamp"] = timestamp
     suite = junit_reporter.TestSuite("1", "Functional Tests", runner.total_runtime)
+    suite.attributes["timestamp"] = timestamp
+
+    for arg in Test.fixed_args:
+        suite.properties.append(junit_reporter.TestProperty("argument", arg))
+
     for test in runner.tests:
         testcase = junit_reporter.TestCase(test.id, test.name, round(test.runtime, 6))
-        if not test.passed:
+        testcase.attributes["timestamp"] = test.timestamp
+
+        for arg in test.args:
+            testcase.properties.append(junit_reporter.TestProperty("argument", arg))
+
+        if not test.enabled:
+            testcase.skipped.append(junit_reporter.TestSkipped())
+        elif not test.passed:
             failure_detail = f"Return code: {test.returncode}"
             testcase.failures.append(junit_reporter.TestFailure(test.msg, "Error", failure_detail))
         suite.add_testcase(testcase)
 
     reporter.test_suites.append(suite)
-
-    with open("rona_test.junit.xml", "w") as report_file:
-        report_file.write(reporter.to_xml())
+    reporter.write("rona_test.junit.xml")
