@@ -132,7 +132,7 @@ private:
         TokenType::EQUAL, TokenType::R_PARAN, TokenType::COMMA};
     static const std::unordered_map<TokenType, std::string> _char_map;
     static std::unordered_map<TokenType, int> _prec_tbl;
-    static std::unordered_map<TokenType, Associativity> _operator_associativity;
+    static std::unordered_map<TokenType, Associativity> _associativity;
     std::unordered_map<std::string, std::string> _pragma_table;
     ParserState _previous_state = GENERAL_CONTEXT;
     ParserState _current_state = GENERAL_CONTEXT;

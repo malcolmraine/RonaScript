@@ -143,7 +143,7 @@ std::unordered_map<TokenType, int> Parser::_prec_tbl = {
     {TokenType::DBL_BAR, 20},     {TokenType::L_PARAN, 0},
 };
 
-std::unordered_map<TokenType, Associativity> Parser::_operator_associativity = {
+std::unordered_map<TokenType, Associativity> Parser::_associativity = {
     {TokenType::R_PARAN, NO_ASSOCIATIVITY},
     {TokenType::R_ARROW, LEFT},
     {TokenType::DOUBLE_COLON, LEFT},
@@ -461,7 +461,24 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
 std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
     RnStack<Token*> op_stack;
     RnStack<std::shared_ptr<AstNode>> result_stack;
-    result_stack.Push(std::shared_ptr<AstNode>());
+    result_stack.Push(nullptr);
+
+    auto make_binary_expr = [this, &result_stack, &op_stack]() mutable {
+        auto node = std::make_shared<BinaryExpr>();
+        node->_right = result_stack.Pop();
+        node->_left = result_stack.Pop();
+        node->_op = op_stack.Pop()->lexeme;
+        return std::static_pointer_cast<BinaryExpr>(TransformBinaryExpr(node));
+    };
+
+    auto parse_bracketed_node = [this, &result_stack]() mutable {
+        if (Lookback()->token_type == TokenType::NAME ||
+            Current()->token_type == TokenType::L_PARAN) {
+            result_stack.push_back(ParseIndexedExpr(result_stack.Pop()));
+        } else {
+            result_stack.Push(ParseArrayLiteral());
+        }
+    };
 
     // Grab any immediate unary operators and apply them to the closest
     // expression. This may need some fine-tuning.
@@ -476,14 +493,6 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         }
         result_stack.push_back(node);
     }
-
-    auto make_binary_expr = [this, &result_stack, &op_stack]() mutable {
-        auto node = std::make_shared<BinaryExpr>();
-        node->_right = result_stack.Pop();
-        node->_left = result_stack.Pop();
-        node->_op = op_stack.Pop()->lexeme;
-        return std::static_pointer_cast<BinaryExpr>(TransformBinaryExpr(node));
-    };
 
     bool break_next_iteration = false;
     MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
@@ -501,12 +510,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         }
 
         if (Current()->token_type == TokenType::R_BRACK) {
-            if (Lookback()->token_type == TokenType::NAME ||
-                Current()->token_type == TokenType::L_PARAN) {
-                result_stack.push_back(ParseIndexedExpr(result_stack.Pop()));
-            } else {
-                result_stack.Push(ParseArrayLiteral());
-            }
+            parse_bracketed_node();
         }
 
         if (Current()->IsOneOf(
@@ -532,18 +536,12 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
                     if (op_stack.back()->token_type == TokenType::R_PARAN) {
                         op_stack.Pop();
                     }
-                    auto node = make_binary_expr();
+
+                    result_stack.Push(make_binary_expr());
                     if (Current()->token_type == TokenType::R_BRACK) {
-                        if (Lookback()->IsOneOf({TokenType::EQUAL, TokenType::R_PARAN,
-                                                 TokenType::COMMA})) {
-                            result_stack.Push(ParseArrayLiteral());
-                        } else {
-                            result_stack.Push(ParseIndexedExpr(node));
-                        }
+                        parse_bracketed_node();
                     } else if (Current()->token_type == TokenType::R_PARAN) {
-                        result_stack.Push(ParseFuncCall(node));
-                    } else {
-                        result_stack.Push(node);
+                        result_stack.Push(ParseFuncCall(result_stack.Pop()));
                     }
                 }
                 return result_stack.Pop();
@@ -551,9 +549,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         } else {
             // Shunting-yard _prec_tbl parsing
             if (Current()->IsOperator() ||
-                Current()->token_type == TokenType::L_PARAN ||
-                Current()->token_type == TokenType::R_PARAN) {
-
+                Current()->IsOneOf({TokenType::L_PARAN, TokenType::R_PARAN})) {
                 if (Current()->token_type == TokenType::R_PARAN &&
                     !Lookback()->IsOperator() && result_stack.Top()) {
                     result_stack.Push(ParseFuncCall(result_stack.Pop()));
@@ -567,20 +563,12 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
                            _prec_tbl[op_stack.back()->token_type]) {
                     // Create subtree from result stack if it is lower _prec_tbl than Top of operator stack
                     if (op_stack.back()->IsBinaryOp()) {
-                        auto transformed_node = TransformBinaryExpr(make_binary_expr());
+                        result_stack.Push(TransformBinaryExpr(make_binary_expr()));
 
-                        // Handle _left _operator_associativity
+                        // Handle _left associativity
                         if (!op_stack.IsEmpty() and
-                            _operator_associativity[op_stack.back()->token_type] ==
-                                LEFT) {
-                            auto expr2 = std::make_shared<BinaryExpr>();
-                            expr2->_left = result_stack.Pop();
-                            expr2->_right = transformed_node;
-                            expr2->_op = op_stack.Pop()->lexeme;
-                            auto transformed_expr = TransformBinaryExpr(expr2);
-                            result_stack.Push(transformed_expr);
-                        } else {
-                            result_stack.Push(transformed_node);
+                            _associativity[op_stack.back()->token_type] == LEFT) {
+                            result_stack.Push(make_binary_expr());
                         }
                     }
 
@@ -601,7 +589,6 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
                 result_stack.Push(ParseIndexedExpr(result_stack.Pop()));
             } else {
                 result_stack.Push(GetExprComponent());
-
                 if (Current()->token_type == TokenType::R_BRACK) {
                     result_stack.Push(ParseIndexedExpr(result_stack.Pop()));
                 }
