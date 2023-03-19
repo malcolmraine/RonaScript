@@ -65,3 +65,46 @@ end
 var g: object = Test();
 print("Test: ", is_object(g));
 print(5232, ": ", is_object(5232));
+
+print();
+print("--------------------------------------------------------");
+print("--------------------------------------------------------");
+print("to_int");
+print(to_int(1.998423));
+print(to_int(true));
+print(to_int(99));
+print(to_int(-9942));
+print(is_int(to_int(1)));
+
+print();
+print("--------------------------------------------------------");
+print("--------------------------------------------------------");
+print("to_float");
+print(to_float(1.998423));
+print(to_float(true));
+print(to_float(99));
+print(to_float(-9942));
+print(is_float(to_float(1)));
+
+print();
+print("--------------------------------------------------------");
+print("--------------------------------------------------------");
+print("to_string");
+print(to_string([1, 2, 3, 4]));
+print(to_string(1.9842923));
+print(to_string(7724));
+print(to_string(true));
+print(to_string(false));
+print(to_string(print));
+
+print();
+print("--------------------------------------------------------");
+print("--------------------------------------------------------");
+print("to_bool");
+print(to_bool(1.982));
+print(to_bool(942));
+print(to_bool(1));
+print(to_bool(0));
+print(to_bool(true));
+print(to_bool(false));
+print(to_bool(""));

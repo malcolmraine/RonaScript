@@ -26,6 +26,7 @@ public:
     [[nodiscard]] RnStringNative ToString() const override;
     [[nodiscard]] RnIntNative ToInt() const override;
     [[nodiscard]] RnBoolNative ToBool() const override;
+    [[nodiscard]] RnFloatNative ToFloat() const override;
     void SetData(RnBoolNative data) override {
         SetDataInternal(data);
     }

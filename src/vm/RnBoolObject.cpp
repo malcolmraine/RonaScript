@@ -66,3 +66,8 @@ RnIntNative RnBoolObject::ToInt() const {
 RnBoolNative RnBoolObject::ToBool() const {
     return _data;
 }
+
+/*****************************************************************************/
+RnFloatNative RnBoolObject::ToFloat() const {
+    return _data ? 1.0 : 0.0;
+}
