@@ -1,5 +1,6 @@
 # RonaScript
 ![Build](https://github.com/malcolmraine/RonaScript/actions/workflows/build.yml/badge.svg)
+![Tests](https://github.com/malcolmraine/RonaScript/actions/workflows/test.yml/badge.svg)
 
 RonaScript is an object oriented scripting language that's influenced by Python, C++, and Ada.
 
