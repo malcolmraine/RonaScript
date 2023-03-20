@@ -6,6 +6,7 @@ begin
     else:
         return fibonacci(n - 1) + fibonacci(n - 2);
     end
+    return 4;
 end
 
 for (var n: int = 0; n < 10; n++):
