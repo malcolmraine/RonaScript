@@ -127,6 +127,9 @@ public:
     Ast* ast;
 
 private:
+    std::shared_ptr<AstNode> AddCurrentFileInfo(std::shared_ptr<AstNode> node);
+
+private:
     std::shared_ptr<ScopeNode> _current_scope = nullptr;
     std::unordered_set<TokenType> unary_lookback_set = {
         TokenType::EQUAL, TokenType::R_PARAN, TokenType::COMMA};

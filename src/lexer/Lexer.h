@@ -86,9 +86,7 @@ public:
 
     std::vector<Token*> tokens;
     std::string _lexeme;
-    int line_num = 1;
-    int char_num = 1;
-    FileInfo file_info;
+    FileInfo* file_info = nullptr;
     long file_char_cnt = -1;
 
 protected:
@@ -103,7 +101,7 @@ protected:
     static const std::unordered_set<std::string> _reserved_words;
     static const std::unordered_set<std::string> _compound_ops;
     std::vector<std::string> _error_messages;
-    char _buf[3]{};
+    size_t _current_line_start = 0;
 };
 
 #endif  //RONASCRIPT_LEXER_H

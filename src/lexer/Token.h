@@ -58,7 +58,7 @@ public:
     TokenType token_type = TokenType::UNDEFINED;
     std::string lexeme;
     FilePosition file_pos;
-    FileInfo file_info;
+    FileInfo* file_info;
 };
 
 #endif  //RONASCRIPT_TOKEN_H
