@@ -421,11 +421,11 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
         switch (Lookback()->token_type) {
             case TokenType::INT_LITERAL: {
                 node = std::make_shared<IntLiteral>(
-                    static_cast<long>(std::stoi(Lookback()->lexeme)));
+                    static_cast<long>(std::stol(Lookback()->lexeme)));
                 break;
             }
             case TokenType::FLOAT_LITERAL: {
-                node = std::make_shared<FloatLiteral>(std::stof(Lookback()->lexeme));
+                node = std::make_shared<FloatLiteral>(std::stod(Lookback()->lexeme));
                 break;
             }
             case TokenType::STRING_LITERAL: {
