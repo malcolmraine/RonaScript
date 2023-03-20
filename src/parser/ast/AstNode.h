@@ -26,7 +26,7 @@ public:
     FilePosition file_pos;
     NodeType_t node_type = AST_DEFAULT;
     int nest_lvl = 0;  // For adding \t characters to string output
-    FileInfo* file_info{};
+    FileInfo* file_info = nullptr;
 
 protected:
     std::string MakeTabStr();

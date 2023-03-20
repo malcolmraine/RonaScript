@@ -51,6 +51,8 @@
 #include "ast/VarDecl.h"
 #include "ast/WhileLoop.h"
 
+std::vector<std::string> Parser::parsed_files;
+
 const std::unordered_map<TokenType, std::string> Parser::_char_map = {
     {TokenType::R_BRACE, "{"},
     {TokenType::L_BRACE, "}"},
@@ -211,37 +213,38 @@ void Parser::ConditionalBufAdvance(TokenType t) {
 /*****************************************************************************/
 std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
     auto node = std::make_shared<ImportStmt>();
-    node->file_info = new FileInfo(Current()->file_info);
-    Expect(TokenType::NAME);
+    AddCurrentFileInfo(node);
+    Expect({TokenType::NAME, TokenType::STRING_LITERAL});
     AdvanceBuffer(1);
     node->source_file = Current()->lexeme;
     Expect(TokenType::SEMICOLON);
     AdvanceBuffer(1);
 
-    // Check if the module has already been parsed
-    if (ast->modules.find(node->source_file) != ast->modules.end()) {
-        node->module = ast->modules[node->source_file];
+    // Check if the file has already been parsed
+    if (std::find(parsed_files.begin(), parsed_files.end(), node->source_file) != parsed_files.end()) {
+        return node;
     } else {
-        // Parse the module and create a new subtree from it
-        Lexer lexer;
-        std::filesystem::path module_file =
-            working_dir + "/" + node->GetFullSourceFile();
+        parsed_files.push_back(node->source_file);
+    }
 
-        if (std::filesystem::absolute(module_file) == std::filesystem::absolute(file)) {
-            throw std::runtime_error("Circular dependency error: " +
-                                     module_file.string());
-        }
+    // Parse the module and create a new subtree from it
+    Lexer lexer;
+    std::filesystem::path module_file = working_dir + "/" + node->source_file;
 
-        lexer.LoadFile(module_file);
-        lexer.ProcessTokens();
-        Parser parser;
-        parser.tokens = lexer.tokens;
-        parser.working_dir = module_file.parent_path();
-        parser.LoadTokens(lexer.tokens);
-        parser.Parse();
-        node->module = parser.ast->modules[node->source_file];
-        parser.ast->modules[node->source_file].reset();
-        ast->modules[node->source_file] = node->module;
+    if (std::filesystem::absolute(module_file) == std::filesystem::absolute(file)) {
+        throw std::runtime_error("Circular dependency error: " +
+                                 module_file.string());
+    }
+
+    lexer.LoadFile(module_file);
+    lexer.ProcessTokens();
+    Parser parser;
+    parser.working_dir = module_file.parent_path();
+    parser.LoadTokens(lexer.tokens);
+    parser.Parse();
+
+    for (auto& [key, m] : parser.ast->modules) {
+        ast->modules[key] = m;
     }
     AdvanceBuffer(1);
 
@@ -251,7 +254,7 @@ std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
 /*****************************************************************************/
 std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
     auto node = std::make_shared<VarDecl>();
-    node->file_info = new FileInfo(Current()->file_info);
+    AddCurrentFileInfo(node);
     Expect(TokenType::NAME);
 
     if (Current()->token_type == TokenType::CONST) {
@@ -288,7 +291,7 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
 /*****************************************************************************/
 std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
     auto node = std::make_shared<FuncDecl>();
-    node->file_info = new FileInfo(Current()->file_info);
+    AddCurrentFileInfo(node);
 
     if (!qualifiers.empty()) {
         node->qualifiers = std::move(qualifiers);
@@ -371,7 +374,7 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
 /*****************************************************************************/
 std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
     auto node = std::make_shared<ClassDecl>();
-    node->file_info = new FileInfo(Current()->file_info);
+    AddCurrentFileInfo(node);
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
 
@@ -421,16 +424,16 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
         switch (Lookback()->token_type) {
             case TokenType::INT_LITERAL: {
                 node = std::make_shared<IntLiteral>(
-                    static_cast<long>(std::stoi(Lookback()->lexeme)));
+                    static_cast<long>(std::stol(Lookback()->lexeme)));
                 break;
             }
             case TokenType::FLOAT_LITERAL: {
-                node = std::make_shared<FloatLiteral>(std::stof(Lookback()->lexeme));
+                node = std::make_shared<FloatLiteral>(std::stod(Lookback()->lexeme));
                 break;
             }
             case TokenType::STRING_LITERAL: {
-                node = std::make_shared<StringLiteral>(static_cast<std::string>(
-                    Lookback()->lexeme.substr(1, Lookback()->lexeme.length() - 2)));
+                node = std::make_shared<StringLiteral>(
+                    static_cast<std::string>(Lookback()->lexeme));
                 break;
             }
             case TokenType::BOOL_LITERAL: {
@@ -451,10 +454,7 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
         }
     }
 
-    if (node) {
-        node->file_info = new FileInfo(Current()->file_info);
-    }
-    return node;
+    return AddCurrentFileInfo(node);
 }
 
 /*****************************************************************************/
@@ -524,7 +524,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
             // Return the subtree
             if (result_stack.Size() == 1 ||
                 (result_stack.Size() == 2 && op_stack.IsEmpty())) {
-                return result_stack.Pop();
+                return AddCurrentFileInfo(result_stack.Pop());
             } else {
                 if (!op_stack.IsEmpty() &&
                     op_stack.back()->IsOneOf(
@@ -544,7 +544,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
                         result_stack.Push(ParseFuncCall(result_stack.Pop()));
                     }
                 }
-                return result_stack.Pop();
+                return AddCurrentFileInfo(result_stack.Pop());
             }
         } else {
             // Shunting-yard _prec_tbl parsing
@@ -607,10 +607,10 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
     }
 
     if (result_stack.Size() == 3) {
-        return make_binary_expr();
+        return AddCurrentFileInfo(make_binary_expr());
     } else {
         if (!result_stack.IsEmpty()) {
-            return result_stack.back();
+            return AddCurrentFileInfo(result_stack.back());
         }
     }
     return std::make_shared<Expr>();
@@ -635,6 +635,7 @@ std::shared_ptr<UnaryExpr> Parser::ParseUnaryExpr(
 /*****************************************************************************/
 std::shared_ptr<BreakStmt> Parser::ParseBreakStmt() {
     auto node = std::make_shared<BreakStmt>();
+    AddCurrentFileInfo(node);
     Expect(TokenType::SEMICOLON);
     AdvanceBuffer(2);
 
@@ -644,6 +645,7 @@ std::shared_ptr<BreakStmt> Parser::ParseBreakStmt() {
 /*****************************************************************************/
 std::shared_ptr<ContinueStmt> Parser::ParseContinueStmt() {
     auto node = std::make_shared<ContinueStmt>();
+    AddCurrentFileInfo(node);
     Expect(TokenType::SEMICOLON);
     AdvanceBuffer(2);
 
@@ -653,6 +655,7 @@ std::shared_ptr<ContinueStmt> Parser::ParseContinueStmt() {
 /*****************************************************************************/
 std::shared_ptr<ReturnStmt> Parser::ParseReturnStmt() {
     auto node = std::make_shared<ReturnStmt>();
+    AddCurrentFileInfo(node);
     AdvanceBuffer(1);
 
     if (Current()->token_type == TokenType::SEMICOLON) {
@@ -667,6 +670,7 @@ std::shared_ptr<ReturnStmt> Parser::ParseReturnStmt() {
 /*****************************************************************************/
 std::shared_ptr<DeleteStmt> Parser::ParseDeleteStmt() {
     auto node = std::make_shared<DeleteStmt>();
+    AddCurrentFileInfo(node);
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
 
@@ -682,6 +686,7 @@ std::shared_ptr<DeleteStmt> Parser::ParseDeleteStmt() {
 /*****************************************************************************/
 std::shared_ptr<ExitStmt> Parser::ParseExitStmt() {
     auto node = std::make_shared<ExitStmt>();
+    AddCurrentFileInfo(node);
     Expect({TokenType::SEMICOLON, TokenType::INT_LITERAL});
     AdvanceBuffer(1);
 
@@ -701,6 +706,7 @@ std::shared_ptr<ExitStmt> Parser::ParseExitStmt() {
 std::shared_ptr<AssignmentStmt> Parser::ParseAssignmentStatement(
     const std::shared_ptr<AstNode>& rexpr) {
     auto node = std::make_shared<AssignmentStmt>();
+    AddCurrentFileInfo(node);
     node->SetLexpr(rexpr ? rexpr : ParseExpr());
 
     std::string op;
@@ -727,6 +733,7 @@ std::shared_ptr<AssignmentStmt> Parser::ParseAssignmentStatement(
 /*****************************************************************************/
 std::shared_ptr<IfStmt> Parser::ParseIfStmt() {
     auto node = std::make_shared<IfStmt>();
+    AddCurrentFileInfo(node);
     AdvanceBuffer(1);
     node->test = ParseExpr(TokenType::COLON);
     node->consequent = ParseScope();
@@ -747,6 +754,7 @@ std::shared_ptr<IfStmt> Parser::ParseIfStmt() {
 /*****************************************************************************/
 std::shared_ptr<ElifStmt> Parser::ParseElifStmt() {
     auto node = std::make_shared<ElifStmt>();
+    AddCurrentFileInfo(node);
     AdvanceBuffer(1);
     node->test = ParseExpr(TokenType::COLON);
     node->consequent = ParseScope();
@@ -768,6 +776,7 @@ std::shared_ptr<ElifStmt> Parser::ParseElifStmt() {
 /*****************************************************************************/
 std::shared_ptr<ElseStmt> Parser::ParseElseStmt() {
     auto node = std::make_shared<ElseStmt>();
+    AddCurrentFileInfo(node);
     AdvanceBuffer(1);
     node->consequent = ParseScope();
 
@@ -777,6 +786,7 @@ std::shared_ptr<ElseStmt> Parser::ParseElseStmt() {
 /*****************************************************************************/
 std::shared_ptr<ScopeNode> Parser::ParseScope() {
     auto node = std::make_shared<ScopeNode>();
+    AddCurrentFileInfo(node);
     node->parent = _current_scope;
     node->symbol_table->SetParent(_current_scope->symbol_table);
 
@@ -803,6 +813,7 @@ std::shared_ptr<ScopeNode> Parser::ParseScope() {
 /*****************************************************************************/
 std::shared_ptr<FuncCall> Parser::ParseFuncCall(const std::shared_ptr<AstNode>& expr) {
     auto node = std::make_shared<FuncCall>();
+    AddCurrentFileInfo(node);
 
     if (expr == nullptr) {
         node->expr = ParseExpr();
@@ -824,6 +835,7 @@ std::shared_ptr<FuncCall> Parser::ParseFuncCall(const std::shared_ptr<AstNode>& 
 /*****************************************************************************/
 std::shared_ptr<ArrayLiteral> Parser::ParseArrayLiteral() {
     auto node = std::make_shared<ArrayLiteral>();
+    AddCurrentFileInfo(node);
     ConditionalBufAdvance(TokenType::R_BRACK);
 
     while (!Current()->IsOneOf({TokenType::L_BRACK, TokenType::SEMICOLON})) {
@@ -837,6 +849,7 @@ std::shared_ptr<ArrayLiteral> Parser::ParseArrayLiteral() {
 /*****************************************************************************/
 std::shared_ptr<WhileLoop> Parser::ParseWhileLoop() {
     auto node = std::make_shared<WhileLoop>();
+    AddCurrentFileInfo(node);
     ConditionalBufAdvance(TokenType::WHILE);
     node->test = ParseExpr(TokenType::COLON);
     node->scope = ParseScope();
@@ -847,6 +860,7 @@ std::shared_ptr<WhileLoop> Parser::ParseWhileLoop() {
 /*****************************************************************************/
 std::shared_ptr<ForLoop> Parser::ParseForLoop() {
     auto node = std::make_shared<ForLoop>();
+    AddCurrentFileInfo(node);
     Expect(TokenType::R_PARAN);
     AdvanceBuffer(1);
 
@@ -894,6 +908,7 @@ std::shared_ptr<ForLoop> Parser::ParseForLoop() {
 /*****************************************************************************/
 std::shared_ptr<AliasDecl> Parser::ParseAliasDecl() {
     auto node = std::make_shared<AliasDecl>();
+    AddCurrentFileInfo(node);
 
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
@@ -921,6 +936,7 @@ std::shared_ptr<AliasDecl> Parser::ParseAliasDecl() {
 std::shared_ptr<AstNode> Parser::ParseIndexedExpr(
     const std::shared_ptr<AstNode>& expr) {
     auto node = std::make_shared<IndexedExpr>();
+    AddCurrentFileInfo(node);
     ConditionalBufAdvance(TokenType::R_BRACK);
     node->expr = expr ? expr : ParseExpr();
     node->idx = ParseExpr(TokenType::L_BRACK);
@@ -940,16 +956,18 @@ std::shared_ptr<AstNode> Parser::ParseIndexedExpr(
 
 /*****************************************************************************/
 std::shared_ptr<Name> Parser::ParseName() {
-    auto name = std::make_shared<Name>();
-    name->value = Current()->lexeme;
+    auto node = std::make_shared<Name>();
+    AddCurrentFileInfo(node);
+    node->value = Current()->lexeme;
     AdvanceBuffer(1);
 
-    return name;
+    return node;
 }
 
 /*****************************************************************************/
 std::shared_ptr<TryBlock> Parser::ParseTryBlock() {
     auto node = std::make_shared<TryBlock>();
+    AddCurrentFileInfo(node);
     AdvanceBuffer(1);
     node->scope = ParseScope();
     node->catch_block = ParseCatchBlock();
@@ -961,6 +979,7 @@ std::shared_ptr<TryBlock> Parser::ParseTryBlock() {
 /*****************************************************************************/
 std::shared_ptr<CatchBlock> Parser::ParseCatchBlock() {
     auto node = std::make_shared<CatchBlock>();
+    AddCurrentFileInfo(node);
 
     // current token should now be CATCH: catch (Exception1, Exception2, ...) {}
     AdvanceBuffer(1);
@@ -1011,7 +1030,7 @@ void Parser::Parse() {
 
     if (GetTokenCount()) {
         MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
-        while (!EndOfSequence()) {
+        while (true) {
             INCR_LOOP_COUNTER
             switch (Current()->token_type) {
                 case TokenType::BLOCK_COMMENT:
@@ -1133,9 +1152,11 @@ void Parser::Parse() {
                     AdvanceBuffer(1);
                     break;
                 default:
-                    throw std::runtime_error("Unexpected token '" + Current()->lexeme +
-                                             "'");
+                    HandleUnexpectedItem();
                     break;
+            }
+            if (EndOfSequence()) {
+                break;
             }
         }
     }
@@ -1154,12 +1175,14 @@ std::shared_ptr<AstNode> Parser::TransformBinaryExpr(
         if (binary_expr->_right->node_type == AST_INDEXED_EXPR) {
             auto right_tmp =
                 std::dynamic_pointer_cast<IndexedExpr>(binary_expr->_right);
+            right_tmp->file_info = binary_expr->file_info;
             binary_expr->_right = right_tmp->expr;
             right_tmp->expr = binary_expr;
 
             return right_tmp;
         } else if (binary_expr->_right->node_type == AST_FUNC_CALL) {
             auto right_tmp = std::dynamic_pointer_cast<FuncCall>(binary_expr->_right);
+            right_tmp->file_info = binary_expr->file_info;
             binary_expr->_right = right_tmp->expr;
             right_tmp->expr = TransformBinaryExpr(binary_expr);
 
@@ -1175,6 +1198,7 @@ std::shared_ptr<Module> Parser::ParseModule() {
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
     auto node = std::make_shared<Module>();
+    AddCurrentFileInfo(node);
     node->name = ParseName();
     Expect(TokenType::IS);
     CheckExpected();
@@ -1202,8 +1226,8 @@ std::string Parser::ItemToString(Token* token) {
 /*****************************************************************************/
 void Parser::HandleUnexpectedItem() {
     auto msg = "Unexpected token '" + Current()->lexeme + "'";
-    msg += +" in file " + Current()->file_info.ToString();
-    msg += "\n\n" + Current()->file_info.GetContextualBlock();
+    msg += +" in file " + Current()->file_info->ToString();
+    msg += "\n\n" + Current()->file_info->GetContextualBlock();
     throw std::runtime_error(msg);
 }
 
@@ -1240,4 +1264,12 @@ std::shared_ptr<RnTypeComposite> Parser::ParseType() {
         AdvanceBuffer(2);
     }
     return type;
+}
+
+/*****************************************************************************/
+std::shared_ptr<AstNode> Parser::AddCurrentFileInfo(std::shared_ptr<AstNode> node) {
+    if (node && !node->file_info) {
+        node->file_info = new FileInfo(*(Current()->file_info));
+    }
+    return node;
 }

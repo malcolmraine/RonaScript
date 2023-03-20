@@ -386,25 +386,24 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             } else if (_namespaces.contains(key)) {
                 auto class_obj = dynamic_cast<RnClassObject*>(_namespaces[key]);
                 if (class_obj->IsModule()) {
-                    throw std::runtime_error("Cannot instantiate module '" +
-                                             class_obj->GetName() + "'");
+                    GetStack().Push(class_obj);
+                } else {
+                    auto instance = dynamic_cast<RnClassObject*>(
+                        _memory_manager->CreateObject(RnType::RN_CLASS_INSTANCE));
+                    GetScope()->GetMemoryGroup()->AddObject(instance);
+                    instance->ToObject()->SetParent(class_obj->ToObject());
+                    class_obj->CopySymbols(instance->GetScope());
+                    BindThis(instance->GetScope(), instance);
+                    BindCls(instance->GetScope(), class_obj);
+                    auto func_obj = dynamic_cast<RnFunctionObject*>(
+                        class_obj->ToObject()->GetObject(_object_construct_key));
+                    auto func = func_obj->ToFunction();
+                    auto func_scope = RnObject::Create(RnType::RN_OBJECT)->ToObject();
+                    func_scope->SetParent(instance->GetScope());
+                    BindThis(func_scope, instance);
+                    func->SetScope(func_scope);
+                    GetStack().push_back(func_obj);
                 }
-
-                auto instance = dynamic_cast<RnClassObject*>(
-                    _memory_manager->CreateObject(RnType::RN_CLASS_INSTANCE));
-                GetScope()->GetMemoryGroup()->AddObject(instance);
-                instance->ToObject()->SetParent(class_obj->ToObject());
-                class_obj->CopySymbols(instance->GetScope());
-                BindThis(instance->GetScope(), instance);
-                BindCls(instance->GetScope(), class_obj);
-                auto func_obj = dynamic_cast<RnFunctionObject*>(
-                    class_obj->ToObject()->GetObject(_object_construct_key));
-                auto func = func_obj->ToFunction();
-                auto func_scope = RnObject::Create(RnType::RN_OBJECT)->ToObject();
-                func_scope->SetParent(instance->GetScope());
-                BindThis(func_scope, instance);
-                func->SetScope(func_scope);
-                GetStack().push_back(func_obj);
             } else {
                 throw std::runtime_error("Symbol does not exist: " +
                                          RnObject::GetInternedString(key));
@@ -535,8 +534,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto obj = dynamic_cast<RnClassObject*>(
                 RnObject::Create(RnType::RN_CLASS_INSTANCE));
             obj->SetIsModule(true);
+            obj->GetScope()->SetParent(GetScope());
             GetScope()->StoreObject(instruction->GetArg1(), obj);
-            //            _namespaces[instruction->GetArg1()] = obj;
+            _namespaces[instruction->GetArg1()] = obj;
             _scopes.push_back(obj->ToObject());
             index++;
             size_t stop_index = index + instruction->GetArg2();
@@ -726,9 +726,10 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_RESOLVE_NAMESPACE: {
-            auto nspace = _namespaces[instruction->GetArg1()];
-            auto object = nspace->ToObject()->GetObject(instruction->GetArg2());
-            if (object->GetType() == RnType::RN_FUNCTION) {
+            auto nspace = dynamic_cast<RnClassObject*>(StackPop());
+            auto object = nspace->GetScope()->GetSymbolTable()->GetObject(
+                instruction->GetArg1(), true);
+            if (object->GetType() == RnType::RN_FUNCTION && !nspace->IsModule()) {
                 BindCls(object->ToFunction()->GetScope(), nspace);
                 BindThis(object->ToFunction()->GetScope(), nspace);
             }

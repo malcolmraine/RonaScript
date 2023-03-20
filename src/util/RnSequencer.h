@@ -209,10 +209,7 @@ bool RnSequencer<T, E>::CheckExpected() {
     bool item_is_expected =
         std::find(_expected_items.begin(), _expected_items.end(),
                   GetCurrentAsExpectedType()) != _expected_items.end();
-
-    if (item_is_expected) {
-        _expected_items.clear();
-    }
+    _expected_items.clear();
 
     return item_is_expected;
 }

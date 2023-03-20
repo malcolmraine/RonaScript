@@ -144,13 +144,15 @@ bool Token::IsLiteral() const {
 
 /*****************************************************************************/
 bool Token::IsBinaryOp() const {
-    return IsOneOf({TokenType::PLUS,      TokenType::MINUS,    TokenType::STAR,
-                    TokenType::BAR,       TokenType::DBL_BAR,  TokenType::DBL_AMPER,
-                    TokenType::DBL_EQUAL, TokenType::UP_ARROW, TokenType::GEQ,
-                    TokenType::LEQ,       TokenType::R_CARAT,  TokenType::L_CARAT,
-                    TokenType::SLASH,     TokenType::AMPER,    TokenType::NOT_EQUAL,
-                    TokenType::PERCENT,   TokenType::UP_ARROW, TokenType::DOUBLE_COLON,
-                    TokenType::R_ARROW,   TokenType::DBL_STAR});
+    return IsOneOf(
+        {TokenType::PLUS,        TokenType::MINUS,       TokenType::STAR,
+         TokenType::BAR,         TokenType::DBL_BAR,     TokenType::DBL_AMPER,
+         TokenType::DBL_EQUAL,   TokenType::UP_ARROW,    TokenType::GEQ,
+         TokenType::LEQ,         TokenType::R_CARAT,     TokenType::L_CARAT,
+         TokenType::SLASH,       TokenType::AMPER,       TokenType::NOT_EQUAL,
+         TokenType::PERCENT,     TokenType::UP_ARROW,    TokenType::DOUBLE_COLON,
+         TokenType::DBL_L_CARAT, TokenType::DBL_R_CARAT, TokenType::R_ARROW,
+         TokenType::DBL_STAR});
 }
 
 /*****************************************************************************/

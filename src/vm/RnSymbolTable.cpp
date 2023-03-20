@@ -41,13 +41,13 @@ RnObject* RnSymbolTable::GetObject(RnIntNative symbol, bool should_throw) {
     if (iter != _table.end()) {
         return iter->second;
     } else if (_parent_table) {
-        return _parent_table->GetObject(symbol);
+        return _parent_table->GetObject(symbol, should_throw);
     } else {
-        if (!should_throw) {
-            return nullptr;
+        if (should_throw) {
+            throw std::runtime_error("Symbol not found: " +
+                                     RnObject::GetInternedString(symbol));
         }
-        throw std::runtime_error("Symbol not found: " +
-                                 RnObject::GetInternedString(symbol));
+        return nullptr;
     }
 }
 

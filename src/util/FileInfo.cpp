@@ -8,14 +8,13 @@
 ******************************************************************************/
 
 #include "FileInfo.h"
-
 #include <utility>
 
 int FileInfo::CONTEXTUAL_BLOCK_TAB_LVL = 2;
 
 /*****************************************************************************/
 FileInfo::FileInfo(const std::string& filepath) {
-    _filepath = std::make_shared<std::string>(filepath);
+    _filepath = filepath;
 }
 
 /*****************************************************************************/
@@ -23,6 +22,7 @@ FileInfo::FileInfo(const FileInfo& other) {
     SetFilePath(other.GetFilePath());
     SetCharNum(other.GetCharNum());
     SetLineNum(other.GetLineNum());
+    _previous_line_start = other.GetPreviousLineStart();
     _is_original = false;
 }
 
@@ -31,22 +31,21 @@ FileInfo::~FileInfo() = default;
 
 /*****************************************************************************/
 void FileInfo::SetFilePath(const std::string& filepath) {
-    std::shared_ptr<std::string> newpath = std::make_shared<std::string>(filepath);
-    _filepath.swap(newpath);
+    _filepath = filepath;
 }
 
 /*****************************************************************************/
 std::string FileInfo::GetFilePath() const {
-    return *_filepath;
+    return _filepath;
 }
 
 /*****************************************************************************/
-void FileInfo::SetLineNum(FileSize linenum) {
+void FileInfo::SetLineNum(size_t linenum) {
     _linenum = linenum;
 }
 
 /*****************************************************************************/
-FileSize FileInfo::GetLineNum() const {
+size_t FileInfo::GetLineNum() const {
     return _linenum;
 }
 
@@ -56,12 +55,12 @@ void FileInfo::IncrementLineNum() {
 }
 
 /*****************************************************************************/
-void FileInfo::SetCharNum(FileSize charnum) {
+void FileInfo::SetCharNum(size_t charnum) {
     _charnum = charnum;
 }
 
 /*****************************************************************************/
-FileSize FileInfo::GetCharNum() const {
+size_t FileInfo::GetCharNum() const {
     return _charnum;
 }
 
@@ -73,37 +72,31 @@ void FileInfo::IncrementCharNum() {
 
 /*****************************************************************************/
 std::string FileInfo::GetContextualBlock(bool formatted) {
-    std::string block =
-        GetContextualBlockTabStr() + GetLineAt(_previous_line_start, true, false);
+    std::string block = "\033[0m" + GetContextualBlockTabStr() +
+                        GetLineAt(_previous_line_start, true, false);
     std::string line;
 
-    if (std::getline(_file_obj, line)) {
+    if (std::getline(_file_obj, line, '\n')) {
         if (formatted) {
             block += GetFormattedLine(line);
         } else {
             block += line + "\n";
         }
 
-        if (std::getline(_file_obj, line)) {
+        if (std::getline(_file_obj, line, '\n')) {
             if (formatted) {
-                block += GetContextualBlockTabStr() + line + "\n";
-            } else {
-                block += line + "\n";
+                block += GetContextualBlockTabStr();
             }
+            block += line + "\n";
         }
     }
     return block;
 }
 
 /*****************************************************************************/
-std::string FileInfo::GetLine() {
-    return GetLineAt(_current_line_start, false);
-}
-
-/*****************************************************************************/
 std::string FileInfo::ToString() const {
-    return "File: " + GetFilePath() + "  " + std::to_string(_linenum) + ":" +
-           std::to_string(_charnum);
+    return ": " + GetFilePath() + "  " + std::to_string(_linenum + 1) + ":" +
+           std::to_string(_charnum + 1);
 }
 
 /*****************************************************************************/
@@ -112,13 +105,13 @@ bool FileInfo::IsOriginal() const {
 }
 
 /*****************************************************************************/
-std::string FileInfo::GetLineAt(FileSize line_start, bool keep_open, bool formatted) {
+std::string FileInfo::GetLineAt(size_t line_start, bool keep_open, bool formatted) {
     if (!_file_obj.is_open()) {
         _file_obj.open(GetFilePath(), std::ios::in);
     }
     _file_obj.seekg(line_start);
     std::string line;
-    std::getline(_file_obj, line);
+    std::getline(_file_obj, line, '\n');
 
     if (!keep_open) {
         _file_obj.close();
@@ -136,7 +129,7 @@ std::string FileInfo::GetContextualBlockTabStr() {
     std::string s;
 
     for (int i = 0; i < FileInfo::CONTEXTUAL_BLOCK_TAB_LVL; ++i) {
-        s += "\t";
+        s += "    ";
     }
 
     return s;
@@ -144,5 +137,5 @@ std::string FileInfo::GetContextualBlockTabStr() {
 
 /*****************************************************************************/
 std::string FileInfo::GetFormattedLine(const std::string& line) {
-    return _line_prefix + GetContextualBlockTabStr() + line + "\n";
+    return _line_prefix + GetContextualBlockTabStr().substr(1) + line + _line_suffix + "\n";
 }
