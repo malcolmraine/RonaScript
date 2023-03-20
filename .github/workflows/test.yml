@@ -24,10 +24,11 @@ jobs:
       working-directory: ${{github.workspace}}
       run: bash scripts/run_tests.sh --functional
       
-    - name: Publish Test Results
-      uses: EnricoMi/publish-unit-test-result-action/composite@v2
-      if: always()
+    - name: Test Reporter
+      uses: dorny/test-reporter@v1.6.0
+      if: success() || failure()
       with:
-        files: |
-          test/*.junit.xml
+        name: Test Results
+        path: test/*.junit.xml
+        reporter: jest-junit
 
