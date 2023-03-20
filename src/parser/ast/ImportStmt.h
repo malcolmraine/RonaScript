@@ -23,7 +23,6 @@ public:
     [[nodiscard]] std::string GetFullSourceFile() const;
 
     std::string source_file;
-    std::shared_ptr<Module> module = nullptr;
 };
 
 #endif  //RONASCRIPT_REQUIRE_H

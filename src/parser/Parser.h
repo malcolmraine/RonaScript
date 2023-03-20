@@ -125,6 +125,7 @@ public:
     std::filesystem::path file;
     std::vector<Token*> tokens;
     Ast* ast;
+    static std::vector<std::string> parsed_files;
 
 private:
     std::shared_ptr<AstNode> AddCurrentFileInfo(std::shared_ptr<AstNode> node);

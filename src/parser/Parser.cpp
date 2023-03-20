@@ -51,6 +51,8 @@
 #include "ast/VarDecl.h"
 #include "ast/WhileLoop.h"
 
+std::vector<std::string> Parser::parsed_files;
+
 const std::unordered_map<TokenType, std::string> Parser::_char_map = {
     {TokenType::R_BRACE, "{"},
     {TokenType::L_BRACE, "}"},
@@ -212,35 +214,37 @@ void Parser::ConditionalBufAdvance(TokenType t) {
 std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
     auto node = std::make_shared<ImportStmt>();
     AddCurrentFileInfo(node);
-    Expect(TokenType::NAME);
+    Expect({TokenType::NAME, TokenType::STRING_LITERAL});
     AdvanceBuffer(1);
     node->source_file = Current()->lexeme;
     Expect(TokenType::SEMICOLON);
     AdvanceBuffer(1);
 
-    // Check if the module has already been parsed
-    if (ast->modules.find(node->source_file) != ast->modules.end()) {
-        node->module = ast->modules[node->source_file];
+    // Check if the file has already been parsed
+    if (std::find(parsed_files.begin(), parsed_files.end(), node->source_file) != parsed_files.end()) {
+        return node;
     } else {
-        // Parse the module and create a new subtree from it
-        Lexer lexer;
-        std::filesystem::path module_file =
-            working_dir + "/" + node->GetFullSourceFile();
+        parsed_files.push_back(node->source_file);
+    }
 
-        if (std::filesystem::absolute(module_file) == std::filesystem::absolute(file)) {
-            throw std::runtime_error("Circular dependency error: " +
-                                     module_file.string());
-        }
+    // Parse the module and create a new subtree from it
+    Lexer lexer;
+    std::filesystem::path module_file = working_dir + "/" + node->source_file;
 
-        lexer.LoadFile(module_file);
-        lexer.ProcessTokens();
-        Parser parser;
-        parser.working_dir = module_file.parent_path();
-        parser.LoadTokens(lexer.tokens);
-        parser.Parse();
-        node->module = parser.ast->modules[node->source_file];
-        parser.ast->modules[node->source_file].reset();
-        ast->modules[node->source_file] = node->module;
+    if (std::filesystem::absolute(module_file) == std::filesystem::absolute(file)) {
+        throw std::runtime_error("Circular dependency error: " +
+                                 module_file.string());
+    }
+
+    lexer.LoadFile(module_file);
+    lexer.ProcessTokens();
+    Parser parser;
+    parser.working_dir = module_file.parent_path();
+    parser.LoadTokens(lexer.tokens);
+    parser.Parse();
+
+    for (auto& [key, m] : parser.ast->modules) {
+        ast->modules[key] = m;
     }
     AdvanceBuffer(1);
 
@@ -428,8 +432,8 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
                 break;
             }
             case TokenType::STRING_LITERAL: {
-                node = std::make_shared<StringLiteral>(static_cast<std::string>(
-                    Lookback()->lexeme.substr(1, Lookback()->lexeme.length() - 2)));
+                node = std::make_shared<StringLiteral>(
+                    static_cast<std::string>(Lookback()->lexeme));
                 break;
             }
             case TokenType::BOOL_LITERAL: {
@@ -1026,7 +1030,7 @@ void Parser::Parse() {
 
     if (GetTokenCount()) {
         MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
-        while (!EndOfSequence()) {
+        while (true) {
             INCR_LOOP_COUNTER
             switch (Current()->token_type) {
                 case TokenType::BLOCK_COMMENT:
@@ -1150,6 +1154,9 @@ void Parser::Parse() {
                 default:
                     HandleUnexpectedItem();
                     break;
+            }
+            if (EndOfSequence()) {
+                break;
             }
         }
     }

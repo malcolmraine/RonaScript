@@ -107,8 +107,7 @@ auto RnInstruction::ToString() -> std::string {
         case OP_MAKE_ALIAS:
         case OP_RESOLVE_NAMESPACE:
             arg1_str = RnObject::GetInternedString(_arg1);
-            arg2_str = RnObject::GetInternedString(_arg2);
-            s += String::Join<uint32_t>({_arg1, _arg2}, "\t");
+            s += std::to_string(_arg1) +  "\t\t";
             break;
         case OP_MAKE_FUNC:
             arg1_str = RnObject::GetInternedString(_arg1);

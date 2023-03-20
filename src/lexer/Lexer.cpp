@@ -190,8 +190,8 @@ Lexer::~Lexer() {
 }
 
 /*****************************************************************************/
-Token* Lexer::Emit() {
-    auto token = MakeToken(_lexeme);
+Token* Lexer::Emit(TokenType type) {
+    auto token = MakeToken(_lexeme, type);
 
     // This is a little awkward but it handles repeated unary operators
     if (token->token_type == TokenType::NAME &&
@@ -206,8 +206,8 @@ Token* Lexer::Emit() {
 }
 
 /*****************************************************************************/
-Token* Lexer::MakeToken(const std::string& s) {
-    auto token = new Token(s, TokenType::UNDEFINED);
+Token* Lexer::MakeToken(const std::string& s, TokenType initial_type) const {
+    auto token = new Token(s, initial_type);
     token->file_info = new FileInfo(*file_info);
 
     // A number can have an abitrary number of signs in front of it
@@ -393,20 +393,22 @@ Token* Lexer::ProcessOperator() {
 /*****************************************************************************/
 Token* Lexer::ProcessStringLiteral() {
     if (_lexeme.empty()) {
+        AdvanceBuffer(1);
         _lexeme.append(std::string(1, Current()));
         AdvanceBuffer(1);
-        bool end_quote_found = false;
 
-        while (!end_quote_found && _lexeme.length() < STRING_LITERAL_MAX_LENGTH) {
-            if (Current() == '\"' && Lookback() != '\\')
-                end_quote_found = true;
+        while (_lexeme.length() < STRING_LITERAL_MAX_LENGTH) {
+            if (Current() == '\"' && Lookback() != '\\') {
+                AdvanceBuffer(1);
+                break;
+            }
 
             _lexeme.append(std::string(1, Current()));
             AdvanceBuffer(1);
         }
     }
 
-    return Emit();
+    return Emit(TokenType::STRING_LITERAL);
 }
 
 /*****************************************************************************/

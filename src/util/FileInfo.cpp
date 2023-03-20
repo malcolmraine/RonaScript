@@ -76,14 +76,14 @@ std::string FileInfo::GetContextualBlock(bool formatted) {
                         GetLineAt(_previous_line_start, true, false);
     std::string line;
 
-    if (std::getline(_file_obj, line, '\r')) {
+    if (std::getline(_file_obj, line, '\n')) {
         if (formatted) {
             block += GetFormattedLine(line);
         } else {
             block += line + "\n";
         }
 
-        if (std::getline(_file_obj, line, '\r')) {
+        if (std::getline(_file_obj, line, '\n')) {
             if (formatted) {
                 block += GetContextualBlockTabStr();
             }
@@ -111,7 +111,7 @@ std::string FileInfo::GetLineAt(size_t line_start, bool keep_open, bool formatte
     }
     _file_obj.seekg(line_start);
     std::string line;
-    std::getline(_file_obj, line, '\r');
+    std::getline(_file_obj, line, '\n');
 
     if (!keep_open) {
         _file_obj.close();
@@ -137,6 +137,5 @@ std::string FileInfo::GetContextualBlockTabStr() {
 
 /*****************************************************************************/
 std::string FileInfo::GetFormattedLine(const std::string& line) {
-    return _line_prefix + GetContextualBlockTabStr().substr(CONTEXTUAL_BLOCK_TAB_LVL + 1) +
-           line + _line_suffix + "\n";
+    return _line_prefix + GetContextualBlockTabStr().substr(1) + line + _line_suffix + "\n";
 }

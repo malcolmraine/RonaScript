@@ -486,26 +486,24 @@ InstructionBlock RnCodeGenVisitor::Visit(AssignmentStmt* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(BinaryExpr* node) {
     InstructionBlock instructions;
+    RnOpCode opcode = GetOpCodeFromOperator(node->_op);
 
-    if (node->_op == "::") {
+    if (opcode == OP_RESOLVE_NAMESPACE) {
+        instructions = GeneralVisit(node->_left);
         instructions.emplace_back(new RnInstruction(
-            GetOpCodeFromOperator(node->_op),
-            RnObject::InternValue(std::static_pointer_cast<Name>(node->_left)->value),
-            RnObject::InternValue(
-                std::static_pointer_cast<Name>(node->_right)->value)));
-    } else if (node->_op == "->") {
-        InstructionBlock left = GeneralVisit(node->_left);
-        instructions.insert(instructions.end(), left.begin(), left.end());
+            opcode,
+            RnObject::InternValue(std::static_pointer_cast<Name>(node->_right)->value)));
+    } else if (opcode == OP_ATTR_ACCESS) {
+        instructions = GeneralVisit(node->_left);
         instructions.push_back(new RnInstruction(
-            OP_ATTR_ACCESS, RnObject::InternValue(
-                                std::static_pointer_cast<Name>(node->_right)->value)));
-        //		instructions.emplace_back(new RnInstruction(GetOpCodeFromOperator(node->_op)));
+            opcode, RnObject::InternValue(
+                        std::static_pointer_cast<Name>(node->_right)->value)));
     } else {
         InstructionBlock left = GeneralVisit(node->_left);
         InstructionBlock right = GeneralVisit(node->_right);
         instructions.insert(instructions.end(), left.begin(), left.end());
         instructions.insert(instructions.end(), right.begin(), right.end());
-        instructions.emplace_back(new RnInstruction(GetOpCodeFromOperator(node->_op)));
+        instructions.emplace_back(new RnInstruction(opcode));
     }
 
     return instructions;

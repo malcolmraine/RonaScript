@@ -34,6 +34,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include "TokenType.h"
 #include "../util/FileInfo.h"
 #include "../util/RnSequencer.h"
 
@@ -49,16 +50,15 @@
 #define IS_SIGNED_POSITIVE_LITERAL(s) ((s)[0] == '+')
 
 class Token;
-enum TokenType : int;
 
 class Lexer : public RnSequencer<char, char> {
 public:
     Lexer();
     ~Lexer();
     void LoadNextItem() override;
-    Token* Emit();
+    Token* Emit(TokenType type = TokenType::UNDEFINED);
     Token* MakeToken(TokenType type);
-    Token* MakeToken(const std::string& s);
+    Token* MakeToken(const std::string& s, TokenType initial_type = TokenType::UNDEFINED) const;
     static bool IsIntLiteral(std::string s);          // TODO: Unit test
     static bool IsFloatLiteral(std::string s);        // TODO: Unit test
     static bool IsHexLiteral(std::string s);          // TODO: Unit test
