@@ -1,0 +1,22 @@
+// Module Creation
+
+module Matrix is
+begin
+    class _MatrixInternal is
+    begin
+        var _data: array = [];
+
+        routine construct(var rows: int, var columns: int): object
+        begin
+            for (var i: int = 0; i < rows; i++):
+                var r: array = [];
+                for (var j: int = 0; j < columns; j++):
+                    array_push(r, 0);
+                end
+                array_push(this->_data, r);
+            end
+            return this;
+        end
+    end
+end
+

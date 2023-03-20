@@ -70,7 +70,6 @@ protected:
     RnInternment<long> _int_internment;
     std::vector<RnScope*> _scopes;
     std::vector<RnScope*> _call_stack;
-    std::unordered_map<RnIntNative, RnClassObject*> _namespaces;
     std::vector<RnInstruction*> _instructions;
     RnMemoryManager* _memory_manager;
     size_t i_idx = 0;

@@ -83,11 +83,30 @@ public:
         return _is_marked;
     }
 
+    [[nodiscard]] bool IsModule() const {
+        return _is_module;
+    }
+
+    void SetIsModule(bool flag) {
+        _is_module = flag;
+    }
+
+    [[nodiscard]] bool IsClass() const {
+        return _is_class;
+    }
+
+    void SetIsClass(bool flag) {
+        _is_class = flag;
+    }
+
+
 public:
     static RnObject* null_object;
 
 private:
     bool _is_marked = false;
+    bool _is_module = false;
+    bool _is_class = false;
 };
 
 #endif  //RONASCRIPT_RNOBJECT_H

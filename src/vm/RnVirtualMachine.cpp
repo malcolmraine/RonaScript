@@ -382,12 +382,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             if (object) {
                 Log::DEBUG("Loading (" + RnObject::GetInternedString(key) + ", " +
                            RnType::TypeToString(object->GetType()) + ")");
-                GetStack().push_back(object);
-            } else if (_namespaces.contains(key)) {
-                auto class_obj = dynamic_cast<RnClassObject*>(_namespaces[key]);
-                if (class_obj->IsModule()) {
-                    GetStack().Push(class_obj);
-                } else {
+                if (object->IsClass()) {
+                    auto class_obj = dynamic_cast<RnClassObject*>(object);
                     auto instance = dynamic_cast<RnClassObject*>(
                         _memory_manager->CreateObject(RnType::RN_CLASS_INSTANCE));
                     GetScope()->GetMemoryGroup()->AddObject(instance);
@@ -403,6 +399,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                     BindThis(func_scope, instance);
                     func->SetScope(func_scope);
                     GetStack().push_back(func_obj);
+                } else {
+                    GetStack().push_back(object);
                 }
             } else {
                 throw std::runtime_error("Symbol does not exist: " +
@@ -536,7 +534,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             obj->SetIsModule(true);
             obj->GetScope()->SetParent(GetScope());
             GetScope()->StoreObject(instruction->GetArg1(), obj);
-            _namespaces[instruction->GetArg1()] = obj;
+            //            _namespaces[instruction->GetArg1()] = obj;
             _scopes.push_back(obj->ToObject());
             index++;
             size_t stop_index = index + instruction->GetArg2();
@@ -551,10 +549,12 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto name = RnObject::GetInternedString(instruction->GetArg1());
             auto obj = dynamic_cast<RnClassObject*>(
                 RnObject::Create(RnType::RN_CLASS_INSTANCE));
+            obj->SetIsClass(true);
             auto name_obj = RnObject::Create(name);
             name_obj->SetConstFlag(true);
             obj->GetScope()->StoreObject(RnObject::InternValue("__class"), name_obj);
-            _namespaces[instruction->GetArg1()] = obj;
+            GetScope()->StoreObject(instruction->GetArg1(), obj);
+            //            _namespaces[instruction->GetArg1()] = obj;
             auto class_scope = obj->ToObject();
             class_scope->SetParent(GetScope());
             _scopes.push_back(class_scope);

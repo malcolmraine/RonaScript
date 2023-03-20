@@ -1,0 +1,5 @@
+// Import File
+import "other.rn";
+
+print(Other::GetData());
+print(Other::data);
