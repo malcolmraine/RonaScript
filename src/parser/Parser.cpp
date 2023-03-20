@@ -550,9 +550,14 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
             // Shunting-yard _prec_tbl parsing
             if (Current()->IsOperator() ||
                 Current()->IsOneOf({TokenType::L_PARAN, TokenType::R_PARAN})) {
-                if (Current()->token_type == TokenType::R_PARAN &&
-                    !Lookback()->IsOperator() && result_stack.Top()) {
-                    result_stack.Push(ParseFuncCall(result_stack.Pop()));
+                if (Current()->token_type == TokenType::R_PARAN) {
+                    if (!Lookback()->IsOperator() && result_stack.Top() &&
+                        Lookback()->token_type != TokenType::R_PARAN) {
+                        result_stack.Push(ParseFuncCall(result_stack.Pop()));
+                    } else {
+                        op_stack.push_back(Current());
+                        AdvanceBuffer(1);
+                    }
                 } else if (op_stack.IsEmpty() ||
                            _prec_tbl[Current()->token_type] >
                                _prec_tbl[op_stack.back()->token_type]) {
@@ -1067,6 +1072,7 @@ void Parser::Parse() {
                     _previous_state = GENERAL_CONTEXT;
                     break;
                 }
+                case TokenType::R_PARAN:
                 case TokenType::NAME: {
                     if (Current()->lexeme == "__pragma") {
                         AdvanceBuffer(2);

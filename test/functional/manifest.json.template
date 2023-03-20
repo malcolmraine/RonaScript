@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "title": "",
+  "name": ##TEST_NAME##,
+  "title": ##TEST_TITLE##,
   "args": [],
   "timeout": 5,
   "invoke_count": 1,
