@@ -27,7 +27,7 @@ class Test(object):
 
     def __init__(self,
                  name,
-                 id,
+                 test_id,
                  source_dir: str,
                  expected_output_file: str = "",
                  args: list = None,
@@ -35,7 +35,7 @@ class Test(object):
                  invoke_count=1,
                  enabled=False,
                  similarity=1.0):
-        self.id = id
+        self.id = test_id
         self.stdout = []
         self.stderr = []
         self.source_dir = source_dir
@@ -211,8 +211,8 @@ class TestRunner(object):
         print(f"Passed: {self.passed_count}")
         print(f"Failed: {self.failed_count}")
         print(f"Total runtime: {round(self.total_runtime, 3)}s")
-        print(f"Avg. runtime: {round(self.total_runtime / self.enabled_count, 3)}s")
-        print(f"\nPass rate: {round(self.passed_count / self.enabled_count, 3)}")
+        print(f"Avg. runtime: {round(self.total_runtime / (self.enabled_count or 1), 3)}s")
+        print(f"\nPass rate: {round(self.passed_count / (self.enabled_count or 1), 3)}")
 
 
 if __name__ == "__main__":
@@ -224,7 +224,7 @@ if __name__ == "__main__":
             manifest = json.load(manifest_file)
         runner.add_test(Test(manifest.get("title"),
                              manifest.get("name"),
-                             file.replace("manifest.json", ""),
+                             os.path.dirname(file),
                              expected_output_file=manifest.get("expected_output", "expected_output.txt"),
                              args=[*manifest.get("args", [])],
                              timeout=manifest.get("timeout", 5),
