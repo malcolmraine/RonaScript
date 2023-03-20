@@ -1,0 +1,26 @@
+name: Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Functional Tests
+      working-directory: ${{github.workspace}}
+      run: bash scripts/run_tests.sh --functional
+      
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action/composite@v2
+      if: always()
+      with:
+        files: |
+          test/*.junit.xml
+
