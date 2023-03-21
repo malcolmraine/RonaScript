@@ -122,6 +122,13 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
     }
 }
 
+#define SIMPLE_BINARY_OPERATION(op) \
+    auto b = StackPop(); \
+    auto a = StackPop(); \
+    auto result = *a op b; \
+    GetScope()->GetMemoryGroup()->AddObject(result); \
+    GetStack().push_back(result);
+
 /*****************************************************************************/
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
     _gc_count++;
@@ -135,155 +142,84 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
     Log::DEBUG(instruction->ToString());
     switch (instruction->GetOpcode()) {
         case OP_BINARY_ADD: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a + b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(+)
             break;
         }
         case OP_BINARY_SUB: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a - b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(-)
             break;
         }
         case OP_BINARY_MUL: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a * b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(*)
             break;
         }
         case OP_BINARY_DIV: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a / b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(/)
             break;
         }
         case OP_BINARY_MOD: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a % b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(%)
             break;
         }
         case OP_BINARY_GTE: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a >= b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(>=)
             break;
         }
         case OP_BINARY_LTE: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a <= b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(<=)
             break;
         }
         case OP_BINARY_GT: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a > b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(>)
             break;
         }
         case OP_BINARY_LT: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a < b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(<)
             break;
         }
         case OP_BINARY_EQ: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a == b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(==)
             break;
         }
         case OP_BINARY_NEQ: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a != b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(!=)
             break;
         }
         case OP_BINARY_POWER: {
             auto b = StackPop();
             auto a = StackPop();
             auto result = CreateObject(std::pow(a->ToFloat(), b->ToFloat()));
+            assert(result);
             GetScope()->GetMemoryGroup()->AddObject(result);
             GetStack().push_back(result);
             break;
         }
         case OP_BINARY_RSH: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a << b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(<<)
             break;
         }
         case OP_BINARY_LSH: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a >> b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(>>)
             break;
         }
         case OP_BINARY_OR: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a | b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(|)
             break;
         }
         case OP_BINARY_XOR: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a ^ b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(^)
             break;
         }
         case OP_BINARY_AND: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a & b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(&)
             break;
         }
         case OP_LOGICAL_OR: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a || b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(||)
             break;
         }
         case OP_LOGICAL_AND: {
-            auto b = StackPop();
-            auto a = StackPop();
-            auto result = *a && b;
-            GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            SIMPLE_BINARY_OPERATION(&&)
             break;
         }
         case OP_STORE: {
@@ -463,7 +399,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 func->Call(args, ret_val);
                 GetStack().push_back(ret_val);
             } else {
-                auto scope = CreateScope();
+                auto scope = _memory_manager->CreateScope();
                 scope->SetParent(func->GetScope());
                 func->InitScope(scope);
                 _scopes.push_back(scope);
