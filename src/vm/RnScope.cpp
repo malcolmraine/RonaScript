@@ -31,7 +31,8 @@ RnScope::RnScope(RnScope* parent) : _memory_group(nullptr) {
         _symbolTable.SetParent(parent->GetSymbolTable());
         _memory_group.SetParent(parent->GetMemoryGroup());
     }
-    _stack.Resize(10);
+    _stack.reserve(10);
+//    _stack.Resize(10);
 }
 
 /*****************************************************************************/
@@ -62,7 +63,7 @@ RnSymbolTable* RnScope::GetSymbolTable() {
 }
 
 /*****************************************************************************/
-PtrStack<RnObject*>& RnScope::GetStack() {
+std::vector<RnObject*>& RnScope::GetStack() {
     return _stack;
 }
 
@@ -178,6 +179,6 @@ RnObject* RnScope::MakeLocal(RnType::Type type) {
 /*****************************************************************************/
 void RnScope::Reset() {
     GetSymbolTable()->Clear();
-    _stack.Clear();
+    _stack.clear();
     _locals.clear();
 }

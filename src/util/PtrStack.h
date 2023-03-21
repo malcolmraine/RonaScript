@@ -20,6 +20,7 @@ public:
     }
 
     void Push(T item) {
+        assert(item);
         if (_size == _max_size)
             Resize(2 * _max_size);
 
@@ -33,9 +34,9 @@ public:
     T Pop() {
         assert(_size > 0);
         assert(_stack_ptr);
-        auto item = *_stack_ptr;
+        auto item = *(_stack_ptr--);
+        assert(item);
         _size--;
-        _stack_ptr--;
         return item;
     }
 

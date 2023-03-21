@@ -9,7 +9,7 @@ begin
             end
         else:
             print("x is 4");
-            return x; * 4
+            return x * 4;
         end
     elif x < 3:
         if x == 1:
