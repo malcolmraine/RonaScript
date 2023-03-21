@@ -1,0 +1,8 @@
+module Other is
+    var data: array = [1, 2, 3];
+
+    routine GetData(): array
+    begin
+        return data;
+    end
+end

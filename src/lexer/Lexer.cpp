@@ -228,20 +228,22 @@ Token* Lexer::MakeToken(const std::string& s, TokenType initial_type) const {
         return std::string(1, '-') + s.substr(i);
     };
 
-    if (_token_map.count(s) || (_token_map.count(s) && IsReservedWord(s))) {
-        token->token_type = _token_map[s];
-    } else if (IsIntLiteral(s)) {
-        token->token_type = TokenType::INT_LITERAL;
-        token->lexeme = normalize_sign(s);
-    } else if (IsFloatLiteral(s)) {
-        token->token_type = TokenType::FLOAT_LITERAL;
-        token->lexeme = normalize_sign(s);
-    } else if (IsStrLiteral(s)) {
-        token->token_type = TokenType::STRING_LITERAL;
-    } else if (IsBoolLiteral(s)) {
-        token->token_type = TokenType::BOOL_LITERAL;
-    } else {
-        token->token_type = TokenType::NAME;
+    if (initial_type == TokenType::UNDEFINED) {
+        if (_token_map.count(s) || (_token_map.count(s) && IsReservedWord(s))) {
+            token->token_type = _token_map[s];
+        } else if (IsIntLiteral(s)) {
+            token->token_type = TokenType::INT_LITERAL;
+            token->lexeme = normalize_sign(s);
+        } else if (IsFloatLiteral(s)) {
+            token->token_type = TokenType::FLOAT_LITERAL;
+            token->lexeme = normalize_sign(s);
+        } else if (IsStrLiteral(s)) {
+            token->token_type = TokenType::STRING_LITERAL;
+        } else if (IsBoolLiteral(s)) {
+            token->token_type = TokenType::BOOL_LITERAL;
+        } else {
+            token->token_type = TokenType::NAME;
+        }
     }
     return token;
 }
@@ -393,8 +395,6 @@ Token* Lexer::ProcessOperator() {
 /*****************************************************************************/
 Token* Lexer::ProcessStringLiteral() {
     if (_lexeme.empty()) {
-        AdvanceBuffer(1);
-        _lexeme.append(std::string(1, Current()));
         AdvanceBuffer(1);
 
         while (_lexeme.length() < STRING_LITERAL_MAX_LENGTH) {

@@ -59,16 +59,7 @@ public:
         return _name;
     }
 
-    [[nodiscard]] bool IsModule() const {
-        return _is_module;
-    }
-
-    void SetIsModule(bool flag) {
-        _is_module = flag;
-    }
-
 private:
-    bool _is_module = false;
     std::string _name;
 };
 

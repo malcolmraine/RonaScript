@@ -360,6 +360,7 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
 
     // Get the function's scope
     node->scope = ParseScope();
+    assert(node->scope);
     for (const auto& symbol : arg_symbols) {
         node->scope->symbol_table->AddSymbol(symbol.first, symbol.second, node);
     }
@@ -1001,6 +1002,8 @@ std::shared_ptr<CatchBlock> Parser::ParseCatchBlock() {
 
 /*****************************************************************************/
 void Parser::RevertScope() {
+    assert(_current_scope);
+
     if (_current_scope->parent) {
         _current_scope = _current_scope->parent;
     }
@@ -1008,6 +1011,8 @@ void Parser::RevertScope() {
 
 /*****************************************************************************/
 void Parser::ConvertScope(const std::shared_ptr<ScopeNode>& scope) {
+    assert(scope);
+
     scope->parent = _current_scope;
     _current_scope = scope;
 }
@@ -1171,6 +1176,8 @@ void Parser::LoadTokens(std::vector<Token*> t) {
 /*****************************************************************************/
 std::shared_ptr<AstNode> Parser::TransformBinaryExpr(
     std::shared_ptr<BinaryExpr> binary_expr) {
+    assert(binary_expr);
+
     if (binary_expr->_op == "->" || binary_expr->_op == "::") {
         if (binary_expr->_right->node_type == AST_INDEXED_EXPR) {
             auto right_tmp =
