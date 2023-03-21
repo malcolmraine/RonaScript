@@ -15,7 +15,7 @@
 #include <vector>
 
 //#define ENABLE_DEBUG_LOGGING
-//#define ENABLE_INFO_LOGGING
+#define ENABLE_INFO_LOGGING
 #define ENABLE_ERROR_LOGGING
 
 class Log {

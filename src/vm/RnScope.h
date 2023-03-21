@@ -13,7 +13,6 @@
 #include <map>
 #include <variant>
 #include <vector>
-#include "../util/PtrStack.h"
 #include "../util/RnStack.h"
 #include "RnMemoryGroup.h"
 #include "RnScope.h"
@@ -35,7 +34,7 @@ public:
     [[nodiscard]] RnObject* GetObject(RnIntNative key);
     void RemoveObject(RnIntNative key);
     [[nodiscard]] RnSymbolTable* GetSymbolTable();
-    [[nodiscard]] PtrStack<RnObject*>& GetStack();
+    [[nodiscard]] std::vector<RnObject*>& GetStack();
     void SetParent(RnScope* scope);
     [[nodiscard]] RnScope* GetParent() const;
     [[nodiscard]] RnMemoryGroup* GetMemoryGroup();
@@ -59,7 +58,7 @@ public:
 
 protected:
     RnScope* _parent = nullptr;
-    PtrStack<RnObject*> _stack;
+    std::vector<RnObject*> _stack;
     RnSymbolTable _symbolTable;
     RnMemoryGroup _memory_group;
     std::vector<std::variant<RnBoolObject, RnStringObject, RnIntObject, RnFloatObject,

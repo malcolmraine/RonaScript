@@ -32,14 +32,19 @@ public:
         return _scopes.back();
     }
 
-    [[nodiscard]] PtrStack<RnObject*>& GetStack() {
+    [[nodiscard]] std::vector<RnObject*>& GetStack() {
         return _scopes.back()->GetStack();
     }
 
     RnObject* StackPop() {
-        auto item = _scopes.back()->GetStack().Pop();
+        auto item = _scopes.back()->GetStack().back();
+        _scopes.back()->GetStack().pop_back();
         assert(item);
         return item;
+    }
+
+    void StackPush(RnObject* object) {
+        _scopes.back()->GetStack().push_back(object);
     }
 
     void CallFunction(RnFunctionObject* obj, uint32_t arg_cnt);
