@@ -417,7 +417,7 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
         node = ParseArrayLiteral();
     } else if (Current()->token_type == TokenType::NAME) {
         node = ParseName();
-        if (Current()->IsUnaryOp()) {
+        if (Current()->IsOneOf({TokenType::DBL_MINUS, TokenType::DBL_PLUS})) {
             node = ParseUnaryExpr(node);
         }
     } else if (Current()->IsLiteral()) {
