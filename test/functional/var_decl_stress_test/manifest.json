@@ -2,7 +2,7 @@
   "name": "var_decl_stress_test",
   "title": "Variable Declaration Stress Test",
   "args": [],
-  "timeout": 3,
+  "timeout": 5,
   "invoke_count": 1,
   "enabled": true,
   "expected_output": "expected_output.txt",

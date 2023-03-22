@@ -80,6 +80,19 @@ auto RnFloatObject::operator*(RnObject* obj) -> RnObject* {
 }
 
 /*****************************************************************************/
+auto RnFloatObject::operator%(RnObject* obj) -> RnObject* {
+    switch (obj->GetType()) {
+        case RnType::RN_INT:
+        case RnType::RN_FLOAT:
+            return RnObject::Create(std::fmod(ToFloat(), obj->ToFloat()));
+        default:
+            throw std::runtime_error("Operator '%' is not defined for types '" +
+                                     RnType::TypeToString(GetType()) + "' and '" +
+                                     RnType::TypeToString(obj->GetType()) + "'");
+    }
+}
+
+/*****************************************************************************/
 auto RnFloatObject::ToString() const -> RnStringNative {
     std::stringstream ss;
     ss.setf(std::ios_base::fixed, std::ios_base::floatfield);
