@@ -52,6 +52,7 @@ public:
                 return "int";
             case RN_ARRAY:
                 return "array";
+            case RN_CALLABLE:
             case RN_FUNCTION:
                 return "function";
             case RN_CLASS_INSTANCE:

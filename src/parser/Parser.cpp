@@ -106,6 +106,7 @@ const std::unordered_map<TokenType, std::string> Parser::_char_map = {
     {TokenType::BOOL, "bool"},
     {TokenType::INT, "int"},
     {TokenType::STRING, "string"},
+    {TokenType::ANY, "any"},
     {TokenType::OBJECT, "object"},
     {TokenType::ARRAY, "array"},
     {TokenType::CLASS, "class"},
@@ -738,7 +739,6 @@ std::shared_ptr<IfStmt> Parser::ParseIfStmt() {
     AdvanceBuffer(1);
     node->test = ParseExpr(TokenType::COLON);
     node->consequent = ParseScope();
-    ConditionalBufAdvance(TokenType::L_BRACE);
 
     if (Current()->token_type == TokenType::ELIF) {
         node->alternative = ParseElifStmt();
@@ -759,7 +759,7 @@ std::shared_ptr<ElifStmt> Parser::ParseElifStmt() {
     AdvanceBuffer(1);
     node->test = ParseExpr(TokenType::COLON);
     node->consequent = ParseScope();
-    ConditionalBufAdvance(TokenType::L_BRACE);
+//    ConditionalBufAdvance(TokenType::L_BRACE);
 
     if (Current()->token_type == TokenType::ELIF) {
         node->alternative = ParseElifStmt();
@@ -804,7 +804,6 @@ std::shared_ptr<ScopeNode> Parser::ParseScope() {
         Current()->token_type == TokenType::ELSE ||
         Current()->token_type == TokenType::ELIF) {
         RevertScope();
-
         ConditionalBufAdvance(TokenType::L_BRACE);
     }
 
@@ -1003,7 +1002,6 @@ std::shared_ptr<CatchBlock> Parser::ParseCatchBlock() {
 /*****************************************************************************/
 void Parser::RevertScope() {
     assert(_current_scope);
-
     if (_current_scope->parent) {
         _current_scope = _current_scope->parent;
     }
