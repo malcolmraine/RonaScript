@@ -20,6 +20,7 @@
 #include "RnMemoryManager.h"
 #include "RnObject.h"
 #include "RnStringObject.h"
+#include "RnAnyObject.h"
 #include "RnSymbolTable.h"
 
 std::map<std::string, void*> RnScope::_handles;
@@ -156,6 +157,9 @@ RnObject* RnScope::MakeLocal(RnType::Type type) {
         case RnType::RN_INT:
             _locals.emplace_back(RnIntObject());
             return &std::get<RnIntObject>(_locals.back());
+        case RnType::RN_ANY:
+            _locals.emplace_back(RnAnyObject());
+            return &std::get<RnAnyObject>(_locals.back());
         case RnType::RN_ARRAY:
             _locals.emplace_back(RnArrayObject());
             return &std::get<RnArrayObject>(_locals.back());

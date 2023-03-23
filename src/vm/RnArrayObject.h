@@ -16,6 +16,7 @@
 class RnArrayObject : public RnObjectBase<std::vector<RnObject*>> {
 public:
     RnArrayObject();
+    RnArrayObject(const std::vector<RnObject*>& data);
     ~RnArrayObject();
 
     RnObject* operator+(RnObject* obj) override;

@@ -19,6 +19,7 @@
 #include "RnIntObject.h"
 #include "RnNullObject.h"
 #include "RnStringObject.h"
+#include "RnAnyObject.h"
 
 #define OBJECT_ALLOCATION_COUNT 1000000
 
@@ -60,6 +61,9 @@ RnObject* RnMemoryManager::CreateObject(RnType::Type type) {
         case RnType::RN_INT:
             return std::construct_at<RnIntObject>(
                 reinterpret_cast<RnIntObject*>(address));
+        case RnType::RN_ANY:
+            return std::construct_at<RnAnyObject>(
+                reinterpret_cast<RnAnyObject*>(address));
         case RnType::RN_ARRAY:
             return std::construct_at<RnArrayObject>(
                 reinterpret_cast<RnArrayObject*>(address));
@@ -173,6 +177,10 @@ void RnMemoryManager::GCSweep() {
                 case RnType::RN_INT:
                     std::destroy_at<RnIntObject>(
                         reinterpret_cast<RnIntObject*>(address));
+                    break;
+                case RnType::RN_ANY:
+                    std::destroy_at<RnAnyObject>(
+                        reinterpret_cast<RnAnyObject*>(address));
                     break;
                 case RnType::RN_ARRAY:
                     std::destroy_at<RnArrayObject>(

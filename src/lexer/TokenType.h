@@ -125,6 +125,7 @@ enum TokenType : int {
     EXTENDS,
     MODULE,
     RANGE,
+    ANY,
 };
 
 #endif  //RONASCRIPT_TOKEN_TYPE_H

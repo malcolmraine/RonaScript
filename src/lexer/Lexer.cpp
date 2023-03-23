@@ -85,6 +85,7 @@ std::unordered_map<std::string, TokenType> Lexer::_token_map = {
     {"bool", TokenType::BOOL},
     {"int", TokenType::INT},
     {"string", TokenType::STRING},
+    {"any", TokenType::ANY},
     {"object", TokenType::OBJECT},
     {"array", TokenType::ARRAY},
     {"class", TokenType::CLASS},
@@ -120,7 +121,7 @@ std::unordered_map<std::string, TokenType> Lexer::_token_map = {
 };
 
 const std::unordered_set<std::string> Lexer::_reserved_words = {
-    "float",     "string",  "int",       "bool",     "list",     "void",   "null",
+    "float",     "string",  "int",       "bool",     "list",     "void",   "null", "any",
     "class",     "object",  "alias",     "is",       "require",  "class",  "routine",
     "begin",     "end",     "construct", "destruct", "var",      "const",  "public",
     "protected", "private", "return",    "break",    "continue", "static", "callable",

@@ -107,6 +107,10 @@ public:
     /*************************************************************************/
     void CopyDataFromObject(RnObject* obj) override {
         switch (obj->GetType()) {
+            case RnType::RN_ANY:
+            {
+                break;
+            }
             case RnType::RN_BOOLEAN:
                 SetData(obj->ToInt());
                 break;

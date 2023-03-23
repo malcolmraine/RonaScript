@@ -33,6 +33,7 @@ public:
         RN_OBJECT,
         RN_NULL,
         RN_VOID,
+        RN_ANY,
         RN_UNKNOWN,
     };
 
@@ -43,6 +44,8 @@ public:
                 return "bool";
             case RN_STRING:
                 return "string";
+            case RN_ANY:
+                return "any";
             case RN_FLOAT:
                 return "float";
             case RN_INT:
@@ -52,14 +55,13 @@ public:
             case RN_FUNCTION:
                 return "function";
             case RN_CLASS_INSTANCE:
-                return "object";
             case RN_OBJECT:
                 return "object";
             case RN_NULL:
                 return "null";
             case RN_UNKNOWN:
-                return "unknown";
             default:
+                assert(false);
                 return "unknown";
         }
     }
@@ -68,6 +70,8 @@ public:
     static Type StringToType(const std::string& type) {
         if (type == "string") {
             return RN_STRING;
+        } else if (type == "any") {
+            return RN_ANY;
         } else if (type == "float") {
             return RN_FLOAT;
         } else if (type == "array") {
@@ -85,6 +89,7 @@ public:
         } else if (type == "bool") {
             return RN_BOOLEAN;
         } else {
+            assert(false);
             return RN_UNKNOWN;
         }
     }

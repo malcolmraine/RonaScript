@@ -16,6 +16,7 @@
 #include "RnFloatObject.h"
 #include "RnFunctionObject.h"
 #include "RnIntObject.h"
+#include "RnAnyObject.h"
 #include "RnNullObject.h"
 #include "RnStringObject.h"
 #include "RnVirtualMachine.h"
@@ -103,6 +104,8 @@ RnObject* RnObject::Create(RnType::Type type) {
             return new RnFloatObject();
         case RnType::RN_INT:
             return new RnIntObject();
+        case RnType::RN_ANY:
+            return new RnAnyObject();
         case RnType::RN_ARRAY:
             return new RnArrayObject();
         case RnType::RN_FUNCTION:
@@ -122,6 +125,9 @@ RnObject* RnObject::Copy(RnObject* obj) {
     switch (obj->GetType()) {
         case RnType::RN_BOOLEAN:
             result->SetData(obj->ToBool());
+            break;
+        case RnType::RN_ANY:
+            dynamic_cast<RnAnyObject*>(result)->CopyFrom(obj);
             break;
         case RnType::RN_STRING:
             result->SetData(obj->ToString());

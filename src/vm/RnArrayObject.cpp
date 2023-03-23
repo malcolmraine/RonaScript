@@ -14,6 +14,11 @@
 RnArrayObject::RnArrayObject() = default;
 
 /*****************************************************************************/
+RnArrayObject::RnArrayObject(const std::vector<RnObject*>& data) {
+    _data = data;
+}
+
+/*****************************************************************************/
 RnArrayObject::~RnArrayObject() = default;
 
 /*****************************************************************************/
