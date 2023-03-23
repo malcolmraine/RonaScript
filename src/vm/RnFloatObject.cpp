@@ -81,7 +81,7 @@ auto RnFloatObject::operator*(RnObject* obj) -> RnObject* {
 
 /*****************************************************************************/
 auto RnFloatObject::operator%(RnObject* obj) -> RnObject* {
-    switch (obj->GetType()) {
+    switch (obj->GetActiveType()) {
         case RnType::RN_INT:
         case RnType::RN_FLOAT:
             return RnObject::Create(std::fmod(ToFloat(), obj->ToFloat()));

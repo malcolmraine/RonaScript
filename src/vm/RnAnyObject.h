@@ -53,7 +53,7 @@ public:
         return RnType::RN_ANY;
     }
 
-    [[nodiscard]] RnType::Type GetActiveType() const {
+    [[nodiscard]] RnType::Type GetActiveType() const override {
         return _active_type;
     }
 

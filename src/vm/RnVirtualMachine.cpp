@@ -782,6 +782,8 @@ void RnVirtualMachine::RegisterBuiltins() {
          RnType::RN_BOOLEAN},
         {"is_int", CastToBuiltin(&RnBuiltins_Type::rn_builtin_is_int),
          RnType::RN_BOOLEAN},
+        {"is_any", CastToBuiltin(&RnBuiltins_Type::rn_builtin_is_any),
+         RnType::RN_BOOLEAN},
         {"str_titlecase", CastToBuiltin(&RnBuiltins_String::rn_builtin_str_titlecase),
          RnType::RN_STRING},
         {"str_lower", CastToBuiltin(&RnBuiltins_String::rn_builtin_str_lower),

@@ -19,7 +19,7 @@ RnIntObject::~RnIntObject() = default;
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator+(RnObject* obj) {
-    switch (obj->GetType()) {
+    switch (obj->GetActiveType()) {
         case RnType::RN_INT:
         case RnType::RN_BOOLEAN:
             return RnObject::Create(_data + obj->ToInt());
@@ -37,12 +37,12 @@ RnObject* RnIntObject::operator+(RnObject* obj) {
     }
     throw std::runtime_error("Operator '+' is not defined for types '" +
                              RnType::TypeToString(GetType()) + "' and '" +
-                             RnType::TypeToString(obj->GetType()) + "'");
+                             RnType::TypeToString(obj->GetActiveType()) + "'");
 }
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator-(RnObject* obj) {
-    switch (obj->GetType()) {
+    switch (obj->GetActiveType()) {
         case RnType::RN_INT:
         case RnType::RN_BOOLEAN:
             return RnObject::Create(_data - obj->ToInt());
@@ -60,12 +60,12 @@ RnObject* RnIntObject::operator-(RnObject* obj) {
     }
     throw std::runtime_error("Operator '-' is not defined for types '" +
                              RnType::TypeToString(GetType()) + "' and '" +
-                             RnType::TypeToString(obj->GetType()) + "'");
+                             RnType::TypeToString(obj->GetActiveType()) + "'");
 }
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator==(RnObject* obj) {
-    switch (obj->GetType()) {
+    switch (obj->GetActiveType()) {
         case RnType::RN_INT:
         case RnType::RN_BOOLEAN:
             return RnObject::Create(_data == obj->ToInt());
@@ -85,7 +85,7 @@ RnObject* RnIntObject::operator==(RnObject* obj) {
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator!=(RnObject* obj) {
-    switch (obj->GetType()) {
+    switch (obj->GetActiveType()) {
         case RnType::RN_INT:
         case RnType::RN_BOOLEAN:
             return RnObject::Create(_data == obj->ToInt());
@@ -105,7 +105,7 @@ RnObject* RnIntObject::operator!=(RnObject* obj) {
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator/(RnObject* obj) {
-    switch (obj->GetType()) {
+    switch (obj->GetActiveType()) {
         case RnType::RN_BOOLEAN:
         case RnType::RN_FLOAT:
         case RnType::RN_INT:
@@ -122,7 +122,7 @@ RnObject* RnIntObject::operator/(RnObject* obj) {
     }
     throw std::runtime_error("Operator '/' is not defined for types '" +
                              RnType::TypeToString(GetType()) + "' and '" +
-                             RnType::TypeToString(obj->GetType()) + "'");
+                             RnType::TypeToString(obj->GetActiveType()) + "'");
 }
 
 /*****************************************************************************/
@@ -147,7 +147,7 @@ RnObject* RnIntObject::operator&(RnObject* obj) {
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator^(RnObject* obj) {
-    switch (obj->GetType()) {
+    switch (obj->GetActiveType()) {
         case RnType::RN_BOOLEAN:
         case RnType::RN_INT:
             return RnObject::Create(_data ^ obj->ToInt());
@@ -164,7 +164,7 @@ RnObject* RnIntObject::operator^(RnObject* obj) {
     }
     throw std::runtime_error("Operator '+' is not defined for types '" +
                              RnType::TypeToString(GetType()) + "' and '" +
-                             RnType::TypeToString(obj->GetType()) + "'");
+                             RnType::TypeToString(obj->GetActiveType()) + "'");
 }
 
 /*****************************************************************************/
@@ -189,7 +189,7 @@ RnObject* RnIntObject::operator<=(RnObject* obj) {
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator%(RnObject* obj) {
-    switch (obj->GetType()) {
+    switch (obj->GetActiveType()) {
         case RnType::RN_INT:
             return RnObject::Create(_data % obj->ToInt());
         case RnType::RN_FLOAT:
@@ -197,7 +197,7 @@ RnObject* RnIntObject::operator%(RnObject* obj) {
         default:
             throw std::runtime_error("Operator '%' is not defined for types '" +
                                      RnType::TypeToString(GetType()) + "' and '" +
-                                     RnType::TypeToString(obj->GetType()) + "'");
+                                     RnType::TypeToString(obj->GetActiveType()) + "'");
     }
 }
 
@@ -231,7 +231,7 @@ RnObject* RnIntObject::operator*(RnObject* obj) {
     }
     throw std::runtime_error("Operator '*' is not defined for types '" +
                              RnType::TypeToString(GetType()) + "' and '" +
-                             RnType::TypeToString(obj->GetType()) + "'");
+                             RnType::TypeToString(obj->GetActiveType()) + "'");
 }
 
 /*****************************************************************************/

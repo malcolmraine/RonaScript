@@ -43,6 +43,8 @@ public:
                                        RnObject* ret_val);
     static void rn_builtin_is_int(RnScope* scope, const std::vector<RnObject*>& args,
                                   RnObject* ret_val);
+    static void rn_builtin_is_any(RnScope* scope, const std::vector<RnObject*>& args,
+                                  RnObject* ret_val);
 };
 
 #endif  //RONASCRIPT_VM_BUILTINS_RNBUILTINS_TYPE_H_
