@@ -20,3 +20,4 @@ begin
     end
 end
 
+print(Matrix::_MatrixInternal);

@@ -19,7 +19,7 @@
         throw std::runtime_error("Operator '" + std::string(#op) +             \
                                  "' is not defined for types '" +              \
                                  RnType::TypeToString(GetType()) + "' and '" + \
-                                 RnType::TypeToString(obj->GetType()) + "'");  \
+                                 RnType::TypeToString(obj->GetActiveType()) + "'");  \
     }
 
 #define UNDEFINED_CAST(ret, handle, replacement)                              \
@@ -99,6 +99,10 @@ public:
     UNDEFINED_ASSIGNMENT(RnScope*, RnType::RN_OBJECT, "object")
     UNDEFINED_ASSIGNMENT(RnFunction*, RnType::RN_FUNCTION, "")
 
+    [[nodiscard]] RnType::Type GetActiveType() const override {
+        return GetType();
+    }
+
     /*************************************************************************/
     void SetConstFlag(bool flag) override {
         _is_const = flag;
@@ -107,6 +111,10 @@ public:
     /*************************************************************************/
     void CopyDataFromObject(RnObject* obj) override {
         switch (obj->GetType()) {
+            case RnType::RN_ANY:
+            {
+                break;
+            }
             case RnType::RN_BOOLEAN:
                 SetData(obj->ToInt());
                 break;

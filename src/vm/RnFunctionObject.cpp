@@ -15,6 +15,11 @@
 RnFunctionObject::RnFunctionObject() = default;
 
 /*****************************************************************************/
+RnFunctionObject::RnFunctionObject(RnFunction* data) {
+    _data = data;
+}
+
+/*****************************************************************************/
 RnFunctionObject::~RnFunctionObject() = default;
 
 /*****************************************************************************/

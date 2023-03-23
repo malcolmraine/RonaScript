@@ -1,6 +1,6 @@
 {
-  "name": "var_decl_stress_test",
-  "title": "Variable Declaration Stress Test",
+  "name": "comment_only_input_file",
+  "title": "Comment Only Input File",
   "args": [],
   "timeout": 5,
   "invoke_count": 1,

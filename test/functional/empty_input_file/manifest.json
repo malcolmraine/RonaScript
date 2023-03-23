@@ -1,6 +1,6 @@
 {
-  "name": "var_decl_stress_test",
-  "title": "Variable Declaration Stress Test",
+  "name": "empty_input_file",
+  "title": "Empty Input File",
   "args": [],
   "timeout": 5,
   "invoke_count": 1,

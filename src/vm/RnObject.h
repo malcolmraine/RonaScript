@@ -21,6 +21,7 @@ class RnScope;
 class RnObject {
 public:
     virtual ~RnObject() = default;
+    [[nodiscard]] virtual RnType::Type GetActiveType() const = 0;
     [[nodiscard]] virtual RnType::Type GetType() const = 0;
     [[nodiscard]] virtual std::vector<char> AsBytes() const = 0;
     virtual RnObject* operator+(RnObject* obj) = 0;

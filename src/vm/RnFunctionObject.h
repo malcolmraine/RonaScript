@@ -17,6 +17,7 @@ class RnFunction;
 class RnFunctionObject : public RnObjectBase<RnFunction*> {
 public:
     RnFunctionObject();
+    RnFunctionObject(RnFunction* data);
     ~RnFunctionObject() override;
     [[nodiscard]] RnStringNative ToString() const override;
     void SetData(RnFunction* data) override;
