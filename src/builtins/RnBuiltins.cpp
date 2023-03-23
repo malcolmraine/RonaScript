@@ -47,7 +47,7 @@ void RnBuiltins::rn_builtin_call(RnScope* scope, const std::vector<RnObject*>& a
     auto func_obj = dynamic_cast<RnFunctionObject*>(obj);
     auto func = func_obj->GetData();
     std::vector<RnObject*> callArgs(args.begin() + 1, args.end());
-    RnObject* call_ret_val = RnObject::Create(func_obj->GetReturnType());
+    RnObject* call_ret_val = RnObject::Create(func->GetReturnType());
     func->Call(callArgs, call_ret_val);
     std::vector<RnObject*> ret_vals = {call_ret_val};
     ret_val->SetData(ret_vals);

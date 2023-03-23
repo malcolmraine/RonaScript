@@ -117,9 +117,9 @@ void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library,
             auto func =
                 new RnBuiltinFunction(name, CastToBuiltin(dlsym(handle, name.c_str())));
             func->SetScope(scope);
+            func->SetReturnType(std::get<1>(info));
             auto obj =
                 dynamic_cast<RnFunctionObject*>(RnObject::Create(RnType::RN_FUNCTION));
-            obj->SetReturnType(std::get<1>(info));
             obj->SetData(func);
             scope->StoreObject(RnObject::InternValue(name), obj);
         }

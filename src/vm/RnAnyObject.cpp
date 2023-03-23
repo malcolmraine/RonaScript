@@ -216,7 +216,7 @@ void RnAnyObject::SetData(RnScope* data) {
 
 /*****************************************************************************/
 void RnAnyObject::CopyFrom(RnObject* obj) {
-    auto type = dynamic_cast<RnAnyObject*>(obj)->GetActiveType();
+    auto type = obj->GetActiveType();
     _active_type = type;
     switch (type) {
         case RnType::RN_BOOLEAN:

@@ -38,6 +38,14 @@ public:
     void InitScope(RnScope* scope);
     void Bind(RnIntNative this_key, RnObject* object);
 
+    [[nodiscard]] RnType::Type GetReturnType() const {
+        return _return_type;
+    }
+
+    void SetReturnType(RnType::Type type) {
+        _return_type = type;
+    }
+
 private:
     std::unordered_map<size_t, RnIntNative> _argument_index_map;
     std::string _name;
@@ -45,6 +53,7 @@ private:
     long _i_cnt = -1;
     RnScope* _scope = nullptr;
     RnScope* _argument_scope = nullptr;
+    RnType::Type _return_type = RnType::RN_VOID;
 };
 
 /*****************************************************************************/

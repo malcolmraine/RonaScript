@@ -48,6 +48,7 @@ public:
     void SetData(RnFunction* data) override;
     void SetData(RnScope* data) override;
     void CopyFrom(RnObject* obj);
+    RnObject GetObjectForActiveType();
 
     [[nodiscard]] RnType::Type GetType() const override {
         return RnType::RN_ANY;
