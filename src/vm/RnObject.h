@@ -45,7 +45,7 @@ public:
     [[nodiscard]] virtual RnIntNative ToInt() const = 0;
     [[nodiscard]] virtual RnFloatNative ToFloat() const = 0;
     [[nodiscard]] virtual RnStringNative ToString() const = 0;
-    [[nodiscard]] virtual std::vector<RnObject*> ToArray() const = 0;
+    [[nodiscard]] virtual RnArrayNative ToArray() const = 0;
     [[nodiscard]] virtual RnFunction* ToFunction() const = 0;
     [[nodiscard]] virtual RnScope* ToObject() const = 0;
     [[nodiscard]] virtual RnBoolNative ToBool() const = 0;
@@ -53,7 +53,7 @@ public:
     virtual void SetData(RnIntNative data) = 0;
     virtual void SetData(RnFloatNative data) = 0;
     virtual void SetData(RnBoolNative data) = 0;
-    virtual void SetData(std::vector<RnObject*> data) = 0;
+    virtual void SetData(RnArrayNative data) = 0;
     virtual void SetData(RnObject* data) = 0;
     virtual void SetData(RnFunction* data) = 0;
     virtual void SetData(RnScope* data) = 0;

@@ -23,7 +23,7 @@ RnMemoryGroup::RnMemoryGroup(RnMemoryGroup* parent) {
 RnMemoryGroup::~RnMemoryGroup() = default;
 
 /*****************************************************************************/
-std::vector<RnObject*> RnMemoryGroup::GetObjects() const {
+RnArrayNative RnMemoryGroup::GetObjects() const {
     return _objects;
 }
 

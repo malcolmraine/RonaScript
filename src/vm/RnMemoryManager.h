@@ -43,14 +43,14 @@ private:
     void GrowAllocation(size_t size);
 
 private:
-    std::vector<RnObject*> _heap;
+    RnArrayNative _heap;
     std::vector<char*> _allocations;        // Larger blocks of memory
     std::vector<char*> _scope_allocations;  // Larger blocks of memory
 
     size_t _block_size = 0;
     size_t _allocation_size = 0;
-    std::vector<RnObject*> _available_addresses;
-    std::vector<RnObject*> _used_addresses;
+    RnArrayNative _available_addresses;
+    RnArrayNative _used_addresses;
 
     std::vector<RnScope*> _available_scope_addresses;
     std::vector<RnScope*> _used_scope_addresses;

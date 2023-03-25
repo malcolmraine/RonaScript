@@ -10,7 +10,7 @@
 #ifndef RONASCRIPT_VM_BUILTINS_RNBUILTINS_IO_H_
 #define RONASCRIPT_VM_BUILTINS_RNBUILTINS_IO_H_
 
-#include <vector>
+#include "../common/RnType.h"
 
 class RnScope;
 class RnObject;
@@ -47,16 +47,16 @@ class RnObject;
 
 class RnBuiltins_IO {
 public:
-    static void rn_builtin_file_size(RnScope* scope, const std::vector<RnObject*>& args,
+    static void rn_builtin_file_size(RnScope* scope, const RnArrayNative& args,
                                      RnObject* ret_val);
     static void rn_builtin_file_write(RnScope* scope,
-                                      const std::vector<RnObject*>& args,
+                                      const RnArrayNative& args,
                                       RnObject* ret_val);
-    static void rn_builtin_print(RnScope* scope, const std::vector<RnObject*>& args,
+    static void rn_builtin_print(RnScope* scope, const RnArrayNative& args,
                                  RnObject* ret_val);
-    static void rn_builtin_read(RnScope* scope, const std::vector<RnObject*>& args,
+    static void rn_builtin_read(RnScope* scope, const RnArrayNative& args,
                                 RnObject* ret_val);
-    static void rn_builtin_prompt(RnScope* scope, const std::vector<RnObject*>& args,
+    static void rn_builtin_prompt(RnScope* scope, const RnArrayNative& args,
                                   RnObject* ret_val);
 };
 

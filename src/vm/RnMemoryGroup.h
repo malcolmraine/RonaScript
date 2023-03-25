@@ -11,6 +11,7 @@
 #define RONASCRIPT_RNMEMORYGROUP_H
 
 #include <vector>
+#include "../common/RnType.h"
 
 class RnObject;
 
@@ -18,7 +19,7 @@ class RnMemoryGroup {
 public:
     explicit RnMemoryGroup(RnMemoryGroup* parent);
     ~RnMemoryGroup();
-    [[nodiscard]] std::vector<RnObject*> GetObjects() const;
+    [[nodiscard]] RnArrayNative GetObjects() const;
     [[nodiscard]] std::vector<RnMemoryGroup*> GetChildGroups() const;
     void RemoveChildGroup(RnMemoryGroup* group);
 
@@ -30,7 +31,7 @@ public:
 private:
     RnMemoryGroup* _parent = nullptr;
     std::vector<RnMemoryGroup*> _child_groups;
-    std::vector<RnObject*> _objects;
+    RnArrayNative _objects;
 };
 
 #endif  //RONASCRIPT_RNMEMORYGROUP_H

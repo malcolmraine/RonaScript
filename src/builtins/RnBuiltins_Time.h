@@ -10,7 +10,7 @@
 #ifndef RONASCRIPT_VM_BUILTINS_RNBUILTINS_TIME_H_
 #define RONASCRIPT_VM_BUILTINS_RNBUILTINS_TIME_H_
 
-#include <vector>
+#include "../common/RnType.h"
 
 class RnScope;
 class RnObject;

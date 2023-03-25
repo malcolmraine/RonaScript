@@ -250,7 +250,7 @@ RnStringNative RnIntObject::ToString() const {
 }
 
 /*****************************************************************************/
-std::vector<RnObject*> RnIntObject::ToArray() const {
+RnArrayNative RnIntObject::ToArray() const {
     return RnObjectBase::ToArray();
 }
 

@@ -13,11 +13,15 @@
 #include <limits>
 #include <string>
 #include <utility>
+#include <vector>
+
+class RnObject;
 
 typedef long long RnIntNative;
 typedef double RnFloatNative;
 typedef std::string RnStringNative;
 typedef bool RnBoolNative;
+typedef std::vector<RnObject*> RnArrayNative;
 
 class RnType {
 public:

@@ -153,13 +153,36 @@ RnStringNative RnAnyObject::ToString() const {
 }
 
 /*****************************************************************************/
-std::vector<RnObject*> RnAnyObject::ToArray() const {
-    return std::get<std::vector<RnObject*>>(_data);
+RnArrayNative RnAnyObject::ToArray() const {
+    return std::get<RnArrayNative>(_data);
 }
 
 /*****************************************************************************/
 RnBoolNative RnAnyObject::ToBool() const {
-    return std::get<RnBoolNative>(_data);
+    switch (_active_type) {
+        case RnType::RN_BOOLEAN:
+            return std::get<RnBoolNative>(_data);
+        case RnType::RN_STRING:
+            return std::get<RnBoolNative>(_data);
+        case RnType::RN_FLOAT:
+            return std::get<RnBoolNative>(_data);
+        case RnType::RN_INT:
+            return std::get<RnBoolNative>(_data);
+        case RnType::RN_ARRAY:
+//            return std::get<RnArrayNative>(_data);
+        case RnType::RN_FUNCTION:
+        case RnType::RN_CALLABLE:
+            return std::get<RnFunction*>(_data);
+        case RnType::RN_CLASS_INSTANCE:
+        case RnType::RN_OBJECT:
+            return std::get<RnScope*>(_data);
+        case RnType::RN_NULL:
+        case RnType::RN_VOID:
+        case RnType::RN_ANY:
+        case RnType::RN_UNKNOWN:
+            assert(false);
+            return false;
+    }
 }
 
 /*****************************************************************************/
@@ -191,7 +214,7 @@ void RnAnyObject::SetData(RnFloatNative data) {
 }
 
 /*****************************************************************************/
-void RnAnyObject::SetData(std::vector<RnObject*> data) {
+void RnAnyObject::SetData(RnArrayNative data) {
     _data = data;
     _active_type = RnType::RN_ARRAY;
 }

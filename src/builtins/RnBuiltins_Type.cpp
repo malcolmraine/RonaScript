@@ -13,7 +13,7 @@
 
 /*****************************************************************************/
 void RnBuiltins_Type::rn_builtin_to_int(RnScope* scope,
-                                        const std::vector<RnObject*>& args,
+                                        const RnArrayNative& args,
                                         RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -23,7 +23,7 @@ void RnBuiltins_Type::rn_builtin_to_int(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Type::rn_builtin_to_float(RnScope* scope,
-                                          const std::vector<RnObject*>& args,
+                                          const RnArrayNative& args,
                                           RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -33,7 +33,7 @@ void RnBuiltins_Type::rn_builtin_to_float(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Type::rn_builtin_to_string(RnScope* scope,
-                                           const std::vector<RnObject*>& args,
+                                           const RnArrayNative& args,
                                            RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -43,7 +43,7 @@ void RnBuiltins_Type::rn_builtin_to_string(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Type::rn_builtin_to_bool(RnScope* scope,
-                                         const std::vector<RnObject*>& args,
+                                         const RnArrayNative& args,
                                          RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -53,7 +53,7 @@ void RnBuiltins_Type::rn_builtin_to_bool(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Type::rn_builtin_is_string(RnScope* scope,
-                                           const std::vector<RnObject*>& args,
+                                           const RnArrayNative& args,
                                            RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -63,7 +63,7 @@ void RnBuiltins_Type::rn_builtin_is_string(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Type::rn_builtin_is_float(RnScope* scope,
-                                          const std::vector<RnObject*>& args,
+                                          const RnArrayNative& args,
                                           RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -73,7 +73,7 @@ void RnBuiltins_Type::rn_builtin_is_float(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Type::rn_builtin_is_array(RnScope* scope,
-                                          const std::vector<RnObject*>& args,
+                                          const RnArrayNative& args,
                                           RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -83,7 +83,7 @@ void RnBuiltins_Type::rn_builtin_is_array(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Type::rn_builtin_is_object(RnScope* scope,
-                                           const std::vector<RnObject*>& args,
+                                           const RnArrayNative& args,
                                            RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -93,7 +93,7 @@ void RnBuiltins_Type::rn_builtin_is_object(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Type::rn_builtin_is_bool(RnScope* scope,
-                                         const std::vector<RnObject*>& args,
+                                         const RnArrayNative& args,
                                          RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -103,7 +103,7 @@ void RnBuiltins_Type::rn_builtin_is_bool(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Type::rn_builtin_is_callable(RnScope* scope,
-                                             const std::vector<RnObject*>& args,
+                                             const RnArrayNative& args,
                                              RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -113,7 +113,7 @@ void RnBuiltins_Type::rn_builtin_is_callable(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Type::rn_builtin_is_int(RnScope* scope,
-                                        const std::vector<RnObject*>& args,
+                                        const RnArrayNative& args,
                                         RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -123,7 +123,7 @@ void RnBuiltins_Type::rn_builtin_is_int(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Type::rn_builtin_is_any(RnScope* scope,
-                                        const std::vector<RnObject*>& args,
+                                        const RnArrayNative& args,
                                         RnObject* ret_val) {
     assert(ret_val);
     assert(scope);

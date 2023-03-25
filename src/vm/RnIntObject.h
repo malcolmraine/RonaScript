@@ -37,7 +37,7 @@ public:
     [[nodiscard]] RnIntNative ToInt() const override;
     [[nodiscard]] RnFloatNative ToFloat() const override;
     [[nodiscard]] RnStringNative ToString() const override;
-    [[nodiscard]] std::vector<RnObject*> ToArray() const override;
+    [[nodiscard]] RnArrayNative ToArray() const override;
     [[nodiscard]] RnBoolNative ToBool() const override;
     void SetData(RnIntNative data) override;
     void SetData(RnFloatNative data) override;

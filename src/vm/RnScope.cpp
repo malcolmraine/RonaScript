@@ -64,7 +64,7 @@ RnSymbolTable* RnScope::GetSymbolTable() {
 }
 
 /*****************************************************************************/
-std::vector<RnObject*>& RnScope::GetStack() {
+RnArrayNative& RnScope::GetStack() {
     return _stack;
 }
 
@@ -107,7 +107,7 @@ void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library,
         auto LibraryVersion = (const char* (*)())dlsym(handle, "LibraryVersion");
         std::vector<std::tuple<std::string, RnType::Type>> functions;
         ListExports(functions);
-        std::vector<RnObject*> function_names;
+        RnArrayNative function_names;
         function_names.reserve(functions.size());
         for (const auto& info : functions) {
             function_names.push_back(RnObject::Create(std::get<0>(info)));

@@ -32,7 +32,7 @@ public:
         return _scopes.back();
     }
 
-    [[nodiscard]] std::vector<RnObject*>& GetStack() {
+    [[nodiscard]] RnArrayNative& GetStack() {
         return _scopes.back()->GetStack();
     }
 

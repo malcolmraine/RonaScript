@@ -83,7 +83,7 @@ RnVirtualMachine::~RnVirtualMachine() {
 
 /*****************************************************************************/
 void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
-    std::vector<RnObject*> args;
+    RnArrayNative args;
     auto func = obj->GetData();
     args.reserve(arg_cnt);
     for (uint32_t i = 0; i < arg_cnt; i++) {
@@ -359,7 +359,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             } else {
                 func_obj = stack_val;
             }
-            std::vector<RnObject*> args;
+            RnArrayNative args;
             auto func = func_obj->ToFunction();
             args.reserve(instruction->GetArg1());
             for (uint32_t i = 0; i < instruction->GetArg1(); i++) {
