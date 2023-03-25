@@ -225,8 +225,6 @@ template <class T, typename E>
 void RnSequencer<T, E>::LoadNextItem() {
     if (!EndOfSequence()) {
         _buffer[GetBufferSize() - 1] = _data[_data_idx++];
-    } else {
-        _buffer[GetBufferSize()] = _data[GetBufferSize() - 1];
     }
 }
 

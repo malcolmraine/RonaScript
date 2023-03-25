@@ -43,6 +43,10 @@ void RonaScriptMain(int argc, char* argv[]) {
     std::filesystem::path const file = arg_parser.GetInputFile();
     std::filesystem::path const cfile = file.string() + "c";
 
+    if (std::filesystem::file_size(file) == 0) {
+        return;
+    }
+
     Lexer lexer;
     try {
         lexer.LoadFile(file);
