@@ -75,23 +75,23 @@ public:
     virtual void SetConstFlag(bool flag) = 0;
     static bool ValueCompare(RnObject* a, RnObject* b);
 
-    void Mark() {
+    inline void Mark() {
         _is_marked = true;
     }
 
-    void Unmark() {
+    inline void Unmark() {
         _is_marked = false;
     }
 
-    [[nodiscard]] bool IsMarked() const {
+    [[nodiscard]] inline bool IsMarked() const {
         return _is_marked;
     }
 
-    [[nodiscard]] bool IsModule() const {
+    [[nodiscard]] inline bool IsModule() const {
         return _is_module;
     }
 
-    void SetIsModule(bool flag) {
+    inline void SetIsModule(bool flag) {
         _is_module = flag;
     }
 

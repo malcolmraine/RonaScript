@@ -133,14 +133,14 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
 /*****************************************************************************/
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
     _gc_count++;
-    if (_gc_count > 1000) {
+    if (_gc_count > 10000) {
         _memory_manager->GCMark();
         _memory_manager->GCSweep();
         _gc_count = 0;
     }
 
     auto instruction = _instructions[index];
-    Log::DEBUG(instruction->ToString());
+//    Log::DEBUG(instruction->ToString());
     switch (instruction->GetOpcode()) {
         case OP_BINARY_ADD: {
             SIMPLE_BINARY_OPERATION(+)
@@ -226,8 +226,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_STORE: {
             auto obj = StackPop();
             auto value = StackPop();
-            Log::DEBUG("Storing (" + RnType::TypeToString(obj->GetType()) + " <- " +
-                       RnType::TypeToString(value->GetType()) + ")");
+//            Log::DEBUG("Storing (" + RnType::TypeToString(obj->GetType()) + " <- " +
+//                       RnType::TypeToString(value->GetType()) + ")");
             obj->CopyDataFromObject(value);
             break;
         }
@@ -299,8 +299,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto object = GetScope()->GetObject(key);
 
             if (object) {
-                Log::DEBUG("Loading (" + RnObject::GetInternedString(key) + ", " +
-                           RnType::TypeToString(object->GetType()) + ")");
+//                Log::DEBUG("Loading (" + RnObject::GetInternedString(key) + ", " +
+//                           RnType::TypeToString(object->GetType()) + ")");
                 if (object->IsClass() && _instructions[index + 1]->GetOpcode() == OP_CALL) {
                     auto class_obj = dynamic_cast<RnClassObject*>(object);
                     auto instance = dynamic_cast<RnClassObject*>(
@@ -663,7 +663,7 @@ RnIntNative RnVirtualMachine::Run() {
     }
     stopwatch.Stop();
 
-    Log::DEBUG("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
+    Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
     return GetStack().back()->ToInt();
 }
 

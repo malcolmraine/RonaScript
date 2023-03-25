@@ -23,16 +23,6 @@ RnMemoryGroup::RnMemoryGroup(RnMemoryGroup* parent) {
 RnMemoryGroup::~RnMemoryGroup() = default;
 
 /*****************************************************************************/
-RnArrayNative RnMemoryGroup::GetObjects() const {
-    return _objects;
-}
-
-/*****************************************************************************/
-std::vector<RnMemoryGroup*> RnMemoryGroup::GetChildGroups() const {
-    return _child_groups;
-}
-
-/*****************************************************************************/
 void RnMemoryGroup::RemoveChildGroup(RnMemoryGroup* group) {
     auto iter = std::find(_child_groups.begin(), _child_groups.end(), group);
     if (iter != _child_groups.end()) {

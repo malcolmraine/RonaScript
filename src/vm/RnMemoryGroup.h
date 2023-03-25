@@ -19,14 +19,20 @@ class RnMemoryGroup {
 public:
     explicit RnMemoryGroup(RnMemoryGroup* parent);
     ~RnMemoryGroup();
-    [[nodiscard]] RnArrayNative GetObjects() const;
-    [[nodiscard]] std::vector<RnMemoryGroup*> GetChildGroups() const;
     void RemoveChildGroup(RnMemoryGroup* group);
 
     void AddObject(RnObject* obj);
     void AddChildGroup(RnMemoryGroup* child);
     [[nodiscard]] RnMemoryGroup* GetParent() const;
     void SetParent(RnMemoryGroup* parent);
+
+    [[nodiscard]] RnArrayNative& GetObjects() {
+        return _objects;
+    }
+
+    [[nodiscard]] std::vector<RnMemoryGroup*>& GetChildGroups() {
+        return _child_groups;
+    }
 
 private:
     RnMemoryGroup* _parent = nullptr;
