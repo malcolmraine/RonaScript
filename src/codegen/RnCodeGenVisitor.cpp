@@ -127,17 +127,17 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(const std::shared_ptr<AstNode>& 
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(StringLiteral* node) {
-    return {new RnInstruction(OP_LOAD_STRING, RnObject::InternValue(node->data))};
+    return {new RnInstruction(OP_LOAD_LITERAL, RnObject::InternValue(node->data))};
 }
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(FloatLiteral* node) {
-    return {new RnInstruction(OP_LOAD_FLOAT, RnObject::InternValue(node->data))};
+    return {new RnInstruction(OP_LOAD_LITERAL, RnObject::InternValue(node->data))};
 }
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(IntLiteral* node) {
-    return {new RnInstruction(OP_LOAD_INT, RnObject::InternValue(node->data))};
+    return {new RnInstruction(OP_LOAD_LITERAL, RnObject::InternValue(node->data))};
 }
 
 /*****************************************************************************/
@@ -427,7 +427,7 @@ InstructionBlock RnCodeGenVisitor::Visit(DeleteStmt* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(BoolLiteral* node) {
-    return {new RnInstruction(OP_LOAD_BOOL, node->GetData())};
+    return {new RnInstruction(OP_LOAD_LITERAL, RnObject::InternValue(node->GetData()))};
 }
 
 /*****************************************************************************/

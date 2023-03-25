@@ -70,9 +70,9 @@ private:
     void Init();
 
 protected:
-    RnInternment<std::string> _string_internment;
-    RnInternment<double> _float_internment;
-    RnInternment<long> _int_internment;
+//    RnInternment<std::string> _string_internment;
+//    RnInternment<double> _float_internment;
+//    RnInternment<long> _int_internment;
     std::vector<RnScope*> _scopes;
     std::vector<RnScope*> _call_stack;
     std::vector<RnInstruction*> _instructions;

@@ -12,19 +12,24 @@
 
 #include <string>
 #include <unordered_map>
+#include <functional>
 #include "../common/RnType.h"
 
 typedef RnIntNative InternmentKey;
 
-template <typename T>
+template <typename T, typename FUNC = std::function<bool(T a, T b)>>
 class RnInternment {
 public:
-    RnInternment() = default;
+    explicit RnInternment(FUNC fn = [](T a, T b) { return a == b; })  {
+        _compare = fn;
+    }
     ~RnInternment() = default;
 
     InternmentKey InternItem(T item) {
-        if (_item_key_map.contains(item)) {
-            return _item_key_map[item];
+        for (const auto& [key, value] : _key_item_map) {
+            if (_compare(item, value)) {
+                return key;
+            }
         }
         _index++;
         _item_key_map[item] = _index;
@@ -38,6 +43,7 @@ public:
     }
 
 protected:
+    FUNC _compare;
     InternmentKey _index = 0;
     std::unordered_map<InternmentKey, T> _key_item_map;
     std::unordered_map<T, InternmentKey> _item_key_map;

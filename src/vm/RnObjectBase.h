@@ -25,8 +25,8 @@
 #define UNDEFINED_CAST(ret, handle, replacement)                              \
     [[nodiscard]] ret handle const override {                                 \
         throw std::runtime_error("Cannot convert type " +                     \
-                                 RnType::TypeToString(GetType()) + " to a " + \
-                                 std::string(#replacement));                  \
+                                 RnType::TypeToString(GetType()) + " to type " + \
+                                 replacement);                  \
     }
 
 #define UNDEFINED_ASSIGNMENT(type, rntype, strval)                              \

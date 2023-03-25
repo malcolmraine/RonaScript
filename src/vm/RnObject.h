@@ -61,16 +61,19 @@ public:
     static std::string GetInternedString(InternmentKey key);
     static double GetInternedFloat(InternmentKey key);
     static long GetInternedInt(InternmentKey key);
+    static RnObject* GetInternedObject(InternmentKey key);
     static RnIntNative InternValue(RnFloatNative x);
+    static RnIntNative InternValue(RnBoolNative x);
     static RnIntNative InternValue(const RnStringNative& x);
     static RnIntNative InternValue(RnIntNative x);
     static RnObject* Create(RnBoolNative data);
-    static RnObject* Create(RnStringNative data);
+    static RnObject* Create(const RnStringNative& data);
     static RnObject* Create(RnIntNative data);
     static RnObject* Create(RnFloatNative data);
     static RnObject* Create(RnType::Type type);
     static RnObject* Copy(RnObject* obj);
     virtual void SetConstFlag(bool flag) = 0;
+    static bool ValueCompare(RnObject* a, RnObject* b);
 
     void Mark() {
         _is_marked = true;

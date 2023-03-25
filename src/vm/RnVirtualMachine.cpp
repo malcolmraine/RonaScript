@@ -31,9 +31,9 @@
 #include "RnSymbolTable.h"
 
 RnVirtualMachine* RnVirtualMachine::_instance = nullptr;
-RnIntNative RnVirtualMachine::_object_this_key = 0;
-RnIntNative RnVirtualMachine::_object_cls_key = 0;
-RnIntNative RnVirtualMachine::_object_construct_key = 0;
+RnIntNative RnVirtualMachine::_object_this_key = -1;
+RnIntNative RnVirtualMachine::_object_cls_key = -1;
+RnIntNative RnVirtualMachine::_object_construct_key = -1;
 
 /*****************************************************************************/
 RnVirtualMachine::RnVirtualMachine() {
@@ -41,9 +41,9 @@ RnVirtualMachine::RnVirtualMachine() {
     _call_stack.reserve(50);
     _memory_manager = new RnMemoryManager();
 
-    _object_this_key = RnObject::InternValue("this");
-    _object_cls_key = RnObject::InternValue("cls");
-    _object_construct_key = RnObject::InternValue("construct");
+    _object_this_key = RnObject::InternValue(static_cast<std::string>("this"));
+    _object_cls_key = RnObject::InternValue(static_cast<std::string>("cls"));
+    _object_construct_key = RnObject::InternValue(static_cast<std::string>("construct"));
 }
 
 /*****************************************************************************/
@@ -288,27 +288,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break_scope = true;
             break;
         }
-        case OP_LOAD_INT: {
-            auto value = RnObject::GetInternedInt(instruction->GetArg1());
-            auto obj = _memory_manager->CreateObject(RnType::RN_INT);
-            GetScope()->GetMemoryGroup()->AddObject(obj);
-            obj->SetData(static_cast<RnIntNative>(value));
-            GetStack().push_back(obj);
-            break;
-        }
-        case OP_LOAD_FLOAT: {
-            auto value = RnObject::GetInternedFloat(instruction->GetArg1());
-            auto obj = _memory_manager->CreateObject(RnType::RN_FLOAT);
-            GetScope()->GetMemoryGroup()->AddObject(obj);
-            obj->SetData(static_cast<RnFloatNative>(value));
-            GetStack().push_back(obj);
-            break;
-        }
-        case OP_LOAD_STRING: {
-            auto value = RnObject::GetInternedString(instruction->GetArg1());
-            auto obj = _memory_manager->CreateObject(RnType::RN_STRING);
-            GetScope()->GetMemoryGroup()->AddObject(obj);
-            obj->SetData(value);
+        case OP_LOAD_LITERAL:
+        {
+            auto obj = RnObject::GetInternedObject(instruction->GetArg1());
             GetStack().push_back(obj);
             break;
         }
@@ -319,7 +301,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             if (object) {
                 Log::DEBUG("Loading (" + RnObject::GetInternedString(key) + ", " +
                            RnType::TypeToString(object->GetType()) + ")");
-                if (object->IsClass()) {
+                if (object->IsClass() && _instructions[index + 1]->GetOpcode() == OP_CALL) {
                     auto class_obj = dynamic_cast<RnClassObject*>(object);
                     auto instance = dynamic_cast<RnClassObject*>(
                         _memory_manager->CreateObject(RnType::RN_CLASS_INSTANCE));
@@ -346,14 +328,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_LOAD_NULL: {
             GetStack().push_back(_memory_manager->CreateObject(RnType::RN_NULL));
-            break;
-        }
-        case OP_LOAD_BOOL: {
-            auto value = static_cast<bool>(instruction->GetArg1());
-            auto obj = _memory_manager->CreateObject(RnType::RN_BOOLEAN);
-            GetScope()->GetMemoryGroup()->AddObject(obj);
-            obj->SetData(value);
-            GetStack().push_back(obj);
             break;
         }
         case OP_CALL: {
@@ -482,15 +456,13 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_MAKE_CLASS: {
-            auto name = RnObject::GetInternedString(instruction->GetArg1());
+            auto name_obj = RnObject::GetInternedObject(instruction->GetArg1());
+            name_obj->SetConstFlag(true);
             auto obj = dynamic_cast<RnClassObject*>(
                 RnObject::Create(RnType::RN_CLASS_INSTANCE));
             obj->SetIsClass(true);
-            auto name_obj = RnObject::Create(name);
-            name_obj->SetConstFlag(true);
             obj->GetScope()->StoreObject(RnObject::InternValue("__class"), name_obj);
             GetScope()->StoreObject(instruction->GetArg1(), obj);
-            //            _namespaces[instruction->GetArg1()] = obj;
             auto class_scope = obj->ToObject();
             class_scope->SetParent(GetScope());
             _scopes.push_back(class_scope);

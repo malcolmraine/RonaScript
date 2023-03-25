@@ -21,9 +21,43 @@
 #include "RnStringObject.h"
 #include "RnVirtualMachine.h"
 
-RnInternment<std::string>* string_internment = new RnInternment<std::string>();
-RnInternment<double>* float_internment = new RnInternment<double>();
-RnInternment<long>* int_internment = new RnInternment<long>();
+//RnInternment<std::string>* string_internment = new RnInternment<std::string>();
+//RnInternment<double>* float_internment = new RnInternment<double>();
+//RnInternment<long>* int_internment = new RnInternment<long>();
+RnInternment<RnObject*>* object_internment = new RnInternment<RnObject*>([](RnObject* a, RnObject* b) {
+    return RnObject::ValueCompare(a, b);
+});
+
+bool RnObject::ValueCompare(RnObject* a, RnObject* b) {
+    if (a->GetType() != b->GetType()) {
+        return false;
+    }
+    switch (a->GetType()) {
+        case RnType::RN_BOOLEAN:
+            return a->ToBool() == b->ToBool();
+        case RnType::RN_STRING:
+            return a->ToString() == b->ToString();
+        case RnType::RN_FLOAT:
+            return a->ToFloat() == b->ToFloat();
+        case RnType::RN_INT:
+            return a->ToInt() == b->ToInt();
+        case RnType::RN_ARRAY:
+            return a->ToArray() == b->ToArray();
+        case RnType::RN_FUNCTION:
+        case RnType::RN_CALLABLE:
+            return a->ToFunction() == b->ToFunction();
+        case RnType::RN_CLASS_INSTANCE:
+        case RnType::RN_OBJECT:
+            return a->ToObject() == b->ToObject();
+        case RnType::RN_NULL:
+            return true;
+        case RnType::RN_VOID:
+        case RnType::RN_ANY:
+        case RnType::RN_UNKNOWN:
+            break;
+    }
+    return false;
+}
 
 /*****************************************************************************/
 static RnObject* GetNullObject() {
@@ -32,37 +66,52 @@ static RnObject* GetNullObject() {
 
 /*****************************************************************************/
 std::string RnObject::GetInternedString(InternmentKey key) {
-    return string_internment->GetInternedItem(key);
+    return object_internment->GetInternedItem(key)->ToString();
 }
 
 /*****************************************************************************/
 double RnObject::GetInternedFloat(InternmentKey key) {
-    return float_internment->GetInternedItem(key);
+    return object_internment->GetInternedItem(key)->ToFloat();
 }
 
 /*****************************************************************************/
 long RnObject::GetInternedInt(InternmentKey key) {
-    return int_internment->GetInternedItem(key);
+    return object_internment->GetInternedItem(key)->ToInt();
 }
 
 /*****************************************************************************/
+ RnObject* RnObject::GetInternedObject(InternmentKey key) {
+    return object_internment->GetInternedItem(key);
+ }
+
+/*****************************************************************************/
 RnIntNative RnObject::InternValue(RnFloatNative x) {
-    return float_internment->InternItem(x);
+
+    return object_internment->InternItem(new RnFloatObject(x));
+}
+
+/*****************************************************************************/
+RnIntNative RnObject::InternValue(RnBoolNative x) {
+
+    return object_internment->InternItem(new RnBoolObject(x));
 }
 
 /*****************************************************************************/
 RnIntNative RnObject::InternValue(const RnStringNative& x) {
-    return string_internment->InternItem(x);
+    return object_internment->InternItem(new RnStringObject(x));
 }
 
 /*****************************************************************************/
 RnIntNative RnObject::InternValue(RnIntNative x) {
-    return int_internment->InternItem(x);
+    return object_internment->InternItem(new RnIntObject(x));
 }
 
 /*****************************************************************************/
-RnObject* RnObject::Create(RnStringNative data) {
-    return new RnStringObject(std::move(data));
+RnObject* RnObject::Create(const RnStringNative& data) {
+    if (RnVirtualMachine::GetInstance()) {
+        return RnVirtualMachine::GetInstance()->CreateObject(data);
+    }
+    return new RnStringObject(data);
 }
 
 /*****************************************************************************/
