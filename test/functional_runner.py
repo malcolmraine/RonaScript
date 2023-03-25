@@ -210,6 +210,7 @@ class TestRunner(object):
         print(f"Enabled/Disabled: {self.enabled_count}/{self.disabled_count}")
         print(f"Passed: {self.passed_count}")
         print(f"Failed: {self.failed_count}")
+        print(f"Timed Out: {self.timeout_count}")
         print(f"Total runtime: {round(self.total_runtime, 3)}s")
         print(f"Avg. runtime: {round(self.total_runtime / (self.enabled_count or 1), 3)}s")
         print(f"\nPass rate: {round(self.passed_count / (self.enabled_count or 1), 3)}")
