@@ -44,7 +44,7 @@ typedef enum : int {
     OP_UNARY_DECREMENT,  // op1: name     op2:
     OP_UNARY_INCREMENT,  // op1: name     op2:
     OP_UNARY_NEGATION,
-    OP_RETURN,    // op1: rel_idx  op2:
+    OP_RETURN,  // op1: rel_idx  op2:
     OP_LOAD_NULL,
     OP_LOAD_LITERAL,
     OP_CALL,  // op1: name     op2: _arg1 count

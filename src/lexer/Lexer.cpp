@@ -121,12 +121,12 @@ std::unordered_map<std::string, TokenType> Lexer::_token_map = {
 };
 
 const std::unordered_set<std::string> Lexer::_reserved_words = {
-    "float",     "string",  "int",       "bool",     "list",     "void",   "null", "any",
-    "class",     "object",  "alias",     "is",       "require",  "class",  "routine",
-    "begin",     "end",     "construct", "destruct", "var",      "const",  "public",
-    "protected", "private", "return",    "break",    "continue", "static", "callable",
-    "type",      "try",     "catch",     "global",   "local",    "exit",   "delete",
-    "extends",   "import",  "module",
+    "float",    "string",    "int",     "bool",      "list",     "void",     "null",
+    "any",      "class",     "object",  "alias",     "is",       "require",  "class",
+    "routine",  "begin",     "end",     "construct", "destruct", "var",      "const",
+    "public",   "protected", "private", "return",    "break",    "continue", "static",
+    "callable", "type",      "try",     "catch",     "global",   "local",    "exit",
+    "delete",   "extends",   "import",  "module",
 };
 
 const std::unordered_set<std::string> Lexer::_compounds = {

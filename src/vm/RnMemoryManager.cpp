@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
+#include "RnAnyObject.h"
 #include "RnArrayObject.h"
 #include "RnBoolObject.h"
 #include "RnClassObject.h"
@@ -19,7 +20,6 @@
 #include "RnIntObject.h"
 #include "RnNullObject.h"
 #include "RnStringObject.h"
-#include "RnAnyObject.h"
 
 #define OBJECT_ALLOCATION_COUNT 1000000
 

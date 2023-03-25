@@ -38,8 +38,7 @@ public:
                                      RnObject* ret_val);
     static void rn_builtin_is_bool(RnScope* scope, const RnArrayNative& args,
                                    RnObject* ret_val);
-    static void rn_builtin_is_callable(RnScope* scope,
-                                       const RnArrayNative& args,
+    static void rn_builtin_is_callable(RnScope* scope, const RnArrayNative& args,
                                        RnObject* ret_val);
     static void rn_builtin_is_int(RnScope* scope, const RnArrayNative& args,
                                   RnObject* ret_val);

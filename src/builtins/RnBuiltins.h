@@ -38,11 +38,11 @@ public:
     static void rn_builtin_attrpairs(RnScope* scope, const RnArrayNative& args,
                                      RnObject* ret_val);
     static void rn_builtin_hasattr(RnScope* scope, const RnArrayNative& args,
-                                     RnObject* ret_val);
+                                   RnObject* ret_val);
     static void rn_builtin_getattr(RnScope* scope, const RnArrayNative& args,
-                                     RnObject* ret_val);
+                                   RnObject* ret_val);
     static void rn_builtin_setattr(RnScope* scope, const RnArrayNative& args,
-                                     RnObject* ret_val);
+                                   RnObject* ret_val);
     static void rn_builtin_delattr(RnScope* scope, const RnArrayNative& args,
                                    RnObject* ret_val);
 };

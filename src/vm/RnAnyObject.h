@@ -6,14 +6,14 @@
 #define RONASCRIPT_SRC_VM_RNANYOBJECT_H_
 
 #include <variant>
-#include "RnObjectBase.h"
-#include "RnIntObject.h"
-#include "RnFloatObject.h"
 #include "RnArrayObject.h"
-#include "RnStringObject.h"
 #include "RnBoolObject.h"
-#include "RnFunctionObject.h"
 #include "RnClassObject.h"
+#include "RnFloatObject.h"
+#include "RnFunctionObject.h"
+#include "RnIntObject.h"
+#include "RnObjectBase.h"
+#include "RnStringObject.h"
 
 class RnAnyObject
     : public RnObjectBase<
@@ -21,7 +21,7 @@ class RnAnyObject
                        RnStringObject, RnArrayObject, RnFunctionObject>> {
 public:
     RnAnyObject();
-    explicit RnAnyObject(RnIntNative data );
+    explicit RnAnyObject(RnIntNative data);
     explicit RnAnyObject(RnFloatNative data);
     explicit RnAnyObject(RnBoolNative data);
     explicit RnAnyObject(RnStringNative data);

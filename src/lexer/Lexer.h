@@ -34,9 +34,9 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include "TokenType.h"
 #include "../util/FileInfo.h"
 #include "../util/RnSequencer.h"
+#include "TokenType.h"
 
 #define STRING_LITERAL_MAX_LENGTH 1000000
 #define BLOCK_COMMENT_START "/*"
@@ -58,7 +58,8 @@ public:
     void LoadNextItem() override;
     Token* Emit(TokenType type = TokenType::UNDEFINED);
     Token* MakeToken(TokenType type);
-    Token* MakeToken(const std::string& s, TokenType initial_type = TokenType::UNDEFINED) const;
+    Token* MakeToken(const std::string& s,
+                     TokenType initial_type = TokenType::UNDEFINED) const;
     static bool IsIntLiteral(std::string s);          // TODO: Unit test
     static bool IsFloatLiteral(std::string s);        // TODO: Unit test
     static bool IsHexLiteral(std::string s);          // TODO: Unit test

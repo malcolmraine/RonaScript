@@ -49,8 +49,7 @@ class RnBuiltins_IO {
 public:
     static void rn_builtin_file_size(RnScope* scope, const RnArrayNative& args,
                                      RnObject* ret_val);
-    static void rn_builtin_file_write(RnScope* scope,
-                                      const RnArrayNative& args,
+    static void rn_builtin_file_write(RnScope* scope, const RnArrayNative& args,
                                       RnObject* ret_val);
     static void rn_builtin_print(RnScope* scope, const RnArrayNative& args,
                                  RnObject* ret_val);

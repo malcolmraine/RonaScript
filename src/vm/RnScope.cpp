@@ -10,6 +10,7 @@
 #include "RnScope.h"
 #include <dlfcn.h>
 #include "../util/log.h"
+#include "RnAnyObject.h"
 #include "RnArrayObject.h"
 #include "RnBoolObject.h"
 #include "RnClassObject.h"
@@ -20,7 +21,6 @@
 #include "RnMemoryManager.h"
 #include "RnObject.h"
 #include "RnStringObject.h"
-#include "RnAnyObject.h"
 #include "RnSymbolTable.h"
 
 std::map<std::string, void*> RnScope::_handles;
@@ -33,7 +33,7 @@ RnScope::RnScope(RnScope* parent) : _memory_group(nullptr) {
         _memory_group.SetParent(parent->GetMemoryGroup());
     }
     _stack.reserve(10);
-//    _stack.Resize(10);
+    //    _stack.Resize(10);
 }
 
 /*****************************************************************************/

@@ -18,30 +18,23 @@ class RnObject;
 class RnBuiltins_Array {
 public:
     // Array functions
-    static void rn_builtin_array_filter(RnScope* scope,
-                                        const RnArrayNative& args,
+    static void rn_builtin_array_filter(RnScope* scope, const RnArrayNative& args,
                                         RnObject* ret_val);
-    static void rn_builtin_array_union(RnScope* scope,
-                                       const RnArrayNative& args,
+    static void rn_builtin_array_union(RnScope* scope, const RnArrayNative& args,
                                        RnObject* ret_val);
-    static void rn_builtin_array_intersect(RnScope* scope,
-                                           const RnArrayNative& args,
+    static void rn_builtin_array_intersect(RnScope* scope, const RnArrayNative& args,
                                            RnObject* ret_val);
     static void rn_builtin_count(RnScope* scope, const RnArrayNative& args,
                                  RnObject* ret_val);
-    static void rn_builtin_array_merge(RnScope* scope,
-                                       const RnArrayNative& args,
+    static void rn_builtin_array_merge(RnScope* scope, const RnArrayNative& args,
                                        RnObject* ret_val);
-    static void rn_builtin_array_push(RnScope* scope,
-                                      const RnArrayNative& args,
+    static void rn_builtin_array_push(RnScope* scope, const RnArrayNative& args,
                                       RnObject* ret_val);
     static void rn_builtin_array_pop(RnScope* scope, const RnArrayNative& args,
                                      RnObject* ret_val);
-    static void rn_builtin_array_zeros(RnScope* scope,
-                                       const RnArrayNative& args,
+    static void rn_builtin_array_zeros(RnScope* scope, const RnArrayNative& args,
                                        RnObject* ret_val);
-    static void rn_builtin_array_fill(RnScope* scope,
-                                      const RnArrayNative& args,
+    static void rn_builtin_array_fill(RnScope* scope, const RnArrayNative& args,
                                       RnObject* ret_val);
     static void rn_builtin_sequence(RnScope* scope, const RnArrayNative& args,
                                     RnObject* ret_val);
