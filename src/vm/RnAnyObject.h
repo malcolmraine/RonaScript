@@ -20,7 +20,15 @@ class RnAnyObject
           std::variant<RnIntObject, RnFloatObject, RnBoolObject, RnClassObject,
                        RnStringObject, RnArrayObject, RnFunctionObject>> {
 public:
-    explicit RnAnyObject(RnIntNative data = 0);
+    RnAnyObject();
+    explicit RnAnyObject(RnIntNative data );
+    explicit RnAnyObject(RnFloatNative data);
+    explicit RnAnyObject(RnBoolNative data);
+    explicit RnAnyObject(RnStringNative data);
+    explicit RnAnyObject(RnFunction* data);
+    explicit RnAnyObject(RnScope* data);
+    explicit RnAnyObject(RnArrayNative data);
+
     ~RnAnyObject() override;
     RnObject* operator+(RnObject* obj) override;
     RnObject* operator-(RnObject* obj) override;

@@ -18,9 +18,45 @@
 #include "RnStringObject.h"
 
 /*****************************************************************************/
-RnAnyObject::RnAnyObject(RnIntNative data) {
+RnAnyObject::RnAnyObject() {
+    _data = RnIntObject(0);
+    _active_type = RnType::RN_INT;
+}
 
+/*****************************************************************************/
+RnAnyObject::RnAnyObject(RnFloatNative data) {
+    _data = RnFloatObject(data);
+    _active_type = RnType::RN_FLOAT;
+}
 
+/*****************************************************************************/
+RnAnyObject::RnAnyObject(RnBoolNative data) {
+    _data = RnBoolObject(data);
+    _active_type = RnType::RN_BOOLEAN;
+}
+
+/*****************************************************************************/
+RnAnyObject::RnAnyObject(RnStringNative data) {
+    _data = RnStringObject(data);
+    _active_type = RnType::RN_STRING;
+}
+
+/*****************************************************************************/
+RnAnyObject::RnAnyObject(RnFunction* data) {
+    _data = RnFunctionObject(data);
+    _active_type = RnType::RN_CALLABLE;
+}
+
+/*****************************************************************************/
+RnAnyObject::RnAnyObject(RnScope* data) {
+    _data = RnClassObject(data);
+    _active_type = RnType::RN_CLASS_INSTANCE;
+}
+
+/*****************************************************************************/
+RnAnyObject::RnAnyObject(RnArrayNative data) {
+    _data = RnArrayObject();
+    _active_type = RnType::RN_ARRAY;
 }
 
 /*****************************************************************************/
