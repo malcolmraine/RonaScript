@@ -488,6 +488,7 @@ Token* Lexer::Consume() {
 void Lexer::ProcessTokens() {
     while (!EndOfFile())
         Consume();
+    Consume();
 
     // Clear the last _lexeme
     if (!_lexeme.empty())

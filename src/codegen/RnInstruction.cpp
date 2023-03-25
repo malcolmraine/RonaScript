@@ -94,13 +94,13 @@ auto RnInstruction::ToString() -> std::string {
         case OP_MAKE_LOCAL:
         case OP_MAKE_VAR:
         case OP_MAKE_CONST:
-        case OP_MAKE_MODULE:
         case OP_MAKE_GLOBAL:
             arg1_str = RnType::TypeToString(static_cast<RnType::Type>(_arg1));
             arg2_str = RnObject::GetInternedString(_arg2);
             break;
         case OP_MAKE_ALIAS:
         case OP_RESOLVE_NAMESPACE:
+        case OP_MAKE_MODULE:
         case OP_MAKE_CLASS:
             arg1_str = RnObject::GetInternedString(_arg1);
             break;
