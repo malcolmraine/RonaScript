@@ -1,0 +1,65 @@
+
+class Car is
+begin
+    var make: string = "N/A";
+    var model: string;
+    var year: int = -1;
+    var price: float = -1;
+
+    routine construct(var make: string, var model: string): object
+    begin
+        this->make = make;
+        this->model = model;
+        this->price = 0.0;
+        this->year = 2023;
+    end
+
+    routine SetPrice(var price: float): void
+    begin
+        this->price = price;
+    end
+
+    routine GetMake(): string
+    begin
+        return this->make;
+    end
+
+    routine GetModel(): string
+    begin
+        return this->model;
+    end
+
+    routine GetYear(): string
+    begin
+        return this->year;
+    end
+
+    routine GetPrice(): string
+    begin
+        return this->price;
+    end
+end
+
+var my_car: object = Car("Chevrolet", "Cruze");
+my_car->SetPrice(9999.99);
+my_car->year = 2012;
+
+// Properties and method can be accessed from the class instance
+print(my_car->make);
+print(my_car->GetYear(), my_car->GetMake(), my_car->GetModel());
+print(my_car->GetPrice());
+
+// Properties and routine can be accessed statically
+print(Car::make);
+print(Car::GetMake());
+Car::SetPrice(3.50);
+print(Car::GetPrice());
+
+/*
+Chevrolet
+2012 Chevrolet Cruze
+9999.99
+N/A
+N/A
+3.5
+*
