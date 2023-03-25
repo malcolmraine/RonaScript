@@ -18,7 +18,10 @@
 #include "RnStringObject.h"
 
 /*****************************************************************************/
-RnAnyObject::RnAnyObject(RnIntNative data) {}
+RnAnyObject::RnAnyObject(RnIntNative data) {
+
+
+}
 
 /*****************************************************************************/
 RnAnyObject::~RnAnyObject() = default;

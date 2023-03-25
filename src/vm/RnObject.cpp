@@ -21,9 +21,6 @@
 #include "RnStringObject.h"
 #include "RnVirtualMachine.h"
 
-//RnInternment<std::string>* string_internment = new RnInternment<std::string>();
-//RnInternment<double>* float_internment = new RnInternment<double>();
-//RnInternment<long>* int_internment = new RnInternment<long>();
 RnInternment<RnObject*>* object_internment = new RnInternment<RnObject*>([](RnObject* a, RnObject* b) {
     return RnObject::ValueCompare(a, b);
 });

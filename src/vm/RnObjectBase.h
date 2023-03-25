@@ -110,13 +110,9 @@ public:
 
     /*************************************************************************/
     void CopyDataFromObject(RnObject* obj) override {
-        switch (obj->GetType()) {
-            case RnType::RN_ANY:
-            {
-                break;
-            }
+        switch (obj->GetActiveType()) {
             case RnType::RN_BOOLEAN:
-                SetData(obj->ToInt());
+                SetData(obj->ToBool());
                 break;
             case RnType::RN_STRING:
                 SetData(obj->ToString());
@@ -138,9 +134,11 @@ public:
             case RnType::RN_CLASS_INSTANCE:
                 SetData(obj->ToObject());
                 break;
+            case RnType::RN_ANY:
             case RnType::RN_NULL:
             case RnType::RN_VOID:
             case RnType::RN_UNKNOWN:
+                assert(false);
                 break;
         }
     }
