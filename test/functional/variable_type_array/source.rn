@@ -1,0 +1,31 @@
+// Variable Type Array
+
+var d: array;
+print(d);
+
+var int_data: array = [1, 2, 3, 4, 5];
+print(int_data);
+
+var float_data: array = [1.0, 2.0, 3.20842, 0.1];
+print(float_data);
+
+var string_data: array = ["one", "two", "three"];
+print(string_data);
+
+var mixed_data: array = [1, 1.42, "test", false, is_bool];
+print(count(mixed_data));
+mixed_data[4] = 882313.113;
+print(mixed_data);
+mixed_data[0] = "Test";
+print(mixed_data);
+mixed_data[2] = 9;
+print(mixed_data);
+
+var func_data: array = [is_int, is_float];
+print(func_data[1](99.0));
+
+var bool_data: array = [true, false, true, true];
+
+var nested_data: array = [1, [2, [4, [5, [5]]]], [[[[[[3]]]], [3]]]];
+print(nested_data);
+print(nested_data[1][1][1][0]);
