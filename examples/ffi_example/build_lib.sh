@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cmake -S -B ./
+cmake -S . -B ./
 make all
 declare -a REMOVALS=("CMakeFiles/" "cmake_install.cmake" "CMakeCache.txt")
 

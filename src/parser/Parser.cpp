@@ -194,6 +194,8 @@ Parser::Parser() {
         "array_pop", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
     _current_scope->symbol_table->AddSymbol(
         "count", std::make_shared<RnTypeComposite>(RnType::RN_INT));
+    _current_scope->symbol_table->AddSymbol(
+        "lload", std::make_shared<RnTypeComposite>(RnType::RN_OBJECT));
 
     _current_scope->pragma_table["bounds"] = "not-enforced";
     _current_scope->pragma_table["typing"] = "not-enforced";
