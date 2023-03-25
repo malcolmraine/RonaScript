@@ -45,7 +45,7 @@ public:
     [[nodiscard]] virtual RnIntNative ToInt() const = 0;
     [[nodiscard]] virtual RnFloatNative ToFloat() const = 0;
     [[nodiscard]] virtual RnStringNative ToString() const = 0;
-    [[nodiscard]] virtual std::vector<RnObject*> ToArray() const = 0;
+    [[nodiscard]] virtual RnArrayNative ToArray() const = 0;
     [[nodiscard]] virtual RnFunction* ToFunction() const = 0;
     [[nodiscard]] virtual RnScope* ToObject() const = 0;
     [[nodiscard]] virtual RnBoolNative ToBool() const = 0;
@@ -53,7 +53,7 @@ public:
     virtual void SetData(RnIntNative data) = 0;
     virtual void SetData(RnFloatNative data) = 0;
     virtual void SetData(RnBoolNative data) = 0;
-    virtual void SetData(std::vector<RnObject*> data) = 0;
+    virtual void SetData(RnArrayNative data) = 0;
     virtual void SetData(RnObject* data) = 0;
     virtual void SetData(RnFunction* data) = 0;
     virtual void SetData(RnScope* data) = 0;
@@ -61,34 +61,37 @@ public:
     static std::string GetInternedString(InternmentKey key);
     static double GetInternedFloat(InternmentKey key);
     static long GetInternedInt(InternmentKey key);
+    static RnObject* GetInternedObject(InternmentKey key);
     static RnIntNative InternValue(RnFloatNative x);
+    static RnIntNative InternValue(RnBoolNative x);
     static RnIntNative InternValue(const RnStringNative& x);
     static RnIntNative InternValue(RnIntNative x);
     static RnObject* Create(RnBoolNative data);
-    static RnObject* Create(RnStringNative data);
+    static RnObject* Create(const RnStringNative& data);
     static RnObject* Create(RnIntNative data);
     static RnObject* Create(RnFloatNative data);
     static RnObject* Create(RnType::Type type);
     static RnObject* Copy(RnObject* obj);
     virtual void SetConstFlag(bool flag) = 0;
+    static bool ValueCompare(RnObject* a, RnObject* b);
 
-    void Mark() {
+    inline void Mark() {
         _is_marked = true;
     }
 
-    void Unmark() {
+    inline void Unmark() {
         _is_marked = false;
     }
 
-    [[nodiscard]] bool IsMarked() const {
+    [[nodiscard]] inline bool IsMarked() const {
         return _is_marked;
     }
 
-    [[nodiscard]] bool IsModule() const {
+    [[nodiscard]] inline bool IsModule() const {
         return _is_module;
     }
 
-    void SetIsModule(bool flag) {
+    inline void SetIsModule(bool flag) {
         _is_module = flag;
     }
 

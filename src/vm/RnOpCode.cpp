@@ -76,14 +76,8 @@ std::string GetOpCodeAsString(RnOpCode opcode) {
             return "OP_UNARY_NEGATION";
         case OP_RETURN:
             return "OP_RETURN";
-        case OP_LOAD_INT:
-            return "OP_LOAD_INT";
-        case OP_LOAD_FLOAT:
-            return "OP_LOAD_FLOAT";
-        case OP_LOAD_STRING:
-            return "OP_LOAD_STRING";
-        case OP_LOAD_BOOL:
-            return "OP_LOAD_BOOL";
+        case OP_LOAD_LITERAL:
+            return "OP_LOAD_LITERAL";
         case OP_LOAD_VALUE:
             return "OP_LOAD_VALUE";
         case OP_LOAD_NULL:

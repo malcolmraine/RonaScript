@@ -3,11 +3,13 @@
 PROC_COUNT=9
 TARGET="invalid"
 BUILD_DIR="./build"
+BUILD_TYPE="Release"
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 function build_project() {
     mkdir "$BUILD_DIR"
+    export CMAKE_BUILD_TYPE=$BUILD_TYPE
     cmake -S. -B "$BUILD_DIR"
     cmake --build "$BUILD_DIR" "-j $PROC_COUNT"
 
@@ -72,6 +74,10 @@ while true; do
     --target)
         shift
         TARGET=$1
+        ;;
+    --type)
+        shift
+        BUILD_TYPE=$1;
         ;;
     -j)
         shift

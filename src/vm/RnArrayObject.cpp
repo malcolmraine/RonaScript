@@ -14,7 +14,7 @@
 RnArrayObject::RnArrayObject() = default;
 
 /*****************************************************************************/
-RnArrayObject::RnArrayObject(const std::vector<RnObject*>& data) {
+RnArrayObject::RnArrayObject(const RnArrayNative& data) {
     _data = data;
 }
 
@@ -23,7 +23,7 @@ RnArrayObject::~RnArrayObject() = default;
 
 /*****************************************************************************/
 RnObject* RnArrayObject::operator+(RnObject* obj) {
-    std::vector<RnObject*> data;
+    RnArrayNative data;
     auto result = RnObject::Create(RnType::RN_ARRAY);
 
     for (auto& item : obj->ToArray()) {
@@ -70,7 +70,7 @@ RnObject* RnArrayObject::operator&(RnObject* obj) {
 
 /*****************************************************************************/
 void RnArrayObject::Append(RnObject* obj) {
-    _data.push_back(obj);
+     _data.push_back(obj);
 }
 
 /*****************************************************************************/
@@ -89,7 +89,7 @@ void RnArrayObject::SetData(RnFloatNative data) {
 }
 
 /*****************************************************************************/
-void RnArrayObject::SetData(std::vector<RnObject*> data) {
+void RnArrayObject::SetData(RnArrayNative data) {
     SetDataInternal(data);
 }
 
@@ -116,7 +116,7 @@ RnStringNative RnArrayObject::ToString() const {
 }
 
 /*****************************************************************************/
-std::vector<RnObject*> RnArrayObject::ToArray() const {
+RnArrayNative RnArrayObject::ToArray() const {
     return GetData();
 }
 

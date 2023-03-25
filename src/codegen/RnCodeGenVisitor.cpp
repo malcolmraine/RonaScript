@@ -127,17 +127,29 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(const std::shared_ptr<AstNode>& 
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(StringLiteral* node) {
-    return {new RnInstruction(OP_LOAD_STRING, RnObject::InternValue(node->data))};
+    return {new RnInstruction(
+        OP_LOAD_LITERAL,
+        RnObject::InternValue(static_cast<RnStringNative>(node->data)))};
 }
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(FloatLiteral* node) {
-    return {new RnInstruction(OP_LOAD_FLOAT, RnObject::InternValue(node->data))};
+    return {new RnInstruction(
+        OP_LOAD_LITERAL,
+        RnObject::InternValue(static_cast<RnFloatNative>(node->data)))};
 }
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(IntLiteral* node) {
-    return {new RnInstruction(OP_LOAD_INT, RnObject::InternValue(node->data))};
+    return {new RnInstruction(
+        OP_LOAD_LITERAL, RnObject::InternValue(static_cast<RnIntNative>(node->data)))};
+}
+
+/*****************************************************************************/
+InstructionBlock RnCodeGenVisitor::Visit(BoolLiteral* node) {
+    return {new RnInstruction(
+        OP_LOAD_LITERAL,
+        RnObject::InternValue(static_cast<RnBoolNative>(node->GetData())))};
 }
 
 /*****************************************************************************/
@@ -426,11 +438,6 @@ InstructionBlock RnCodeGenVisitor::Visit(DeleteStmt* node) {
 }
 
 /*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(BoolLiteral* node) {
-    return {new RnInstruction(OP_LOAD_BOOL, node->GetData())};
-}
-
-/*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(UnaryExpr* node) {
 
     if (node->op == "++") {
@@ -491,8 +498,8 @@ InstructionBlock RnCodeGenVisitor::Visit(BinaryExpr* node) {
     if (opcode == OP_RESOLVE_NAMESPACE) {
         instructions = GeneralVisit(node->_left);
         instructions.emplace_back(new RnInstruction(
-            opcode,
-            RnObject::InternValue(std::static_pointer_cast<Name>(node->_right)->value)));
+            opcode, RnObject::InternValue(
+                        std::static_pointer_cast<Name>(node->_right)->value)));
     } else if (opcode == OP_ATTR_ACCESS) {
         instructions = GeneralVisit(node->_left);
         instructions.push_back(new RnInstruction(

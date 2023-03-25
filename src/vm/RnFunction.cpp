@@ -59,7 +59,7 @@ bool RnFunction::IsBuiltIn() const {
 }
 
 /*****************************************************************************/
-void RnFunction::Call(const std::vector<RnObject*>& args, RnObject* ret_val) {}
+void RnFunction::Call(const RnArrayNative& args, RnObject* ret_val) {}
 
 /*****************************************************************************/
 void RnFunction::CreateArgument(RnIntNative key, RnType::Type type, size_t index) {
@@ -69,7 +69,7 @@ void RnFunction::CreateArgument(RnIntNative key, RnType::Type type, size_t index
 }
 
 /*****************************************************************************/
-void RnFunction::PassArguments(const std::vector<RnObject*>& args, RnScope* scope) {
+void RnFunction::PassArguments(const RnArrayNative& args, RnScope* scope) {
     if (args.size() < _argument_index_map.size()) {
         throw std::runtime_error("Expected " +
                                  std::to_string(_argument_index_map.size()) +
@@ -107,6 +107,6 @@ bool RnBuiltinFunction::IsBuiltIn() const {
 }
 
 /*****************************************************************************/
-void RnBuiltinFunction::Call(const std::vector<RnObject*>& args, RnObject* ret_val) {
+void RnBuiltinFunction::Call(const RnArrayNative& args, RnObject* ret_val) {
     _function(GetScope(), args, ret_val);
 }

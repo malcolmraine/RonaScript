@@ -17,7 +17,7 @@
 
 /*****************************************************************************/
 void RnBuiltins_IO::rn_builtin_file_size(RnScope* scope,
-                                         const std::vector<RnObject*>& args,
+                                         const RnArrayNative& args,
                                          RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -27,14 +27,14 @@ void RnBuiltins_IO::rn_builtin_file_size(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_IO::rn_builtin_file_write(RnScope* scope,
-                                          const std::vector<RnObject*>& args,
+                                          const RnArrayNative& args,
                                           RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
 }
 
 /*****************************************************************************/
-void RnBuiltins_IO::rn_builtin_print(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_IO::rn_builtin_print(RnScope* scope, const RnArrayNative& args,
                                      RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -50,7 +50,7 @@ void RnBuiltins_IO::rn_builtin_print(RnScope* scope, const std::vector<RnObject*
 }
 
 /*****************************************************************************/
-void RnBuiltins_IO::rn_builtin_read(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_IO::rn_builtin_read(RnScope* scope, const RnArrayNative& args,
                                     RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -70,7 +70,7 @@ void RnBuiltins_IO::rn_builtin_read(RnScope* scope, const std::vector<RnObject*>
 
 /*****************************************************************************/
 void RnBuiltins_IO::rn_builtin_prompt(RnScope* scope,
-                                      const std::vector<RnObject*>& args,
+                                      const RnArrayNative& args,
                                       RnObject* ret_val) {
     std::string input;
     std::cout << args.front()->ToString();

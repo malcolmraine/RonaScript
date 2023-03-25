@@ -1,0 +1,12 @@
+// Variable Type Callable
+
+var d: callable;
+print(d);
+var fn: callable = print;
+
+fn("This is a test");
+
+fn = is_int;
+print(fn(99));
+print(fn(82.1));
+print(is_callable(fn));

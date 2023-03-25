@@ -1,0 +1,22 @@
+// Variable Type Int
+
+var d: int;
+print(d);
+
+var x: int = 99;
+print(x);
+print(is_int(x));
+
+x = 9.772;
+print(x);
+
+x = 772313123123123131;
+print(x);
+x += 14;
+print(x);
+x++;
+print(x);
+x++;
+print(x);
+x--;
+print(x);

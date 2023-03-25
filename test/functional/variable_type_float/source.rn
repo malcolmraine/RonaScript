@@ -1,0 +1,16 @@
+// Variable Type Float
+
+var d: float;
+print(d);
+var x: float = 0.001;
+print(x);
+print(is_float(x));
+
+print(x + 99.2);
+x = 99;
+print(x);
+x *= 77;
+print(x);
+
+print(is_int(9913132.11212));
+print(is_float(99377131.123131));

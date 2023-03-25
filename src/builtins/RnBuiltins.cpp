@@ -21,7 +21,7 @@
 #include "../vm/RnScope.h"
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_unpack(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins::rn_builtin_unpack(RnScope* scope, const RnArrayNative& args,
                                    RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -38,7 +38,7 @@ void RnBuiltins::rn_builtin_unpack(RnScope* scope, const std::vector<RnObject*>&
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_call(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins::rn_builtin_call(RnScope* scope, const RnArrayNative& args,
                                  RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -46,15 +46,15 @@ void RnBuiltins::rn_builtin_call(RnScope* scope, const std::vector<RnObject*>& a
     auto obj = scope->GetObject(RnObject::InternValue(args.front()->ToString()));
     auto func_obj = dynamic_cast<RnFunctionObject*>(obj);
     auto func = func_obj->GetData();
-    std::vector<RnObject*> callArgs(args.begin() + 1, args.end());
-    RnObject* call_ret_val = RnObject::Create(func_obj->GetReturnType());
+    RnArrayNative callArgs(args.begin() + 1, args.end());
+    RnObject* call_ret_val = RnObject::Create(func->GetReturnType());
     func->Call(callArgs, call_ret_val);
-    std::vector<RnObject*> ret_vals = {call_ret_val};
+    RnArrayNative ret_vals = {call_ret_val};
     ret_val->SetData(ret_vals);
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_system(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins::rn_builtin_system(RnScope* scope, const RnArrayNative& args,
                                    RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -70,12 +70,12 @@ void RnBuiltins::rn_builtin_system(RnScope* scope, const std::vector<RnObject*>&
         result += buffer.data();
     }
     result = String::Replace(result, "\n", "\\n");
-    std::vector<RnObject*> output = {RnObject::Create(result)};
+    RnArrayNative output = {RnObject::Create(result)};
     ret_val->SetData(output);
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_lload(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins::rn_builtin_lload(RnScope* scope, const RnArrayNative& args,
                                   RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -88,7 +88,7 @@ void RnBuiltins::rn_builtin_lload(RnScope* scope, const std::vector<RnObject*>& 
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_bind(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins::rn_builtin_bind(RnScope* scope, const RnArrayNative& args,
                                  RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -109,7 +109,7 @@ void RnBuiltins::rn_builtin_bind(RnScope* scope, const std::vector<RnObject*>& a
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_setenv(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins::rn_builtin_setenv(RnScope* scope, const RnArrayNative& args,
                                    RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -119,7 +119,7 @@ void RnBuiltins::rn_builtin_setenv(RnScope* scope, const std::vector<RnObject*>&
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_getenv(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins::rn_builtin_getenv(RnScope* scope, const RnArrayNative& args,
                                    RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -128,7 +128,7 @@ void RnBuiltins::rn_builtin_getenv(RnScope* scope, const std::vector<RnObject*>&
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_unsetenv(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins::rn_builtin_unsetenv(RnScope* scope, const RnArrayNative& args,
                                      RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -137,12 +137,12 @@ void RnBuiltins::rn_builtin_unsetenv(RnScope* scope, const std::vector<RnObject*
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_listattr(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins::rn_builtin_listattr(RnScope* scope, const RnArrayNative& args,
                                      RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
 
-    std::vector<RnObject*> attrs;
+    RnArrayNative attrs;
     for (const auto& attr : args.front()->ToObject()->GetSymbolTable()->GetSymbols()) {
         attrs.push_back(RnObject::Create(RnObject::GetInternedString(attr)));
     }
@@ -151,7 +151,7 @@ void RnBuiltins::rn_builtin_listattr(RnScope* scope, const std::vector<RnObject*
 
 /*****************************************************************************/
 void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
-                                      const std::vector<RnObject*>& args,
+                                      const RnArrayNative& args,
                                       RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -160,12 +160,12 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
         return;
     }
 
-    std::vector<RnObject*> attrs;
+    RnArrayNative attrs;
     auto target_scope = args.front()->ToObject();
     for (const auto& attr : target_scope->GetSymbolTable()->GetSymbols()) {
         auto pair_obj =
             dynamic_cast<RnArrayObject*>(RnObject::Create(RnType::RN_ARRAY));
-        std::vector<RnObject*> data = {
+        RnArrayNative data = {
             RnObject::Create(RnObject::GetInternedString(attr)),
             target_scope->GetObject(attr)};
         pair_obj->SetData(data);
@@ -175,7 +175,7 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
 }
 
 /*****************************************************************************/
- void RnBuiltins::rn_builtin_hasattr(RnScope* scope, const std::vector<RnObject*>& args,
+ void RnBuiltins::rn_builtin_hasattr(RnScope* scope, const RnArrayNative& args,
                                RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -186,7 +186,7 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
  }
 
  /*****************************************************************************/
- void RnBuiltins::rn_builtin_getattr(RnScope* scope, const std::vector<RnObject*>& args,
+ void RnBuiltins::rn_builtin_getattr(RnScope* scope, const RnArrayNative& args,
                                RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -197,13 +197,13 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
         auto original = obj->GetObject(attr_key);
         auto result = RnObject::Create(original->GetType());
         result->CopyDataFromObject(original);
-        std::vector<RnObject*> array_data = {result};
+        RnArrayNative array_data = {result};
         ret_val->SetData(array_data);
     }
  }
 
  /*****************************************************************************/
- void RnBuiltins::rn_builtin_setattr(RnScope* scope, const std::vector<RnObject*>& args,
+ void RnBuiltins::rn_builtin_setattr(RnScope* scope, const RnArrayNative& args,
                                RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -222,7 +222,7 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
  }
 
  /*****************************************************************************/
- void RnBuiltins::rn_builtin_delattr(RnScope* scope, const std::vector<RnObject*>& args,
+ void RnBuiltins::rn_builtin_delattr(RnScope* scope, const RnArrayNative& args,
                                RnObject* ret_val) {
     assert(ret_val);
     assert(scope);

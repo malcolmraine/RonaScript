@@ -15,7 +15,7 @@
 
 class RnStringObject : public RnObjectBase<RnStringNative> {
 public:
-    RnStringObject(RnStringNative data = "");
+    RnStringObject(const RnStringNative& data = "");
     ~RnStringObject();
 
     RnObject* operator+(RnObject* obj) override;

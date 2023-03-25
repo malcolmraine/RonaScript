@@ -1,0 +1,22 @@
+// Variable Type Bool
+
+var d: bool;
+print(d);
+
+var x: bool = true;
+print(x);
+print(x == false);
+print(x == true);
+x = false;
+print(x);
+print(x == false);
+print(x == true);
+print(false);
+print(true);
+print(true && false);
+print(true && true);
+print(false && false);
+print(false && true);
+print(true || false);
+print(true || true);
+print(false || false);

@@ -32,11 +32,19 @@ public:
     [[nodiscard]] RnScope* GetScope();
     void SetScope(RnScope* scope);
     [[nodiscard]] virtual bool IsBuiltIn() const;
-    virtual void Call(const std::vector<RnObject*>& args, RnObject* ret_val);
+    virtual void Call(const RnArrayNative& args, RnObject* ret_val);
     void CreateArgument(RnIntNative key, RnType::Type type, size_t index);
-    void PassArguments(const std::vector<RnObject*>& args, RnScope* scope);
+    void PassArguments(const RnArrayNative& args, RnScope* scope);
     void InitScope(RnScope* scope);
     void Bind(RnIntNative this_key, RnObject* object);
+
+    [[nodiscard]] RnType::Type GetReturnType() const {
+        return _return_type;
+    }
+
+    void SetReturnType(RnType::Type type) {
+        _return_type = type;
+    }
 
 private:
     std::unordered_map<size_t, RnIntNative> _argument_index_map;
@@ -45,10 +53,11 @@ private:
     long _i_cnt = -1;
     RnScope* _scope = nullptr;
     RnScope* _argument_scope = nullptr;
+    RnType::Type _return_type = RnType::RN_VOID;
 };
 
 /*****************************************************************************/
-typedef void (*BuiltinFunction)(RnScope*, std::vector<RnObject*>, RnObject*);
+typedef void (*BuiltinFunction)(RnScope*, RnArrayNative, RnObject*);
 
 auto CastToBuiltin = [](auto f) {
     return reinterpret_cast<BuiltinFunction>(f);
@@ -59,7 +68,7 @@ public:
     RnBuiltinFunction(const std::string& name, BuiltinFunction func);
     ~RnBuiltinFunction();
     [[nodiscard]] bool IsBuiltIn() const override;
-    void Call(const std::vector<RnObject*>& args, RnObject* ret_val) override;
+    void Call(const RnArrayNative& args, RnObject* ret_val) override;
 
 private:
     BuiltinFunction _function;

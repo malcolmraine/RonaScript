@@ -11,7 +11,7 @@
 #include <utility>
 
 /*****************************************************************************/
-RnStringObject::RnStringObject(RnStringNative data) {
+RnStringObject::RnStringObject(const RnStringNative& data) {
     _data = std::move(data);
 }
 

@@ -213,7 +213,7 @@ RnObject* RnIntObject::operator<<(RnObject* obj) {
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator*(RnObject* obj) {
-    switch (obj->GetType()) {
+    switch (obj->GetActiveType()) {
         case RnType::RN_INT:
         case RnType::RN_BOOLEAN:
             return RnObject::Create(_data * obj->ToInt());
@@ -250,7 +250,7 @@ RnStringNative RnIntObject::ToString() const {
 }
 
 /*****************************************************************************/
-std::vector<RnObject*> RnIntObject::ToArray() const {
+RnArrayNative RnIntObject::ToArray() const {
     return RnObjectBase::ToArray();
 }
 

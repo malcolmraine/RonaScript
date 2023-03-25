@@ -1,0 +1,45 @@
+bool:  false
+array:  false
+string:  false
+float:  false
+int:  true
+callable:  false
+42
+
+------------------------------------------------------------
+bool:  false
+array:  false
+string:  false
+float:  true
+int:  false
+callable:  false
+8.2342
+
+------------------------------------------------------------
+bool:  false
+array:  false
+string:  true
+float:  false
+int:  false
+callable:  false
+This is a string
+
+------------------------------------------------------------
+bool:  false
+array:  true
+string:  false
+float:  false
+int:  false
+callable:  false
+[1, 3, 3]
+
+------------------------------------------------------------
+bool:  true
+array:  false
+string:  false
+float:  false
+int:  false
+callable:  false
+true
+test
+3.9242

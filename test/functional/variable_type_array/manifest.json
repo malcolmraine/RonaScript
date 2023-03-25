@@ -1,0 +1,10 @@
+{
+  "name": "variable_type_array",
+  "title": "Variable Type Array",
+  "args": [],
+  "timeout": 5,
+  "invoke_count": 1,
+  "enabled": true,
+  "expected_output": "expected_output.txt",
+  "similarity_threshold": 1.0
+}

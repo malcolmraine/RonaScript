@@ -42,7 +42,7 @@ if [[ $REBUILD == 1 ]]; then
     if [[ -d ./scripts ]]; then
         bash ./scripts/build.sh --target rebuild
     else
-        bash build.sh --target rebuild
+        bash build.sh --target rebuild --type Debug
     fi
 fi
 

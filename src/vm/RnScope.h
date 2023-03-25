@@ -35,7 +35,7 @@ public:
     [[nodiscard]] RnObject* GetObject(RnIntNative key);
     void RemoveObject(RnIntNative key);
     [[nodiscard]] RnSymbolTable* GetSymbolTable();
-    [[nodiscard]] std::vector<RnObject*>& GetStack();
+    [[nodiscard]] RnArrayNative& GetStack();
     void SetParent(RnScope* scope);
     [[nodiscard]] RnScope* GetParent() const;
     [[nodiscard]] RnMemoryGroup* GetMemoryGroup();
@@ -59,7 +59,7 @@ public:
 
 protected:
     RnScope* _parent = nullptr;
-    std::vector<RnObject*> _stack;
+    RnArrayNative _stack;
     RnSymbolTable _symbolTable;
     RnMemoryGroup _memory_group;
     std::vector<std::variant<RnBoolObject, RnStringObject, RnIntObject, RnFloatObject,

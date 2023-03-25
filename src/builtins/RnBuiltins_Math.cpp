@@ -13,7 +13,7 @@
 #include "../vm/RnScope.h"
 
 /*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_pow(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_Math::rn_builtin_pow(RnScope* scope, const RnArrayNative& args,
                                      RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -22,7 +22,7 @@ void RnBuiltins_Math::rn_builtin_pow(RnScope* scope, const std::vector<RnObject*
 }
 
 /*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_mod(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_Math::rn_builtin_mod(RnScope* scope, const RnArrayNative& args,
                                      RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -30,7 +30,7 @@ void RnBuiltins_Math::rn_builtin_mod(RnScope* scope, const std::vector<RnObject*
 
 /*****************************************************************************/
 void RnBuiltins_Math::rn_builtin_sqrt(RnScope* scope,
-                                      const std::vector<RnObject*>& args,
+                                      const RnArrayNative& args,
                                       RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -40,7 +40,7 @@ void RnBuiltins_Math::rn_builtin_sqrt(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Math::rn_builtin_cbrt(RnScope* scope,
-                                      const std::vector<RnObject*>& args,
+                                      const RnArrayNative& args,
                                       RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -50,7 +50,7 @@ void RnBuiltins_Math::rn_builtin_cbrt(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Math::rn_builtin_randf(RnScope* scope,
-                                       const std::vector<RnObject*>& args,
+                                       const RnArrayNative& args,
                                        RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -58,7 +58,7 @@ void RnBuiltins_Math::rn_builtin_randf(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Math::rn_builtin_randint(RnScope* scope,
-                                         const std::vector<RnObject*>& args,
+                                         const RnArrayNative& args,
                                          RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -66,14 +66,14 @@ void RnBuiltins_Math::rn_builtin_randint(RnScope* scope,
 
 /*****************************************************************************/
 void RnBuiltins_Math::rn_builtin_normal(RnScope* scope,
-                                        const std::vector<RnObject*>& args,
+                                        const RnArrayNative& args,
                                         RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
 }
 
 /*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_sum(RnScope* scope, const std::vector<RnObject*>& args,
+void RnBuiltins_Math::rn_builtin_sum(RnScope* scope, const RnArrayNative& args,
                                      RnObject* ret_val) {
     assert(ret_val);
     assert(scope);

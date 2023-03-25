@@ -22,14 +22,6 @@ public:
     [[nodiscard]] RnStringNative ToString() const override;
     void SetData(RnFunction* data) override;
 
-    [[nodiscard]] RnType::Type GetReturnType() const {
-        return _return_type;
-    }
-
-    void SetReturnType(RnType::Type type) {
-        _return_type = type;
-    }
-
     [[nodiscard]] RnFunction* ToFunction() const override {
         return _data;
     }

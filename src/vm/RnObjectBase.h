@@ -25,8 +25,8 @@
 #define UNDEFINED_CAST(ret, handle, replacement)                              \
     [[nodiscard]] ret handle const override {                                 \
         throw std::runtime_error("Cannot convert type " +                     \
-                                 RnType::TypeToString(GetType()) + " to a " + \
-                                 std::string(#replacement));                  \
+                                 RnType::TypeToString(GetType()) + " to type " + \
+                                 replacement);                  \
     }
 
 #define UNDEFINED_ASSIGNMENT(type, rntype, strval)                              \
@@ -85,7 +85,7 @@ public:
     UNDEFINED_CAST(RnIntNative, ToInt(), "int")
     UNDEFINED_CAST(RnFloatNative, ToFloat(), "float")
     UNDEFINED_CAST(RnStringNative, ToString(), "string")
-    UNDEFINED_CAST(std::vector<RnObject*>, ToArray(), "array")
+    UNDEFINED_CAST(RnArrayNative, ToArray(), "array")
     UNDEFINED_CAST(RnFunction*, ToFunction(), "function")
     UNDEFINED_CAST(RnScope*, ToObject(), "object")
     UNDEFINED_CAST(RnBoolNative, ToBool(), "bool")
@@ -94,7 +94,7 @@ public:
     UNDEFINED_ASSIGNMENT(RnIntNative, RnType::RN_INT, std::to_string(data))
     UNDEFINED_ASSIGNMENT(RnFloatNative, RnType::RN_FLOAT, std::to_string(data))
     UNDEFINED_ASSIGNMENT(RnBoolNative, RnType::RN_BOOLEAN, std::to_string(data))
-    UNDEFINED_ASSIGNMENT(std::vector<RnObject*>, RnType::RN_ARRAY, "[...]")
+    UNDEFINED_ASSIGNMENT(RnArrayNative, RnType::RN_ARRAY, "[...]")
     UNDEFINED_ASSIGNMENT(RnObject*, data->GetType(), data->ToString())
     UNDEFINED_ASSIGNMENT(RnScope*, RnType::RN_OBJECT, "object")
     UNDEFINED_ASSIGNMENT(RnFunction*, RnType::RN_FUNCTION, "")
@@ -110,13 +110,9 @@ public:
 
     /*************************************************************************/
     void CopyDataFromObject(RnObject* obj) override {
-        switch (obj->GetType()) {
-            case RnType::RN_ANY:
-            {
-                break;
-            }
+        switch (obj->GetActiveType()) {
             case RnType::RN_BOOLEAN:
-                SetData(obj->ToInt());
+                SetData(obj->ToBool());
                 break;
             case RnType::RN_STRING:
                 SetData(obj->ToString());
@@ -138,9 +134,11 @@ public:
             case RnType::RN_CLASS_INSTANCE:
                 SetData(obj->ToObject());
                 break;
+            case RnType::RN_ANY:
             case RnType::RN_NULL:
             case RnType::RN_VOID:
             case RnType::RN_UNKNOWN:
+                assert(false);
                 break;
         }
     }

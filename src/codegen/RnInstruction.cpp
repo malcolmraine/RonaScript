@@ -68,79 +68,67 @@ auto RnInstruction::ToString() -> std::string {
     std::string arg1_str;
     std::string arg2_str;
 
+    for (const auto& arg : {_arg1, _arg2, _arg3}) {
+        s += std::to_string(arg);
+        if (arg <= 9) {
+            s += "    ";
+        } else if (arg <= 99) {
+            s += "   ";
+        } else {
+            s += "  ";
+        }
+    }
+
     switch (_opcode) {
-        case OP_LOAD_INT:
-            arg1_str = std::to_string(RnObject::GetInternedInt(_arg1));
-            s += std::to_string(_arg1) + "\t";
-            break;
-        case OP_LOAD_FLOAT:
-            arg1_str = std::to_string(RnObject::GetInternedFloat(_arg1));
-            s += std::to_string(_arg1) + "\t";
-            break;
-        case OP_LOAD_STRING:
-            arg1_str = "\"" + RnObject::GetInternedString(_arg1) + "\"";
-            s += std::to_string(_arg1) + "\t\t";
+        case OP_LOAD_LITERAL:
+            arg1_str = RnObject::GetInternedObject(_arg1)->ToString();
             break;
         case OP_ATTR_ACCESS:
             arg1_str = RnObject::GetInternedString(_arg1);
-            s += std::to_string(_arg1) + "\t";
             break;
-        case OP_UNARY_NOT:
         case OP_UNARY_INCREMENT:
         case OP_UNARY_DECREMENT:
-        case OP_UNARY_INVERT:
         case OP_LOAD_VALUE:
             arg1_str = RnObject::GetInternedString(_arg1);
-            s += std::to_string(_arg1) + "\t\t";
             break;
         case OP_MAKE_LOCAL:
         case OP_MAKE_VAR:
+        case OP_MAKE_CONST:
         case OP_MAKE_GLOBAL:
             arg1_str = RnType::TypeToString(static_cast<RnType::Type>(_arg1));
             arg2_str = RnObject::GetInternedString(_arg2);
-            s += String::Join<uint32_t>({_arg1, _arg2}, "\t");
-            break;
-        case OP_LOAD_BOOL:
-            arg1_str = _arg1 == 1 ? "false" : "true";
-            s += std::to_string(_arg1) + "\t\t";
             break;
         case OP_MAKE_ALIAS:
         case OP_RESOLVE_NAMESPACE:
+        case OP_MAKE_MODULE:
+        case OP_MAKE_CLASS:
             arg1_str = RnObject::GetInternedString(_arg1);
-            s += std::to_string(_arg1) +  "\t\t";
             break;
         case OP_MAKE_FUNC:
             arg1_str = RnObject::GetInternedString(_arg1);
             arg2_str = RnType::TypeToString(static_cast<RnType::Type>(_arg2));
-            s += String::Join<uint32_t>({_arg1, _arg2, _arg3}, "\t");
             break;
         case OP_MAKE_ARG:
             arg1_str = RnType::TypeToString(static_cast<RnType::Type>(_arg1));
             arg2_str = RnObject::GetInternedString(_arg2);
-            s += String::Join<uint32_t>({_arg1, _arg2}, "\t");
             break;
         case OP_TRY_CONTEXT:
         case OP_JUMPF:
         case OP_JUMPB:
         case OP_EXIT:
         case OP_MAKE_ARRAY:
-            s += std::to_string(_arg1) + "\t\t";
-            break;
         case OP_JUMPF_IF:
         case OP_JUMPB_IF:
         case OP_CALL:
-        case OP_MAKE_CONST:
-        case OP_MAKE_CLASS:
-        case OP_MAKE_MODULE:
         case OP_DELETE:
-            s += String::Join<uint32_t>({_arg1, _arg2}, "\t");
-            break;
+        case OP_UNARY_INVERT:
+        case OP_UNARY_NOT:
         default:
             break;
     }
 
     if (!arg1_str.empty()) {
-        s += "\t|\t" + arg1_str;
+        s += "  |  " + arg1_str;
         if (!arg2_str.empty()) {
             s += ", " + arg2_str;
         }
