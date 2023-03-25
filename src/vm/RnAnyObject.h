@@ -7,11 +7,18 @@
 
 #include <variant>
 #include "RnObjectBase.h"
+#include "RnIntObject.h"
+#include "RnFloatObject.h"
+#include "RnArrayObject.h"
+#include "RnStringObject.h"
+#include "RnBoolObject.h"
+#include "RnFunctionObject.h"
+#include "RnClassObject.h"
 
 class RnAnyObject
     : public RnObjectBase<
-          std::variant<RnIntNative, RnBoolNative, RnFloatNative, RnScope*,
-                       RnStringNative, RnArrayNative, void*, RnFunction*>> {
+          std::variant<RnIntObject, RnFloatObject, RnBoolObject, RnClassObject,
+                       RnStringObject, RnArrayObject, RnFunctionObject>> {
 public:
     explicit RnAnyObject(RnIntNative data = 0);
     ~RnAnyObject() override;
@@ -48,7 +55,6 @@ public:
     void SetData(RnFunction* data) override;
     void SetData(RnScope* data) override;
     void CopyFrom(RnObject* obj);
-    RnObject GetObjectForActiveType();
 
     [[nodiscard]] RnType::Type GetType() const override {
         return RnType::RN_ANY;

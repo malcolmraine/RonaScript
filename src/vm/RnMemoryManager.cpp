@@ -28,7 +28,7 @@ RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr
     _block_size =
         std::max({sizeof(RnArrayObject), sizeof(RnIntObject), sizeof(RnFunctionObject),
                   sizeof(RnFloatObject), sizeof(RnBoolObject), sizeof(RnStringObject),
-                  sizeof(RnClassObject)});
+                  sizeof(RnClassObject), sizeof(RnAnyObject)});
     _allocation_size = _block_size * OBJECT_ALLOCATION_COUNT;
     GrowAllocation(_allocation_size);
     _cached_bool_true_object = new RnBoolObject(true);

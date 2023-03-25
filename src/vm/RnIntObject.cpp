@@ -213,7 +213,7 @@ RnObject* RnIntObject::operator<<(RnObject* obj) {
 
 /*****************************************************************************/
 RnObject* RnIntObject::operator*(RnObject* obj) {
-    switch (obj->GetType()) {
+    switch (obj->GetActiveType()) {
         case RnType::RN_INT:
         case RnType::RN_BOOLEAN:
             return RnObject::Create(_data * obj->ToInt());

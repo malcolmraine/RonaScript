@@ -23,217 +23,174 @@ RnAnyObject::RnAnyObject(RnIntNative data) {}
 /*****************************************************************************/
 RnAnyObject::~RnAnyObject() = default;
 
-/*****************************************************************************/
-RnObject* RnAnyObject::operator+(RnObject* obj) {
-    return RnObjectBase::operator+(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator-(RnObject* obj) {
-    return RnObjectBase::operator-(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator==(RnObject* obj) {
-    return RnObjectBase::operator==(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator!=(RnObject* obj) {
-    return RnObjectBase::operator!=(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator/(RnObject* obj) {
-    return RnObjectBase::operator/(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator|(RnObject* obj) {
-    return RnObjectBase::operator|(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator||(RnObject* obj) {
-    return RnObjectBase::operator||(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator&&(RnObject* obj) {
-    return RnObjectBase::operator&&(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator&(RnObject* obj) {
-    return RnObjectBase::operator&(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator^(RnObject* obj) {
-    return RnObjectBase::operator^(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator>(RnObject* obj) {
-    return RnObjectBase::operator>(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator<(RnObject* obj) {
-    return RnObjectBase::operator<(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator>=(RnObject* obj) {
-    return RnObjectBase::operator>=(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator<=(RnObject* obj) {
-    return RnObjectBase::operator<=(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator%(RnObject* obj) {
-    return RnObjectBase::operator%(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator>>(RnObject* obj) {
-    return RnObjectBase::operator>>(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator<<(RnObject* obj) {
-    return RnObjectBase::operator<<(obj);
-}
-
-/*****************************************************************************/
-RnObject* RnAnyObject::operator*(RnObject* obj) {
-    return RnObjectBase::operator*(obj);
-}
-
-/*****************************************************************************/
-RnIntNative RnAnyObject::ToInt() const {
-    return std::get<RnIntNative>(_data);
-}
-
-/*****************************************************************************/
-RnFloatNative RnAnyObject::ToFloat() const {
-    return std::get<RnFloatNative>(_data);
-}
-
-/*****************************************************************************/
-RnStringNative RnAnyObject::ToString() const {
-    switch (_active_type) {
-        case RnType::RN_BOOLEAN:
-            return RnBoolObject(ToBool()).ToString();
-        case RnType::RN_STRING:
-            return std::get<RnStringNative>(_data);
-        case RnType::RN_FLOAT:
-            return RnFloatObject(ToFloat()).ToString();
-        case RnType::RN_INT:
-            return RnIntObject(ToInt()).ToString();
-        case RnType::RN_ARRAY:
-            return RnArrayObject(ToArray()).ToString();
-        case RnType::RN_FUNCTION:
-        case RnType::RN_CALLABLE:
-            return RnFunctionObject(ToFunction()).ToString();
-        case RnType::RN_CLASS_INSTANCE:
-        case RnType::RN_OBJECT:
-            return RnClassObject(ToObject()).ToString();
-        case RnType::RN_NULL:
-            return "null";
-        case RnType::RN_VOID:
-        case RnType::RN_UNKNOWN:
-        default:
-            assert(false);
-            return "";
+#define ANY_BINARY_OP(op)                                    \
+    switch (_active_type) {                                  \
+        case RnType::RN_BOOLEAN:                             \
+            return std::get<RnBoolObject>(_data) op obj;     \
+        case RnType::RN_STRING:                              \
+            return std::get<RnStringObject>(_data) op obj;   \
+        case RnType::RN_FLOAT:                               \
+            return std::get<RnFloatObject>(_data) op obj;    \
+        case RnType::RN_INT:                                 \
+            return std::get<RnIntObject>(_data) op obj;      \
+        case RnType::RN_ARRAY:                               \
+            return std::get<RnArrayObject>(_data) op obj;    \
+        case RnType::RN_FUNCTION:                            \
+        case RnType::RN_CALLABLE:                            \
+            return std::get<RnFunctionObject>(_data) op obj; \
+        case RnType::RN_CLASS_INSTANCE:                      \
+        case RnType::RN_OBJECT:                              \
+            return std::get<RnClassObject>(_data) op obj;    \
+        case RnType::RN_NULL:                                \
+        case RnType::RN_VOID:                                \
+        case RnType::RN_ANY:                                 \
+        case RnType::RN_UNKNOWN:                             \
+            assert(false);                                   \
+            return nullptr;                                  \
     }
-}
 
-/*****************************************************************************/
-RnArrayNative RnAnyObject::ToArray() const {
-    return std::get<RnArrayNative>(_data);
-}
-
-/*****************************************************************************/
-RnBoolNative RnAnyObject::ToBool() const {
-    switch (_active_type) {
-        case RnType::RN_BOOLEAN:
-            return std::get<RnBoolNative>(_data);
-        case RnType::RN_STRING:
-            return std::get<RnBoolNative>(_data);
-        case RnType::RN_FLOAT:
-            return std::get<RnBoolNative>(_data);
-        case RnType::RN_INT:
-            return std::get<RnBoolNative>(_data);
-        case RnType::RN_ARRAY:
-//            return std::get<RnArrayNative>(_data);
-        case RnType::RN_FUNCTION:
-        case RnType::RN_CALLABLE:
-            return std::get<RnFunction*>(_data);
-        case RnType::RN_CLASS_INSTANCE:
-        case RnType::RN_OBJECT:
-            return std::get<RnScope*>(_data);
-        case RnType::RN_NULL:
-        case RnType::RN_VOID:
-        case RnType::RN_ANY:
-        case RnType::RN_UNKNOWN:
-            assert(false);
-            return false;
+#define ANY_TO_NATIVE(fn, default_value)                   \
+    switch (_active_type) {                                \
+        case RnType::RN_BOOLEAN:                           \
+            return std::get<RnBoolObject>(_data).fn();     \
+        case RnType::RN_STRING:                            \
+            return std::get<RnStringObject>(_data).fn();   \
+        case RnType::RN_FLOAT:                             \
+            return std::get<RnFloatObject>(_data).fn();    \
+        case RnType::RN_INT:                               \
+            return std::get<RnIntObject>(_data).fn();      \
+        case RnType::RN_ARRAY:                             \
+            return std::get<RnArrayObject>(_data).fn();    \
+        case RnType::RN_FUNCTION:                          \
+        case RnType::RN_CALLABLE:                          \
+            return std::get<RnFunctionObject>(_data).fn(); \
+        case RnType::RN_CLASS_INSTANCE:                    \
+        case RnType::RN_OBJECT:                            \
+            return std::get<RnClassObject>(_data).fn();    \
+        case RnType::RN_NULL:                              \
+        case RnType::RN_VOID:                              \
+        case RnType::RN_ANY:                               \
+        case RnType::RN_UNKNOWN:                           \
+            assert(false);                                 \
+            return default_value;                          \
     }
-}
 
 /*****************************************************************************/
-RnScope* RnAnyObject::ToObject() const {
-    return std::get<RnScope*>(_data);
-}
+RnObject* RnAnyObject::operator+(RnObject* obj){ANY_BINARY_OP(+)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator-(RnObject* obj){ANY_BINARY_OP(-)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator==(RnObject* obj){ANY_BINARY_OP(==)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator!=(RnObject* obj){ANY_BINARY_OP(!=)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator/(RnObject* obj){ANY_BINARY_OP(/)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator|(RnObject* obj){ANY_BINARY_OP(|)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator||(RnObject* obj){ANY_BINARY_OP(||)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator&&(RnObject* obj){ANY_BINARY_OP(&&)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator&(RnObject* obj){ANY_BINARY_OP(&)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator^(RnObject* obj){ANY_BINARY_OP(^)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator>(RnObject* obj){ANY_BINARY_OP(>)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator<(RnObject* obj){ANY_BINARY_OP(<)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator>=(RnObject* obj){ANY_BINARY_OP(>=)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator<=(RnObject* obj){ANY_BINARY_OP(<=)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator%(RnObject* obj){ANY_BINARY_OP(%)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator>>(RnObject* obj){ANY_BINARY_OP(>>)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator<<(RnObject* obj){ANY_BINARY_OP(<<)}
+
+/*****************************************************************************/
+RnObject* RnAnyObject::operator*(RnObject* obj){ANY_BINARY_OP(*)}
+
+/*****************************************************************************/
+RnIntNative RnAnyObject::ToInt() const {ANY_TO_NATIVE(ToInt, 0)}
+
+/*****************************************************************************/
+RnFloatNative RnAnyObject::ToFloat() const {ANY_TO_NATIVE(ToFloat, 0.0)}
+
+/*****************************************************************************/
+RnStringNative RnAnyObject::ToString() const {ANY_TO_NATIVE(ToString, "")}
+
+/*****************************************************************************/
+RnArrayNative RnAnyObject::ToArray() const {ANY_TO_NATIVE(ToArray, {})}
+
+/*****************************************************************************/
+RnBoolNative RnAnyObject::ToBool() const {ANY_TO_NATIVE(ToBool, false)}
+
+/*****************************************************************************/
+RnScope* RnAnyObject::ToObject() const {ANY_TO_NATIVE(ToObject, nullptr)}
 
 /*****************************************************************************/
 RnFunction* RnAnyObject::ToFunction() const {
-    return std::get<RnFunction*>(_data);
+    ANY_TO_NATIVE(ToFunction, nullptr)
 }
 
 /*****************************************************************************/
 void RnAnyObject::SetData(RnIntNative data) {
-    _data = data;
+    _data = RnIntObject(data);
     _active_type = RnType::RN_INT;
 }
 
 /*****************************************************************************/
 void RnAnyObject::SetData(RnBoolNative data) {
-    _data = data;
+    _data = RnBoolObject(data);
     _active_type = RnType::RN_BOOLEAN;
 }
 
 /*****************************************************************************/
 void RnAnyObject::SetData(RnFloatNative data) {
-    _data = data;
+    _data = RnFloatObject(data);
     _active_type = RnType::RN_FLOAT;
 }
 
 /*****************************************************************************/
 void RnAnyObject::SetData(RnArrayNative data) {
-    _data = data;
+    _data = RnArrayObject(data);
     _active_type = RnType::RN_ARRAY;
 }
 
 /*****************************************************************************/
 void RnAnyObject::SetData(RnStringNative data) {
-    _data = data;
+    _data = RnStringObject(data);
     _active_type = RnType::RN_STRING;
 }
 
 /*****************************************************************************/
 void RnAnyObject::SetData(RnFunction* data) {
-    _data = data;
+    _data = RnFunctionObject(data);
     _active_type = RnType::RN_CALLABLE;
 }
 
 /*****************************************************************************/
 void RnAnyObject::SetData(RnScope* data) {
-    _data = data;
+    _data = RnClassObject(data);
     _active_type = RnType::RN_OBJECT;
 }
 
