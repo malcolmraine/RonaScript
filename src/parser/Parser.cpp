@@ -194,6 +194,8 @@ Parser::Parser() {
         "array_pop", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
     _current_scope->symbol_table->AddSymbol(
         "count", std::make_shared<RnTypeComposite>(RnType::RN_INT));
+    _current_scope->symbol_table->AddSymbol(
+        "lload", std::make_shared<RnTypeComposite>(RnType::RN_OBJECT));
 
     _current_scope->pragma_table["bounds"] = "not-enforced";
     _current_scope->pragma_table["typing"] = "not-enforced";
@@ -222,7 +224,8 @@ std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
     AdvanceBuffer(1);
 
     // Check if the file has already been parsed
-    if (std::find(parsed_files.begin(), parsed_files.end(), node->source_file) != parsed_files.end()) {
+    if (std::find(parsed_files.begin(), parsed_files.end(), node->source_file) !=
+        parsed_files.end()) {
         return node;
     } else {
         parsed_files.push_back(node->source_file);
@@ -233,8 +236,7 @@ std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
     std::filesystem::path module_file = working_dir + "/" + node->source_file;
 
     if (std::filesystem::absolute(module_file) == std::filesystem::absolute(file)) {
-        throw std::runtime_error("Circular dependency error: " +
-                                 module_file.string());
+        throw std::runtime_error("Circular dependency error: " + module_file.string());
     }
 
     lexer.LoadFile(module_file);
@@ -759,7 +761,7 @@ std::shared_ptr<ElifStmt> Parser::ParseElifStmt() {
     AdvanceBuffer(1);
     node->test = ParseExpr(TokenType::COLON);
     node->consequent = ParseScope();
-//    ConditionalBufAdvance(TokenType::L_BRACE);
+    //    ConditionalBufAdvance(TokenType::L_BRACE);
 
     if (Current()->token_type == TokenType::ELIF) {
         node->alternative = ParseElifStmt();

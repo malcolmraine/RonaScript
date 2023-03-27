@@ -68,7 +68,6 @@ public:
         _previous_line_start = line_start;
     }
 
-
     [[nodiscard]] size_t GetCharCount() const {
         return _char_cnt;
     }

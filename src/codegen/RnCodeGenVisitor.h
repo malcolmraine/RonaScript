@@ -10,8 +10,8 @@
 #ifndef RONASCRIPT_RNCODEGENVISITOR_H
 #define RONASCRIPT_RNCODEGENVISITOR_H
 
-#include <vector>
 #include <utility>
+#include <vector>
 #include "../parser/RnAstVisitor.h"
 #include "../parser/ast/Ast.h"
 #include "RnInstruction.h"

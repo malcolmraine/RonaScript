@@ -70,7 +70,7 @@ RnObject* RnArrayObject::operator&(RnObject* obj) {
 
 /*****************************************************************************/
 void RnArrayObject::Append(RnObject* obj) {
-     _data.push_back(obj);
+    _data.push_back(obj);
 }
 
 /*****************************************************************************/

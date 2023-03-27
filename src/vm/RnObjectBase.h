@@ -14,19 +14,19 @@
 #include "RnObject.h"
 #include "RnScope.h"
 
-#define UNDEFINED_OPERATOR(op)                                                 \
-    auto operator op(RnObject* obj)->RnObject* override {                      \
-        throw std::runtime_error("Operator '" + std::string(#op) +             \
-                                 "' is not defined for types '" +              \
-                                 RnType::TypeToString(GetType()) + "' and '" + \
-                                 RnType::TypeToString(obj->GetActiveType()) + "'");  \
+#define UNDEFINED_OPERATOR(op)                                                      \
+    auto operator op(RnObject* obj)->RnObject* override {                           \
+        throw std::runtime_error("Operator '" + std::string(#op) +                  \
+                                 "' is not defined for types '" +                   \
+                                 RnType::TypeToString(GetType()) + "' and '" +      \
+                                 RnType::TypeToString(obj->GetActiveType()) + "'"); \
     }
 
-#define UNDEFINED_CAST(ret, handle, replacement)                              \
-    [[nodiscard]] ret handle const override {                                 \
-        throw std::runtime_error("Cannot convert type " +                     \
+#define UNDEFINED_CAST(ret, handle, replacement)                                 \
+    [[nodiscard]] ret handle const override {                                    \
+        throw std::runtime_error("Cannot convert type " +                        \
                                  RnType::TypeToString(GetType()) + " to type " + \
-                                 replacement);                  \
+                                 replacement);                                   \
     }
 
 #define UNDEFINED_ASSIGNMENT(type, rntype, strval)                              \

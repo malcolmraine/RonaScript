@@ -10,20 +10,19 @@
 #include "RnObject.h"
 
 #include <utility>
+#include "RnAnyObject.h"
 #include "RnArrayObject.h"
 #include "RnBoolObject.h"
 #include "RnClassObject.h"
 #include "RnFloatObject.h"
 #include "RnFunctionObject.h"
 #include "RnIntObject.h"
-#include "RnAnyObject.h"
 #include "RnNullObject.h"
 #include "RnStringObject.h"
 #include "RnVirtualMachine.h"
 
-RnInternment<RnObject*>* object_internment = new RnInternment<RnObject*>([](RnObject* a, RnObject* b) {
-    return RnObject::ValueCompare(a, b);
-});
+RnInternment<RnObject*>* object_internment = new RnInternment<RnObject*>(
+    [](RnObject* a, RnObject* b) { return RnObject::ValueCompare(a, b); });
 
 bool RnObject::ValueCompare(RnObject* a, RnObject* b) {
     if (a->GetType() != b->GetType()) {
@@ -77,9 +76,9 @@ long RnObject::GetInternedInt(InternmentKey key) {
 }
 
 /*****************************************************************************/
- RnObject* RnObject::GetInternedObject(InternmentKey key) {
+RnObject* RnObject::GetInternedObject(InternmentKey key) {
     return object_internment->GetInternedItem(key);
- }
+}
 
 /*****************************************************************************/
 RnIntNative RnObject::InternValue(RnFloatNative x) {

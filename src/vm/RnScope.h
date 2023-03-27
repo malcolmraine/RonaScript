@@ -62,8 +62,9 @@ protected:
     RnArrayNative _stack;
     RnSymbolTable _symbolTable;
     RnMemoryGroup _memory_group;
-    std::vector<std::variant<RnBoolObject, RnStringObject, RnIntObject, RnFloatObject,
-                             RnFunctionObject, RnClassObject, RnArrayObject, RnAnyObject>>
+    std::vector<
+        std::variant<RnBoolObject, RnStringObject, RnIntObject, RnFloatObject,
+                     RnFunctionObject, RnClassObject, RnArrayObject, RnAnyObject>>
         _locals;  // OP_CREATE_CONTEXT can pass a local count to reserve memory for this
 
 private:

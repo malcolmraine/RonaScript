@@ -10,9 +10,9 @@
 #ifndef RONASCRIPT_RNINTERNMENT_H
 #define RONASCRIPT_RNINTERNMENT_H
 
+#include <functional>
 #include <string>
 #include <unordered_map>
-#include <functional>
 #include "../common/RnType.h"
 
 typedef RnIntNative InternmentKey;
@@ -20,7 +20,7 @@ typedef RnIntNative InternmentKey;
 template <typename T, typename FUNC = std::function<bool(T a, T b)>>
 class RnInternment {
 public:
-    explicit RnInternment(FUNC fn = [](T a, T b) { return a == b; })  {
+    explicit RnInternment(FUNC fn = [](T a, T b) { return a == b; }) {
         _compare = fn;
     }
     ~RnInternment() = default;

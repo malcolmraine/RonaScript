@@ -103,7 +103,6 @@ public:
         _is_class = flag;
     }
 
-
 public:
     static RnObject* null_object;
 

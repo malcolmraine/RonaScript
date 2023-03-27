@@ -137,5 +137,6 @@ std::string FileInfo::GetContextualBlockTabStr() {
 
 /*****************************************************************************/
 std::string FileInfo::GetFormattedLine(const std::string& line) {
-    return _line_prefix + GetContextualBlockTabStr().substr(1) + line + _line_suffix + "\n";
+    return _line_prefix + GetContextualBlockTabStr().substr(1) + line + _line_suffix +
+           "\n";
 }

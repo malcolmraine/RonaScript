@@ -150,8 +150,7 @@ void RnBuiltins::rn_builtin_listattr(RnScope* scope, const RnArrayNative& args,
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
-                                      const RnArrayNative& args,
+void RnBuiltins::rn_builtin_attrpairs(RnScope* scope, const RnArrayNative& args,
                                       RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -165,9 +164,8 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
     for (const auto& attr : target_scope->GetSymbolTable()->GetSymbols()) {
         auto pair_obj =
             dynamic_cast<RnArrayObject*>(RnObject::Create(RnType::RN_ARRAY));
-        RnArrayNative data = {
-            RnObject::Create(RnObject::GetInternedString(attr)),
-            target_scope->GetObject(attr)};
+        RnArrayNative data = {RnObject::Create(RnObject::GetInternedString(attr)),
+                              target_scope->GetObject(attr)};
         pair_obj->SetData(data);
         attrs.push_back(pair_obj);
     }
@@ -175,19 +173,19 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
 }
 
 /*****************************************************************************/
- void RnBuiltins::rn_builtin_hasattr(RnScope* scope, const RnArrayNative& args,
-                               RnObject* ret_val) {
+void RnBuiltins::rn_builtin_hasattr(RnScope* scope, const RnArrayNative& args,
+                                    RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
 
     auto obj = args[0]->ToObject();
     auto attr_key = RnObject::InternValue(args[1]->ToString());
     ret_val->SetData(obj->GetSymbolTable()->SymbolExists(attr_key));
- }
+}
 
- /*****************************************************************************/
- void RnBuiltins::rn_builtin_getattr(RnScope* scope, const RnArrayNative& args,
-                               RnObject* ret_val) {
+/*****************************************************************************/
+void RnBuiltins::rn_builtin_getattr(RnScope* scope, const RnArrayNative& args,
+                                    RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
 
@@ -200,11 +198,11 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
         RnArrayNative array_data = {result};
         ret_val->SetData(array_data);
     }
- }
+}
 
- /*****************************************************************************/
- void RnBuiltins::rn_builtin_setattr(RnScope* scope, const RnArrayNative& args,
-                               RnObject* ret_val) {
+/*****************************************************************************/
+void RnBuiltins::rn_builtin_setattr(RnScope* scope, const RnArrayNative& args,
+                                    RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
 
@@ -219,11 +217,11 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
         obj->StoreObject(attr_key, copy);
     }
     ret_val->SetData(true);
- }
+}
 
- /*****************************************************************************/
- void RnBuiltins::rn_builtin_delattr(RnScope* scope, const RnArrayNative& args,
-                               RnObject* ret_val) {
+/*****************************************************************************/
+void RnBuiltins::rn_builtin_delattr(RnScope* scope, const RnArrayNative& args,
+                                    RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
 
@@ -235,4 +233,4 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope,
     } else {
         ret_val->SetData(false);
     }
- }
+}

@@ -20,8 +20,7 @@ void RnBuiltins_Array::rn_builtin_array_filter(RnScope* scope,
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_array_union(RnScope* scope,
-                                              const RnArrayNative& args,
+void RnBuiltins_Array::rn_builtin_array_union(RnScope* scope, const RnArrayNative& args,
                                               RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -36,8 +35,7 @@ void RnBuiltins_Array::rn_builtin_array_intersect(RnScope* scope,
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_array_merge(RnScope* scope,
-                                              const RnArrayNative& args,
+void RnBuiltins_Array::rn_builtin_array_merge(RnScope* scope, const RnArrayNative& args,
                                               RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -52,8 +50,7 @@ void RnBuiltins_Array::rn_builtin_array_merge(RnScope* scope,
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_count(RnScope* scope,
-                                        const RnArrayNative& args,
+void RnBuiltins_Array::rn_builtin_count(RnScope* scope, const RnArrayNative& args,
                                         RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -67,8 +64,7 @@ void RnBuiltins_Array::rn_builtin_count(RnScope* scope,
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_array_push(RnScope* scope,
-                                             const RnArrayNative& args,
+void RnBuiltins_Array::rn_builtin_array_push(RnScope* scope, const RnArrayNative& args,
                                              RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -80,16 +76,14 @@ void RnBuiltins_Array::rn_builtin_array_push(RnScope* scope,
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_array_pop(RnScope* scope,
-                                            const RnArrayNative& args,
+void RnBuiltins_Array::rn_builtin_array_pop(RnScope* scope, const RnArrayNative& args,
                                             RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_array_zeros(RnScope* scope,
-                                              const RnArrayNative& args,
+void RnBuiltins_Array::rn_builtin_array_zeros(RnScope* scope, const RnArrayNative& args,
                                               RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -104,8 +98,7 @@ void RnBuiltins_Array::rn_builtin_array_zeros(RnScope* scope,
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_array_fill(RnScope* scope,
-                                             const RnArrayNative& args,
+void RnBuiltins_Array::rn_builtin_array_fill(RnScope* scope, const RnArrayNative& args,
                                              RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -113,8 +106,7 @@ void RnBuiltins_Array::rn_builtin_array_fill(RnScope* scope,
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_sequence(RnScope* scope,
-                                           const RnArrayNative& args,
+void RnBuiltins_Array::rn_builtin_sequence(RnScope* scope, const RnArrayNative& args,
                                            RnObject* ret_val) {
     assert(ret_val);
     assert(scope);

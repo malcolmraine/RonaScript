@@ -29,8 +29,7 @@ void RnBuiltins_Math::rn_builtin_mod(RnScope* scope, const RnArrayNative& args,
 }
 
 /*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_sqrt(RnScope* scope,
-                                      const RnArrayNative& args,
+void RnBuiltins_Math::rn_builtin_sqrt(RnScope* scope, const RnArrayNative& args,
                                       RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -39,8 +38,7 @@ void RnBuiltins_Math::rn_builtin_sqrt(RnScope* scope,
 }
 
 /*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_cbrt(RnScope* scope,
-                                      const RnArrayNative& args,
+void RnBuiltins_Math::rn_builtin_cbrt(RnScope* scope, const RnArrayNative& args,
                                       RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
@@ -49,24 +47,21 @@ void RnBuiltins_Math::rn_builtin_cbrt(RnScope* scope,
 }
 
 /*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_randf(RnScope* scope,
-                                       const RnArrayNative& args,
+void RnBuiltins_Math::rn_builtin_randf(RnScope* scope, const RnArrayNative& args,
                                        RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
 }
 
 /*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_randint(RnScope* scope,
-                                         const RnArrayNative& args,
+void RnBuiltins_Math::rn_builtin_randint(RnScope* scope, const RnArrayNative& args,
                                          RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
 }
 
 /*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_normal(RnScope* scope,
-                                        const RnArrayNative& args,
+void RnBuiltins_Math::rn_builtin_normal(RnScope* scope, const RnArrayNative& args,
                                         RnObject* ret_val) {
     assert(ret_val);
     assert(scope);
