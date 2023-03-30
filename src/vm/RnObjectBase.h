@@ -144,13 +144,16 @@ public:
     }
 
 protected:
-    /*************************************************************************/
-    void SetDataInternal(T data) {
+    void ConstInitCheck() {
         if (_is_const && _initialized) {
             throw std::runtime_error("Cannot set value of const");
         }
-        _data = data;
         _initialized = true;
+    }
+
+    void SetDataInternal(T data) {
+        ConstInitCheck();
+        _data = data;
     }
 
 protected:

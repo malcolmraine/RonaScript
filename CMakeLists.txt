@@ -22,4 +22,4 @@ include(src/util/CMakeLists.txt)
 include(src/codegen/CMakeLists.txt)
 
 add_executable(RonaScript src/main.cpp ${RonaScript_SOURCES}
-        src/RnVersionInfo.h src/util/LoopCounter.h src/RnBuildInfo.h src/util/PtrStack.h src/vm/RnAnyObject.cpp src/vm/RnAnyObject.h src/common/RnConfig.cpp src/common/RnConfig.h)
+        src/RnVersionInfo.h src/util/LoopCounter.h src/RnBuildInfo.h src/util/PtrStack.h src/vm/RnAnyObject.cpp src/vm/RnAnyObject.h src/common/RnConfig.cpp src/common/RnConfig.h src/vm/RnNumericObject.cpp src/vm/RnNumericObject.h)
