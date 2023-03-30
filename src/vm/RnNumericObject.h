@@ -15,6 +15,9 @@ public:
     void SetData(RnIntNative data) override;
     void SetData(RnFloatNative data) override;
     void SetData(RnBoolNative data) override;
+    size_t GetByteSize() const;
+    void GetBytes(char* buf);
+    void SetBytes(const char* buf);
 };
 
 #endif  //RONASCRIPT_SRC_VM_RNNUMERICOBJECT_H_

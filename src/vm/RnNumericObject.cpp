@@ -41,3 +41,25 @@ void RnNumericObject::SetData(RnBoolNative data) {
     ConstInitCheck();
     _data.i_data = data ? 1 : 0;
 }
+
+/*****************************************************************************/
+size_t RnNumericObject::GetByteSize() const {
+    // type = 1 byte
+    // data = 8 bytes
+    return RN_NUMERIC_DATA_LENGTH + 1
+}
+
+/*****************************************************************************/
+void RnNumericObject::GetBytes(char* buf) {
+    buf[0] = static_cast<char>(RnObjectBase<RnNumericUnion>::GetType());
+    for (size_t i = 1; i < RN_NUMERIC_DATA_LENGTH + 1; i++) {
+        buf[i] = _data.c_data[i - 1];
+    }
+}
+
+/*****************************************************************************/
+void RnNumericObject::SetBytes(const char* buf) {
+    for (size_t i = 0; i < RN_NUMERIC_DATA_LENGTH; i++) {
+        _data.c_data[i] = buf[i];
+    }
+}
