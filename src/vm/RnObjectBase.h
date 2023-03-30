@@ -99,8 +99,25 @@ public:
     UNDEFINED_ASSIGNMENT(RnScope*, RnType::RN_OBJECT, "object")
     UNDEFINED_ASSIGNMENT(RnFunction*, RnType::RN_FUNCTION, "")
 
+    /*************************************************************************/
     [[nodiscard]] RnType::Type GetActiveType() const override {
         return GetType();
+    }
+
+    /*************************************************************************/
+    [[nodiscard]] size_t GetByteSize() const override {
+        return 0;
+    }
+
+    /*************************************************************************/
+    size_t GetBytes(char* buf) override {
+        return 0;
+    }
+
+    /*************************************************************************/
+    void SetBytes(const char* buf, size_t n) override
+    {
+
     }
 
     /*************************************************************************/
@@ -144,6 +161,7 @@ public:
     }
 
 protected:
+    /*************************************************************************/
     void ConstInitCheck() {
         if (_is_const && _initialized) {
             throw std::runtime_error("Cannot set value of const");
@@ -151,6 +169,7 @@ protected:
         _initialized = true;
     }
 
+    /*************************************************************************/
     void SetDataInternal(T data) {
         ConstInitCheck();
         _data = data;

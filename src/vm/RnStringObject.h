@@ -25,6 +25,9 @@ public:
     [[nodiscard]] RnStringNative ToString() const override;
     [[nodiscard]] RnBoolNative ToBool() const override;
     void SetData(RnStringNative data) override;
+    [[nodiscard]] size_t GetByteSize() const override;
+    size_t GetBytes(char* buf) override;
+    void SetBytes(const char* buf, size_t n) override;
 
     [[nodiscard]] RnType::Type GetType() const override {
         return RnType::RN_STRING;
