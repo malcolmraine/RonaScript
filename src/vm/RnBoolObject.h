@@ -10,9 +10,9 @@
 #ifndef RONASCRIPT_RNBOOLOBJECT_H
 #define RONASCRIPT_RNBOOLOBJECT_H
 
-#include "RnObjectBase.h"
+#include "RnNumericObject.h"
 
-class RnBoolObject : public RnObjectBase<RnBoolNative> {
+class RnBoolObject : public RnNumericObject {
 public:
     explicit RnBoolObject(RnBoolNative data = false);
     ~RnBoolObject() override;
@@ -27,20 +27,15 @@ public:
     [[nodiscard]] RnIntNative ToInt() const override;
     [[nodiscard]] RnBoolNative ToBool() const override;
     [[nodiscard]] RnFloatNative ToFloat() const override;
-    void SetData(RnBoolNative data) override {
-        SetDataInternal(data);
-    }
-
-    void SetData(RnIntNative data) override {
-        SetDataInternal(data);
-    }
 
     void SetData(RnFloatNative data) override {
-        SetDataInternal(static_cast<bool>(data));
+        ConstInitCheck();
+        _data.i_data = static_cast<bool>(data) ? 1 : 0;
     }
 
     void SetData(RnStringNative data) override {
-        SetDataInternal(static_cast<bool>(!data.empty()));
+        ConstInitCheck();
+        _data.i_data = !data.empty() ? 1 : 0;
     }
 
     [[nodiscard]] RnType::Type GetType() const override {
