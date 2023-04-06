@@ -71,7 +71,7 @@ size_t RnStringObject::GetBytes(char* buf) {
     // reading the data back into a string object.
     size_t i = 0;
     union {
-        char bytes[4];
+        char bytes[RN_SIZE_BYTES_LENGTH];
         size_t len = 0;
     } size_bytes;
     size_bytes.len = _data.size() + 1;

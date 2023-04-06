@@ -115,6 +115,7 @@ public:
 
 public:
     static RnObject* null_object;
+    static RnInternment<RnObject*>* object_internment;
 
 private:
     bool _is_marked = false;

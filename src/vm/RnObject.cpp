@@ -21,7 +21,7 @@
 #include "RnStringObject.h"
 #include "RnVirtualMachine.h"
 
-RnInternment<RnObject*>* object_internment = new RnInternment<RnObject*>(
+RnInternment<RnObject*>* RnObject::object_internment = new RnInternment<RnObject*>(
     [](RnObject* a, RnObject* b) { return RnObject::ValueCompare(a, b); });
 
 bool RnObject::ValueCompare(RnObject* a, RnObject* b) {
