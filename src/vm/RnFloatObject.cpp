@@ -13,7 +13,7 @@
 
 /*****************************************************************************/
 RnFloatObject::RnFloatObject(RnFloatNative data) {
-    _data = data;
+    _data.d_data = data;
 }
 
 /*****************************************************************************/
@@ -21,27 +21,27 @@ RnFloatObject::~RnFloatObject() = default;
 
 /*****************************************************************************/
 auto RnFloatObject::operator+(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<RnFloatNative>(_data + obj->ToFloat()));
+    return RnObject::Create(static_cast<RnFloatNative>(_data.d_data + obj->ToFloat()));
 }
 
 /*****************************************************************************/
 auto RnFloatObject::operator-(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<RnFloatNative>(_data - obj->ToFloat()));
+    return RnObject::Create(static_cast<RnFloatNative>(_data.d_data - obj->ToFloat()));
 }
 
 /*****************************************************************************/
 auto RnFloatObject::operator==(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<bool>(_data == obj->ToFloat()));
+    return RnObject::Create(static_cast<bool>(_data.d_data == obj->ToFloat()));
 }
 
 /*****************************************************************************/
 auto RnFloatObject::operator!=(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<bool>(_data != obj->ToFloat()));
+    return RnObject::Create(static_cast<bool>(_data.d_data != obj->ToFloat()));
 }
 
 /*****************************************************************************/
 auto RnFloatObject::operator/(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<RnFloatNative>(_data / obj->ToFloat()));
+    return RnObject::Create(static_cast<RnFloatNative>(_data.d_data / obj->ToFloat()));
 }
 
 /*****************************************************************************/
@@ -56,27 +56,27 @@ auto RnFloatObject::operator&&(RnObject* obj) -> RnObject* {
 
 /*****************************************************************************/
 auto RnFloatObject::operator>(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<bool>(_data > obj->ToFloat()));
+    return RnObject::Create(static_cast<bool>(_data.d_data > obj->ToFloat()));
 }
 
 /*****************************************************************************/
 auto RnFloatObject::operator<(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<bool>(_data < obj->ToFloat()));
+    return RnObject::Create(static_cast<bool>(_data.d_data < obj->ToFloat()));
 }
 
 /*****************************************************************************/
 auto RnFloatObject::operator>=(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<bool>(_data >= obj->ToFloat()));
+    return RnObject::Create(static_cast<bool>(_data.d_data >= obj->ToFloat()));
 }
 
 /*****************************************************************************/
 auto RnFloatObject::operator<=(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<bool>(_data <= obj->ToFloat()));
+    return RnObject::Create(static_cast<bool>(_data.d_data <= obj->ToFloat()));
 }
 
 /*****************************************************************************/
 auto RnFloatObject::operator*(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<RnFloatNative>(_data * obj->ToFloat()));
+    return RnObject::Create(static_cast<RnFloatNative>(_data.d_data * obj->ToFloat()));
 }
 
 /*****************************************************************************/
@@ -96,7 +96,7 @@ auto RnFloatObject::operator%(RnObject* obj) -> RnObject* {
 auto RnFloatObject::ToString() const -> RnStringNative {
     std::stringstream ss;
     ss.setf(std::ios_base::fixed, std::ios_base::floatfield);
-    ss << std::setprecision(std::numeric_limits<float>::digits10) << _data;
+    ss << std::setprecision(std::numeric_limits<float>::digits10) << _data.d_data;
     std::string str = ss.str();
     str.erase(str.find_last_not_of('0') + 1, std::string::npos);
     if (str.ends_with('.')) {
@@ -107,25 +107,16 @@ auto RnFloatObject::ToString() const -> RnStringNative {
 
 /*****************************************************************************/
 auto RnFloatObject::ToInt() const -> RnIntNative {
-    return static_cast<RnIntNative>(_data);
-}
-
-/*****************************************************************************/
-auto RnFloatObject::ToFloat() const -> RnFloatNative {
-    return _data;
+    return static_cast<RnIntNative>(_data.d_data);
 }
 
 /*****************************************************************************/
 auto RnFloatObject::ToBool() const -> RnBoolNative {
-    return static_cast<bool>(_data);
+    return static_cast<bool>(_data.d_data);
 }
 
 /*****************************************************************************/
 void RnFloatObject::SetData(RnIntNative data) {
-    SetDataInternal(static_cast<RnFloatNative>(data));
-}
-
-/*****************************************************************************/
-void RnFloatObject::SetData(RnFloatNative data) {
-    SetDataInternal(data);
+    ConstInitCheck();
+    _data.d_data = static_cast<RnFloatNative>(data);
 }

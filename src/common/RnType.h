@@ -23,6 +23,16 @@ typedef std::string RnStringNative;
 typedef bool RnBoolNative;
 typedef std::vector<RnObject*> RnArrayNative;
 
+#define RN_NUMERIC_DATA_LENGTH (8)
+#define RN_TYPE_BYTES_LENGTH (1)
+#define RN_SIZE_BYTES_LENGTH (4)
+
+typedef union {
+    char c_data[RN_NUMERIC_DATA_LENGTH];
+    RnIntNative i_data;
+    RnFloatNative d_data;
+} RnNumericUnion;
+
 class RnType {
 public:
     enum Type : int {

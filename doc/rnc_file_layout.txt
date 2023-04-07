@@ -1,6 +1,8 @@
-Timestamp - 8 bytes
-Const internment
-    - Layout: [[size, value], [size, value]..., [size, value]]
-Instructions:
-    - Each instruction is 1-9 bytes, with each argument being 4 bytes and the opcode being 1
-    - Layout: [[opcode, ?arg1, ?arg2]]
+TIMESTAMP - 8 bytes
+INTERNMENT: - RnObjects serialized in order of their internment keys
+    - Layout: [[type, size, value], [type, size, value]..., [type, size, value]]
+
+CODE:
+    - Each instruction is 4 bytes: [opcode, arg1, arg2, arg3]
+    - OP_LOAD_LITERAL may combine argument bytes to create internment keys higher an 255
+

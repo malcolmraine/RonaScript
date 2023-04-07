@@ -10,9 +10,9 @@
 #ifndef RONASCRIPT_RNINTOBJECT_H
 #define RONASCRIPT_RNINTOBJECT_H
 
-#include "RnObjectBase.h"
+#include "RnNumericObject.h"
 
-class RnIntObject : public RnObjectBase<RnIntNative> {
+class RnIntObject : public RnNumericObject {
 public:
     explicit RnIntObject(RnIntNative data = 0);
     ~RnIntObject() override;
@@ -34,12 +34,10 @@ public:
     RnObject* operator>>(RnObject* obj) override;
     RnObject* operator<<(RnObject* obj) override;
     RnObject* operator*(RnObject* obj) override;
-    [[nodiscard]] RnIntNative ToInt() const override;
     [[nodiscard]] RnFloatNative ToFloat() const override;
     [[nodiscard]] RnStringNative ToString() const override;
     [[nodiscard]] RnArrayNative ToArray() const override;
     [[nodiscard]] RnBoolNative ToBool() const override;
-    void SetData(RnIntNative data) override;
     void SetData(RnFloatNative data) override;
 
     void SetData(RnObject* data) override {

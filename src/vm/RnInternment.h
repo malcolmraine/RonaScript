@@ -42,6 +42,10 @@ public:
         return _key_item_map[key];
     }
 
+    [[nodiscard]] InternmentKey GetIndex() const {
+        return _index;
+    }
+
 protected:
     FUNC _compare;
     InternmentKey _index = 0;

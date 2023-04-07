@@ -74,37 +74,48 @@ public:
     static RnObject* Copy(RnObject* obj);
     virtual void SetConstFlag(bool flag) = 0;
     static bool ValueCompare(RnObject* a, RnObject* b);
+    [[nodiscard]] virtual size_t GetByteSize() const = 0;
+    virtual size_t GetBytes(char* buf) = 0;
+    virtual void SetBytes(const char* buf, size_t n) = 0;
 
+    /*************************************************************************/
     inline void Mark() {
         _is_marked = true;
     }
 
+    /*************************************************************************/
     inline void Unmark() {
         _is_marked = false;
     }
 
+    /*************************************************************************/
     [[nodiscard]] inline bool IsMarked() const {
         return _is_marked;
     }
 
+    /*************************************************************************/
     [[nodiscard]] inline bool IsModule() const {
         return _is_module;
     }
 
+    /*************************************************************************/
     inline void SetIsModule(bool flag) {
         _is_module = flag;
     }
 
+    /*************************************************************************/
     [[nodiscard]] bool IsClass() const {
         return _is_class;
     }
 
+    /*************************************************************************/
     void SetIsClass(bool flag) {
         _is_class = flag;
     }
 
 public:
     static RnObject* null_object;
+    static RnInternment<RnObject*>* object_internment;
 
 private:
     bool _is_marked = false;

@@ -58,6 +58,14 @@ public:
     RnObject* CreateObject(RnFloatNative data);
     RnScope* CreateScope();
 
+    [[nodiscard]] size_t GetIndex() const {
+        return i_idx;
+    }
+
+    RnInstruction* GetCurrentInstruction() {
+        return _instructions[i_idx];
+    }
+
 private:
     inline void ExecuteInstruction(bool& break_scope, size_t& index);
     void RegisterBuiltins();
