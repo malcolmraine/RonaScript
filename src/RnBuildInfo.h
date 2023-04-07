@@ -13,4 +13,6 @@
 #define DEBUG
 //#define RELEASE
 
+#define ENABLE_OPCODE_PREDICTION
+
 #endif  //RONASCRIPT_SRC_RNBUILDINFO_H_

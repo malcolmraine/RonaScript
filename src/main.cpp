@@ -123,7 +123,7 @@ void RonaScriptMain(int argc, char* argv[]) {
         vm->LoadInstructions(code_generator.GetInstructions());
         RnIntNative exit_code = vm->Run();
     } catch (const std::exception& e) {
-        Log::ERROR("Runtime Error: " + std::string(e.what()));
+        Log::ERROR("Runtime Error: " + std::to_string(vm->GetIndex()) + ": " + std::string(e.what()));
         return;
     }
 
