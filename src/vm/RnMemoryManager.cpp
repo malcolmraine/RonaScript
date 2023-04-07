@@ -21,8 +21,6 @@
 #include "RnNullObject.h"
 #include "RnStringObject.h"
 
-#define OBJECT_ALLOCATION_COUNT 1000000
-
 /*****************************************************************************/
 RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr)) {
     _block_size =

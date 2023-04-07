@@ -58,7 +58,7 @@ public:
     RnObject* CreateObject(RnFloatNative data);
     RnScope* CreateScope();
 
-    size_t GetIndex() const {
+    [[nodiscard]] size_t GetIndex() const {
         return i_idx;
     }
 

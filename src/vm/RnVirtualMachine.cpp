@@ -152,8 +152,7 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
 
 /*****************************************************************************/
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
-    _gc_count++;
-    if (_gc_count > 10000) {
+    if (_gc_count > GC_THRESHOLD) {
         _memory_manager->GCMark();
         _memory_manager->GCSweep();
         _gc_count = 0;
@@ -722,31 +721,37 @@ RnVirtualMachine* RnVirtualMachine::GetInstance() {
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnType::Type type) {
+    _gc_count++;
     return _memory_manager->CreateObject(type);
 }
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnStringNative data) {
+    _gc_count++;
     return _memory_manager->Create(std::move(data));
 }
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnBoolNative data) {
+    _gc_count++;
     return _memory_manager->Create(data);
 }
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnIntNative data) {
+    _gc_count++;
     return _memory_manager->Create(data);
 }
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnFloatNative data) {
+    _gc_count++;
     return _memory_manager->Create(data);
 }
 
 /*****************************************************************************/
 RnScope* RnVirtualMachine::CreateScope() {
+    _gc_count++;
     return _memory_manager->CreateScope();
 }
 
