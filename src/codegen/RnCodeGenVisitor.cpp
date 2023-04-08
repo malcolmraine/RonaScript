@@ -313,6 +313,28 @@ InstructionBlock RnCodeGenVisitor::Visit(VarDecl* node) {
         opcode = OP_MAKE_LOCAL;
     } else if (node->is_global) {
         opcode = OP_MAKE_GLOBAL;
+    } else if (node->is_literal) {
+        switch (node->init_value->node_type) {
+            case AST_STRING_LITERAL:
+                RnObject::InternValue(
+                    std::dynamic_pointer_cast<StringLiteral>(node->init_value)->data);
+                return {};
+            case AST_BOOL_LITERAL:
+                RnObject::InternValue(
+                    std::dynamic_pointer_cast<BoolLiteral>(node->init_value)->GetData());
+                return {};
+            case AST_FLOAT_LITERAL:
+                RnObject::InternValue(
+                    std::dynamic_pointer_cast<FloatLiteral>(node->init_value)->data);
+                return {};
+            case AST_INT_LITERAL:
+                RnObject::InternValue(
+                    std::dynamic_pointer_cast<IntLiteral>(node->init_value)->data);
+                return {};
+            default:
+                assert(false);
+                return {};
+        }
     }
 
     instructions.emplace_back(

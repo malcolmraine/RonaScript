@@ -260,12 +260,23 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
     AddCurrentFileInfo(node);
     Expect(TokenType::NAME);
 
-    if (Current()->token_type == TokenType::CONST) {
-        node->is_const = true;
-    } else if (Current()->token_type == TokenType::GLOBAL) {
-        node->is_global = true;
-    } else if (Current()->token_type == TokenType::LOCAL) {
-        node->is_local = true;
+    switch (Current()->token_type) {
+        case TokenType::CONST:
+            node->is_const = true;
+            break;
+        case TokenType::GLOBAL:
+            node->is_global = true;
+            break;
+        case TokenType::LOCAL:
+            node->is_local = true;
+            break;
+        case TokenType::VAR:
+            break;
+        case TokenType::LITERAL:
+            node->is_literal = true;
+            break;
+        default:
+            assert(false);
     }
 
     if (!qualifiers.empty()) {
@@ -286,6 +297,14 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
         node->init_value = ParseExpr();
     } else {
         ConditionalBufAdvance(TokenType::SEMICOLON);
+    }
+
+    if (node->is_literal) {
+        if (!node->init_value || !node->init_value->IsLiteral())
+            throw std::runtime_error(
+                "A single, literal value must be assigned to a literal declaration.");
+        else
+            _current_scope->AddLiteral(node->id, node->init_value);
     }
 
     return node;
@@ -419,9 +438,14 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
     } else if (Current()->token_type == TokenType::R_BRACK) {
         node = ParseArrayLiteral();
     } else if (Current()->token_type == TokenType::NAME) {
-        node = ParseName();
-        if (Current()->IsOneOf({TokenType::DBL_MINUS, TokenType::DBL_PLUS})) {
-            node = ParseUnaryExpr(node);
+        if (_current_scope->GetLiteral(Current()->lexeme)) {
+            node = _current_scope->GetLiteral(Current()->lexeme);
+            AdvanceBuffer(1);
+        } else {
+            node = ParseName();
+            if (Current()->IsOneOf({TokenType::DBL_MINUS, TokenType::DBL_PLUS})) {
+                node = ParseUnaryExpr(node);
+            }
         }
     } else if (Current()->IsLiteral()) {
         AdvanceBuffer(1);
@@ -442,11 +466,6 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
             }
             case TokenType::BOOL_LITERAL: {
                 node = std::make_shared<BoolLiteral>(Lookback()->lexeme == "true");
-                break;
-            }
-            case TokenType::NAME: {
-                // TODO: Remove, probably deadcode
-                node = ParseName();
                 break;
             }
             case TokenType::NULL_LITERAL: {
@@ -603,7 +622,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
                 }
             }
         }
-        if (break_next_iteration) {
+        if (break_next_iteration || Lookback() == Current()) {
             break;
         } else {
             break_next_iteration = EndOfSequence();
@@ -1058,6 +1077,7 @@ void Parser::Parse() {
                 case TokenType::ELSE:
                     return;
                 case TokenType::CONST:
+                case TokenType::LITERAL:
                 case TokenType::GLOBAL:
                 case TokenType::LOCAL:
                 case TokenType::VAR:
@@ -1111,6 +1131,10 @@ void Parser::Parse() {
                         ConditionalBufAdvance(TokenType::SEMICOLON);
                         Log::DEBUG("Pragma: " + key + ", " + value);
                     } else {
+                        if (_current_scope->GetLiteral(Current()->lexeme)) {
+                            throw std::runtime_error("Misuse of literal replacement '" +
+                                                     Current()->lexeme + "'");
+                        }
                         auto expr = ParseExpr(TokenType::EQUAL);
 
                         if (Current()->token_type == TokenType::EQUAL ||
