@@ -81,6 +81,7 @@ enum TokenType : int {
     FUNC,           // func
     ROUTINE,        // routine
     VAR,            // var
+    LITERAL,        // literal
     CONST,          // const
     IMPORT,         // import
     RETURN,         // return

@@ -70,3 +70,17 @@ void ScopeNode::AddFuncDecl(const std::shared_ptr<FuncDecl>& func_decl) {
     func_decl->nest_lvl = nest_lvl + 1;
     children.emplace_back(func_decl);
 }
+
+/*****************************************************************************/
+void ScopeNode::AddLiteral(const std::string& name,
+                           const std::shared_ptr<AstNode>& node) {
+    _literal_map[name] = node;
+}
+
+/*****************************************************************************/
+std::shared_ptr<AstNode> ScopeNode::GetLiteral(const std::string& name) {
+    auto iter = _literal_map.find(name);
+    if (iter != _literal_map.end())
+        return iter->second;
+    return nullptr;
+}

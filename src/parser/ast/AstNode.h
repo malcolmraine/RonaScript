@@ -22,6 +22,7 @@ class AstNode {
 public:
     AstNode() = default;
     virtual ~AstNode() = default;
+    [[nodiscard]] bool IsLiteral() const;
     virtual std::string ToString(bool nl);
     FilePosition file_pos;
     NodeType_t node_type = AST_DEFAULT;

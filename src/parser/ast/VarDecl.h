@@ -35,6 +35,7 @@ public:
     bool is_const = false;
     bool is_local = false;
     bool is_global = false;
+    bool is_literal = false;
 };
 
 #endif  //RONASCRIPT_VARDECL_H

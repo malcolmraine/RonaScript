@@ -99,6 +99,10 @@ public:
     UNDEFINED_ASSIGNMENT(RnScope*, RnType::RN_OBJECT, "object")
     UNDEFINED_ASSIGNMENT(RnFunction*, RnType::RN_FUNCTION, "")
 
+    [[nodiscard]] RnIntNative GetDataItemCount() const override {
+        return 1;
+    }
+
     /*************************************************************************/
     [[nodiscard]] RnType::Type GetActiveType() const override {
         return GetType();
@@ -115,10 +119,7 @@ public:
     }
 
     /*************************************************************************/
-    void SetBytes(const char* buf, size_t n) override
-    {
-
-    }
+    void SetBytes(const char* buf, size_t n) override {}
 
     /*************************************************************************/
     void SetConstFlag(bool flag) override {

@@ -23,33 +23,35 @@ std::string VarDecl::ToString(bool nl) {
     std::string s = MakeTabStr();
 
     if (is_const) {
-        s += "Const";
+        s.append("ConstDecl");
     } else if (is_local) {
-        s += "LocalVarDecl";
+        s.append("LocalDecl");
     } else if (is_global) {
-        s += "GlobalVarDecl";
+        s.append("GlobalDecl");
+    } else if (is_literal) {
+        s.append("LiteralDecl");
     } else {
-        s += "VarDecl";
+        s.append("VarDecl");
     }
 
-    s += "( " + id + ", " + type->ToString();
+    s.append("( ").append(id).append(", ").append(type->ToString());
 
     for (auto& qualifier : qualifiers) {
-        s += ", " + qualifier->lexeme;
+        s.append(", ").append(qualifier->lexeme);
     }
 
-    s += " )";
+    s.append(" )");
     if (nl) {
-        s += "\n";
+        s.append("\n");
     }
 
     if (init_value != nullptr) {
         init_value->nest_lvl = nest_lvl + 1;
-        s += MakeTabStr() + "AssignmentStmt( " + id + " )";
+        s.append(MakeTabStr()).append("AssignmentStmt( ").append(id).append(" )");
         if (nl) {
-            s += "\n";
+            s.append("\n");
         }
-        s += init_value->ToString(nl);
+        s.append(init_value->ToString(nl));
     }
 
     return s;

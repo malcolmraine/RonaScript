@@ -1,0 +1,21 @@
+// Literal Replacement
+
+literal PI: float =  3.14;
+print(PI);
+print(is_float(PI));
+print(PI * 2);
+
+literal SEPARATOR: string = "-----------------------";
+print(SEPARATOR);
+print(is_string(SEPARATOR));
+print("//" + SEPARATOR);
+
+literal TIMESTAMP: int = 1342312313511;
+print(TIMESTAMP);
+print(is_int(TIMESTAMP));
+
+print(TIMESTAMP + 442);
+
+literal ENABLED: bool = true;
+print(ENABLED);
+print(is_bool(ENABLED));

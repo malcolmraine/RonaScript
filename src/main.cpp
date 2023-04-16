@@ -98,7 +98,7 @@ void RonaScriptMain(int argc, char* argv[]) {
     }
 
     std::ofstream ofs;
-    ofs.open( cfile.c_str(), std::ios::binary);
+    ofs.open(cfile.c_str(), std::ios::binary);
     ofs.write("$$CONST$$", 9);
     for (size_t i = 1; i <= RnObject::object_internment->GetIndex(); i++) {
         auto object = RnObject::object_internment->GetInternedItem(i);
@@ -123,7 +123,7 @@ void RonaScriptMain(int argc, char* argv[]) {
         vm->LoadInstructions(code_generator.GetInstructions());
         RnIntNative exit_code = vm->Run();
     } catch (const std::exception& e) {
-        Log::ERROR("Runtime Error: " + std::to_string(vm->GetIndex()) + ": " + std::string(e.what()));
+        Log::ERROR("Runtime Error: " + std::string(e.what()));
         return;
     }
 

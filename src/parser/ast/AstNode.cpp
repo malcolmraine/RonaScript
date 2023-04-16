@@ -13,6 +13,12 @@
 #define TAB_CHAR "  "
 
 /*****************************************************************************/
+bool AstNode::IsLiteral() const {
+    return node_type == AST_FLOAT_LITERAL || node_type == AST_STRING_LITERAL ||
+           node_type == AST_BOOL_LITERAL || node_type == AST_INT_LITERAL;
+}
+
+/*****************************************************************************/
 std::string AstNode::ToString(bool nl) {
     return nl ? "\n" : "";
 }
