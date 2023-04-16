@@ -39,6 +39,12 @@ public:
     [[nodiscard]] RnType::Type GetType() const override {
         return RnType::RN_ARRAY;
     }
+
+    [[nodiscard]] RnIntNative GetDataItemCount() const override {
+        return static_cast<RnIntNative>(_data.size());
+    }
+
+    bool ContentsEqual(const RnArrayNative& data);
 };
 
 #endif  //RONASCRIPT_RNLISTOBJECT_H

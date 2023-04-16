@@ -49,6 +49,7 @@ public:
     [[nodiscard]] virtual RnFunction* ToFunction() const = 0;
     [[nodiscard]] virtual RnScope* ToObject() const = 0;
     [[nodiscard]] virtual RnBoolNative ToBool() const = 0;
+    [[nodiscard]] virtual RnIntNative GetDataItemCount() const = 0;
     virtual void SetData(RnStringNative data) = 0;
     virtual void SetData(RnIntNative data) = 0;
     virtual void SetData(RnFloatNative data) = 0;

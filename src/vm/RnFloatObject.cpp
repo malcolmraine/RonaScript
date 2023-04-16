@@ -20,66 +20,6 @@ RnFloatObject::RnFloatObject(RnFloatNative data) {
 RnFloatObject::~RnFloatObject() = default;
 
 /*****************************************************************************/
-auto RnFloatObject::operator+(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<RnFloatNative>(_data.d_data + obj->ToFloat()));
-}
-
-/*****************************************************************************/
-auto RnFloatObject::operator-(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<RnFloatNative>(_data.d_data - obj->ToFloat()));
-}
-
-/*****************************************************************************/
-auto RnFloatObject::operator==(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<bool>(_data.d_data == obj->ToFloat()));
-}
-
-/*****************************************************************************/
-auto RnFloatObject::operator!=(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<bool>(_data.d_data != obj->ToFloat()));
-}
-
-/*****************************************************************************/
-auto RnFloatObject::operator/(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<RnFloatNative>(_data.d_data / obj->ToFloat()));
-}
-
-/*****************************************************************************/
-auto RnFloatObject::operator||(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<bool>(ToBool() || obj->ToBool()));
-}
-
-/*****************************************************************************/
-auto RnFloatObject::operator&&(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<bool>(ToBool() && obj->ToBool()));
-}
-
-/*****************************************************************************/
-auto RnFloatObject::operator>(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<bool>(_data.d_data > obj->ToFloat()));
-}
-
-/*****************************************************************************/
-auto RnFloatObject::operator<(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<bool>(_data.d_data < obj->ToFloat()));
-}
-
-/*****************************************************************************/
-auto RnFloatObject::operator>=(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<bool>(_data.d_data >= obj->ToFloat()));
-}
-
-/*****************************************************************************/
-auto RnFloatObject::operator<=(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<bool>(_data.d_data <= obj->ToFloat()));
-}
-
-/*****************************************************************************/
-auto RnFloatObject::operator*(RnObject* obj) -> RnObject* {
-    return RnObject::Create(static_cast<RnFloatNative>(_data.d_data * obj->ToFloat()));
-}
-
-/*****************************************************************************/
 auto RnFloatObject::operator%(RnObject* obj) -> RnObject* {
     switch (obj->GetActiveType()) {
         case RnType::RN_INT:
@@ -103,20 +43,4 @@ auto RnFloatObject::ToString() const -> RnStringNative {
         str.append("0");
     }
     return str;
-}
-
-/*****************************************************************************/
-auto RnFloatObject::ToInt() const -> RnIntNative {
-    return static_cast<RnIntNative>(_data.d_data);
-}
-
-/*****************************************************************************/
-auto RnFloatObject::ToBool() const -> RnBoolNative {
-    return static_cast<bool>(_data.d_data);
-}
-
-/*****************************************************************************/
-void RnFloatObject::SetData(RnIntNative data) {
-    ConstInitCheck();
-    _data.d_data = static_cast<RnFloatNative>(data);
 }
