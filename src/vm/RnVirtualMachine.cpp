@@ -28,6 +28,8 @@
 #include "RnFunctionObject.h"
 #include "RnMemoryManager.h"
 #include "RnOpCode.h"
+
+// @formatter:off
 #include "../RnBuildInfo.h"
 
 RnVirtualMachine* RnVirtualMachine::_instance = nullptr;
@@ -148,7 +150,6 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
 #define PREDICT_OPCODE(op)
 #define PREDICTION_TARGET(op)
 #endif
-
 
 /*****************************************************************************/
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
