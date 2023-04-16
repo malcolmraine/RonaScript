@@ -16,7 +16,7 @@ class RnBoolObject : public RnNumericObject {
 public:
     explicit RnBoolObject(RnBoolNative data = false);
     ~RnBoolObject() override;
-    
+
     RnObject* operator==(RnObject* obj) override {
         return RnObject::Create(static_cast<bool>(
             static_cast<RnBoolNative>(_data.i_data) == obj->ToBool()));

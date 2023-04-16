@@ -321,7 +321,8 @@ InstructionBlock RnCodeGenVisitor::Visit(VarDecl* node) {
                 return {};
             case AST_BOOL_LITERAL:
                 RnObject::InternValue(
-                    std::dynamic_pointer_cast<BoolLiteral>(node->init_value)->GetData());
+                    std::dynamic_pointer_cast<BoolLiteral>(node->init_value)
+                        ->GetData());
                 return {};
             case AST_FLOAT_LITERAL:
                 RnObject::InternValue(

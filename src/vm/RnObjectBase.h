@@ -119,10 +119,7 @@ public:
     }
 
     /*************************************************************************/
-    void SetBytes(const char* buf, size_t n) override
-    {
-
-    }
+    void SetBytes(const char* buf, size_t n) override {}
 
     /*************************************************************************/
     void SetConstFlag(bool flag) override {

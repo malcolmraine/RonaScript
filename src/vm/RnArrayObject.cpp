@@ -139,14 +139,14 @@ RnBoolNative RnArrayObject::ToBool() const {
 
 /*****************************************************************************/
 bool RnArrayObject::ContentsEqual(const RnArrayNative& data) {
-        if (_data.size() != data.size()) {
-            return false;
-        } else {
-            for (size_t i = 0; i < _data.size(); i++) {
-                if (_data[i] != data[i]) {
-                    return false;
-                }
+    if (_data.size() != data.size()) {
+        return false;
+    } else {
+        for (size_t i = 0; i < _data.size(); i++) {
+            if (_data[i] != data[i]) {
+                return false;
             }
         }
-        return true;
+    }
+    return true;
 }
