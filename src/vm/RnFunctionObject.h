@@ -17,7 +17,7 @@ class RnFunction;
 class RnFunctionObject : public RnObjectBase<RnFunction*> {
 public:
     RnFunctionObject();
-    RnFunctionObject(RnFunction* data);
+    explicit RnFunctionObject(RnFunction* data);
     ~RnFunctionObject() override;
     [[nodiscard]] RnStringNative ToString() const override;
     void SetData(RnFunction* data) override;
@@ -29,9 +29,6 @@ public:
     [[nodiscard]] RnType::Type GetType() const override {
         return RnType::RN_FUNCTION;
     }
-
-private:
-    RnType::Type _return_type = RnType::RN_NULL;
 };
 
 #endif  //RONASCRIPT_RNFUNCTIONOBJECT_H
