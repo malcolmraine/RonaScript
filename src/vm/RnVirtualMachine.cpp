@@ -284,11 +284,13 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_UNARY_DECREMENT: {
+            PREDICTION_TARGET(OP_UNARY_DECREMENT)
             auto obj = GetScope()->GetObject(instruction->GetArg1());
             obj->SetData(obj->ToFloat() - 1);
             break;
         }
         case OP_UNARY_INCREMENT: {
+            PREDICTION_TARGET(OP_UNARY_INCREMENT)
             auto obj = GetScope()->GetObject(instruction->GetArg1());
             obj->SetData(obj->ToFloat() + 1);
             break;
@@ -559,6 +561,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_RESET_CONTEXT: {
             GetScope()->Reset();
+            PREDICT_OPCODE(OP_UNARY_INCREMENT)
+            PREDICT_OPCODE(OP_UNARY_DECREMENT)
             break;
         }
         case OP_DELETE: {
