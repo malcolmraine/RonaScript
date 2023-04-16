@@ -726,7 +726,7 @@ std::shared_ptr<ExitStmt> Parser::ParseExitStmt() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<AssignmentStmt> Parser::ParseAssignmentStatement(
+std::shared_ptr<AstNode> Parser::ParseAssignmentStatement(
     const std::shared_ptr<AstNode>& rexpr) {
     auto node = std::make_shared<AssignmentStmt>();
     AddCurrentFileInfo(node);
@@ -741,10 +741,16 @@ std::shared_ptr<AssignmentStmt> Parser::ParseAssignmentStatement(
     }
 
     if (!op.empty()) {
-        node->SetRexpr(std::make_shared<BinaryExpr>());
-        std::dynamic_pointer_cast<BinaryExpr>(node->GetRexpr())->_left = rexpr;
-        std::dynamic_pointer_cast<BinaryExpr>(node->GetRexpr())->_op = op;
-        std::dynamic_pointer_cast<BinaryExpr>(node->GetRexpr())->_right = ParseExpr();
+        auto bin_expr = std::make_shared<BinaryExpr>();
+        bin_expr->_left = node->GetLexpr();
+        bin_expr->_op = op;
+        bin_expr->_right = ParseExpr();
+        auto final_rexpr = TransformBinaryExpr(bin_expr);
+        if (bin_expr != final_rexpr && final_rexpr->node_type == AST_UNARY_EXPR){
+            return final_rexpr;
+        } else {
+            node->SetRexpr(final_rexpr);
+        }
     } else {
         ConditionalBufAdvance(TokenType::EQUAL);
         node->SetRexpr(ParseExpr());
@@ -1218,6 +1224,20 @@ std::shared_ptr<AstNode> Parser::TransformBinaryExpr(
             right_tmp->expr = TransformBinaryExpr(binary_expr);
 
             return right_tmp;
+        }
+    } else if (binary_expr->_op == "+" || binary_expr->_op == "-") {
+        if (binary_expr->_left->node_type == AST_NAME &&
+            binary_expr->_right->node_type == AST_INT_LITERAL &&
+            std::dynamic_pointer_cast<IntLiteral>(binary_expr->_right)->data == 1) {
+            auto unary_node = std::make_shared<UnaryExpr>();
+            unary_node->expr = binary_expr->_left;
+
+            if (binary_expr->_op == "+") {
+                unary_node->op = "++";
+            } else {
+                unary_node->op = "--";
+            }
+            return unary_node;
         }
     }
 

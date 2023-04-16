@@ -88,7 +88,7 @@ public:
     std::shared_ptr<ReturnStmt> ParseReturnStmt();
     std::shared_ptr<DeleteStmt> ParseDeleteStmt();
     std::shared_ptr<ExitStmt> ParseExitStmt();
-    std::shared_ptr<AssignmentStmt> ParseAssignmentStatement(
+    std::shared_ptr<AstNode> ParseAssignmentStatement(
         const std::shared_ptr<AstNode>& rexpr = nullptr);
     std::shared_ptr<IfStmt> ParseIfStmt();
     std::shared_ptr<ElifStmt> ParseElifStmt();
