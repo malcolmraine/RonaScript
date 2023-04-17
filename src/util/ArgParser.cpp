@@ -11,10 +11,9 @@
 
 #include <iomanip>
 #include <iostream>
-#include <sstream>
-
-#include "../util/log.h"
 #include "String.h"
+
+#define HELP_STRING_COLUMN_PAD (10)
 
 /*****************************************************************************/
 Argument::Argument(const std::string& key, const std::string& description,
@@ -64,7 +63,7 @@ bool Argument::HasValue() const {
 
 /*****************************************************************************/
 /*****************************************************************************/
-ArgParser::ArgParser() {}
+ArgParser::ArgParser() = default;
 
 /*****************************************************************************/
 void ArgParser::SetMainDescription(const std::string& description) {
@@ -78,6 +77,8 @@ void ArgParser::AddArgument(const std::string& arg,
                             const std::string& defaultValue) {
     auto argument = new Argument(arg, description, has_value);
     _arguments[arg] = argument;
+    _longest_key_length =
+        _longest_key_length > arg.size() ? _longest_key_length : arg.size();
     _ordered_args.push_back(arg);
 
     if (!defaultValue.empty()) {
@@ -107,7 +108,7 @@ std::string ArgParser::GetValue(const std::string& arg) {
 /*****************************************************************************/
 void ArgParser::ShowHelp() {
     std::string help;
-    help += _main_description + "\n";
+    help.append(_main_description + "\n");
     for (const auto& key : _ordered_args) {
         if (_help_exclusions.find(key) != _help_exclusions.end()) {
             continue;
@@ -116,10 +117,12 @@ void ArgParser::ShowHelp() {
         auto argument = _arguments[key];
         std::string key_str = key;
         for (const auto& alternate_key : argument->GetAlternateKeys()) {
-            key_str += ", " + alternate_key;
+            key_str.append(", " + alternate_key);
         }
-        help +=
-            "  " + String::Pad(key_str, 30, ' ') + argument->GetDescription() + "\n";
+        help.append(
+            "  " +
+            String::Pad(key_str, _longest_key_length + HELP_STRING_COLUMN_PAD, ' ') +
+            argument->GetDescription() + "\n");
     }
 
     std::cout << help;
