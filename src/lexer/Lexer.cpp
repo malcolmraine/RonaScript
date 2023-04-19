@@ -27,8 +27,8 @@
 #include "Lexer.h"
 #include <algorithm>
 #include <iostream>
-#include "../util/FileInfo.h"
 #include <utility>
+#include "../util/FileInfo.h"
 #include "Token.h"
 #include "TokenType.h"
 

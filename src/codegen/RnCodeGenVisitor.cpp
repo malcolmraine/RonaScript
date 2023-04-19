@@ -142,7 +142,8 @@ InstructionBlock RnCodeGenVisitor::Visit(FloatLiteral* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(IntLiteral* node) {
     return {new RnInstruction(
-        OP_LOAD_LITERAL, RnConstStore::InternValue(static_cast<RnIntNative>(node->data)))};
+        OP_LOAD_LITERAL,
+        RnConstStore::InternValue(static_cast<RnIntNative>(node->data)))};
 }
 
 /*****************************************************************************/

@@ -4,6 +4,7 @@
 #include "codegen/RnCodeGenerator.h"
 #include "common/RnInternment.h"
 #include "lexer/Lexer.h"
+#include "lexer/Token.h"
 #include "parser/Parser.h"
 #include "parser/RnAstValidator.h"
 #include "util/ArgParser.h"
@@ -11,7 +12,6 @@
 #include "util/log.h"
 #include "vm/RnMemoryManager.h"
 #include "vm/RnObject.h"
-#include "lexer/Token.h"
 #include "vm/RnVirtualMachine.h"
 
 // @formatter:off

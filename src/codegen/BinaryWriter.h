@@ -9,7 +9,6 @@ class BinaryWriter {
 public:
     BinaryWriter();
     ~BinaryWriter();
-
 };
 
 #endif  //RONASCRIPT_SRC_CODEGEN_BINARYWRITER_H_

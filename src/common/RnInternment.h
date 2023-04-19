@@ -55,7 +55,6 @@ protected:
     std::unordered_map<T, InternmentKey> _item_key_map;
 };
 
-
 class RnConstStore {
 public:
     static std::string GetInternedString(InternmentKey key);

@@ -50,7 +50,6 @@ class DeleteStmt;
 class ExitStmt;
 class AttributeAccess;
 
-
 class RnCodeGenVisitor : public RnAstVisitor<InstructionBlock> {
 public:
     RnCodeGenVisitor() = default;

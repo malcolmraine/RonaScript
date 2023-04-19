@@ -500,7 +500,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto obj = dynamic_cast<RnClassObject*>(
                 RnObject::Create(RnType::RN_CLASS_INSTANCE));
             obj->SetIsClass(true);
-            obj->GetScope()->StoreObject(RnConstStore::InternValue("__class"), name_obj);
+            obj->GetScope()->StoreObject(RnConstStore::InternValue("__class"),
+                                         name_obj);
             GetScope()->StoreObject(instruction->GetArg1(), obj);
             auto class_scope = obj->ToObject();
             class_scope->SetParent(GetScope());
