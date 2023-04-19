@@ -1,9 +1,10 @@
 #include <fstream>
 #include <iostream>
 #include <set>
-#include "RnVersionInfo.h"
 #include "codegen/RnCodeGenerator.h"
+#include "common/RnInternment.h"
 #include "lexer/Lexer.h"
+#include "lexer/Token.h"
 #include "parser/Parser.h"
 #include "parser/RnAstValidator.h"
 #include "util/ArgParser.h"
@@ -12,6 +13,9 @@
 #include "vm/RnMemoryManager.h"
 #include "vm/RnObject.h"
 #include "vm/RnVirtualMachine.h"
+
+// @formatter:off
+#include "RnBuildInfo.h"
 
 /*****************************************************************************/
 void RonaScriptMain(int argc, char* argv[]) {
@@ -100,8 +104,8 @@ void RonaScriptMain(int argc, char* argv[]) {
     std::ofstream ofs;
     ofs.open(cfile.c_str(), std::ios::binary);
     ofs.write("$$CONST$$", 9);
-    for (size_t i = 1; i <= RnObject::object_internment->GetIndex(); i++) {
-        auto object = RnObject::object_internment->GetInternedItem(i);
+    for (size_t i = 1; i <= RnConstStore::object_internment->GetIndex(); i++) {
+        auto object = RnConstStore::object_internment->GetInternedItem(i);
         char* buf = new char[object->GetByteSize()];
         object->GetBytes(buf);
         ofs.write(buf, object->GetByteSize());

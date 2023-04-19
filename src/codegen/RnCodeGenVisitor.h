@@ -50,8 +50,6 @@ class DeleteStmt;
 class ExitStmt;
 class AttributeAccess;
 
-typedef std::vector<RnInstruction*> InstructionBlock;
-
 class RnCodeGenVisitor : public RnAstVisitor<InstructionBlock> {
 public:
     RnCodeGenVisitor() = default;

@@ -8,8 +8,9 @@
 ******************************************************************************/
 
 #include "RnCodeGenerator.h"
-#include <memory>
+#include "../parser/ast/Ast.h"
 #include "../parser/ast/Module.h"
+#include "RnCodeGenVisitor.h"
 
 /*****************************************************************************/
 RnCodeGenerator::RnCodeGenerator() = default;

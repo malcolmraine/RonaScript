@@ -35,8 +35,8 @@ class RnScope;
 class RnClassObject : public RnObjectBase<RnScope*> {
 public:
     RnClassObject();
-    RnClassObject(RnScope* data);
-    ~RnClassObject();
+    explicit RnClassObject(RnScope* data);
+    ~RnClassObject() override;
     [[nodiscard]] RnStringNative ToString() const override;
     void CopySymbols(RnScope* target);
 

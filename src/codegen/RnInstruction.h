@@ -64,4 +64,6 @@ private:
     uint32_t _arg3 = 0;
 };
 
+typedef std::vector<RnInstruction*> InstructionBlock;
+
 #endif  //RONASCRIPT_RNINSTRUCTION_H

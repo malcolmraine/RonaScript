@@ -11,6 +11,7 @@
 #include <memory>
 #include <utility>
 #include "../lexer/Lexer.h"
+#include "../lexer/Token.h"
 #include "../util/LoopCounter.h"
 #include "../util/RnStack.h"
 #include "../util/log.h"
@@ -746,7 +747,7 @@ std::shared_ptr<AstNode> Parser::ParseAssignmentStatement(
         bin_expr->_op = op;
         bin_expr->_right = ParseExpr();
         auto final_rexpr = TransformBinaryExpr(bin_expr);
-        if (bin_expr != final_rexpr && final_rexpr->node_type == AST_UNARY_EXPR){
+        if (bin_expr != final_rexpr && final_rexpr->node_type == AST_UNARY_EXPR) {
             return final_rexpr;
         } else {
             node->SetRexpr(final_rexpr);

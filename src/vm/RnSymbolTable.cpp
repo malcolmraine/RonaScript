@@ -45,7 +45,7 @@ RnObject* RnSymbolTable::GetObject(RnIntNative symbol, bool should_throw) {
     } else {
         if (should_throw) {
             throw std::runtime_error("Symbol not found: " +
-                                     RnObject::GetInternedString(symbol));
+                                     RnConstStore::GetInternedString(symbol));
         }
         return nullptr;
     }
@@ -60,7 +60,7 @@ void RnSymbolTable::RemoveSymbol(RnIntNative symbol) {
         _parent_table->RemoveSymbol(symbol);
     } else {
         throw std::runtime_error("Attempting to delete unknown symbol '" +
-                                 RnObject::GetInternedString(symbol) + "'");
+                                 RnConstStore::GetInternedString(symbol) + "'");
     }
 }
 

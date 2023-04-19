@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <iostream>
 #include <utility>
+#include "../util/FileInfo.h"
 #include "Token.h"
 #include "TokenType.h"
 

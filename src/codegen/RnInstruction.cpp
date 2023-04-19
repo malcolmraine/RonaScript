@@ -81,36 +81,36 @@ auto RnInstruction::ToString() -> std::string {
 
     switch (_opcode) {
         case OP_LOAD_LITERAL:
-            arg1_str = RnObject::GetInternedObject(_arg1)->ToString();
+            arg1_str = RnConstStore::GetInternedObject(_arg1)->ToString();
             break;
         case OP_ATTR_ACCESS:
-            arg1_str = RnObject::GetInternedString(_arg1);
+            arg1_str = RnConstStore::GetInternedString(_arg1);
             break;
         case OP_UNARY_INCREMENT:
         case OP_UNARY_DECREMENT:
         case OP_LOAD_VALUE:
-            arg1_str = RnObject::GetInternedString(_arg1);
+            arg1_str = RnConstStore::GetInternedString(_arg1);
             break;
         case OP_MAKE_LOCAL:
         case OP_MAKE_VAR:
         case OP_MAKE_CONST:
         case OP_MAKE_GLOBAL:
             arg1_str = RnType::TypeToString(static_cast<RnType::Type>(_arg1));
-            arg2_str = RnObject::GetInternedString(_arg2);
+            arg2_str = RnConstStore::GetInternedString(_arg2);
             break;
         case OP_MAKE_ALIAS:
         case OP_RESOLVE_NAMESPACE:
         case OP_MAKE_MODULE:
         case OP_MAKE_CLASS:
-            arg1_str = RnObject::GetInternedString(_arg1);
+            arg1_str = RnConstStore::GetInternedString(_arg1);
             break;
         case OP_MAKE_FUNC:
-            arg1_str = RnObject::GetInternedString(_arg1);
+            arg1_str = RnConstStore::GetInternedString(_arg1);
             arg2_str = RnType::TypeToString(static_cast<RnType::Type>(_arg2));
             break;
         case OP_MAKE_ARG:
             arg1_str = RnType::TypeToString(static_cast<RnType::Type>(_arg1));
-            arg2_str = RnObject::GetInternedString(_arg2);
+            arg2_str = RnConstStore::GetInternedString(_arg2);
             break;
         case OP_TRY_CONTEXT:
         case OP_JUMPF:

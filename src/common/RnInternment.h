@@ -13,7 +13,9 @@
 #include <functional>
 #include <string>
 #include <unordered_map>
-#include "../common/RnType.h"
+#include "RnType.h"
+
+class RnObject;
 
 typedef RnIntNative InternmentKey;
 
@@ -51,6 +53,20 @@ protected:
     InternmentKey _index = 0;
     std::unordered_map<InternmentKey, T> _key_item_map;
     std::unordered_map<T, InternmentKey> _item_key_map;
+};
+
+class RnConstStore {
+public:
+    static std::string GetInternedString(InternmentKey key);
+    static double GetInternedFloat(InternmentKey key);
+    static long GetInternedInt(InternmentKey key);
+    static RnObject* GetInternedObject(InternmentKey key);
+    static RnIntNative InternValue(RnFloatNative x);
+    static RnIntNative InternValue(RnBoolNative x);
+    static RnIntNative InternValue(const RnStringNative& x);
+    static RnIntNative InternValue(RnIntNative x);
+
+    static RnInternment<RnObject*>* object_internment;
 };
 
 #endif  //RONASCRIPT_RNINTERNMENT_H

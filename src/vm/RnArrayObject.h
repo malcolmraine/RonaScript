@@ -16,8 +16,8 @@
 class RnArrayObject : public RnObjectBase<RnArrayNative> {
 public:
     RnArrayObject();
-    RnArrayObject(const RnArrayNative& data);
-    ~RnArrayObject();
+    explicit RnArrayObject(const RnArrayNative& data);
+    ~RnArrayObject() override;
 
     RnObject* operator+(RnObject* obj) override;
     RnObject* operator-(RnObject* obj) override;

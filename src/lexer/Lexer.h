@@ -30,11 +30,9 @@
 
 #include <sys/stat.h>
 #include <fstream>
-#include <map>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-#include "../util/FileInfo.h"
 #include "../util/RnSequencer.h"
 #include "TokenType.h"
 
@@ -50,6 +48,7 @@
 #define IS_SIGNED_POSITIVE_LITERAL(s) ((s)[0] == '+')
 
 class Token;
+class FileInfo;
 
 class Lexer : public RnSequencer<char, char> {
 public:

@@ -43,10 +43,10 @@ RnVirtualMachine::RnVirtualMachine() {
     _call_stack.reserve(50);
     _memory_manager = new RnMemoryManager();
 
-    _object_this_key = RnObject::InternValue(static_cast<std::string>("this"));
-    _object_cls_key = RnObject::InternValue(static_cast<std::string>("cls"));
+    _object_this_key = RnConstStore::InternValue(static_cast<std::string>("this"));
+    _object_cls_key = RnConstStore::InternValue(static_cast<std::string>("cls"));
     _object_construct_key =
-        RnObject::InternValue(static_cast<std::string>("construct"));
+        RnConstStore::InternValue(static_cast<std::string>("construct"));
 }
 
 /*****************************************************************************/
@@ -318,7 +318,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_LOAD_LITERAL: {
             PREDICTION_TARGET(OP_LOAD_LITERAL)
-            auto obj = RnObject::GetInternedObject(instruction->GetArg1());
+            auto obj = RnConstStore::GetInternedObject(instruction->GetArg1());
             GetStack().push_back(obj);
             PREDICT_OPCODE(OP_LOAD_VALUE)
             PREDICT_OPCODE(OP_LOAD_LITERAL)
@@ -330,7 +330,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto object = GetScope()->GetObject(key);
 
             if (object) {
-                //                Log::DEBUG("Loading (" + RnObject::GetInternedString(key) + ", " +
+                //                Log::DEBUG("Loading (" + RnConstStore::GetInternedString(key) + ", " +
                 //                           RnType::TypeToString(object->GetType()) + ")");
                 if (object->IsClass() &&
                     _instructions[index + 1]->GetOpcode() == OP_CALL) {
@@ -355,7 +355,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 }
             } else {
                 throw std::runtime_error("Symbol does not exist: " +
-                                         RnObject::GetInternedString(key));
+                                         RnConstStore::GetInternedString(key));
             }
             PREDICT_OPCODE(OP_LOAD_VALUE)
             PREDICT_OPCODE(OP_LOAD_LITERAL)
@@ -477,7 +477,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_MAKE_MODULE: {
-            auto name = RnObject::GetInternedString(instruction->GetArg1());
+            auto name = RnConstStore::GetInternedString(instruction->GetArg1());
             auto obj = dynamic_cast<RnClassObject*>(
                 RnObject::Create(RnType::RN_CLASS_INSTANCE));
             obj->SetIsModule(true);
@@ -495,12 +495,13 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_MAKE_CLASS: {
-            auto name_obj = RnObject::GetInternedObject(instruction->GetArg1());
+            auto name_obj = RnConstStore::GetInternedObject(instruction->GetArg1());
             name_obj->SetConstFlag(true);
             auto obj = dynamic_cast<RnClassObject*>(
                 RnObject::Create(RnType::RN_CLASS_INSTANCE));
             obj->SetIsClass(true);
-            obj->GetScope()->StoreObject(RnObject::InternValue("__class"), name_obj);
+            obj->GetScope()->StoreObject(RnConstStore::InternValue("__class"),
+                                         name_obj);
             GetScope()->StoreObject(instruction->GetArg1(), obj);
             auto class_scope = obj->ToObject();
             class_scope->SetParent(GetScope());
@@ -518,7 +519,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto obj = dynamic_cast<RnFunctionObject*>(
                 _memory_manager->CreateObject(RnType::RN_FUNCTION));
             GetScope()->GetMemoryGroup()->AddObject(obj);
-            auto name = RnObject::GetInternedString(instruction->GetArg1());
+            auto name = RnConstStore::GetInternedString(instruction->GetArg1());
             auto type = static_cast<RnType::Type>(instruction->GetArg2());
             auto scope_size = instruction->GetArg3();
             auto func = new RnFunction(name, index + 1, scope_size);
@@ -665,7 +666,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             } else {
                 throw std::runtime_error(
                     "Object has no attribute '" +
-                    RnObject::GetInternedString(instruction->GetArg1()) + "'");
+                    RnConstStore::GetInternedString(instruction->GetArg1()) + "'");
             }
 
             // Only want to set "this" binding if the function is immediately called.
@@ -868,6 +869,6 @@ void RnVirtualMachine::RegisterBuiltins() {
             _memory_manager->CreateObject(RnType::RN_FUNCTION));
         GetScope()->GetMemoryGroup()->AddObject(obj);
         obj->SetData(func);
-        GetScope()->StoreObject(RnObject::InternValue(std::get<0>(parts)), obj);
+        GetScope()->StoreObject(RnConstStore::InternValue(std::get<0>(parts)), obj);
     }
 }

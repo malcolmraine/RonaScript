@@ -14,15 +14,13 @@
 #include "AstNode.h"
 
 class ScopeNode;
-
 class RnCodeGenVisitor;
-
 class Name;
 
 class ClassDecl : public AstNode {
 public:
     ClassDecl();
-    ~ClassDecl();
+    ~ClassDecl() override;
     std::string ToString(bool nl) override;
 
     std::string id;
