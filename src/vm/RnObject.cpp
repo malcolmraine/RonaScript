@@ -8,8 +8,6 @@
 ******************************************************************************/
 
 #include "RnObject.h"
-
-#include <utility>
 #include "RnAnyObject.h"
 #include "RnArrayObject.h"
 #include "RnBoolObject.h"
@@ -20,9 +18,6 @@
 #include "RnNullObject.h"
 #include "RnStringObject.h"
 #include "RnVirtualMachine.h"
-
-RnInternment<RnObject*>* RnObject::object_internment = new RnInternment<RnObject*>(
-    [](RnObject* a, RnObject* b) { return RnObject::ValueCompare(a, b); });
 
 bool RnObject::ValueCompare(RnObject* a, RnObject* b) {
     if (a->GetType() != b->GetType()) {
@@ -58,48 +53,6 @@ bool RnObject::ValueCompare(RnObject* a, RnObject* b) {
 /*****************************************************************************/
 static RnObject* GetNullObject() {
     return RnObject::null_object;
-}
-
-/*****************************************************************************/
-std::string RnObject::GetInternedString(InternmentKey key) {
-    return object_internment->GetInternedItem(key)->ToString();
-}
-
-/*****************************************************************************/
-double RnObject::GetInternedFloat(InternmentKey key) {
-    return object_internment->GetInternedItem(key)->ToFloat();
-}
-
-/*****************************************************************************/
-long RnObject::GetInternedInt(InternmentKey key) {
-    return object_internment->GetInternedItem(key)->ToInt();
-}
-
-/*****************************************************************************/
-RnObject* RnObject::GetInternedObject(InternmentKey key) {
-    return object_internment->GetInternedItem(key);
-}
-
-/*****************************************************************************/
-RnIntNative RnObject::InternValue(RnFloatNative x) {
-
-    return object_internment->InternItem(new RnFloatObject(x));
-}
-
-/*****************************************************************************/
-RnIntNative RnObject::InternValue(RnBoolNative x) {
-
-    return object_internment->InternItem(new RnBoolObject(x));
-}
-
-/*****************************************************************************/
-RnIntNative RnObject::InternValue(const RnStringNative& x) {
-    return object_internment->InternItem(new RnStringObject(x));
-}
-
-/*****************************************************************************/
-RnIntNative RnObject::InternValue(RnIntNative x) {
-    return object_internment->InternItem(new RnIntObject(x));
 }
 
 /*****************************************************************************/

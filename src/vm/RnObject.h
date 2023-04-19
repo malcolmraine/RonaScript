@@ -59,14 +59,14 @@ public:
     virtual void SetData(RnFunction* data) = 0;
     virtual void SetData(RnScope* data) = 0;
     virtual void CopyDataFromObject(RnObject* obj) = 0;
-    static std::string GetInternedString(InternmentKey key);
-    static double GetInternedFloat(InternmentKey key);
-    static long GetInternedInt(InternmentKey key);
-    static RnObject* GetInternedObject(InternmentKey key);
-    static RnIntNative InternValue(RnFloatNative x);
-    static RnIntNative InternValue(RnBoolNative x);
-    static RnIntNative InternValue(const RnStringNative& x);
-    static RnIntNative InternValue(RnIntNative x);
+//    static std::string GetInternedString(InternmentKey key);
+//    static double GetInternedFloat(InternmentKey key);
+//    static long GetInternedInt(InternmentKey key);
+//    static RnObject* GetInternedObject(InternmentKey key);
+//    static RnIntNative InternValue(RnFloatNative x);
+//    static RnIntNative InternValue(RnBoolNative x);
+//    static RnIntNative InternValue(const RnStringNative& x);
+//    static RnIntNative InternValue(RnIntNative x);
     static RnObject* Create(RnBoolNative data);
     static RnObject* Create(const RnStringNative& data);
     static RnObject* Create(RnIntNative data);
@@ -116,7 +116,6 @@ public:
 
 public:
     static RnObject* null_object;
-    static RnInternment<RnObject*>* object_internment;
 
 private:
     bool _is_marked = false;

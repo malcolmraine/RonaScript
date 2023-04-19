@@ -121,21 +121,21 @@ void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library,
             auto obj =
                 dynamic_cast<RnFunctionObject*>(RnObject::Create(RnType::RN_FUNCTION));
             obj->SetData(func);
-            scope->StoreObject(RnObject::InternValue(name), obj);
+            scope->StoreObject(RnConstStore::InternValue(name), obj);
         }
 
         if (add_data) {
             auto name_list = RnObject::Create(RnType::RN_ARRAY);
             name_list->SetData(function_names);
-            scope->StoreObject(RnObject::InternValue("__exports__"), name_list);
+            scope->StoreObject(RnConstStore::InternValue("__exports__"), name_list);
 
             auto name_obj = RnObject::Create(RnType::RN_STRING);
             name_obj->SetData(static_cast<std::string>(LibraryName()));
-            scope->StoreObject(RnObject::InternValue("__name__"), name_obj);
+            scope->StoreObject(RnConstStore::InternValue("__name__"), name_obj);
 
             auto version_obj = RnObject::Create(RnType::RN_STRING);
             version_obj->SetData(static_cast<std::string>(LibraryVersion()));
-            scope->StoreObject(RnObject::InternValue("__version__"), version_obj);
+            scope->StoreObject(RnConstStore::InternValue("__version__"), version_obj);
         }
     } else {
         Log::DEBUG("Unable to load external library: " + library);

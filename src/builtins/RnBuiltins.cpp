@@ -43,7 +43,7 @@ void RnBuiltins::rn_builtin_call(RnScope* scope, const RnArrayNative& args,
     assert(ret_val);
     assert(scope);
 
-    auto obj = scope->GetObject(RnObject::InternValue(args.front()->ToString()));
+    auto obj = scope->GetObject(RnConstStore::InternValue(args.front()->ToString()));
     auto func_obj = dynamic_cast<RnFunctionObject*>(obj);
     auto func = func_obj->GetData();
     RnArrayNative callArgs(args.begin() + 1, args.end());
@@ -104,7 +104,7 @@ void RnBuiltins::rn_builtin_bind(RnScope* scope, const RnArrayNative& args,
     if (args.size() == 3) {
         name = args[2]->ToString();
     }
-    func->GetData()->GetScope()->StoreObject(RnObject::InternValue(name), obj);
+    func->GetData()->GetScope()->StoreObject(RnConstStore::InternValue(name), obj);
     ret_val->SetData(func->GetData());
 }
 
@@ -144,7 +144,7 @@ void RnBuiltins::rn_builtin_listattr(RnScope* scope, const RnArrayNative& args,
 
     RnArrayNative attrs;
     for (const auto& attr : args.front()->ToObject()->GetSymbolTable()->GetSymbols()) {
-        attrs.push_back(RnObject::Create(RnObject::GetInternedString(attr)));
+        attrs.push_back(RnObject::Create(RnConstStore::GetInternedString(attr)));
     }
     ret_val->SetData(attrs);
 }
@@ -164,7 +164,7 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope, const RnArrayNative& args,
     for (const auto& attr : target_scope->GetSymbolTable()->GetSymbols()) {
         auto pair_obj =
             dynamic_cast<RnArrayObject*>(RnObject::Create(RnType::RN_ARRAY));
-        RnArrayNative data = {RnObject::Create(RnObject::GetInternedString(attr)),
+        RnArrayNative data = {RnObject::Create(RnConstStore::GetInternedString(attr)),
                               target_scope->GetObject(attr)};
         pair_obj->SetData(data);
         attrs.push_back(pair_obj);
@@ -179,7 +179,7 @@ void RnBuiltins::rn_builtin_hasattr(RnScope* scope, const RnArrayNative& args,
     assert(scope);
 
     auto obj = args[0]->ToObject();
-    auto attr_key = RnObject::InternValue(args[1]->ToString());
+    auto attr_key = RnConstStore::InternValue(args[1]->ToString());
     ret_val->SetData(obj->GetSymbolTable()->SymbolExists(attr_key));
 }
 
@@ -190,7 +190,7 @@ void RnBuiltins::rn_builtin_getattr(RnScope* scope, const RnArrayNative& args,
     assert(scope);
 
     auto obj = args[0]->ToObject();
-    auto attr_key = RnObject::InternValue(args[1]->ToString());
+    auto attr_key = RnConstStore::InternValue(args[1]->ToString());
     if (obj->GetSymbolTable()->SymbolExists(attr_key)) {
         auto original = obj->GetObject(attr_key);
         auto result = RnObject::Create(original->GetType());
@@ -207,7 +207,7 @@ void RnBuiltins::rn_builtin_setattr(RnScope* scope, const RnArrayNative& args,
     assert(scope);
 
     auto obj = args[0]->ToObject();
-    auto attr_key = RnObject::InternValue(args[1]->ToString());
+    auto attr_key = RnConstStore::InternValue(args[1]->ToString());
     if (obj->GetSymbolTable()->SymbolExists(attr_key)) {
         auto original = obj->GetObject(attr_key);
         original->CopyDataFromObject(args[2]);
@@ -226,7 +226,7 @@ void RnBuiltins::rn_builtin_delattr(RnScope* scope, const RnArrayNative& args,
     assert(scope);
 
     auto obj = args[0]->ToObject();
-    auto attr_key = RnObject::InternValue(args[1]->ToString());
+    auto attr_key = RnConstStore::InternValue(args[1]->ToString());
     if (obj->GetSymbolTable()->SymbolExists(attr_key)) {
         obj->RemoveObject(attr_key);
         ret_val->SetData(true);

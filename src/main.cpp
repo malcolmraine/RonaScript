@@ -12,6 +12,7 @@
 #include "vm/RnMemoryManager.h"
 #include "vm/RnObject.h"
 #include "vm/RnVirtualMachine.h"
+#include "vm/RnInternment.h"
 
 /*****************************************************************************/
 void RonaScriptMain(int argc, char* argv[]) {
@@ -100,8 +101,8 @@ void RonaScriptMain(int argc, char* argv[]) {
     std::ofstream ofs;
     ofs.open(cfile.c_str(), std::ios::binary);
     ofs.write("$$CONST$$", 9);
-    for (size_t i = 1; i <= RnObject::object_internment->GetIndex(); i++) {
-        auto object = RnObject::object_internment->GetInternedItem(i);
+    for (size_t i = 1; i <= RnConstStore::object_internment->GetIndex(); i++) {
+        auto object = RnConstStore::object_internment->GetInternedItem(i);
         char* buf = new char[object->GetByteSize()];
         object->GetBytes(buf);
         ofs.write(buf, object->GetByteSize());
