@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <set>
-#include "RnVersionInfo.h"
+#include "RnBuildInfo.h"
 #include "codegen/RnCodeGenerator.h"
 #include "lexer/Lexer.h"
 #include "parser/Parser.h"
