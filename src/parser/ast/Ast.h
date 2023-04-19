@@ -11,11 +11,10 @@
 #define RONASCRIPT_AST_H
 
 #include <map>
-#include "../../util/FileInfo.h"
 
 class Module;
-
 class ScopeNode;
+class FileInfo;
 
 class Ast {
 public:

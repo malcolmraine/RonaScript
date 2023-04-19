@@ -10,6 +10,8 @@
 #ifndef RONASCRIPT_SRC_RNBUILDINFO_H_
 #define RONASCRIPT_SRC_RNBUILDINFO_H_
 
+#define RONASCRIPT_VERSION "0.0.1 beta"
+
 #define DEBUG
 //#define RELEASE
 

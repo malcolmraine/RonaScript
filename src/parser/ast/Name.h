@@ -15,7 +15,6 @@
 #include "NodeType.h"
 
 class RnCodeGenVisitor;
-
 class RnCodeGenVisitor;
 
 class Name : public AstNode {

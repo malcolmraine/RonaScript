@@ -10,9 +10,11 @@
 #ifndef RONASCRIPT_RNCODEGENERATOR_H
 #define RONASCRIPT_RNCODEGENERATOR_H
 
-#include "../parser/ast/Ast.h"
-#include "../vm/RnInternment.h"
+#include <memory>
+#include "../common/RnInternment.h"
 #include "RnCodeGenVisitor.h"
+
+class Ast;
 
 class RnCodeGenerator {
 public:

@@ -11,12 +11,11 @@
 #define RONASCRIPT_ASTNODE_H
 
 #include <string>
-#include "../../codegen/RnInstruction.h"
 #include "../../lexer/Token.h"
-#include "../../util/FileInfo.h"
 #include "NodeType.h"
 
 class RnCodeGenVisitor;
+class FileInfo;
 
 class AstNode {
 public:

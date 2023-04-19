@@ -15,8 +15,8 @@
 // This is a class declaration
 class RnClass : public RnScope {
 public:
-    RnClass(RnScope* parent);
-    ~RnClass();
+    explicit RnClass(RnScope* parent);
+    ~RnClass() override;
     void CopySymbols(RnScope* target);
 
     [[nodiscard]] std::string GetName() const {

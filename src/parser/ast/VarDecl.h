@@ -16,11 +16,8 @@
 #include "AstNode.h"
 
 class RnCodeGenVisitor;
-
 class RnInstruction;
-
 class Token;
-
 class RnInstruction;
 
 class VarDecl : public AstNode {
