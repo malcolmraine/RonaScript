@@ -17,11 +17,11 @@
 #include <unordered_set>
 #include <vector>
 #include "../common/RnType.h"
-#include "../lexer/Token.h"
 #include "../lexer/TokenType.h"
 #include "../util/RnSequencer.h"
 #include "ast/Ast.h"
 
+class Token;
 class StringLiteral;
 class ScopeNode;
 class ImportStmt;

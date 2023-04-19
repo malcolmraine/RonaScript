@@ -8,11 +8,10 @@
 ******************************************************************************/
 
 #include "RnInternment.h"
-#include "RnObject.h"
-#include "RnFloatObject.h"
-#include "RnStringObject.h"
-#include "RnIntObject.h"
-#include "RnBoolObject.h"
+#include "../vm/RnBoolObject.h"
+#include "../vm/RnFloatObject.h"
+#include "../vm/RnIntObject.h"
+#include "../vm/RnStringObject.h"
 
 RnInternment<RnObject*>* RnConstStore::object_internment = new RnInternment<RnObject*>(
     [](RnObject* a, RnObject* b) { return RnObject::ValueCompare(a, b); });

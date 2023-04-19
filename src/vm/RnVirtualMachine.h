@@ -16,7 +16,7 @@
 #include <utility>
 #include <vector>
 #include "../codegen/RnInstruction.h"
-#include "RnInternment.h"
+#include "../common/RnInternment.h"
 #include "RnScope.h"
 
 class RnObject;

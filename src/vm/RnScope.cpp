@@ -23,7 +23,7 @@
 #include "RnStringObject.h"
 #include "RnSymbolTable.h"
 
-std::map<std::string, void*> RnScope::_handles;
+std::unordered_map<std::string, void*> RnScope::_handles;
 
 /*****************************************************************************/
 RnScope::RnScope(RnScope* parent) : _memory_group(nullptr) {

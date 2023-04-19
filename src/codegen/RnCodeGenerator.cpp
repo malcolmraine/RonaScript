@@ -8,7 +8,8 @@
 ******************************************************************************/
 
 #include "RnCodeGenerator.h"
-#include <memory>
+#include "../parser/ast/Ast.h"
+#include "RnCodeGenVisitor.h"
 #include "../parser/ast/Module.h"
 
 /*****************************************************************************/

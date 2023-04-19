@@ -13,13 +13,12 @@
 #include "AstNode.h"
 
 class VarDecl;
-
 class ScopeNode;
 
 class ForLoop : public AstNode {
 public:
     ForLoop();
-    ~ForLoop();
+    ~ForLoop() override;
     std::string ToString(bool nl) override;
 
     std::shared_ptr<AstNode> init = nullptr;

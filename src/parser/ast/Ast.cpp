@@ -9,6 +9,7 @@
 
 #include "Ast.h"
 #include "ScopeNode.h"
+#include "../../util/FileInfo.h"
 
 /*****************************************************************************/
 Ast::Ast() {

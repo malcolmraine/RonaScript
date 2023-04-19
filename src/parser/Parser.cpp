@@ -13,6 +13,7 @@
 #include "../lexer/Lexer.h"
 #include "../util/LoopCounter.h"
 #include "../util/RnStack.h"
+#include "../lexer/Token.h"
 #include "../util/log.h"
 #include "ast/AliasDecl.h"
 #include "ast/ArgDecl.h"

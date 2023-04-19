@@ -18,7 +18,7 @@ class ScopeNode;
 class CatchBlock : public AstNode {
 public:
     CatchBlock();
-    ~CatchBlock();
+    ~CatchBlock() override;
     std::string ToString(bool nl) override;
 
     [[nodiscard]] const std::vector<std::shared_ptr<Name>>& GetExceptionIds() const {

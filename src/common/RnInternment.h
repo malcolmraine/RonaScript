@@ -13,7 +13,7 @@
 #include <functional>
 #include <string>
 #include <unordered_map>
-#include "../common/RnType.h"
+#include "RnType.h"
 
 class RnObject;
 

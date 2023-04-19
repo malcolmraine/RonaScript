@@ -1,8 +1,8 @@
 #include <fstream>
 #include <iostream>
 #include <set>
-#include "RnBuildInfo.h"
 #include "codegen/RnCodeGenerator.h"
+#include "common/RnInternment.h"
 #include "lexer/Lexer.h"
 #include "parser/Parser.h"
 #include "parser/RnAstValidator.h"
@@ -11,8 +11,11 @@
 #include "util/log.h"
 #include "vm/RnMemoryManager.h"
 #include "vm/RnObject.h"
+#include "lexer/Token.h"
 #include "vm/RnVirtualMachine.h"
-#include "vm/RnInternment.h"
+
+// @formatter:off
+#include "RnBuildInfo.h"
 
 /*****************************************************************************/
 void RonaScriptMain(int argc, char* argv[]) {

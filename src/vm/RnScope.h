@@ -10,12 +10,10 @@
 #ifndef RONASCRIPT_RNSCOPE_H
 #define RONASCRIPT_RNSCOPE_H
 
-#include <map>
 #include <variant>
 #include <vector>
 #include "../util/RnStack.h"
 #include "RnMemoryGroup.h"
-#include "RnScope.h"
 #include "RnSymbolTable.h"
 
 class RnBoolObject;
@@ -69,7 +67,7 @@ protected:
 
 private:
     int _linked_scope_count = 0;
-    static std::map<std::string, void*> _handles;
+    static std::unordered_map<std::string, void*> _handles;
     std::unordered_map<RnIntNative, RnClassObject*> _namespaces;
 };
 
