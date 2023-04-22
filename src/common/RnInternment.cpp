@@ -57,3 +57,8 @@ RnIntNative RnConstStore::InternValue(const RnStringNative& x) {
 RnIntNative RnConstStore::InternValue(RnIntNative x) {
     return object_internment->InternItem(new RnIntObject(x));
 }
+
+/*****************************************************************************/
+void RnConstStore::LoadObject(RnObject* object) {
+    object_internment->LoadObject(object);
+}

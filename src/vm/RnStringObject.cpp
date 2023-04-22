@@ -62,7 +62,7 @@ size_t RnStringObject::GetByteSize() const {
     // type - 1 byte
     // length = 4 bytes
     // data - length * 1 byte
-    return 5 + _data.length();
+    return RN_SIZE_BYTES_LENGTH + RN_TYPE_BYTES_LENGTH + _data.length();
 }
 
 /*************************************************************************/
@@ -74,20 +74,20 @@ size_t RnStringObject::GetBytes(char* buf) {
         char bytes[RN_SIZE_BYTES_LENGTH];
         size_t len = 0;
     } size_bytes;
-    size_bytes.len = _data.size() + 1;
+    size_bytes.len = _data.size();
     buf[i++] = static_cast<char>(RnType::RN_STRING);
-    buf[i++] = size_bytes.bytes[0];
-    buf[i++] = size_bytes.bytes[1];
-    buf[i++] = size_bytes.bytes[2];
-    buf[i++] = size_bytes.bytes[3];
+
+    for (char byte : size_bytes.bytes) {
+        buf[i++] = byte;
+    }
+
     for (auto c : _data) {
         buf[i++] = c;
     }
-    buf[i++] = '\0';
     return i;
 }
 
 /*************************************************************************/
 void RnStringObject::SetBytes(const char* buf, size_t n) {
-    _data = std::string(buf + 5);
+    _data = std::string(buf, n);
 }

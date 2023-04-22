@@ -25,7 +25,7 @@ typedef std::vector<RnObject*> RnArrayNative;
 
 #define RN_NUMERIC_DATA_LENGTH (8)
 #define RN_TYPE_BYTES_LENGTH (1)
-#define RN_SIZE_BYTES_LENGTH (4)
+#define RN_SIZE_BYTES_LENGTH (8)
 
 typedef union {
     char c_data[RN_NUMERIC_DATA_LENGTH];

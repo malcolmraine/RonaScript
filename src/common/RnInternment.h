@@ -48,6 +48,13 @@ public:
         return _index;
     }
 
+    // This is used for loading the internment from a binary file
+    void LoadObject(RnObject* object) {
+        _index++;
+        _key_item_map[_index] = object;
+        _item_key_map[object] = _index;
+    }
+
 protected:
     FUNC _compare;
     InternmentKey _index = 0;
@@ -65,6 +72,7 @@ public:
     static RnIntNative InternValue(RnBoolNative x);
     static RnIntNative InternValue(const RnStringNative& x);
     static RnIntNative InternValue(RnIntNative x);
+    static void LoadObject(RnObject* object);
 
     static RnInternment<RnObject*>* object_internment;
 };
