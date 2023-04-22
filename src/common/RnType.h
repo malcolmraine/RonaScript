@@ -17,7 +17,7 @@
 
 class RnObject;
 
-typedef long long RnIntNative;
+typedef int64_t RnIntNative;
 typedef double RnFloatNative;
 typedef std::string RnStringNative;
 typedef bool RnBoolNative;
