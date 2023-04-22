@@ -43,7 +43,16 @@ void WriteHeader(std::fstream& fs, const std::string& header) {
 /*****************************************************************************/
 bool BinaryWriter::Write() {
     std::fstream fs;
-    fs.open(_outfile.c_str());
+
+    if (fs.is_open()) {
+        fs.close();
+    }
+    fs.open(_outfile.c_str(), std::ios_base::out | std::ios_base::trunc);
+
+    if (fs.fail()) {
+        throw std::runtime_error("Failed to open file: " + _outfile);
+    }
+
     WriteHeader(fs, CONST_HEADER);
     IntByteConversion const_count;
     std::memset(const_count.bytes, 0, RN_SIZE_BYTES_LENGTH);
@@ -114,7 +123,7 @@ void ReadHeader(char* buf, const std::string& header, const std::string& label,
 /*****************************************************************************/
 bool BinaryReader::Read(InstructionBlock& instructions) {
     std::ifstream fs;
-    fs.open(_infile.c_str());
+    fs.open(_infile.c_str(), std::ios_base::in);
 
     if (fs.fail()) {
         throw std::runtime_error("Failed to open file: " + _infile);
