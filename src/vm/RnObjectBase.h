@@ -180,4 +180,3 @@ protected:
     bool _is_const = false;
     bool _initialized = false;
 };
-

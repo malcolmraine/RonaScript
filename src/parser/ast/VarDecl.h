@@ -33,4 +33,3 @@ public:
     bool is_global = false;
     bool is_literal = false;
 };
-

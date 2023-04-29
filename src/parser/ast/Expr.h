@@ -20,4 +20,3 @@ public:
 
     std::shared_ptr<AstNode> expr = nullptr;
 };
-

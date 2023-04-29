@@ -36,4 +36,3 @@ public:
     ~ContinueStmt() override;
     std::string ToString(bool nl) override;
 };
-

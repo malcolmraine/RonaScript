@@ -29,9 +29,9 @@
 #pragma once
 
 #include <string>
-#include "AstNode.h"
 #include <variant>
 #include "../../common/RnType.h"
+#include "AstNode.h"
 
 class LiteralValue : public AstNode {
 public:
@@ -39,5 +39,5 @@ public:
     ~LiteralValue() override;
     std::string ToString(bool nl) override;
 
-    std::variant<RnFloatNative , RnIntNative, RnStringNative , RnBoolNative> data;
+    std::variant<RnFloatNative, RnIntNative, RnStringNative, RnBoolNative> data;
 };

@@ -49,4 +49,3 @@ public:
     std::vector<Token*> qualifiers;
     std::shared_ptr<ScopeNode> scope = nullptr;
 };
-

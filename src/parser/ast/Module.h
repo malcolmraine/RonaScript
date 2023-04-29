@@ -23,4 +23,3 @@ public:
     std::shared_ptr<Name> name = nullptr;
     std::shared_ptr<ScopeNode> scope = nullptr;
 };
-

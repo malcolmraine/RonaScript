@@ -73,4 +73,3 @@ typedef enum : int {
 
 std::string GetOpCodeAsString(RnOpCode opcode);
 RnOpCode GetOpCodeFromOperator(const std::string& op);
-

@@ -30,4 +30,3 @@ public:
 protected:
     std::string MakeTabStr();
 };
-

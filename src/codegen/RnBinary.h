@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include <string>
-#include "../codegen/RnInstruction.h"
 #include <fstream>
 #include <iostream>
+#include <string>
+#include "../codegen/RnInstruction.h"
 
 class RnObject;
 
@@ -20,7 +20,7 @@ class RnObject;
 /*****************************************************************************/
 class BinaryWriter {
 public:
-    explicit BinaryWriter(std::string  file);
+    explicit BinaryWriter(std::string file);
     ~BinaryWriter();
     void SetInstructions(const InstructionBlock& instructions);
     bool Write();
@@ -34,7 +34,7 @@ private:
 /*****************************************************************************/
 class BinaryReader {
 public:
-    explicit BinaryReader(std::string  file);
+    explicit BinaryReader(std::string file);
     ~BinaryReader();
     bool Read(InstructionBlock& instructions);
     RnObject* ReadObject(std::fstream& fs);

@@ -59,4 +59,3 @@ public:
     FilePosition file_pos;
     FileInfo* file_info;
 };
-

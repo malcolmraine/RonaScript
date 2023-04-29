@@ -23,4 +23,3 @@ public:
 
     std::shared_ptr<LiteralValue> exit_code = nullptr;
 };
-

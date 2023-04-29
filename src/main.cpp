@@ -155,7 +155,7 @@ void RonaScriptMain(int argc, char* argv[]) {
 
     if (file.extension() == ".rnc") {
         Read(file, instructions);
-//        PrintInstructions(instructions);
+        //        PrintInstructions(instructions);
         Run(instructions);
         return;
     } else {
@@ -168,7 +168,7 @@ void RonaScriptMain(int argc, char* argv[]) {
         if (arg_parser.IsSet("-r")) {
             Run(instructions);
         }
-//        PrintInstructions(instructions);
+        //        PrintInstructions(instructions);
     }
 }
 

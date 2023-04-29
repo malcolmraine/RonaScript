@@ -90,4 +90,3 @@ public:
 private:
     std::vector<T> _data;
 };
-

@@ -72,4 +72,3 @@ private:
 #define INCR_LOOP_COUNTER
 #endif
 #endif
-

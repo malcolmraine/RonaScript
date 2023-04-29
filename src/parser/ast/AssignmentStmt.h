@@ -56,4 +56,3 @@ private:
     std::shared_ptr<AstNode> _offset = nullptr;
     std::shared_ptr<AstNode> _idx = nullptr;
 };
-

@@ -44,4 +44,3 @@ public:
 
     std::string value;
 };
-

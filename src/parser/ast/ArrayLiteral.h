@@ -21,4 +21,3 @@ public:
 public:
     std::vector<std::shared_ptr<AstNode>> items;
 };
-

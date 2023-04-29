@@ -64,4 +64,3 @@ enum NodeType_t {
     AST_CATCH_BLOCK,
 
 };
-

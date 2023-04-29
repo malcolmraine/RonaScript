@@ -34,7 +34,6 @@ LiteralValue::LiteralValue() = default;
 /*****************************************************************************/
 LiteralValue::~LiteralValue() = default;
 
-
 /*****************************************************************************/
 std::string LiteralValue::ToString(bool nl) {
     std::string s = MakeTabStr();

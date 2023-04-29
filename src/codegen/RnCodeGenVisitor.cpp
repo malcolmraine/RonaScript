@@ -33,23 +33,23 @@
 #include "../parser/ast/AssignmentStmt.h"
 #include "../parser/ast/AttributeAccess.h"
 #include "../parser/ast/BinaryExpr.h"
-#include "../parser/ast/LiteralValue.h"
-#include "../parser/ast/FlowControl.h"
 #include "../parser/ast/CatchBlock.h"
 #include "../parser/ast/ClassDecl.h"
+#include "../parser/ast/ConditionalStmt.h"
 #include "../parser/ast/DeleteStmt.h"
 #include "../parser/ast/ExitStmt.h"
 #include "../parser/ast/Expr.h"
+#include "../parser/ast/FlowControl.h"
 #include "../parser/ast/FuncCall.h"
 #include "../parser/ast/FuncDecl.h"
 #include "../parser/ast/ImportStmt.h"
 #include "../parser/ast/IndexedExpr.h"
+#include "../parser/ast/LiteralValue.h"
+#include "../parser/ast/Loop.h"
 #include "../parser/ast/ReturnStmt.h"
 #include "../parser/ast/TryBlock.h"
 #include "../parser/ast/UnaryExpr.h"
 #include "../parser/ast/VarDecl.h"
-#include "../parser/ast/Loop.h"
-#include "../parser/ast/ConditionalStmt.h"
 #include "../vm/RnObject.h"
 
 /*****************************************************************************/
@@ -319,21 +319,20 @@ InstructionBlock RnCodeGenVisitor::Visit(VarDecl* node) {
     } else if (node->is_literal) {
         switch (node->init_value->node_type) {
             case AST_STRING_LITERAL:
-                RnConstStore::InternValue(
-                    std::get<RnStringNative >(std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
+                RnConstStore::InternValue(std::get<RnStringNative>(
+                    std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
                 return {};
             case AST_BOOL_LITERAL:
-                RnConstStore::InternValue(
-                    std::get<RnBoolNative >(std::dynamic_pointer_cast<LiteralValue>(node->init_value)
-                        ->data));
+                RnConstStore::InternValue(std::get<RnBoolNative>(
+                    std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
                 return {};
             case AST_FLOAT_LITERAL:
-                RnConstStore::InternValue(
-                    std::get<RnFloatNative >(std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
+                RnConstStore::InternValue(std::get<RnFloatNative>(
+                    std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
                 return {};
             case AST_INT_LITERAL:
-                RnConstStore::InternValue(
-                    std::get<RnIntNative >(std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
+                RnConstStore::InternValue(std::get<RnIntNative>(
+                    std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
                 return {};
             default:
                 assert(false);
@@ -371,7 +370,7 @@ InstructionBlock RnCodeGenVisitor::Visit(ClassDecl* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ExitStmt* node) {
-    return {new RnInstruction(OP_EXIT, std::get<RnIntNative >(node->exit_code->data))};
+    return {new RnInstruction(OP_EXIT, std::get<RnIntNative>(node->exit_code->data))};
 }
 
 /*****************************************************************************/
@@ -416,7 +415,6 @@ InstructionBlock RnCodeGenVisitor::Visit(ConditionalStmt* node) {
     auto jumpf = new RnInstruction(OP_JUMPF_IF, consequent.size());
     instructions.push_back(jumpf);
     instructions.insert(instructions.end(), consequent.begin(), consequent.end());
-
 
     if (!alternative.empty()) {
         jumpf->SetArg1(jumpf->GetArg1() + 1);
