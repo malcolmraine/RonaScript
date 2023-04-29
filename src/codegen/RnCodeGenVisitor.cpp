@@ -421,6 +421,7 @@ InstructionBlock RnCodeGenVisitor::Visit(ConditionalStmt* node) {
 
     if (!alternative.empty()) {
         jumpf->SetArg1(jumpf->GetArg1() + 1);
+        WrapContext(alternative);
         instructions.emplace_back(new RnInstruction(OP_JUMPF, alternative.size()));
         instructions.insert(instructions.end(), alternative.begin(), alternative.end());
     }
