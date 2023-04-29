@@ -38,15 +38,13 @@ class IndexedExpr;
 class ClassDecl;
 class WhileLoop;
 class BreakStmt;
-class IfStmt;
+class ConditionalStmt;
 class FuncDecl;
 class BinaryExpr;
 class AssignmentStmt;
 class ArrayLiteral;
-class ElifStmt;
 class IntLiteral;
 class ContinueStmt;
-class ElseStmt;
 class Name;
 class TryBlock;
 class CatchBlock;
@@ -89,9 +87,9 @@ public:
     std::shared_ptr<ExitStmt> ParseExitStmt();
     std::shared_ptr<AstNode> ParseAssignmentStatement(
         const std::shared_ptr<AstNode>& rexpr = nullptr);
-    std::shared_ptr<IfStmt> ParseIfStmt();
-    std::shared_ptr<ElifStmt> ParseElifStmt();
-    std::shared_ptr<ElseStmt> ParseElseStmt();
+    std::shared_ptr<ConditionalStmt> ParseIfStmt();
+    std::shared_ptr<ConditionalStmt> ParseElifStmt();
+    std::shared_ptr<ConditionalStmt> ParseElseStmt();
     std::shared_ptr<ScopeNode> ParseScope();
     std::shared_ptr<FuncCall> ParseFuncCall(
         const std::shared_ptr<AstNode>& expr = nullptr);

@@ -39,15 +39,12 @@
 #include "../parser/ast/ClassDecl.h"
 #include "../parser/ast/ContinueStmt.h"
 #include "../parser/ast/DeleteStmt.h"
-#include "../parser/ast/ElifStmt.h"
-#include "../parser/ast/ElseStmt.h"
 #include "../parser/ast/ExitStmt.h"
 #include "../parser/ast/Expr.h"
 #include "../parser/ast/FloatLiteral.h"
 #include "../parser/ast/ForLoop.h"
 #include "../parser/ast/FuncCall.h"
 #include "../parser/ast/FuncDecl.h"
-#include "../parser/ast/IfStmt.h"
 #include "../parser/ast/ImportStmt.h"
 #include "../parser/ast/IndexedExpr.h"
 #include "../parser/ast/IntLiteral.h"
@@ -57,6 +54,7 @@
 #include "../parser/ast/UnaryExpr.h"
 #include "../parser/ast/VarDecl.h"
 #include "../parser/ast/WhileLoop.h"
+#include "../parser/ast/ConditionalStmt.h"
 #include "../vm/RnObject.h"
 
 /*****************************************************************************/
@@ -99,11 +97,9 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
         case AST_IMPORT:
             return Visit(dynamic_cast<ImportStmt*>(node));
         case AST_IF_STMT:
-            return Visit(dynamic_cast<IfStmt*>(node));
         case AST_ELIF_STMT:
-            return Visit(dynamic_cast<ElifStmt*>(node));
         case AST_ELSE_STMT:
-            return Visit(dynamic_cast<ElseStmt*>(node));
+            return Visit(dynamic_cast<ConditionalStmt*>(node));
         case AST_ARG_DECL:
             return Visit(dynamic_cast<ArgDecl*>(node));
         case AST_ALIAS_DECL:
@@ -417,7 +413,7 @@ InstructionBlock RnCodeGenVisitor::Visit(CatchBlock* node) {
 }
 
 /*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(IfStmt* node) {
+InstructionBlock RnCodeGenVisitor::Visit(ConditionalStmt* node) {
     InstructionBlock instructions;
     InstructionBlock test = GeneralVisit(node->test);
     InstructionBlock consequent = GeneralVisit(node->consequent);
@@ -428,29 +424,6 @@ InstructionBlock RnCodeGenVisitor::Visit(IfStmt* node) {
     auto jumpf = new RnInstruction(OP_JUMPF_IF, consequent.size());
     instructions.emplace_back(jumpf);
     instructions.insert(instructions.end(), consequent.begin(), consequent.end());
-
-    if (!alternative.empty()) {
-        jumpf->SetArg1(jumpf->GetArg1() + 1);
-        instructions.emplace_back(new RnInstruction(OP_JUMPF, alternative.size()));
-        instructions.insert(instructions.end(), alternative.begin(), alternative.end());
-    }
-
-    return instructions;
-}
-
-/*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(ElifStmt* node) {
-    InstructionBlock instructions = {new RnInstruction(OP_CREATE_CONTEXT)};
-    InstructionBlock test = GeneralVisit(node->test);
-    InstructionBlock consequent = GeneralVisit(node->consequent);
-    WrapContext(consequent);
-    InstructionBlock alternative = GeneralVisit(node->alternative);
-
-    instructions.insert(instructions.end(), test.begin(), test.end());
-    auto jumpf = new RnInstruction(OP_JUMPF_IF, consequent.size());
-    instructions.emplace_back(jumpf);
-    instructions.insert(instructions.end(), consequent.begin(), consequent.end());
-    //	instructions.emplace_back(new RnInstruction(OP_JUMPF, alternative.size()));
 
     if (!alternative.empty()) {
         jumpf->SetArg1(jumpf->GetArg1() + 1);
@@ -458,16 +431,6 @@ InstructionBlock RnCodeGenVisitor::Visit(ElifStmt* node) {
         instructions.insert(instructions.end(), alternative.begin(), alternative.end());
     }
     instructions.push_back(new RnInstruction(OP_DESTROY_CONTEXT));
-
-    return instructions;
-}
-
-/*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(ElseStmt* node) {
-    InstructionBlock instructions;
-    InstructionBlock consequent = GeneralVisit(node->consequent);
-    WrapContext(consequent);
-    instructions.insert(instructions.end(), consequent.begin(), consequent.end());
 
     return instructions;
 }

@@ -47,15 +47,13 @@
 #include "ast/ClassDecl.h"
 #include "ast/ContinueStmt.h"
 #include "ast/DeleteStmt.h"
-#include "ast/ElifStmt.h"
-#include "ast/ElseStmt.h"
 #include "ast/ExitStmt.h"
 #include "ast/Expr.h"
 #include "ast/FloatLiteral.h"
 #include "ast/ForLoop.h"
 #include "ast/FuncCall.h"
 #include "ast/FuncDecl.h"
-#include "ast/IfStmt.h"
+#include "ast/ConditionalStmt.h"
 #include "ast/ImportStmt.h"
 #include "ast/IndexedExpr.h"
 #include "ast/IntLiteral.h"
@@ -780,8 +778,9 @@ std::shared_ptr<AstNode> Parser::ParseAssignmentStatement(
 }
 
 /*****************************************************************************/
-std::shared_ptr<IfStmt> Parser::ParseIfStmt() {
-    auto node = std::make_shared<IfStmt>();
+std::shared_ptr<ConditionalStmt> Parser::ParseIfStmt() {
+    auto node = std::make_shared<ConditionalStmt>();
+    node->node_type = AST_IF_STMT;
     AddCurrentFileInfo(node);
     AdvanceBuffer(1);
     node->test = ParseExpr(TokenType::COLON);
@@ -800,8 +799,9 @@ std::shared_ptr<IfStmt> Parser::ParseIfStmt() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<ElifStmt> Parser::ParseElifStmt() {
-    auto node = std::make_shared<ElifStmt>();
+std::shared_ptr<ConditionalStmt> Parser::ParseElifStmt() {
+    auto node = std::make_shared<ConditionalStmt>();
+    node->node_type = AST_ELIF_STMT;
     AddCurrentFileInfo(node);
     AdvanceBuffer(1);
     node->test = ParseExpr(TokenType::COLON);
@@ -822,8 +822,9 @@ std::shared_ptr<ElifStmt> Parser::ParseElifStmt() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<ElseStmt> Parser::ParseElseStmt() {
-    auto node = std::make_shared<ElseStmt>();
+std::shared_ptr<ConditionalStmt> Parser::ParseElseStmt() {
+    auto node = std::make_shared<ConditionalStmt>();
+    node->node_type = AST_ELSE_STMT;
     AddCurrentFileInfo(node);
     AdvanceBuffer(1);
     node->consequent = ParseScope();

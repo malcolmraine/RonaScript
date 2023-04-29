@@ -39,15 +39,13 @@
 #include "../parser/ast/ClassDecl.h"
 #include "../parser/ast/ContinueStmt.h"
 #include "../parser/ast/DeleteStmt.h"
-#include "../parser/ast/ElifStmt.h"
-#include "../parser/ast/ElseStmt.h"
 #include "../parser/ast/ExitStmt.h"
 #include "../parser/ast/Expr.h"
 #include "../parser/ast/FloatLiteral.h"
 #include "../parser/ast/ForLoop.h"
 #include "../parser/ast/FuncCall.h"
 #include "../parser/ast/FuncDecl.h"
-#include "../parser/ast/IfStmt.h"
+#include "../parser/ast/ConditionalStmt.h"
 #include "../parser/ast/ImportStmt.h"
 #include "../parser/ast/IndexedExpr.h"
 #include "../parser/ast/IntLiteral.h"
@@ -270,11 +268,9 @@ bool RnAstValidator::GeneralVisit(AstNode* node) {
         case AST_IMPORT:
             return Visit(dynamic_cast<ImportStmt*>(node));
         case AST_IF_STMT:
-            return Visit(dynamic_cast<IfStmt*>(node));
         case AST_ELIF_STMT:
-            return Visit(dynamic_cast<ElifStmt*>(node));
         case AST_ELSE_STMT:
-            return Visit(dynamic_cast<ElseStmt*>(node));
+            return Visit(dynamic_cast<ConditionalStmt*>(node));
         case AST_ARG_DECL:
             return Visit(dynamic_cast<ArgDecl*>(node));
         case AST_ALIAS_DECL:
@@ -447,22 +443,11 @@ bool RnAstValidator::Visit(CatchBlock* node) {
 }
 
 /*****************************************************************************/
-bool RnAstValidator::Visit(IfStmt* node) {
+bool RnAstValidator::Visit(ConditionalStmt* node) {
+    if (node->consequent)
     GeneralVisit(node->consequent);
+    if (node->alternative)
     GeneralVisit(node->alternative);
-    return true;
-}
-
-/*****************************************************************************/
-bool RnAstValidator::Visit(ElifStmt* node) {
-    GeneralVisit(node->consequent);
-    GeneralVisit(node->alternative);
-    return true;
-}
-
-/*****************************************************************************/
-bool RnAstValidator::Visit(ElseStmt* node) {
-    GeneralVisit(node->consequent);
     return true;
 }
 
