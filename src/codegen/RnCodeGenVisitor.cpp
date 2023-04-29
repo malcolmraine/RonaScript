@@ -34,10 +34,9 @@
 #include "../parser/ast/AttributeAccess.h"
 #include "../parser/ast/BinaryExpr.h"
 #include "../parser/ast/LiteralValue.h"
-#include "../parser/ast/BreakStmt.h"
+#include "../parser/ast/FlowControl.h"
 #include "../parser/ast/CatchBlock.h"
 #include "../parser/ast/ClassDecl.h"
-#include "../parser/ast/ContinueStmt.h"
 #include "../parser/ast/DeleteStmt.h"
 #include "../parser/ast/ExitStmt.h"
 #include "../parser/ast/Expr.h"
@@ -74,7 +73,7 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
         case AST_EXPR:
             return Visit(dynamic_cast<Expr*>(node));
         case AST_CONTINUE_STMT:
-            return Visit(dynamic_cast<ContinueStmt*>(node));
+            return Visit(dynamic_cast<FlowControl*>(node));
         case AST_FUNC_CALL:
             return Visit(dynamic_cast<FuncCall*>(node));
         case AST_FUNC_DECL:
@@ -105,7 +104,7 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
         case AST_SCOPE:
             return Visit(dynamic_cast<ScopeNode*>(node));
         case AST_BREAK_STMT:
-            return Visit(dynamic_cast<BreakStmt*>(node));
+            return Visit(dynamic_cast<FlowControl*>(node));
         case AST_MODULE:
             return Visit(dynamic_cast<Module*>(node));
         case AST_EXIT_STMT:
@@ -518,13 +517,6 @@ InstructionBlock RnCodeGenVisitor::Visit(BinaryExpr* node) {
 }
 
 /*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(ContinueStmt* node) {
-    auto instruction = new RnInstruction(OP_JUMPF);
-    _continue_instructions.back().push_back(instruction);
-    return {instruction};
-}
-
-/*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(IndexedExpr* node) {
     InstructionBlock instructions;
     InstructionBlock expr = GeneralVisit(node->expr);
@@ -536,9 +528,14 @@ InstructionBlock RnCodeGenVisitor::Visit(IndexedExpr* node) {
 }
 
 /*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(BreakStmt* node) {
+InstructionBlock RnCodeGenVisitor::Visit(FlowControl* node) {
     auto instruction = new RnInstruction(OP_JUMPF);
-    _break_instructions.back().push_back(instruction);
+
+    if (node->node_type == AST_CONTINUE_STMT) {
+        _continue_instructions.back().push_back(instruction);
+    } else {
+        _break_instructions.back().push_back(instruction);
+    }
     return {instruction};
 }
 

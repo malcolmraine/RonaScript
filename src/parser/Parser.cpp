@@ -42,10 +42,9 @@
 #include "ast/AstNode.h"
 #include "ast/BinaryExpr.h"
 #include "ast/LiteralValue.h"
-#include "ast/BreakStmt.h"
+#include "ast/FlowControl.h"
 #include "ast/CatchBlock.h"
 #include "ast/ClassDecl.h"
-#include "ast/ContinueStmt.h"
 #include "ast/DeleteStmt.h"
 #include "ast/ExitStmt.h"
 #include "ast/Expr.h"
@@ -676,20 +675,15 @@ std::shared_ptr<UnaryExpr> Parser::ParseUnaryExpr(
 }
 
 /*****************************************************************************/
-std::shared_ptr<BreakStmt> Parser::ParseBreakStmt() {
-    auto node = std::make_shared<BreakStmt>();
+std::shared_ptr<FlowControl> Parser::ParseFlowControlStmt() {
+    auto node = std::make_shared<FlowControl>();
     AddCurrentFileInfo(node);
     Expect(TokenType::SEMICOLON);
-    AdvanceBuffer(2);
-
-    return node;
-}
-
-/*****************************************************************************/
-std::shared_ptr<ContinueStmt> Parser::ParseContinueStmt() {
-    auto node = std::make_shared<ContinueStmt>();
-    AddCurrentFileInfo(node);
-    Expect(TokenType::SEMICOLON);
+    if (Current()->token_type == TokenType::CONTINUE) {
+        node->node_type = AST_CONTINUE_STMT;
+    } else {
+        node->node_type = AST_BREAK_STMT;
+    }
     AdvanceBuffer(2);
 
     return node;
@@ -1138,10 +1132,8 @@ void Parser::Parse() {
                     _current_scope->AddSubTree(ParseExitStmt());
                     break;
                 case TokenType::BREAK:
-                    _current_scope->AddSubTree(ParseBreakStmt());
-                    break;
                 case TokenType::CONTINUE:
-                    _current_scope->AddSubTree(ParseContinueStmt());
+                    _current_scope->AddSubTree(ParseFlowControlStmt());
                     break;
                 case TokenType::CLASS: {
                     _previous_state = _current_state;
