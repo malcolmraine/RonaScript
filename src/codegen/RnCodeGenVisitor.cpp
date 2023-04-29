@@ -42,7 +42,6 @@
 #include "../parser/ast/ExitStmt.h"
 #include "../parser/ast/Expr.h"
 #include "../parser/ast/FloatLiteral.h"
-#include "../parser/ast/ForLoop.h"
 #include "../parser/ast/FuncCall.h"
 #include "../parser/ast/FuncDecl.h"
 #include "../parser/ast/ImportStmt.h"
@@ -53,7 +52,7 @@
 #include "../parser/ast/TryBlock.h"
 #include "../parser/ast/UnaryExpr.h"
 #include "../parser/ast/VarDecl.h"
-#include "../parser/ast/WhileLoop.h"
+#include "../parser/ast/Loop.h"
 #include "../parser/ast/ConditionalStmt.h"
 #include "../vm/RnObject.h"
 
@@ -71,9 +70,8 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
         case AST_INDEXED_EXPR:
             return Visit(dynamic_cast<IndexedExpr*>(node));
         case AST_WHILE_LOOP:
-            return Visit(dynamic_cast<WhileLoop*>(node));
         case AST_FOR_LOOP:
-            return Visit(dynamic_cast<ForLoop*>(node));
+            return Visit(dynamic_cast<Loop*>(node));
         case AST_CLASS_DECL:
             return Visit(dynamic_cast<ClassDecl*>(node));
         case AST_EXPR:
@@ -193,7 +191,7 @@ InstructionBlock RnCodeGenVisitor::Visit(ScopeNode* node) {
 }
 
 /*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(ForLoop* node) {
+InstructionBlock RnCodeGenVisitor::Visit(Loop* node) {
     _break_instructions.emplace_back();
     _continue_instructions.emplace_back();
     InstructionBlock instructions;
@@ -246,23 +244,23 @@ InstructionBlock RnCodeGenVisitor::Visit(ForLoop* node) {
     _continue_instructions.pop_back();
     return instructions;
 }
-
-/*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(WhileLoop* node) {
-    InstructionBlock instructions;
-    InstructionBlock scope = GeneralVisit(node->scope);
-    scope.insert(scope.begin(), new RnInstruction(OP_CREATE_CONTEXT));
-    scope.push_back(new RnInstruction(OP_RESET_CONTEXT));
-    InstructionBlock test = GeneralVisit(node->test);
-    instructions.reserve(scope.size() + test.size());
-    instructions.insert(instructions.end(), test.begin(), test.end());
-    instructions.emplace_back(new RnInstruction(OP_JUMPF_IF, scope.size() + 1));
-    instructions.insert(instructions.end(), scope.begin(), scope.end());
-    instructions.emplace_back(
-        new RnInstruction(OP_JUMPB, scope.size() + test.size() + 1));
-
-    return instructions;
-}
+//
+///*****************************************************************************/
+//InstructionBlock RnCodeGenVisitor::Visit(WhileLoop* node) {
+//    InstructionBlock instructions;
+//    InstructionBlock scope = GeneralVisit(node->scope);
+//    scope.insert(scope.begin(), new RnInstruction(OP_CREATE_CONTEXT));
+//    scope.push_back(new RnInstruction(OP_RESET_CONTEXT));
+//    InstructionBlock test = GeneralVisit(node->test);
+//    instructions.reserve(scope.size() + test.size());
+//    instructions.insert(instructions.end(), test.begin(), test.end());
+//    instructions.emplace_back(new RnInstruction(OP_JUMPF_IF, scope.size() + 1));
+//    instructions.insert(instructions.end(), scope.begin(), scope.end());
+//    instructions.emplace_back(
+//        new RnInstruction(OP_JUMPB, scope.size() + test.size() + 1));
+//
+//    return instructions;
+//}
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ImportStmt* node) {

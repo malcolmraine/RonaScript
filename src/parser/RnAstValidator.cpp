@@ -42,7 +42,6 @@
 #include "../parser/ast/ExitStmt.h"
 #include "../parser/ast/Expr.h"
 #include "../parser/ast/FloatLiteral.h"
-#include "../parser/ast/ForLoop.h"
 #include "../parser/ast/FuncCall.h"
 #include "../parser/ast/FuncDecl.h"
 #include "../parser/ast/ConditionalStmt.h"
@@ -55,7 +54,7 @@
 #include "../parser/ast/TryBlock.h"
 #include "../parser/ast/UnaryExpr.h"
 #include "../parser/ast/VarDecl.h"
-#include "../parser/ast/WhileLoop.h"
+#include "../parser/ast/Loop.h"
 #include "../util/log.h"
 
 /*****************************************************************************/
@@ -242,9 +241,8 @@ bool RnAstValidator::GeneralVisit(AstNode* node) {
         case AST_INDEXED_EXPR:
             return Visit(dynamic_cast<IndexedExpr*>(node));
         case AST_WHILE_LOOP:
-            return Visit(dynamic_cast<WhileLoop*>(node));
         case AST_FOR_LOOP:
-            return Visit(dynamic_cast<ForLoop*>(node));
+            return Visit(dynamic_cast<Loop*>(node));
         case AST_CLASS_DECL:
             return Visit(dynamic_cast<ClassDecl*>(node));
         case AST_EXPR:
@@ -342,13 +340,7 @@ bool RnAstValidator::Visit(ScopeNode* node) {
 }
 
 /*****************************************************************************/
-bool RnAstValidator::Visit(ForLoop* node) {
-    GeneralVisit(node->scope);
-    return true;
-}
-
-/*****************************************************************************/
-bool RnAstValidator::Visit(WhileLoop* node) {
+bool RnAstValidator::Visit(Loop* node) {
     GeneralVisit(node->scope);
     return true;
 }

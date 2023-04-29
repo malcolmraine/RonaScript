@@ -1,5 +1,5 @@
 /*****************************************************************************
-* File:
+* File: Loop.cpp
 * Description:
 * Author: Malcolm Hall
 * Date:
@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,28 +26,46 @@
 * SOFTWARE.
 ******************************************************************************/
 
-#include "WhileLoop.h"
-#include "../../codegen/RnCodeGenVisitor.h"
+#include "Loop.h"
 #include "ScopeNode.h"
+#include "VarDecl.h"
 
 /*****************************************************************************/
-WhileLoop::WhileLoop() {
-    node_type = AST_WHILE_LOOP;
+Loop::Loop() {
+    node_type = AST_FOR_LOOP;
 }
 
 /*****************************************************************************/
-WhileLoop::~WhileLoop() = default;
+Loop::~Loop() = default;
 
 /*****************************************************************************/
-std::string WhileLoop::ToString(bool nl) {
-    std::string s = MakeTabStr() + "WhileLoop( )";
-    if (nl) {
-        s += "\n";
-    }
-    test->nest_lvl = nest_lvl + 1;
-    scope->nest_lvl = nest_lvl + 1;
-    s += test->ToString(true);
-    s += scope->ToString(true);
+std::string Loop::ToString(bool nl) {
+    std::string output = MakeTabStr();
 
-    return s;
+    if (node_type == AST_FOR_LOOP) {
+        output += "ForLoop( )";
+    } else {
+        output += "WhileLoop( )";
+    }
+
+    if (nl) {
+        output += "\n";
+    }
+
+    if (init) {
+        init->nest_lvl = nest_lvl + 1;
+        output += init->ToString(nl);
+    }
+    if (test) {
+        test->nest_lvl = nest_lvl + 1;
+        output += test->ToString(nl);
+    }
+    if (update) {
+        update->nest_lvl = nest_lvl + 1;
+        output += update->ToString(nl);
+    }
+    scope->nest_lvl = nest_lvl + 1;
+    output += scope->ToString(nl);
+
+    return output;
 }

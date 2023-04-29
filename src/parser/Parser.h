@@ -26,7 +26,6 @@ class ScopeNode;
 class ImportStmt;
 class ArgDecl;
 class AstNode;
-class ForLoop;
 class AliasDecl;
 class Expr;
 class VarDecl;
@@ -36,7 +35,7 @@ class ReturnStmt;
 class FuncCall;
 class IndexedExpr;
 class ClassDecl;
-class WhileLoop;
+class Loop;
 class BreakStmt;
 class ConditionalStmt;
 class FuncDecl;
@@ -94,8 +93,8 @@ public:
     std::shared_ptr<FuncCall> ParseFuncCall(
         const std::shared_ptr<AstNode>& expr = nullptr);
     std::shared_ptr<ArrayLiteral> ParseArrayLiteral();
-    std::shared_ptr<WhileLoop> ParseWhileLoop();
-    std::shared_ptr<ForLoop> ParseForLoop();
+    std::shared_ptr<Loop> ParseWhileLoop();
+    std::shared_ptr<Loop> ParseForLoop();
     std::shared_ptr<AliasDecl> ParseAliasDecl();
     std::shared_ptr<AstNode> ParseIndexedExpr(
         const std::shared_ptr<AstNode>& expr = nullptr);

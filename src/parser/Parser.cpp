@@ -50,7 +50,6 @@
 #include "ast/ExitStmt.h"
 #include "ast/Expr.h"
 #include "ast/FloatLiteral.h"
-#include "ast/ForLoop.h"
 #include "ast/FuncCall.h"
 #include "ast/FuncDecl.h"
 #include "ast/ConditionalStmt.h"
@@ -67,7 +66,7 @@
 #include "ast/TryBlock.h"
 #include "ast/UnaryExpr.h"
 #include "ast/VarDecl.h"
-#include "ast/WhileLoop.h"
+#include "ast/Loop.h"
 
 std::vector<std::string> Parser::parsed_files;
 
@@ -895,8 +894,9 @@ std::shared_ptr<ArrayLiteral> Parser::ParseArrayLiteral() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<WhileLoop> Parser::ParseWhileLoop() {
-    auto node = std::make_shared<WhileLoop>();
+std::shared_ptr<Loop> Parser::ParseWhileLoop() {
+    auto node = std::make_shared<Loop>();
+    node->node_type = AST_WHILE_LOOP;
     AddCurrentFileInfo(node);
     ConditionalBufAdvance(TokenType::WHILE);
     node->test = ParseExpr(TokenType::COLON);
@@ -906,8 +906,9 @@ std::shared_ptr<WhileLoop> Parser::ParseWhileLoop() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<ForLoop> Parser::ParseForLoop() {
-    auto node = std::make_shared<ForLoop>();
+std::shared_ptr<Loop> Parser::ParseForLoop() {
+    auto node = std::make_shared<Loop>();
+    node->node_type = AST_FOR_LOOP;
     AddCurrentFileInfo(node);
     Expect(TokenType::R_PARAN);
     AdvanceBuffer(1);

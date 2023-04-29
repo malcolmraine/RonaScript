@@ -1,5 +1,5 @@
 /*****************************************************************************
-* File:
+* File: Loop.h
 * Description:
 * Author: Malcolm Hall
 * Date:
@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,40 +26,21 @@
 * SOFTWARE.
 ******************************************************************************/
 
-#include "ForLoop.h"
-#include "../../codegen/RnCodeGenVisitor.h"
-#include "ScopeNode.h"
-#include "VarDecl.h"
+#pragma once
 
-/*****************************************************************************/
-ForLoop::ForLoop() {
-    node_type = AST_FOR_LOOP;
-}
+#include "AstNode.h"
 
-/*****************************************************************************/
-ForLoop::~ForLoop() {}
+class VarDecl;
+class ScopeNode;
 
-/*****************************************************************************/
-std::string ForLoop::ToString(bool nl) {
-    std::string output = MakeTabStr() + "ForLoop( )";
-    if (nl) {
-        output += "\n";
-    }
+class Loop : public AstNode {
+public:
+    Loop();
+    ~Loop() override;
+    std::string ToString(bool nl) override;
 
-    if (init) {
-        init->nest_lvl = nest_lvl + 1;
-        output += init->ToString(nl);
-    }
-    if (test) {
-        test->nest_lvl = nest_lvl + 1;
-        output += test->ToString(nl);
-    }
-    if (update) {
-        update->nest_lvl = nest_lvl + 1;
-        output += update->ToString(nl);
-    }
-    scope->nest_lvl = nest_lvl + 1;
-    output += scope->ToString(nl);
-
-    return output;
-}
+    std::shared_ptr<AstNode> init = nullptr;
+    std::shared_ptr<AstNode> test = nullptr;
+    std::shared_ptr<AstNode> update = nullptr;
+    std::shared_ptr<ScopeNode> scope = nullptr;
+};
