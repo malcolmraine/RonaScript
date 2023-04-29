@@ -550,6 +550,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_DESTROY_CONTEXT: {
+            PREDICTION_TARGET(OP_DESTROY_CONTEXT)
             auto scope = _scopes.back();
             _scopes.pop_back();
             _memory_manager->DestroyScope(scope);
@@ -557,6 +558,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             if (!_call_stack.empty()) {
                 _call_stack.back()->DecrLinkedScopeCount();
             }
+            PREDICT_OPCODE(OP_DESTROY_CONTEXT)
             break;
         }
         case OP_RESET_CONTEXT: {
