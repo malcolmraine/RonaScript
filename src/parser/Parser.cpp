@@ -1254,20 +1254,6 @@ std::shared_ptr<AstNode> Parser::TransformBinaryExpr(
 
             return right_tmp;
         }
-    } else if (binary_expr->_op == "+" || binary_expr->_op == "-") {
-        if (binary_expr->_left->node_type == AST_NAME &&
-            binary_expr->_right->node_type == AST_INT_LITERAL &&
-            std::get<RnIntNative>(std::dynamic_pointer_cast<LiteralValue>(binary_expr->_right)->data) == 1) {
-            auto unary_node = std::make_shared<UnaryExpr>();
-            unary_node->expr = binary_expr->_left;
-
-            if (binary_expr->_op == "+") {
-                unary_node->op = "++";
-            } else {
-                unary_node->op = "--";
-            }
-            return unary_node;
-        }
     }
 
     return binary_expr;

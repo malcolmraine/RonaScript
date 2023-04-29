@@ -330,8 +330,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto object = GetScope()->GetObject(key);
 
             if (object) {
-                //                Log::DEBUG("Loading (" + RnConstStore::GetInternedString(key) + ", " +
-                //                           RnType::TypeToString(object->GetType()) + ")");
                 if (object->IsClass() &&
                     _instructions[index + 1]->GetOpcode() == OP_CALL) {
                     auto class_obj = dynamic_cast<RnClassObject*>(object);

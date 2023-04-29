@@ -405,13 +405,19 @@ InstructionBlock RnCodeGenVisitor::Visit(ConditionalStmt* node) {
     InstructionBlock instructions;
     InstructionBlock test = GeneralVisit(node->test);
     InstructionBlock consequent = GeneralVisit(node->consequent);
-    WrapContext(consequent);
     InstructionBlock alternative = GeneralVisit(node->alternative);
+
+    WrapContext(consequent);
+    if (node->node_type == AST_ELSE_STMT) {
+        instructions.insert(instructions.end(), consequent.begin(), consequent.end());
+        return instructions;
+    }
 
     instructions.insert(instructions.end(), test.begin(), test.end());
     auto jumpf = new RnInstruction(OP_JUMPF_IF, consequent.size());
-    instructions.emplace_back(jumpf);
+    instructions.push_back(jumpf);
     instructions.insert(instructions.end(), consequent.begin(), consequent.end());
+
 
     if (!alternative.empty()) {
         jumpf->SetArg1(jumpf->GetArg1() + 1);
