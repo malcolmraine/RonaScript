@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_DELETESTMT_H
-#define RONASCRIPT_DELETESTMT_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -32,4 +31,3 @@ private:
     std::shared_ptr<AstNode> _name = nullptr;
 };
 
-#endif  //RONASCRIPT_DELETESTMT_H

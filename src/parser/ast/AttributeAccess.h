@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_ATTRIBUTEACCESS_H
-#define RONASCRIPT_ATTRIBUTEACCESS_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -48,4 +47,3 @@ private:
     std::string _op;
 };
 
-#endif  //RONASCRIPT_ATTRIBUTEACCESS_H

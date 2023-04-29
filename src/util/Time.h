@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_SRC_UTIL_TIME_H
-#define RONASCRIPT_SRC_UTIL_TIME_H
+#pragma once
 
 #include <chrono>
 #include <type_traits>
@@ -69,5 +68,3 @@ public:
         return "";
     }
 };
-
-#endif  //RONASCRIPT_SRC_UTIL_TIME_H

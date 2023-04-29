@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_VM_RNCLASSOBJECT_H_
-#define RONASCRIPT_VM_RNCLASSOBJECT_H_
+#pragma once
 
 #include "RnClass.h"
 #include "RnObjectBase.h"
@@ -63,5 +62,3 @@ public:
 private:
     std::string _name;
 };
-
-#endif  //RONASCRIPT_VM_RNCLASSOBJECT_H_

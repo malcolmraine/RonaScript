@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNOPCODE_H
-#define RONASCRIPT_RNOPCODE_H
+#pragma once
 
 #include <string>
 
@@ -75,4 +74,3 @@ typedef enum : int {
 std::string GetOpCodeAsString(RnOpCode opcode);
 RnOpCode GetOpCodeFromOperator(const std::string& op);
 
-#endif  //RONASCRIPT_RNOPCODE_H

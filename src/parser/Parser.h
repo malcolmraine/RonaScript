@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_PARSER_H
-#define RONASCRIPT_PARSER_H
+#pragma once
 
 #include <filesystem>
 #include <map>
@@ -27,7 +26,6 @@ class ScopeNode;
 class ImportStmt;
 class ArgDecl;
 class AstNode;
-class ForLoop;
 class AliasDecl;
 class Expr;
 class VarDecl;
@@ -37,17 +35,15 @@ class ReturnStmt;
 class FuncCall;
 class IndexedExpr;
 class ClassDecl;
-class WhileLoop;
+class Loop;
 class BreakStmt;
-class IfStmt;
+class ConditionalStmt;
 class FuncDecl;
 class BinaryExpr;
 class AssignmentStmt;
 class ArrayLiteral;
-class ElifStmt;
 class IntLiteral;
 class ContinueStmt;
-class ElseStmt;
 class Name;
 class TryBlock;
 class CatchBlock;
@@ -90,15 +86,15 @@ public:
     std::shared_ptr<ExitStmt> ParseExitStmt();
     std::shared_ptr<AstNode> ParseAssignmentStatement(
         const std::shared_ptr<AstNode>& rexpr = nullptr);
-    std::shared_ptr<IfStmt> ParseIfStmt();
-    std::shared_ptr<ElifStmt> ParseElifStmt();
-    std::shared_ptr<ElseStmt> ParseElseStmt();
+    std::shared_ptr<ConditionalStmt> ParseIfStmt();
+    std::shared_ptr<ConditionalStmt> ParseElifStmt();
+    std::shared_ptr<ConditionalStmt> ParseElseStmt();
     std::shared_ptr<ScopeNode> ParseScope();
     std::shared_ptr<FuncCall> ParseFuncCall(
         const std::shared_ptr<AstNode>& expr = nullptr);
     std::shared_ptr<ArrayLiteral> ParseArrayLiteral();
-    std::shared_ptr<WhileLoop> ParseWhileLoop();
-    std::shared_ptr<ForLoop> ParseForLoop();
+    std::shared_ptr<Loop> ParseWhileLoop();
+    std::shared_ptr<Loop> ParseForLoop();
     std::shared_ptr<AliasDecl> ParseAliasDecl();
     std::shared_ptr<AstNode> ParseIndexedExpr(
         const std::shared_ptr<AstNode>& expr = nullptr);
@@ -143,5 +139,3 @@ private:
     std::unordered_map<std::string, std::shared_ptr<RnTypeComposite>>
         _user_defined_type_map;
 };
-
-#endif  //RONASCRIPT_PARSER_H

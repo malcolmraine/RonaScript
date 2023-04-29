@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNMEMORYMANAGER_H
-#define RONASCRIPT_RNMEMORYMANAGER_H
+#pragma once
 
 #include <set>
 #include <unordered_map>
@@ -61,5 +60,3 @@ private:
     RnObject* _cached_bool_false_object = nullptr;
     RnObject* _cached_int_object = nullptr;
 };
-
-#endif  //RONASCRIPT_RNMEMORYMANAGER_H

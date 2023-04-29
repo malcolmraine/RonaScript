@@ -5,6 +5,25 @@
 * Date: 6/26/22
 * Version: 1
 *
+* MIT License
+*
+* Copyright (c) 2021 Malcolm Hall
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
 ******************************************************************************/
 
 #include "RnAstValidator.h"
@@ -14,31 +33,25 @@
 #include "../parser/ast/AssignmentStmt.h"
 #include "../parser/ast/AttributeAccess.h"
 #include "../parser/ast/BinaryExpr.h"
-#include "../parser/ast/BoolLiteral.h"
+#include "../parser/ast/LiteralValue.h"
 #include "../parser/ast/BreakStmt.h"
 #include "../parser/ast/CatchBlock.h"
 #include "../parser/ast/ClassDecl.h"
 #include "../parser/ast/ContinueStmt.h"
 #include "../parser/ast/DeleteStmt.h"
-#include "../parser/ast/ElifStmt.h"
-#include "../parser/ast/ElseStmt.h"
 #include "../parser/ast/ExitStmt.h"
 #include "../parser/ast/Expr.h"
-#include "../parser/ast/FloatLiteral.h"
-#include "../parser/ast/ForLoop.h"
 #include "../parser/ast/FuncCall.h"
 #include "../parser/ast/FuncDecl.h"
-#include "../parser/ast/IfStmt.h"
+#include "../parser/ast/ConditionalStmt.h"
 #include "../parser/ast/ImportStmt.h"
 #include "../parser/ast/IndexedExpr.h"
-#include "../parser/ast/IntLiteral.h"
 #include "../parser/ast/ReturnStmt.h"
 #include "../parser/ast/ScopeNode.h"
-#include "../parser/ast/StringLiteral.h"
 #include "../parser/ast/TryBlock.h"
 #include "../parser/ast/UnaryExpr.h"
 #include "../parser/ast/VarDecl.h"
-#include "../parser/ast/WhileLoop.h"
+#include "../parser/ast/Loop.h"
 #include "../util/log.h"
 
 /*****************************************************************************/
@@ -169,29 +182,29 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
             return type;
         }
         case AST_STRING_LITERAL: {
-            auto node = std::dynamic_pointer_cast<StringLiteral>(subtree);
+            auto node = std::dynamic_pointer_cast<LiteralValue>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_STRING);
-            auto value = static_cast<RnIntNative>(node->data.length());
+            auto value = static_cast<RnIntNative>(std::get<RnStringNative >(node->data).length());
             type->SetBounds(value, value);
             return type;
         }
         case AST_BOOL_LITERAL: {
-            auto node = std::dynamic_pointer_cast<BoolLiteral>(subtree);
+            auto node = std::dynamic_pointer_cast<LiteralValue>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_BOOLEAN);
-            auto value = static_cast<RnIntNative>(node->GetData() ? 1 : 0);
+            auto value = static_cast<RnIntNative>(std::get<RnBoolNative >(node->data) ? 1 : 0);
             type->SetBounds(value, value);
             return type;
         }
         case AST_FLOAT_LITERAL: {
-            auto node = std::dynamic_pointer_cast<FloatLiteral>(subtree);
+            auto node = std::dynamic_pointer_cast<LiteralValue>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_FLOAT);
-            type->SetBounds(node->data, node->data);
+            type->SetBounds(std::get<RnFloatNative >(node->data), std::get<RnFloatNative >(node->data));
             return type;
         }
         case AST_INT_LITERAL: {
-            auto node = std::dynamic_pointer_cast<IntLiteral>(subtree);
+            auto node = std::dynamic_pointer_cast<LiteralValue>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_INT);
-            type->SetBounds(node->data, node->data);
+            type->SetBounds(std::get<RnIntNative >(node->data), std::get<RnIntNative >(node->data));
             return type;
         }
         case AST_RETURN_STMT: {
@@ -225,9 +238,8 @@ bool RnAstValidator::GeneralVisit(AstNode* node) {
         case AST_INDEXED_EXPR:
             return Visit(dynamic_cast<IndexedExpr*>(node));
         case AST_WHILE_LOOP:
-            return Visit(dynamic_cast<WhileLoop*>(node));
         case AST_FOR_LOOP:
-            return Visit(dynamic_cast<ForLoop*>(node));
+            return Visit(dynamic_cast<Loop*>(node));
         case AST_CLASS_DECL:
             return Visit(dynamic_cast<ClassDecl*>(node));
         case AST_EXPR:
@@ -241,21 +253,16 @@ bool RnAstValidator::GeneralVisit(AstNode* node) {
         case AST_LIST_LITERAL:
             return Visit(dynamic_cast<ArrayLiteral*>(node));
         case AST_STRING_LITERAL:
-            return Visit(dynamic_cast<StringLiteral*>(node));
         case AST_BOOL_LITERAL:
-            return Visit(dynamic_cast<BoolLiteral*>(node));
         case AST_FLOAT_LITERAL:
-            return Visit(dynamic_cast<FloatLiteral*>(node));
         case AST_INT_LITERAL:
-            return Visit(dynamic_cast<IntLiteral*>(node));
+            return Visit(dynamic_cast<LiteralValue*>(node));
         case AST_IMPORT:
             return Visit(dynamic_cast<ImportStmt*>(node));
         case AST_IF_STMT:
-            return Visit(dynamic_cast<IfStmt*>(node));
         case AST_ELIF_STMT:
-            return Visit(dynamic_cast<ElifStmt*>(node));
         case AST_ELSE_STMT:
-            return Visit(dynamic_cast<ElseStmt*>(node));
+            return Visit(dynamic_cast<ConditionalStmt*>(node));
         case AST_ARG_DECL:
             return Visit(dynamic_cast<ArgDecl*>(node));
         case AST_ALIAS_DECL:
@@ -297,17 +304,7 @@ bool RnAstValidator::GeneralVisit(const std::shared_ptr<AstNode>& node) {
 }
 
 /*****************************************************************************/
-bool RnAstValidator::Visit(StringLiteral* node) {
-    return true;
-}
-
-/*****************************************************************************/
-bool RnAstValidator::Visit(FloatLiteral* node) {
-    return true;
-}
-
-/*****************************************************************************/
-bool RnAstValidator::Visit(IntLiteral* node) {
+bool RnAstValidator::Visit(LiteralValue* node) {
     return true;
 }
 
@@ -327,13 +324,7 @@ bool RnAstValidator::Visit(ScopeNode* node) {
 }
 
 /*****************************************************************************/
-bool RnAstValidator::Visit(ForLoop* node) {
-    GeneralVisit(node->scope);
-    return true;
-}
-
-/*****************************************************************************/
-bool RnAstValidator::Visit(WhileLoop* node) {
+bool RnAstValidator::Visit(Loop* node) {
     GeneralVisit(node->scope);
     return true;
 }
@@ -428,22 +419,11 @@ bool RnAstValidator::Visit(CatchBlock* node) {
 }
 
 /*****************************************************************************/
-bool RnAstValidator::Visit(IfStmt* node) {
+bool RnAstValidator::Visit(ConditionalStmt* node) {
+    if (node->consequent)
     GeneralVisit(node->consequent);
+    if (node->alternative)
     GeneralVisit(node->alternative);
-    return true;
-}
-
-/*****************************************************************************/
-bool RnAstValidator::Visit(ElifStmt* node) {
-    GeneralVisit(node->consequent);
-    GeneralVisit(node->alternative);
-    return true;
-}
-
-/*****************************************************************************/
-bool RnAstValidator::Visit(ElseStmt* node) {
-    GeneralVisit(node->consequent);
     return true;
 }
 
@@ -452,11 +432,6 @@ bool RnAstValidator::Visit(DeleteStmt* node) {
     if (node->GetName()->node_type == AST_NAME) {
         SymbolExistsCheck(std::dynamic_pointer_cast<Name>(node->GetName())->value);
     }
-    return true;
-}
-
-/*****************************************************************************/
-bool RnAstValidator::Visit(BoolLiteral* node) {
     return true;
 }
 

@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNVIRTUALMACHINE_H
-#define RONASCRIPT_RNVIRTUALMACHINE_H
+#pragma once
 
 #include <string>
 #include <type_traits>
@@ -88,5 +87,3 @@ protected:
     static RnIntNative _object_cls_key;
     static RnIntNative _object_construct_key;
 };
-
-#endif  //RONASCRIPT_RNVIRTUALMACHINE_H

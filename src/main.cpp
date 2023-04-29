@@ -164,9 +164,9 @@ void RonaScriptMain(int argc, char* argv[]) {
             Compile(file, code_generator);
             instructions = code_generator.GetInstructions();
             Write(std::filesystem::path(file.string() + "c"), instructions);
-            if (!arg_parser.IsSet("-r")) {
-                Run(instructions);
-            }
+        }
+        if (arg_parser.IsSet("-r")) {
+            Run(instructions);
         }
         PrintInstructions(instructions);
     }

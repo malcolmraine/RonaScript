@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RONASEQUENCER_H
-#define RONASCRIPT_RONASEQUENCER_H
+#pragma once
 
 #include <algorithm>
 #include <string>
@@ -227,5 +226,3 @@ void RnSequencer<T, E>::LoadNextItem() {
         _buffer[GetBufferSize() - 1] = _data[_data_idx++];
     }
 }
-
-#endif  //RONASCRIPT_RONASEQUENCER_H

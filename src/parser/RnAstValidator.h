@@ -7,39 +7,33 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNASTVALIDATOR_H
-#define RONASCRIPT_RNASTVALIDATOR_H
+#pragma once
 
 #include <vector>
 #include "../common/RnType.h"
 #include "RnAstVisitor.h"
 
-class StringLiteral;
+class LiteralValue;
 class ScopeNode;
 class ImportStmt;
 class ArgDecl;
 class AstNode;
-class ForLoop;
 class AliasDecl;
 class Expr;
 class VarDecl;
-class FloatLiteral;
 class UnaryExpr;
 class ReturnStmt;
 class FuncCall;
 class IndexedExpr;
 class ClassDecl;
-class WhileLoop;
+class Loop;
 class BreakStmt;
-class IfStmt;
+class ConditionalStmt;
 class FuncDecl;
 class BinaryExpr;
 class AssignmentStmt;
 class ArrayLiteral;
-class ElifStmt;
-class IntLiteral;
 class ContinueStmt;
-class ElseStmt;
 class Name;
 class TryBlock;
 class CatchBlock;
@@ -57,13 +51,10 @@ public:
 
     bool GeneralVisit(AstNode* node) override;
     bool GeneralVisit(const std::shared_ptr<AstNode>& node) override;
-    bool Visit(StringLiteral* node) override;
-    bool Visit(FloatLiteral* node) override;
-    bool Visit(IntLiteral* node) override;
     bool Visit(ArrayLiteral* node) override;
     bool Visit(ScopeNode* node) override;
-    bool Visit(ForLoop* node) override;
-    bool Visit(WhileLoop* node) override;
+    bool Visit(Loop* node) override;
+    bool Visit(LiteralValue* node) override;
     bool Visit(ImportStmt* node) override;
     bool Visit(Module* node) override;
     bool Visit(FuncDecl* node) override;
@@ -76,11 +67,8 @@ public:
     bool Visit(AttributeAccess* node) override;
     bool Visit(TryBlock* node) override;
     bool Visit(CatchBlock* node) override;
-    bool Visit(IfStmt* node) override;
-    bool Visit(ElifStmt* node) override;
-    bool Visit(ElseStmt* node) override;
+    bool Visit(ConditionalStmt* node) override;
     bool Visit(DeleteStmt* node) override;
-    bool Visit(BoolLiteral* node) override;
     bool Visit(UnaryExpr* node) override;
     bool Visit(Expr* node) override;
     bool Visit(AliasDecl* node) override;
@@ -107,5 +95,3 @@ private:
     ScopeNode* _current_scope = nullptr;
     std::shared_ptr<RnTypeComposite> _current_type_reference;
 };
-
-#endif  //RONASCRIPT_RNASTVALIDATOR_H

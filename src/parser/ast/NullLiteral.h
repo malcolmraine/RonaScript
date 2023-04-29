@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_NULLLITERAL_H
-#define RONASCRIPT_NULLLITERAL_H
+#pragma once
 
 #include "AstNode.h"
 
@@ -20,5 +19,3 @@ public:
     ~NullLiteral() override = default;
     std::string ToString(bool nl) override;
 };
-
-#endif  //RONASCRIPT_NULLLITERAL_H

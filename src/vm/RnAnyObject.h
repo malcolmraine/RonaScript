@@ -1,9 +1,6 @@
-//
-// Created by Malcolm Hall on 3/22/23.
-//
 
-#ifndef RONASCRIPT_SRC_VM_RNANYOBJECT_H_
-#define RONASCRIPT_SRC_VM_RNANYOBJECT_H_
+
+#pragma once
 
 #include <variant>
 #include "RnArrayObject.h"
@@ -75,5 +72,3 @@ public:
 private:
     RnType::Type _active_type = RnType::RN_NULL;
 };
-
-#endif  //RONASCRIPT_SRC_VM_RNANYOBJECT_H_

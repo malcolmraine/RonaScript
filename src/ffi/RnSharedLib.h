@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNSHAREDLIB_H_
-#define RONASCRIPT_RNSHAREDLIB_H_
+#pragma once
 
 #include <string>
 #include <vector>
@@ -44,5 +43,3 @@ RONA_EXPORT void LibraryFunctions(
     void LibraryFunctions(std::vector<std::tuple<std::string, RnType::Type>>& functions)
 
 #define REGISTER_LIBRARY_FUNCTION(name, type) functions.emplace_back(#name, type);
-
-#endif  //RONASCRIPT_RNSHAREDLIB_H_

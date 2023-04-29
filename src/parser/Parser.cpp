@@ -5,6 +5,25 @@
 * Date:
 * Version: 1
 *
+* MIT License
+*
+* Copyright (c) 2021 Malcolm Hall
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
 ******************************************************************************/
 
 #include "Parser.h"
@@ -22,35 +41,29 @@
 #include "ast/Ast.h"
 #include "ast/AstNode.h"
 #include "ast/BinaryExpr.h"
-#include "ast/BoolLiteral.h"
+#include "ast/LiteralValue.h"
 #include "ast/BreakStmt.h"
 #include "ast/CatchBlock.h"
 #include "ast/ClassDecl.h"
 #include "ast/ContinueStmt.h"
 #include "ast/DeleteStmt.h"
-#include "ast/ElifStmt.h"
-#include "ast/ElseStmt.h"
 #include "ast/ExitStmt.h"
 #include "ast/Expr.h"
-#include "ast/FloatLiteral.h"
-#include "ast/ForLoop.h"
 #include "ast/FuncCall.h"
 #include "ast/FuncDecl.h"
-#include "ast/IfStmt.h"
+#include "ast/ConditionalStmt.h"
 #include "ast/ImportStmt.h"
 #include "ast/IndexedExpr.h"
-#include "ast/IntLiteral.h"
 #include "ast/Module.h"
 #include "ast/Name.h"
 #include "ast/NodeType.h"
 #include "ast/NullLiteral.h"
 #include "ast/ReturnStmt.h"
 #include "ast/ScopeNode.h"
-#include "ast/StringLiteral.h"
 #include "ast/TryBlock.h"
 #include "ast/UnaryExpr.h"
 #include "ast/VarDecl.h"
-#include "ast/WhileLoop.h"
+#include "ast/Loop.h"
 
 std::vector<std::string> Parser::parsed_files;
 
@@ -452,21 +465,27 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
         AdvanceBuffer(1);
         switch (Lookback()->token_type) {
             case TokenType::INT_LITERAL: {
-                node = std::make_shared<IntLiteral>(
-                    static_cast<long>(std::stol(Lookback()->lexeme)));
+                node = std::make_shared<LiteralValue>();
+                node->node_type = AST_INT_LITERAL;
+                std::dynamic_pointer_cast<LiteralValue>(node)->data = static_cast<RnIntNative>(std::stol(Lookback()->lexeme));
                 break;
             }
             case TokenType::FLOAT_LITERAL: {
-                node = std::make_shared<FloatLiteral>(std::stod(Lookback()->lexeme));
+                node = std::make_shared<LiteralValue>();
+                node->node_type = AST_FLOAT_LITERAL;
+                std::dynamic_pointer_cast<LiteralValue>(node)->data = static_cast<RnFloatNative>(std::stod(Lookback()->lexeme));
                 break;
             }
             case TokenType::STRING_LITERAL: {
-                node = std::make_shared<StringLiteral>(
-                    static_cast<std::string>(Lookback()->lexeme));
+                node = std::make_shared<LiteralValue>();
+                node->node_type = AST_STRING_LITERAL;
+                std::dynamic_pointer_cast<LiteralValue>(node)->data = Lookback()->lexeme;
                 break;
             }
             case TokenType::BOOL_LITERAL: {
-                node = std::make_shared<BoolLiteral>(Lookback()->lexeme == "true");
+                node = std::make_shared<LiteralValue>();
+                node->node_type = AST_BOOL_LITERAL;
+                std::dynamic_pointer_cast<LiteralValue>(node)->data =Lookback()->lexeme == "true";
                 break;
             }
             case TokenType::NULL_LITERAL: {
@@ -715,11 +734,15 @@ std::shared_ptr<ExitStmt> Parser::ParseExitStmt() {
     AdvanceBuffer(1);
 
     if (Current()->token_type == TokenType::SEMICOLON) {
-        node->exit_code = std::make_shared<IntLiteral>(0L);
+        node->exit_code = std::make_shared<LiteralValue>();
+        node->exit_code->node_type = AST_INT_LITERAL;
+        node->exit_code->data = 0L;
         AdvanceBuffer(1);
     } else {
-        node->exit_code = std::make_shared<IntLiteral>(
-            static_cast<long>(std::stoi(Current()->lexeme)));
+        node->exit_code = std::make_shared<LiteralValue>();
+        node->exit_code->node_type = AST_INT_LITERAL;
+        node->exit_code->data =
+            static_cast<RnIntNative>(std::stoi(Current()->lexeme));
         AdvanceBuffer(2);
     }
 
@@ -761,8 +784,9 @@ std::shared_ptr<AstNode> Parser::ParseAssignmentStatement(
 }
 
 /*****************************************************************************/
-std::shared_ptr<IfStmt> Parser::ParseIfStmt() {
-    auto node = std::make_shared<IfStmt>();
+std::shared_ptr<ConditionalStmt> Parser::ParseIfStmt() {
+    auto node = std::make_shared<ConditionalStmt>();
+    node->node_type = AST_IF_STMT;
     AddCurrentFileInfo(node);
     AdvanceBuffer(1);
     node->test = ParseExpr(TokenType::COLON);
@@ -781,8 +805,9 @@ std::shared_ptr<IfStmt> Parser::ParseIfStmt() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<ElifStmt> Parser::ParseElifStmt() {
-    auto node = std::make_shared<ElifStmt>();
+std::shared_ptr<ConditionalStmt> Parser::ParseElifStmt() {
+    auto node = std::make_shared<ConditionalStmt>();
+    node->node_type = AST_ELIF_STMT;
     AddCurrentFileInfo(node);
     AdvanceBuffer(1);
     node->test = ParseExpr(TokenType::COLON);
@@ -803,8 +828,9 @@ std::shared_ptr<ElifStmt> Parser::ParseElifStmt() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<ElseStmt> Parser::ParseElseStmt() {
-    auto node = std::make_shared<ElseStmt>();
+std::shared_ptr<ConditionalStmt> Parser::ParseElseStmt() {
+    auto node = std::make_shared<ConditionalStmt>();
+    node->node_type = AST_ELSE_STMT;
     AddCurrentFileInfo(node);
     AdvanceBuffer(1);
     node->consequent = ParseScope();
@@ -875,8 +901,9 @@ std::shared_ptr<ArrayLiteral> Parser::ParseArrayLiteral() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<WhileLoop> Parser::ParseWhileLoop() {
-    auto node = std::make_shared<WhileLoop>();
+std::shared_ptr<Loop> Parser::ParseWhileLoop() {
+    auto node = std::make_shared<Loop>();
+    node->node_type = AST_WHILE_LOOP;
     AddCurrentFileInfo(node);
     ConditionalBufAdvance(TokenType::WHILE);
     node->test = ParseExpr(TokenType::COLON);
@@ -886,8 +913,9 @@ std::shared_ptr<WhileLoop> Parser::ParseWhileLoop() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<ForLoop> Parser::ParseForLoop() {
-    auto node = std::make_shared<ForLoop>();
+std::shared_ptr<Loop> Parser::ParseForLoop() {
+    auto node = std::make_shared<Loop>();
+    node->node_type = AST_FOR_LOOP;
     AddCurrentFileInfo(node);
     Expect(TokenType::R_PARAN);
     AdvanceBuffer(1);
@@ -1229,7 +1257,7 @@ std::shared_ptr<AstNode> Parser::TransformBinaryExpr(
     } else if (binary_expr->_op == "+" || binary_expr->_op == "-") {
         if (binary_expr->_left->node_type == AST_NAME &&
             binary_expr->_right->node_type == AST_INT_LITERAL &&
-            std::dynamic_pointer_cast<IntLiteral>(binary_expr->_right)->data == 1) {
+            std::get<RnIntNative>(std::dynamic_pointer_cast<LiteralValue>(binary_expr->_right)->data) == 1) {
             auto unary_node = std::make_shared<UnaryExpr>();
             unary_node->expr = binary_expr->_left;
 

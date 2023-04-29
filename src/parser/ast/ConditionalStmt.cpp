@@ -1,5 +1,5 @@
 /*****************************************************************************
-* File:
+* File: ConditionalStmt.cpp
 * Description:
 * Author: Malcolm Hall
 * Date:
@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +26,40 @@
 * SOFTWARE.
 ******************************************************************************/
 
-#pragma once
+#include "ConditionalStmt.h"
 
-#include "../common/RnType.h"
+/*****************************************************************************/
+ConditionalStmt::ConditionalStmt() = default;
 
-class RnScope;
-class RnObject;
+/*****************************************************************************/
+ConditionalStmt::~ConditionalStmt() = default;
 
-class RnBuiltins_Time {};
+/*****************************************************************************/
+std::string ConditionalStmt::ToString(bool nl) {
+    std::string newline = nl ? "\n" : "";
+    std::string output;
+    if (node_type == AST_IF_STMT) {
+        output += MakeTabStr() + "IfStmt( )" + newline;
+    } else if (node_type == AST_ELIF_STMT) {
+        output += MakeTabStr() + "ElifStmt( )" + newline;
+    } else {
+        output += MakeTabStr() + "ElseStmt( )" + newline;
+    }
+
+    if (test) {
+        test->nest_lvl = nest_lvl + 1;
+        output += test->ToString(true);
+    }
+
+    output += MakeTabStr() + "\tConsequent( )" + newline;
+    consequent->nest_lvl = nest_lvl + 1;
+    output += consequent->ToString(true);
+
+    if (alternative) {
+        output += MakeTabStr() + "\tAlternative( )" + newline;
+        alternative->nest_lvl = nest_lvl + 1;
+        output += alternative->ToString(true);
+    }
+
+    return output;
+}

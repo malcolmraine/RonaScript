@@ -1,13 +1,13 @@
 /*****************************************************************************
-* File:
+* File: LiteralValue.cpp
 * Description:
 * Author: Malcolm Hall
-* Date:
+* Date: 6/26/22
 * Version: 1
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +26,29 @@
 * SOFTWARE.
 ******************************************************************************/
 
-#pragma once
+#include "LiteralValue.h"
 
-#include "../common/RnType.h"
+/*****************************************************************************/
+LiteralValue::LiteralValue() = default;
 
-class RnScope;
-class RnObject;
+/*****************************************************************************/
+LiteralValue::~LiteralValue() = default;
 
-class RnBuiltins_Time {};
+
+/*****************************************************************************/
+std::string LiteralValue::ToString(bool nl) {
+    std::string s = MakeTabStr();
+    if (node_type == AST_FLOAT_LITERAL) {
+        s += "FloatLiteral( " + std::to_string(std::get<RnFloatNative>(data)) + " )";
+    } else if (node_type == AST_INT_LITERAL) {
+        s += "IntLiteral( " + std::to_string(std::get<RnIntNative>(data)) + " )";
+    } else if (node_type == AST_BOOL_LITERAL) {
+        s += "BoolLiteral( " + std::to_string(std::get<RnBoolNative>(data)) + " )";
+    } else if (node_type == AST_STRING_LITERAL) {
+        s += "StringLiteral( " + std::get<RnStringNative>(data) + " )";
+    }
+    if (nl) {
+        s += "\n";
+    }
+    return s;
+}

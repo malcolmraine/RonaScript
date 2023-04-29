@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNFUNCTION_H
-#define RONASCRIPT_RNFUNCTION_H
+#pragma once
 
 #include <map>
 #include <string>
@@ -73,5 +72,3 @@ public:
 private:
     BuiltinFunction _function;
 };
-
-#endif  //RONASCRIPT_RNFUNCTION_H

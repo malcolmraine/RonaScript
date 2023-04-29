@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_SRC_UTIL_PATH_H
-#define RONASCRIPT_SRC_UTIL_PATH_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -29,5 +28,3 @@ private:
     Path() = default;
     ~Path() = default;
 };
-
-#endif  //RONASCRIPT_SRC_UTIL_PATH_H

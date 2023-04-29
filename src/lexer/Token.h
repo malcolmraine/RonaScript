@@ -25,8 +25,7 @@
 * SOFTWARE.
 *******************************************************************************/
 
-#ifndef RONASCRIPT_TOKEN_H
-#define RONASCRIPT_TOKEN_H
+#pragma once
 
 #include <map>
 #include <string>
@@ -61,4 +60,3 @@ public:
     FileInfo* file_info;
 };
 
-#endif  //RONASCRIPT_TOKEN_H

@@ -17,6 +17,14 @@ const std::string CODE_HEADER = "$$CODE$$";
 
 #define INSTRUCTION_BYTE_COUNT (4)
 
+
+typedef struct {
+    uint32_t timestamp;
+    uint8_t int_width;
+    uint8_t float_width;
+    uint8_t bool_width;
+} RnMetaData;
+
 typedef union {
     RnIntNative i_value;
     char bytes[RN_SIZE_BYTES_LENGTH];
@@ -41,6 +49,14 @@ void WriteHeader(std::fstream& fs, const std::string& header) {
 }
 
 /*****************************************************************************/
+void SetMetaData(RnMetaData* metadata) {
+    metadata->timestamp = Time::Seconds();
+    metadata->int_width = sizeof(RnIntNative);
+    metadata->float_width = sizeof(RnFloatNative);
+    metadata->bool_width = sizeof(uint8_t);
+}
+
+/*****************************************************************************/
 bool BinaryWriter::Write() {
     std::fstream fs;
 
@@ -53,6 +69,9 @@ bool BinaryWriter::Write() {
         throw std::runtime_error("Failed to open file: " + _outfile);
     }
 
+    auto* metadata = new RnMetaData;
+    SetMetaData(metadata);
+    fs.write(reinterpret_cast<const char*>(metadata), sizeof(RnMetaData));
     WriteHeader(fs, CONST_HEADER);
     IntByteConversion const_count;
     std::memset(const_count.bytes, 0, RN_SIZE_BYTES_LENGTH);
@@ -70,8 +89,6 @@ bool BinaryWriter::Write() {
         }
         std::memset(buf, 0, object->GetByteSize());
         object->GetBytes(buf);
-        std::cout << i << ": " << object->ToString() << " - " << object->GetByteSize()
-                  << std::endl;
         fs.write(buf, static_cast<std::streamsize>(object->GetByteSize()));
     }
     delete[] buf;
@@ -102,13 +119,13 @@ BinaryReader::BinaryReader(std::string file) : _infile(std::move(file)) {}
 BinaryReader::~BinaryReader() = default;
 
 /*****************************************************************************/
-RnIntNative GetSizeFromBuf(const char* buf) {
-    IntByteConversion conversion;
-    std::memset(conversion.bytes, 0, RN_SIZE_BYTES_LENGTH);
-    for (int i = 0; i < RN_SIZE_BYTES_LENGTH; i++) {
-        conversion.bytes[i] = buf[i];
-    }
-    return conversion.i_value;
+RnIntNative GetSizeFromBuf(char* buf) {
+//    IntByteConversion conversion;
+//    std::memset(conversion.bytes, 0, RN_SIZE_BYTES_LENGTH);
+//    for (int i = 0; i < RN_SIZE_BYTES_LENGTH; i++) {
+//        conversion.bytes[i] = buf[i];
+//    }
+    return *(reinterpret_cast<RnIntNative *>(buf));
 }
 
 /*****************************************************************************/
@@ -141,7 +158,11 @@ bool BinaryReader::Read(InstructionBlock& instructions) {
         std::memset(buf, 0, file_size);
         fs.read(buf, static_cast<std::streamsize>(file_size));
         size_t idx = 0;
-        ReadHeader(buf, CONST_HEADER, "const", idx);
+
+        auto metadata = reinterpret_cast<RnMetaData*>(buf + idx);
+        idx += sizeof(RnMetaData);
+
+        ReadHeader(buf + idx, CONST_HEADER, "const", idx);
 
         // Read constants
         RnIntNative const_count = GetSizeFromBuf(buf + idx);
@@ -172,7 +193,7 @@ bool BinaryReader::Read(InstructionBlock& instructions) {
     } catch (const std::exception& e) {
         delete[] const_header;
         delete[] code_header;
-        throw e;
+        throw std::runtime_error(e.what());
     }
 
     delete[] const_header;

@@ -7,8 +7,7 @@
 *
 *****************************************************************************/
 
-#ifndef RONASCRIPT_SRC_UTIL_LOOPCOUNTER_H_
-#define RONASCRIPT_SRC_UTIL_LOOPCOUNTER_H_
+#pragma once
 
 #include <cstddef>
 #include <limits>
@@ -74,4 +73,3 @@ private:
 #endif
 #endif
 
-#endif  //RONASCRIPT_SRC_UTIL_LOOPCOUNTER_H_

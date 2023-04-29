@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNCODEGENERATOR_H
-#define RONASCRIPT_RNCODEGENERATOR_H
+#pragma once
 
 #include <memory>
 #include "../common/RnInternment.h"
@@ -31,5 +30,3 @@ private:
     InstructionBlock instructions;
     RnCodeGenVisitor visitor;
 };
-
-#endif  //RONASCRIPT_RNCODEGENERATOR_H

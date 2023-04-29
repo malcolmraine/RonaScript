@@ -5,6 +5,25 @@
 * Date: 6/26/22
 * Version: 1
 *
+* MIT License
+*
+* Copyright (c) 2021 Malcolm Hall
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
 ******************************************************************************/
 
 #include "RnCodeGenVisitor.h"
@@ -14,30 +33,24 @@
 #include "../parser/ast/AssignmentStmt.h"
 #include "../parser/ast/AttributeAccess.h"
 #include "../parser/ast/BinaryExpr.h"
-#include "../parser/ast/BoolLiteral.h"
+#include "../parser/ast/LiteralValue.h"
 #include "../parser/ast/BreakStmt.h"
 #include "../parser/ast/CatchBlock.h"
 #include "../parser/ast/ClassDecl.h"
 #include "../parser/ast/ContinueStmt.h"
 #include "../parser/ast/DeleteStmt.h"
-#include "../parser/ast/ElifStmt.h"
-#include "../parser/ast/ElseStmt.h"
 #include "../parser/ast/ExitStmt.h"
 #include "../parser/ast/Expr.h"
-#include "../parser/ast/FloatLiteral.h"
-#include "../parser/ast/ForLoop.h"
 #include "../parser/ast/FuncCall.h"
 #include "../parser/ast/FuncDecl.h"
-#include "../parser/ast/IfStmt.h"
 #include "../parser/ast/ImportStmt.h"
 #include "../parser/ast/IndexedExpr.h"
-#include "../parser/ast/IntLiteral.h"
 #include "../parser/ast/ReturnStmt.h"
-#include "../parser/ast/StringLiteral.h"
 #include "../parser/ast/TryBlock.h"
 #include "../parser/ast/UnaryExpr.h"
 #include "../parser/ast/VarDecl.h"
-#include "../parser/ast/WhileLoop.h"
+#include "../parser/ast/Loop.h"
+#include "../parser/ast/ConditionalStmt.h"
 #include "../vm/RnObject.h"
 
 /*****************************************************************************/
@@ -54,9 +67,8 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
         case AST_INDEXED_EXPR:
             return Visit(dynamic_cast<IndexedExpr*>(node));
         case AST_WHILE_LOOP:
-            return Visit(dynamic_cast<WhileLoop*>(node));
         case AST_FOR_LOOP:
-            return Visit(dynamic_cast<ForLoop*>(node));
+            return Visit(dynamic_cast<Loop*>(node));
         case AST_CLASS_DECL:
             return Visit(dynamic_cast<ClassDecl*>(node));
         case AST_EXPR:
@@ -69,22 +81,17 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
             return Visit(dynamic_cast<FuncDecl*>(node));
         case AST_LIST_LITERAL:
             return Visit(dynamic_cast<ArrayLiteral*>(node));
-        case AST_STRING_LITERAL:
-            return Visit(dynamic_cast<StringLiteral*>(node));
-        case AST_BOOL_LITERAL:
-            return Visit(dynamic_cast<BoolLiteral*>(node));
-        case AST_FLOAT_LITERAL:
-            return Visit(dynamic_cast<FloatLiteral*>(node));
         case AST_INT_LITERAL:
-            return Visit(dynamic_cast<IntLiteral*>(node));
+        case AST_STRING_LITERAL:
+        case AST_BOOL_LITERAL:
+        case AST_FLOAT_LITERAL:
+            return Visit(dynamic_cast<LiteralValue*>(node));
         case AST_IMPORT:
             return Visit(dynamic_cast<ImportStmt*>(node));
         case AST_IF_STMT:
-            return Visit(dynamic_cast<IfStmt*>(node));
         case AST_ELIF_STMT:
-            return Visit(dynamic_cast<ElifStmt*>(node));
         case AST_ELSE_STMT:
-            return Visit(dynamic_cast<ElseStmt*>(node));
+            return Visit(dynamic_cast<ConditionalStmt*>(node));
         case AST_ARG_DECL:
             return Visit(dynamic_cast<ArgDecl*>(node));
         case AST_ALIAS_DECL:
@@ -126,31 +133,27 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(const std::shared_ptr<AstNode>& 
 }
 
 /*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(StringLiteral* node) {
-    return {new RnInstruction(
-        OP_LOAD_LITERAL,
-        RnConstStore::InternValue(static_cast<RnStringNative>(node->data)))};
-}
-
-/*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(FloatLiteral* node) {
-    return {new RnInstruction(
-        OP_LOAD_LITERAL,
-        RnConstStore::InternValue(static_cast<RnFloatNative>(node->data)))};
-}
-
-/*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(IntLiteral* node) {
-    return {new RnInstruction(
-        OP_LOAD_LITERAL,
-        RnConstStore::InternValue(static_cast<RnIntNative>(node->data)))};
-}
-
-/*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(BoolLiteral* node) {
-    return {new RnInstruction(
-        OP_LOAD_LITERAL,
-        RnConstStore::InternValue(static_cast<RnBoolNative>(node->GetData())))};
+InstructionBlock RnCodeGenVisitor::Visit(LiteralValue* node) {
+    switch (node->node_type) {
+        case AST_STRING_LITERAL:
+            return {new RnInstruction(
+                OP_LOAD_LITERAL,
+                RnConstStore::InternValue(std::get<RnStringNative>(node->data)))};
+        case AST_BOOL_LITERAL:
+            return {new RnInstruction(
+                OP_LOAD_LITERAL,
+                RnConstStore::InternValue(std::get<RnBoolNative>(node->data)))};
+        case AST_INT_LITERAL:
+            return {new RnInstruction(
+                OP_LOAD_LITERAL,
+                RnConstStore::InternValue(std::get<RnIntNative>(node->data)))};
+        case AST_FLOAT_LITERAL:
+            return {new RnInstruction(
+                OP_LOAD_LITERAL,
+                RnConstStore::InternValue(std::get<RnFloatNative>(node->data)))};
+        default:
+            throw std::runtime_error("Invalid literal type");
+    }
 }
 
 /*****************************************************************************/
@@ -178,7 +181,7 @@ InstructionBlock RnCodeGenVisitor::Visit(ScopeNode* node) {
 }
 
 /*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(ForLoop* node) {
+InstructionBlock RnCodeGenVisitor::Visit(Loop* node) {
     _break_instructions.emplace_back();
     _continue_instructions.emplace_back();
     InstructionBlock instructions;
@@ -231,23 +234,23 @@ InstructionBlock RnCodeGenVisitor::Visit(ForLoop* node) {
     _continue_instructions.pop_back();
     return instructions;
 }
-
-/*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(WhileLoop* node) {
-    InstructionBlock instructions;
-    InstructionBlock scope = GeneralVisit(node->scope);
-    scope.insert(scope.begin(), new RnInstruction(OP_CREATE_CONTEXT));
-    scope.push_back(new RnInstruction(OP_RESET_CONTEXT));
-    InstructionBlock test = GeneralVisit(node->test);
-    instructions.reserve(scope.size() + test.size());
-    instructions.insert(instructions.end(), test.begin(), test.end());
-    instructions.emplace_back(new RnInstruction(OP_JUMPF_IF, scope.size() + 1));
-    instructions.insert(instructions.end(), scope.begin(), scope.end());
-    instructions.emplace_back(
-        new RnInstruction(OP_JUMPB, scope.size() + test.size() + 1));
-
-    return instructions;
-}
+//
+///*****************************************************************************/
+//InstructionBlock RnCodeGenVisitor::Visit(WhileLoop* node) {
+//    InstructionBlock instructions;
+//    InstructionBlock scope = GeneralVisit(node->scope);
+//    scope.insert(scope.begin(), new RnInstruction(OP_CREATE_CONTEXT));
+//    scope.push_back(new RnInstruction(OP_RESET_CONTEXT));
+//    InstructionBlock test = GeneralVisit(node->test);
+//    instructions.reserve(scope.size() + test.size());
+//    instructions.insert(instructions.end(), test.begin(), test.end());
+//    instructions.emplace_back(new RnInstruction(OP_JUMPF_IF, scope.size() + 1));
+//    instructions.insert(instructions.end(), scope.begin(), scope.end());
+//    instructions.emplace_back(
+//        new RnInstruction(OP_JUMPB, scope.size() + test.size() + 1));
+//
+//    return instructions;
+//}
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ImportStmt* node) {
@@ -318,20 +321,20 @@ InstructionBlock RnCodeGenVisitor::Visit(VarDecl* node) {
         switch (node->init_value->node_type) {
             case AST_STRING_LITERAL:
                 RnConstStore::InternValue(
-                    std::dynamic_pointer_cast<StringLiteral>(node->init_value)->data);
+                    std::get<RnStringNative >(std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
                 return {};
             case AST_BOOL_LITERAL:
                 RnConstStore::InternValue(
-                    std::dynamic_pointer_cast<BoolLiteral>(node->init_value)
-                        ->GetData());
+                    std::get<RnBoolNative >(std::dynamic_pointer_cast<LiteralValue>(node->init_value)
+                        ->data));
                 return {};
             case AST_FLOAT_LITERAL:
                 RnConstStore::InternValue(
-                    std::dynamic_pointer_cast<FloatLiteral>(node->init_value)->data);
+                    std::get<RnFloatNative >(std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
                 return {};
             case AST_INT_LITERAL:
                 RnConstStore::InternValue(
-                    std::dynamic_pointer_cast<IntLiteral>(node->init_value)->data);
+                    std::get<RnIntNative >(std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
                 return {};
             default:
                 assert(false);
@@ -369,7 +372,7 @@ InstructionBlock RnCodeGenVisitor::Visit(ClassDecl* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ExitStmt* node) {
-    return {new RnInstruction(OP_EXIT, node->exit_code->data)};
+    return {new RnInstruction(OP_EXIT, std::get<RnIntNative >(node->exit_code->data))};
 }
 
 /*****************************************************************************/
@@ -398,7 +401,7 @@ InstructionBlock RnCodeGenVisitor::Visit(CatchBlock* node) {
 }
 
 /*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(IfStmt* node) {
+InstructionBlock RnCodeGenVisitor::Visit(ConditionalStmt* node) {
     InstructionBlock instructions;
     InstructionBlock test = GeneralVisit(node->test);
     InstructionBlock consequent = GeneralVisit(node->consequent);
@@ -409,29 +412,6 @@ InstructionBlock RnCodeGenVisitor::Visit(IfStmt* node) {
     auto jumpf = new RnInstruction(OP_JUMPF_IF, consequent.size());
     instructions.emplace_back(jumpf);
     instructions.insert(instructions.end(), consequent.begin(), consequent.end());
-
-    if (!alternative.empty()) {
-        jumpf->SetArg1(jumpf->GetArg1() + 1);
-        instructions.emplace_back(new RnInstruction(OP_JUMPF, alternative.size()));
-        instructions.insert(instructions.end(), alternative.begin(), alternative.end());
-    }
-
-    return instructions;
-}
-
-/*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(ElifStmt* node) {
-    InstructionBlock instructions = {new RnInstruction(OP_CREATE_CONTEXT)};
-    InstructionBlock test = GeneralVisit(node->test);
-    InstructionBlock consequent = GeneralVisit(node->consequent);
-    WrapContext(consequent);
-    InstructionBlock alternative = GeneralVisit(node->alternative);
-
-    instructions.insert(instructions.end(), test.begin(), test.end());
-    auto jumpf = new RnInstruction(OP_JUMPF_IF, consequent.size());
-    instructions.emplace_back(jumpf);
-    instructions.insert(instructions.end(), consequent.begin(), consequent.end());
-    //	instructions.emplace_back(new RnInstruction(OP_JUMPF, alternative.size()));
 
     if (!alternative.empty()) {
         jumpf->SetArg1(jumpf->GetArg1() + 1);
@@ -439,16 +419,6 @@ InstructionBlock RnCodeGenVisitor::Visit(ElifStmt* node) {
         instructions.insert(instructions.end(), alternative.begin(), alternative.end());
     }
     instructions.push_back(new RnInstruction(OP_DESTROY_CONTEXT));
-
-    return instructions;
-}
-
-/*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(ElseStmt* node) {
-    InstructionBlock instructions;
-    InstructionBlock consequent = GeneralVisit(node->consequent);
-    WrapContext(consequent);
-    instructions.insert(instructions.end(), consequent.begin(), consequent.end());
 
     return instructions;
 }

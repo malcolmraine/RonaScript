@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNTYPE_H
-#define RONASCRIPT_RNTYPE_H
+#pragma once
 
 #include <limits>
 #include <string>
@@ -17,7 +16,7 @@
 
 class RnObject;
 
-typedef long long RnIntNative;
+typedef int64_t RnIntNative;
 typedef double RnFloatNative;
 typedef std::string RnStringNative;
 typedef bool RnBoolNative;
@@ -136,5 +135,3 @@ private:
     Bounds<RnFloatNative> _bounds{};
     RnType::Type _type;
 };
-
-#endif  //RONASCRIPT_RNTYPE_H

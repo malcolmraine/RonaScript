@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNOBJECTBASE_H
-#define RONASCRIPT_RNOBJECTBASE_H
+#pragma once
 
 #include <vector>
 #include "RnObject.h"
@@ -182,4 +181,3 @@ protected:
     bool _initialized = false;
 };
 
-#endif  //RONASCRIPT_RNOBJECTBASE_H

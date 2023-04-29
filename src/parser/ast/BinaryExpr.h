@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_BINARYEXPR_H
-#define RONASCRIPT_BINARYEXPR_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -28,4 +27,3 @@ public:
     std::string _op;
 };
 
-#endif  //RONASCRIPT_BINARYEXPR_H

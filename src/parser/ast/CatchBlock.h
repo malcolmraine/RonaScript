@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef VARSTACKTEST_CATCH_BLOCK_H
-#define VARSTACKTEST_CATCH_BLOCK_H
+#pragma once
 
 #include "AstNode.h"
 
@@ -45,5 +44,3 @@ private:
     std::vector<std::shared_ptr<Name>> _exception_ids;
     std::shared_ptr<ScopeNode> _scope = nullptr;
 };
-
-#endif  //VARSTACKTEST_CATCH_BLOCK_H

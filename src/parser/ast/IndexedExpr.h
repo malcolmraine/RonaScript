@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_INDEXEDEXPR_H
-#define RONASCRIPT_INDEXEDEXPR_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -22,4 +21,3 @@ public:
     std::shared_ptr<AstNode> idx = nullptr;
 };
 
-#endif  //RONASCRIPT_INDEXEDEXPR_H

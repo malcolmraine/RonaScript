@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_ASTNODE_H
-#define RONASCRIPT_ASTNODE_H
+#pragma once
 
 #include <string>
 #include "../../lexer/Token.h"
@@ -32,4 +31,3 @@ protected:
     std::string MakeTabStr();
 };
 
-#endif  //RONASCRIPT_ASTNODE_H

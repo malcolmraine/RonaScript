@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNFUNCTIONOBJECT_H
-#define RONASCRIPT_RNFUNCTIONOBJECT_H
+#pragma once
 
 #include "RnObjectBase.h"
 
@@ -30,5 +29,3 @@ public:
         return RnType::RN_FUNCTION;
     }
 };
-
-#endif  //RONASCRIPT_RNFUNCTIONOBJECT_H

@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNFLOATOBJECT_H
-#define RONASCRIPT_RNFLOATOBJECT_H
+#pragma once
 
 #include "RnNumericObject.h"
 
@@ -88,5 +87,3 @@ public:
         return RnType::RN_FLOAT;
     }
 };
-
-#endif  //RONASCRIPT_RNFLOATOBJECT_H

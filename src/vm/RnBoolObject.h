@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNBOOLOBJECT_H
-#define RONASCRIPT_RNBOOLOBJECT_H
+#pragma once
 
 #include "RnNumericObject.h"
 
@@ -80,5 +79,3 @@ public:
         return RnType::RN_BOOLEAN;
     }
 };
-
-#endif  //RONASCRIPT_RNBOOLOBJECT_H

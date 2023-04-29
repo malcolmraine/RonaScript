@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_BREAKSTMT_H
-#define RONASCRIPT_BREAKSTMT_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -20,4 +19,3 @@ public:
     std::string ToString(bool nl) override;
 };
 
-#endif  //RONASCRIPT_BREAKSTMT_H

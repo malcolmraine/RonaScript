@@ -1,13 +1,13 @@
 /*****************************************************************************
-* File:
+* File: LiteralValue.cpp
 * Description:
 * Author: Malcolm Hall
-* Date:
+* Date: 6/26/22
 * Version: 1
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,9 +28,16 @@
 
 #pragma once
 
-#include "../common/RnType.h"
+#include <string>
+#include "AstNode.h"
+#include <variant>
+#include "../../common/RnType.h"
 
-class RnScope;
-class RnObject;
+class LiteralValue : public AstNode {
+public:
+    LiteralValue();
+    ~LiteralValue() override;
+    std::string ToString(bool nl) override;
 
-class RnBuiltins_Time {};
+    std::variant<RnFloatNative , RnIntNative, RnStringNative , RnBoolNative> data;
+};

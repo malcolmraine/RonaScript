@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNASTOPTIMIZER_H
-#define RONASCRIPT_RNASTOPTIMIZER_H
+#pragma once
 
 class Ast;
 class AstNode;
@@ -30,5 +29,3 @@ public:
 protected:
     Ast* ast = nullptr;
 };
-
-#endif  //RONASCRIPT_RNASTOPTIMIZER_H

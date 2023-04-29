@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_SRC_UTIL_STRING_H
-#define RONASCRIPT_SRC_UTIL_STRING_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -65,5 +64,3 @@ private:
     String() = default;
     ~String() = default;
 };
-
-#endif  //RONASCRIPT_SRC_UTIL_STRING_H

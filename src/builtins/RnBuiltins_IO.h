@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_VM_BUILTINS_RNBUILTINS_IO_H_
-#define RONASCRIPT_VM_BUILTINS_RNBUILTINS_IO_H_
+#pragma once
 
 #include "../common/RnType.h"
 
@@ -58,5 +57,3 @@ public:
     static void rn_builtin_prompt(RnScope* scope, const RnArrayNative& args,
                                   RnObject* ret_val);
 };
-
-#endif  //RONASCRIPT_VM_BUILTINS_RNBUILTINS_IO_H_

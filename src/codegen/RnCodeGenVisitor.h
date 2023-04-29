@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNCODEGENVISITOR_H
-#define RONASCRIPT_RNCODEGENVISITOR_H
+#pragma once
 
 #include <utility>
 #include <vector>
@@ -21,7 +20,6 @@ class ScopeNode;
 class ImportStmt;
 class ArgDecl;
 class AstNode;
-class ForLoop;
 class AliasDecl;
 class Expr;
 class VarDecl;
@@ -31,17 +29,15 @@ class ReturnStmt;
 class FuncCall;
 class IndexedExpr;
 class ClassDecl;
-class WhileLoop;
+class Loop;
 class BreakStmt;
-class IfStmt;
+class ConditionalStmt;
 class FuncDecl;
 class BinaryExpr;
 class AssignmentStmt;
 class ArrayLiteral;
-class ElifStmt;
 class IntLiteral;
 class ContinueStmt;
-class ElseStmt;
 class Name;
 class TryBlock;
 class CatchBlock;
@@ -57,13 +53,10 @@ public:
 
     InstructionBlock GeneralVisit(AstNode* node) override;
     InstructionBlock GeneralVisit(const std::shared_ptr<AstNode>& node) override;
-    InstructionBlock Visit(StringLiteral* node) override;
-    InstructionBlock Visit(FloatLiteral* node) override;
-    InstructionBlock Visit(IntLiteral* node) override;
     InstructionBlock Visit(ArrayLiteral* node) override;
+    InstructionBlock Visit(LiteralValue* node) override;
     InstructionBlock Visit(ScopeNode* node) override;
-    InstructionBlock Visit(ForLoop* node) override;
-    InstructionBlock Visit(WhileLoop* node) override;
+    InstructionBlock Visit(Loop* node) override;
     InstructionBlock Visit(ImportStmt* node) override;
     InstructionBlock Visit(Module* node) override;
     InstructionBlock Visit(FuncDecl* node) override;
@@ -76,11 +69,8 @@ public:
     InstructionBlock Visit(AttributeAccess* node) override;
     InstructionBlock Visit(TryBlock* node) override;
     InstructionBlock Visit(CatchBlock* node) override;
-    InstructionBlock Visit(IfStmt* node) override;
-    InstructionBlock Visit(ElifStmt* node) override;
-    InstructionBlock Visit(ElseStmt* node) override;
+    InstructionBlock Visit(ConditionalStmt* node) override;
     InstructionBlock Visit(DeleteStmt* node) override;
-    InstructionBlock Visit(BoolLiteral* node) override;
     InstructionBlock Visit(UnaryExpr* node) override;
     InstructionBlock Visit(Expr* node) override;
     InstructionBlock Visit(AliasDecl* node) override;
@@ -104,5 +94,3 @@ private:
     std::vector<std::vector<RnInstruction*>> _break_instructions;
     std::vector<std::vector<RnInstruction*>> _continue_instructions;
 };
-
-#endif  //RONASCRIPT_RNCODEGENVISITOR_H

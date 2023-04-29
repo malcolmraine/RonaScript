@@ -1,5 +1,5 @@
 /*****************************************************************************
-* File:
+* File: Loop.cpp
 * Description:
 * Author: Malcolm Hall
 * Date:
@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,11 +26,46 @@
 * SOFTWARE.
 ******************************************************************************/
 
-#pragma once
+#include "Loop.h"
+#include "ScopeNode.h"
+#include "VarDecl.h"
 
-#include "../common/RnType.h"
+/*****************************************************************************/
+Loop::Loop() {
+    node_type = AST_FOR_LOOP;
+}
 
-class RnScope;
-class RnObject;
+/*****************************************************************************/
+Loop::~Loop() = default;
 
-class RnBuiltins_Time {};
+/*****************************************************************************/
+std::string Loop::ToString(bool nl) {
+    std::string output = MakeTabStr();
+
+    if (node_type == AST_FOR_LOOP) {
+        output += "ForLoop( )";
+    } else {
+        output += "WhileLoop( )";
+    }
+
+    if (nl) {
+        output += "\n";
+    }
+
+    if (init) {
+        init->nest_lvl = nest_lvl + 1;
+        output += init->ToString(nl);
+    }
+    if (test) {
+        test->nest_lvl = nest_lvl + 1;
+        output += test->ToString(nl);
+    }
+    if (update) {
+        update->nest_lvl = nest_lvl + 1;
+        output += update->ToString(nl);
+    }
+    scope->nest_lvl = nest_lvl + 1;
+    output += scope->ToString(nl);
+
+    return output;
+}

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* File:
+* File: ConditionalStmt.h
 * Description:
 * Author: Malcolm Hall
 * Date:
@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,9 +28,14 @@
 
 #pragma once
 
-#include "../common/RnType.h"
+#include "AstNode.h"
 
-class RnScope;
-class RnObject;
-
-class RnBuiltins_Time {};
+class ConditionalStmt : public AstNode {
+public:
+    ConditionalStmt();
+    ~ConditionalStmt() override;
+    std::string ToString(bool nl) override;
+    std::shared_ptr<AstNode> test = nullptr;
+    std::shared_ptr<AstNode> consequent = nullptr;
+    std::shared_ptr<AstNode> alternative = nullptr;
+};

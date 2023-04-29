@@ -1,5 +1,5 @@
 /*****************************************************************************
-* File:
+* File: Loop.h
 * Description:
 * Author: Malcolm Hall
 * Date:
@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,9 +28,19 @@
 
 #pragma once
 
-#include "../common/RnType.h"
+#include "AstNode.h"
 
-class RnScope;
-class RnObject;
+class VarDecl;
+class ScopeNode;
 
-class RnBuiltins_Time {};
+class Loop : public AstNode {
+public:
+    Loop();
+    ~Loop() override;
+    std::string ToString(bool nl) override;
+
+    std::shared_ptr<AstNode> init = nullptr;
+    std::shared_ptr<AstNode> test = nullptr;
+    std::shared_ptr<AstNode> update = nullptr;
+    std::shared_ptr<ScopeNode> scope = nullptr;
+};

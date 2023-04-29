@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_REQUIRE_H
-#define RONASCRIPT_REQUIRE_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -24,5 +23,3 @@ public:
 
     std::string source_file;
 };
-
-#endif  //RONASCRIPT_REQUIRE_H

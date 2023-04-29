@@ -25,8 +25,7 @@
 * SOFTWARE.
 *******************************************************************************/
 
-#ifndef RONASCRIPT_TOKEN_TYPE_H
-#define RONASCRIPT_TOKEN_TYPE_H
+#pragma once
 
 enum TokenType : int {
     L_BRACE,         // {
@@ -128,5 +127,3 @@ enum TokenType : int {
     RANGE,
     ANY,
 };
-
-#endif  //RONASCRIPT_TOKEN_TYPE_H

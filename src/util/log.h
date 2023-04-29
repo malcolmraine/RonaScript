@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_SRC_UTIL_LOG_H
-#define RONASCRIPT_SRC_UTIL_LOG_H
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -26,4 +25,3 @@ public:
     static void ERROR(const std::string& msg);
 };
 
-#endif  //RONASCRIPT_SRC_UTIL_LOG_H

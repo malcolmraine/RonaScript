@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef VARSTACKTEST_RNSTACK_H
-#define VARSTACKTEST_RNSTACK_H
+#pragma once
 
 #include <stack>
 #include <vector>
@@ -92,4 +91,3 @@ private:
     std::vector<T> _data;
 };
 
-#endif  //VARSTACKTEST_RNSTACK_H

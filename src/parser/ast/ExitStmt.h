@@ -7,14 +7,13 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_EXITSTMT_H
-#define RONASCRIPT_EXITSTMT_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
 #include "NodeType.h"
 
-class IntLiteral;
+class LiteralValue;
 
 class ExitStmt : public AstNode {
 public:
@@ -22,7 +21,6 @@ public:
     ~ExitStmt() override;
     std::string ToString(bool nl) override;
 
-    std::shared_ptr<IntLiteral> exit_code = nullptr;
+    std::shared_ptr<LiteralValue> exit_code = nullptr;
 };
 
-#endif  //RONASCRIPT_EXITSTMT_H
