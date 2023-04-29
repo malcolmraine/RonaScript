@@ -53,10 +53,8 @@ public:
 
     InstructionBlock GeneralVisit(AstNode* node) override;
     InstructionBlock GeneralVisit(const std::shared_ptr<AstNode>& node) override;
-    InstructionBlock Visit(StringLiteral* node) override;
-    InstructionBlock Visit(FloatLiteral* node) override;
-    InstructionBlock Visit(IntLiteral* node) override;
     InstructionBlock Visit(ArrayLiteral* node) override;
+    InstructionBlock Visit(LiteralValue* node) override;
     InstructionBlock Visit(ScopeNode* node) override;
     InstructionBlock Visit(Loop* node) override;
     InstructionBlock Visit(ImportStmt* node) override;
@@ -73,7 +71,6 @@ public:
     InstructionBlock Visit(CatchBlock* node) override;
     InstructionBlock Visit(ConditionalStmt* node) override;
     InstructionBlock Visit(DeleteStmt* node) override;
-    InstructionBlock Visit(BoolLiteral* node) override;
     InstructionBlock Visit(UnaryExpr* node) override;
     InstructionBlock Visit(Expr* node) override;
     InstructionBlock Visit(AliasDecl* node) override;

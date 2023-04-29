@@ -1,13 +1,13 @@
 /*****************************************************************************
-* File:
+* File: LiteralValue.cpp
 * Description:
 * Author: Malcolm Hall
-* Date:
+* Date: 6/26/22
 * Version: 1
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,43 +26,29 @@
 * SOFTWARE.
 ******************************************************************************/
 
-#include "IntLiteral.h"
-#include <iostream>
-#include "../../codegen/RnCodeGenVisitor.h"
+#include "LiteralValue.h"
 
 /*****************************************************************************/
-IntLiteral::IntLiteral() {
-    node_type = AST_INT_LITERAL;
-    data = 0;
+LiteralValue::LiteralValue() = default;
+
+/*****************************************************************************/
+LiteralValue::~LiteralValue() = default;
+
+
+/*****************************************************************************/
+std::string LiteralValue::ToString(bool nl) {
+    std::string s = MakeTabStr();
+    if (node_type == AST_FLOAT_LITERAL) {
+        s += "FloatLiteral( " + std::to_string(std::get<RnFloatNative>(data)) + " )";
+    } else if (node_type == AST_INT_LITERAL) {
+        s += "IntLiteral( " + std::to_string(std::get<RnIntNative>(data)) + " )";
+    } else if (node_type == AST_BOOL_LITERAL) {
+        s += "BoolLiteral( " + std::to_string(std::get<RnBoolNative>(data)) + " )";
+    } else if (node_type == AST_STRING_LITERAL) {
+        s += "StringLiteral( " + std::get<RnStringNative>(data) + " )";
+    }
+    if (nl) {
+        s += "\n";
+    }
+    return s;
 }
-
-/*****************************************************************************/
-IntLiteral::IntLiteral(long value) {
-    node_type = AST_INT_LITERAL;
-    data = value;
-}
-
-/*****************************************************************************/
-IntLiteral::~IntLiteral() = default;
-
-/*****************************************************************************/
-std::string IntLiteral::ToString(bool nl) {
-    return MakeTabStr() + "IntLiteral( " + std::to_string(data) + " )" +
-           (nl ? "\n" : "");
-}
-
-/*****************************************************************************/
-IntLiteral::IntLiteral(bool value) {
-    data = value ? 1 : 0;
-}
-
-/*****************************************************************************/
-IntLiteral::IntLiteral(double value) {
-    data = static_cast<RnIntNative>(value);
-}
-
-///*****************************************************************************/
-//IntLiteral::IntLiteral(const std::string& value)
-//{
-//	std::cout << value;
-//}

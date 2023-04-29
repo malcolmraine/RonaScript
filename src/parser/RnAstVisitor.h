@@ -2,7 +2,7 @@
 
 #pragma once
 
-class StringLiteral;
+class LiteralValue;
 class ScopeNode;
 class ImportStmt;
 class ArgDecl;
@@ -23,7 +23,7 @@ class FuncDecl;
 class BinaryExpr;
 class AssignmentStmt;
 class ArrayLiteral;
-class IntLiteral;
+class LiteralValue;
 class ContinueStmt;
 class Name;
 class TryBlock;
@@ -38,9 +38,6 @@ template <typename T>
 class RnAstVisitor {
     virtual T GeneralVisit(AstNode* node) = 0;
     virtual T GeneralVisit(const std::shared_ptr<AstNode>& node) = 0;
-    virtual T Visit(StringLiteral* node) = 0;
-    virtual T Visit(FloatLiteral* node) = 0;
-    virtual T Visit(IntLiteral* node) = 0;
     virtual T Visit(ArrayLiteral* node) = 0;
     virtual T Visit(ScopeNode* node) = 0;
     virtual T Visit(Loop* node) = 0;
@@ -53,12 +50,12 @@ class RnAstVisitor {
     virtual T Visit(ClassDecl* node) = 0;
     virtual T Visit(ExitStmt* node) = 0;
     virtual T Visit(ReturnStmt* node) = 0;
+    virtual T Visit(LiteralValue* node) = 0;
     virtual T Visit(AttributeAccess* node) = 0;
     virtual T Visit(TryBlock* node) = 0;
     virtual T Visit(CatchBlock* node) = 0;
     virtual T Visit(ConditionalStmt* node) = 0;
     virtual T Visit(DeleteStmt* node) = 0;
-    virtual T Visit(BoolLiteral* node) = 0;
     virtual T Visit(UnaryExpr* node) = 0;
     virtual T Visit(Expr* node) = 0;
     virtual T Visit(AliasDecl* node) = 0;

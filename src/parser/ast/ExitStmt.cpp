@@ -28,7 +28,7 @@
 
 #include "ExitStmt.h"
 #include "../../codegen/RnCodeGenVisitor.h"
-#include "IntLiteral.h"
+#include "LiteralValue.h"
 
 /*****************************************************************************/
 ExitStmt::ExitStmt() {

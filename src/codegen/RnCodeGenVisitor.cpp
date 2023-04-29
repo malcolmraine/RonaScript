@@ -33,7 +33,7 @@
 #include "../parser/ast/AssignmentStmt.h"
 #include "../parser/ast/AttributeAccess.h"
 #include "../parser/ast/BinaryExpr.h"
-#include "../parser/ast/BoolLiteral.h"
+#include "../parser/ast/LiteralValue.h"
 #include "../parser/ast/BreakStmt.h"
 #include "../parser/ast/CatchBlock.h"
 #include "../parser/ast/ClassDecl.h"
@@ -41,14 +41,11 @@
 #include "../parser/ast/DeleteStmt.h"
 #include "../parser/ast/ExitStmt.h"
 #include "../parser/ast/Expr.h"
-#include "../parser/ast/FloatLiteral.h"
 #include "../parser/ast/FuncCall.h"
 #include "../parser/ast/FuncDecl.h"
 #include "../parser/ast/ImportStmt.h"
 #include "../parser/ast/IndexedExpr.h"
-#include "../parser/ast/IntLiteral.h"
 #include "../parser/ast/ReturnStmt.h"
-#include "../parser/ast/StringLiteral.h"
 #include "../parser/ast/TryBlock.h"
 #include "../parser/ast/UnaryExpr.h"
 #include "../parser/ast/VarDecl.h"
@@ -84,14 +81,11 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
             return Visit(dynamic_cast<FuncDecl*>(node));
         case AST_LIST_LITERAL:
             return Visit(dynamic_cast<ArrayLiteral*>(node));
-        case AST_STRING_LITERAL:
-            return Visit(dynamic_cast<StringLiteral*>(node));
-        case AST_BOOL_LITERAL:
-            return Visit(dynamic_cast<BoolLiteral*>(node));
-        case AST_FLOAT_LITERAL:
-            return Visit(dynamic_cast<FloatLiteral*>(node));
         case AST_INT_LITERAL:
-            return Visit(dynamic_cast<IntLiteral*>(node));
+        case AST_STRING_LITERAL:
+        case AST_BOOL_LITERAL:
+        case AST_FLOAT_LITERAL:
+            return Visit(dynamic_cast<LiteralValue*>(node));
         case AST_IMPORT:
             return Visit(dynamic_cast<ImportStmt*>(node));
         case AST_IF_STMT:
@@ -139,31 +133,27 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(const std::shared_ptr<AstNode>& 
 }
 
 /*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(StringLiteral* node) {
-    return {new RnInstruction(
-        OP_LOAD_LITERAL,
-        RnConstStore::InternValue(static_cast<RnStringNative>(node->data)))};
-}
-
-/*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(FloatLiteral* node) {
-    return {new RnInstruction(
-        OP_LOAD_LITERAL,
-        RnConstStore::InternValue(static_cast<RnFloatNative>(node->data)))};
-}
-
-/*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(IntLiteral* node) {
-    return {new RnInstruction(
-        OP_LOAD_LITERAL,
-        RnConstStore::InternValue(static_cast<RnIntNative>(node->data)))};
-}
-
-/*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(BoolLiteral* node) {
-    return {new RnInstruction(
-        OP_LOAD_LITERAL,
-        RnConstStore::InternValue(static_cast<RnBoolNative>(node->GetData())))};
+InstructionBlock RnCodeGenVisitor::Visit(LiteralValue* node) {
+    switch (node->node_type) {
+        case AST_STRING_LITERAL:
+            return {new RnInstruction(
+                OP_LOAD_LITERAL,
+                RnConstStore::InternValue(std::get<RnStringNative>(node->data)))};
+        case AST_BOOL_LITERAL:
+            return {new RnInstruction(
+                OP_LOAD_LITERAL,
+                RnConstStore::InternValue(std::get<RnBoolNative>(node->data)))};
+        case AST_INT_LITERAL:
+            return {new RnInstruction(
+                OP_LOAD_LITERAL,
+                RnConstStore::InternValue(std::get<RnIntNative>(node->data)))};
+        case AST_FLOAT_LITERAL:
+            return {new RnInstruction(
+                OP_LOAD_LITERAL,
+                RnConstStore::InternValue(std::get<RnFloatNative>(node->data)))};
+        default:
+            throw std::runtime_error("Invalid literal type");
+    }
 }
 
 /*****************************************************************************/
@@ -331,20 +321,20 @@ InstructionBlock RnCodeGenVisitor::Visit(VarDecl* node) {
         switch (node->init_value->node_type) {
             case AST_STRING_LITERAL:
                 RnConstStore::InternValue(
-                    std::dynamic_pointer_cast<StringLiteral>(node->init_value)->data);
+                    std::get<RnStringNative >(std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
                 return {};
             case AST_BOOL_LITERAL:
                 RnConstStore::InternValue(
-                    std::dynamic_pointer_cast<BoolLiteral>(node->init_value)
-                        ->GetData());
+                    std::get<RnBoolNative >(std::dynamic_pointer_cast<LiteralValue>(node->init_value)
+                        ->data));
                 return {};
             case AST_FLOAT_LITERAL:
                 RnConstStore::InternValue(
-                    std::dynamic_pointer_cast<FloatLiteral>(node->init_value)->data);
+                    std::get<RnFloatNative >(std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
                 return {};
             case AST_INT_LITERAL:
                 RnConstStore::InternValue(
-                    std::dynamic_pointer_cast<IntLiteral>(node->init_value)->data);
+                    std::get<RnIntNative >(std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
                 return {};
             default:
                 assert(false);
@@ -382,7 +372,7 @@ InstructionBlock RnCodeGenVisitor::Visit(ClassDecl* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ExitStmt* node) {
-    return {new RnInstruction(OP_EXIT, node->exit_code->data)};
+    return {new RnInstruction(OP_EXIT, std::get<RnIntNative >(node->exit_code->data))};
 }
 
 /*****************************************************************************/

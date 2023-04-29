@@ -13,7 +13,7 @@
 #include "../common/RnType.h"
 #include "RnAstVisitor.h"
 
-class StringLiteral;
+class LiteralValue;
 class ScopeNode;
 class ImportStmt;
 class ArgDecl;
@@ -21,7 +21,6 @@ class AstNode;
 class AliasDecl;
 class Expr;
 class VarDecl;
-class FloatLiteral;
 class UnaryExpr;
 class ReturnStmt;
 class FuncCall;
@@ -34,7 +33,6 @@ class FuncDecl;
 class BinaryExpr;
 class AssignmentStmt;
 class ArrayLiteral;
-class IntLiteral;
 class ContinueStmt;
 class Name;
 class TryBlock;
@@ -53,12 +51,10 @@ public:
 
     bool GeneralVisit(AstNode* node) override;
     bool GeneralVisit(const std::shared_ptr<AstNode>& node) override;
-    bool Visit(StringLiteral* node) override;
-    bool Visit(FloatLiteral* node) override;
-    bool Visit(IntLiteral* node) override;
     bool Visit(ArrayLiteral* node) override;
     bool Visit(ScopeNode* node) override;
     bool Visit(Loop* node) override;
+    bool Visit(LiteralValue* node) override;
     bool Visit(ImportStmt* node) override;
     bool Visit(Module* node) override;
     bool Visit(FuncDecl* node) override;
@@ -73,7 +69,6 @@ public:
     bool Visit(CatchBlock* node) override;
     bool Visit(ConditionalStmt* node) override;
     bool Visit(DeleteStmt* node) override;
-    bool Visit(BoolLiteral* node) override;
     bool Visit(UnaryExpr* node) override;
     bool Visit(Expr* node) override;
     bool Visit(AliasDecl* node) override;

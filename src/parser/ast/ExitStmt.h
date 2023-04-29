@@ -13,7 +13,7 @@
 #include "AstNode.h"
 #include "NodeType.h"
 
-class IntLiteral;
+class LiteralValue;
 
 class ExitStmt : public AstNode {
 public:
@@ -21,6 +21,6 @@ public:
     ~ExitStmt() override;
     std::string ToString(bool nl) override;
 
-    std::shared_ptr<IntLiteral> exit_code = nullptr;
+    std::shared_ptr<LiteralValue> exit_code = nullptr;
 };
 

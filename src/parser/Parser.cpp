@@ -41,7 +41,7 @@
 #include "ast/Ast.h"
 #include "ast/AstNode.h"
 #include "ast/BinaryExpr.h"
-#include "ast/BoolLiteral.h"
+#include "ast/LiteralValue.h"
 #include "ast/BreakStmt.h"
 #include "ast/CatchBlock.h"
 #include "ast/ClassDecl.h"
@@ -49,20 +49,17 @@
 #include "ast/DeleteStmt.h"
 #include "ast/ExitStmt.h"
 #include "ast/Expr.h"
-#include "ast/FloatLiteral.h"
 #include "ast/FuncCall.h"
 #include "ast/FuncDecl.h"
 #include "ast/ConditionalStmt.h"
 #include "ast/ImportStmt.h"
 #include "ast/IndexedExpr.h"
-#include "ast/IntLiteral.h"
 #include "ast/Module.h"
 #include "ast/Name.h"
 #include "ast/NodeType.h"
 #include "ast/NullLiteral.h"
 #include "ast/ReturnStmt.h"
 #include "ast/ScopeNode.h"
-#include "ast/StringLiteral.h"
 #include "ast/TryBlock.h"
 #include "ast/UnaryExpr.h"
 #include "ast/VarDecl.h"
@@ -468,21 +465,27 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
         AdvanceBuffer(1);
         switch (Lookback()->token_type) {
             case TokenType::INT_LITERAL: {
-                node = std::make_shared<IntLiteral>(
-                    static_cast<long>(std::stol(Lookback()->lexeme)));
+                node = std::make_shared<LiteralValue>();
+                node->node_type = AST_INT_LITERAL;
+                std::dynamic_pointer_cast<LiteralValue>(node)->data = static_cast<RnIntNative>(std::stol(Lookback()->lexeme));
                 break;
             }
             case TokenType::FLOAT_LITERAL: {
-                node = std::make_shared<FloatLiteral>(std::stod(Lookback()->lexeme));
+                node = std::make_shared<LiteralValue>();
+                node->node_type = AST_FLOAT_LITERAL;
+                std::dynamic_pointer_cast<LiteralValue>(node)->data = static_cast<RnFloatNative>(std::stod(Lookback()->lexeme));
                 break;
             }
             case TokenType::STRING_LITERAL: {
-                node = std::make_shared<StringLiteral>(
-                    static_cast<std::string>(Lookback()->lexeme));
+                node = std::make_shared<LiteralValue>();
+                node->node_type = AST_STRING_LITERAL;
+                std::dynamic_pointer_cast<LiteralValue>(node)->data = Lookback()->lexeme;
                 break;
             }
             case TokenType::BOOL_LITERAL: {
-                node = std::make_shared<BoolLiteral>(Lookback()->lexeme == "true");
+                node = std::make_shared<LiteralValue>();
+                node->node_type = AST_BOOL_LITERAL;
+                std::dynamic_pointer_cast<LiteralValue>(node)->data =Lookback()->lexeme == "true";
                 break;
             }
             case TokenType::NULL_LITERAL: {
@@ -731,11 +734,15 @@ std::shared_ptr<ExitStmt> Parser::ParseExitStmt() {
     AdvanceBuffer(1);
 
     if (Current()->token_type == TokenType::SEMICOLON) {
-        node->exit_code = std::make_shared<IntLiteral>(0L);
+        node->exit_code = std::make_shared<LiteralValue>();
+        node->exit_code->node_type = AST_INT_LITERAL;
+        node->exit_code->data = 0L;
         AdvanceBuffer(1);
     } else {
-        node->exit_code = std::make_shared<IntLiteral>(
-            static_cast<long>(std::stoi(Current()->lexeme)));
+        node->exit_code = std::make_shared<LiteralValue>();
+        node->exit_code->node_type = AST_INT_LITERAL;
+        node->exit_code->data =
+            static_cast<RnIntNative>(std::stoi(Current()->lexeme));
         AdvanceBuffer(2);
     }
 
@@ -1250,7 +1257,7 @@ std::shared_ptr<AstNode> Parser::TransformBinaryExpr(
     } else if (binary_expr->_op == "+" || binary_expr->_op == "-") {
         if (binary_expr->_left->node_type == AST_NAME &&
             binary_expr->_right->node_type == AST_INT_LITERAL &&
-            std::dynamic_pointer_cast<IntLiteral>(binary_expr->_right)->data == 1) {
+            std::get<RnIntNative>(std::dynamic_pointer_cast<LiteralValue>(binary_expr->_right)->data) == 1) {
             auto unary_node = std::make_shared<UnaryExpr>();
             unary_node->expr = binary_expr->_left;
 

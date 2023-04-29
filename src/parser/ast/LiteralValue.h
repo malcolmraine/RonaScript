@@ -1,13 +1,13 @@
 /*****************************************************************************
-* File:
+* File: LiteralValue.cpp
 * Description:
 * Author: Malcolm Hall
-* Date:
+* Date: 6/26/22
 * Version: 1
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,35 +26,18 @@
 * SOFTWARE.
 ******************************************************************************/
 
-#include "FloatLiteral.h"
-#include <iostream>
-#include "../../codegen/RnCodeGenVisitor.h"
+#pragma once
 
-/*****************************************************************************/
-FloatLiteral::FloatLiteral() {
-    node_type = AST_FLOAT_LITERAL;
-    data = 0;
-}
+#include <string>
+#include "AstNode.h"
+#include <variant>
+#include "../../common/RnType.h"
 
-/*****************************************************************************/
-FloatLiteral::FloatLiteral(double value) {
-    node_type = AST_FLOAT_LITERAL;
-    data = value;
-}
+class LiteralValue : public AstNode {
+public:
+    LiteralValue();
+    ~LiteralValue() override;
+    std::string ToString(bool nl) override;
 
-/*****************************************************************************/
-FloatLiteral::~FloatLiteral() = default;
-
-/*****************************************************************************/
-std::string FloatLiteral::ToString(bool nl) {
-    std::string s = MakeTabStr() + "FloatLiteral( " + std::to_string(data) + " )";
-    if (nl) {
-        s += "\n";
-    }
-    return s;
-}
-
-/*****************************************************************************/
-FloatLiteral::FloatLiteral(bool value) {
-    data = value ? 1.0 : 0.0;
-}
+    std::variant<RnFloatNative , RnIntNative, RnStringNative , RnBoolNative> data;
+};
