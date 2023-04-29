@@ -51,7 +51,6 @@ void WriteHeader(std::fstream& fs, const std::string& header) {
 /*****************************************************************************/
 void SetMetaData(RnMetaData* metadata) {
     metadata->timestamp = Time::Seconds();
-    std::cout << metadata->timestamp << std::endl;
     metadata->int_width = sizeof(RnIntNative);
     metadata->float_width = sizeof(RnFloatNative);
     metadata->bool_width = sizeof(uint8_t);
@@ -90,8 +89,6 @@ bool BinaryWriter::Write() {
         }
         std::memset(buf, 0, object->GetByteSize());
         object->GetBytes(buf);
-        std::cout << i << ": " << object->ToString() << " - " << object->GetByteSize()
-                  << std::endl;
         fs.write(buf, static_cast<std::streamsize>(object->GetByteSize()));
     }
     delete[] buf;
@@ -163,7 +160,6 @@ bool BinaryReader::Read(InstructionBlock& instructions) {
         size_t idx = 0;
 
         auto metadata = reinterpret_cast<RnMetaData*>(buf + idx);
-        std::cout << metadata->timestamp << std::endl;
         idx += sizeof(RnMetaData);
 
         ReadHeader(buf + idx, CONST_HEADER, "const", idx);
