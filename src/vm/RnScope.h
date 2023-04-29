@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNSCOPE_H
-#define RONASCRIPT_RNSCOPE_H
+#pragma once
 
 #include <variant>
 #include <vector>
@@ -70,5 +69,3 @@ private:
     static std::unordered_map<std::string, void*> _handles;
     std::unordered_map<RnIntNative, RnClassObject*> _namespaces;
 };
-
-#endif  //RONASCRIPT_RNSCOPE_H

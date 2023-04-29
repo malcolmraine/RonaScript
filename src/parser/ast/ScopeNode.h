@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_SCOPE_NODE_H
-#define RONASCRIPT_SCOPE_NODE_H
+#pragma once
 
 #include <unordered_set>
 #include <vector>
@@ -39,4 +38,3 @@ public:
     std::map<std::string, std::shared_ptr<AstNode>> _literal_map;
 };
 
-#endif  //RONASCRIPT_SCOPE_NODE_H

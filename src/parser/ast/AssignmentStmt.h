@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_ASSIGNMENTSTMT_H
-#define RONASCRIPT_ASSIGNMENTSTMT_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -58,4 +57,3 @@ private:
     std::shared_ptr<AstNode> _idx = nullptr;
 };
 
-#endif  //RONASCRIPT_ASSIGNMENTSTMT_H

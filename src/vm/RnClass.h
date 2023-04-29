@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNCLASS_H
-#define RONASCRIPT_RNCLASS_H
+#pragma once
 
 #include "RnScope.h"
 
@@ -39,5 +38,3 @@ private:
     std::string _name;
     bool _is_module = false;
 };
-
-#endif  //RONASCRIPT_RNCLASS_H

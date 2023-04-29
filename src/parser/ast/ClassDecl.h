@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_CLASSDECL_H
-#define RONASCRIPT_CLASSDECL_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -28,5 +27,3 @@ public:
     std::vector<std::shared_ptr<Name>>
         parent_classes;  // Names of classes to inherit. Names are resolved at code generation time
 };
-
-#endif  //RONASCRIPT_CLASSDECL_H

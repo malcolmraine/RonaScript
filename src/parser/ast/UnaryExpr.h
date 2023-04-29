@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_UNARYEXPR_H
-#define RONASCRIPT_UNARYEXPR_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -21,5 +20,3 @@ public:
     std::shared_ptr<AstNode> expr = nullptr;
     std::string op;
 };
-
-#endif  //RONASCRIPT_UNARYEXPR_H

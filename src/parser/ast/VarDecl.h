@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_VARDECL_H
-#define RONASCRIPT_VARDECL_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -35,4 +34,3 @@ public:
     bool is_literal = false;
 };
 
-#endif  //RONASCRIPT_VARDECL_H

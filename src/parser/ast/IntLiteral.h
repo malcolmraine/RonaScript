@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_INTLITERAL_H
-#define RONASCRIPT_INTLITERAL_H
+#pragma once
 
 #include "../../common/RnType.h"
 #include "AstNode.h"
@@ -24,4 +23,3 @@ public:
     RnIntNative data;
 };
 
-#endif  //RONASCRIPT_INTLITERAL_H

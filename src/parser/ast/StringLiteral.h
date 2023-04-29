@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_STRINGLITERAL_H
-#define RONASCRIPT_STRINGLITERAL_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -24,4 +23,3 @@ public:
     std::string data;
 };
 
-#endif  //RONASCRIPT_STRINGLITERAL_H

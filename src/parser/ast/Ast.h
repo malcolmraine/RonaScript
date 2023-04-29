@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_AST_H
-#define RONASCRIPT_AST_H
+#pragma once
 
 #include <map>
 
@@ -25,4 +24,3 @@ public:
     FileInfo* file_info{};
 };
 
-#endif  //RONASCRIPT_AST_H

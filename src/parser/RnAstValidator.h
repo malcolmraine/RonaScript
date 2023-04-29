@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNASTVALIDATOR_H
-#define RONASCRIPT_RNASTVALIDATOR_H
+#pragma once
 
 #include <vector>
 #include "../common/RnType.h"
@@ -107,5 +106,3 @@ private:
     ScopeNode* _current_scope = nullptr;
     std::shared_ptr<RnTypeComposite> _current_type_reference;
 };
-
-#endif  //RONASCRIPT_RNASTVALIDATOR_H

@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_ALIASDECL_H
-#define RONASCRIPT_ALIASDECL_H
+#pragma once
 
 #include <string>
 #include "../../common/RnType.h"
@@ -49,5 +48,3 @@ public:
     std::shared_ptr<RnTypeComposite> base_type;
     AliasType alias_type;
 };
-
-#endif  //RONASCRIPT_ALIASDECL_H

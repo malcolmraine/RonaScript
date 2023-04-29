@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_SRC_UTIL_SETTINGS_H
-#define RONASCRIPT_SRC_UTIL_SETTINGS_H
+#pragma once
 
 #include <map>
 #include <string>
@@ -39,5 +38,3 @@ private:
     ~Settings();
     std::map<std::string, SettingsVariant*> _settings;
 };
-
-#endif  //RONASCRIPT_SRC_UTIL_SETTINGS_H

@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_PARSER_H
-#define RONASCRIPT_PARSER_H
+#pragma once
 
 #include <filesystem>
 #include <map>
@@ -143,5 +142,3 @@ private:
     std::unordered_map<std::string, std::shared_ptr<RnTypeComposite>>
         _user_defined_type_map;
 };
-
-#endif  //RONASCRIPT_PARSER_H

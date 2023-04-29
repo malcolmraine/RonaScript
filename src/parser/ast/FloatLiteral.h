@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_FLOATLITERAL_H
-#define RONASCRIPT_FLOATLITERAL_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -24,4 +23,3 @@ public:
     double data = 0.0;
 };
 
-#endif  //RONASCRIPT_FLOATLITERAL_H

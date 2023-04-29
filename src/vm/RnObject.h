@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNOBJECT_H
-#define RONASCRIPT_RNOBJECT_H
+#pragma once
 
 #include <string>
 #include <variant>
@@ -122,5 +121,3 @@ private:
     bool _is_module = false;
     bool _is_class = false;
 };
-
-#endif  //RONASCRIPT_RNOBJECT_H

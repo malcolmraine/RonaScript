@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_ELIFSTMT_H
-#define RONASCRIPT_ELIFSTMT_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -23,4 +22,3 @@ public:
     std::shared_ptr<AstNode> alternative = nullptr;
 };
 
-#endif  //RONASCRIPT_ELIFSTMT_H

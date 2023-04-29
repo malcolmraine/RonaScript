@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef VARSTACKTEST_MODULE_H
-#define VARSTACKTEST_MODULE_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -25,4 +24,3 @@ public:
     std::shared_ptr<ScopeNode> scope = nullptr;
 };
 
-#endif  //VARSTACKTEST_MODULE_H

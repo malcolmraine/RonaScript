@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_SRC_UTIL_STOPWATCH_H
-#define RONASCRIPT_SRC_UTIL_STOPWATCH_H
+#pragma once
 
 #include <chrono>
 #include "Time.h"
@@ -79,4 +78,3 @@ private:
 
 #undef RONASCRIPT_SRC_UTIL_CLOCK
 
-#endif  //RONASCRIPT_SRC_UTIL_STOPWATCH_H

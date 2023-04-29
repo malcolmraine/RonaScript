@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNTYPE_H
-#define RONASCRIPT_RNTYPE_H
+#pragma once
 
 #include <limits>
 #include <string>
@@ -136,5 +135,3 @@ private:
     Bounds<RnFloatNative> _bounds{};
     RnType::Type _type;
 };
-
-#endif  //RONASCRIPT_RNTYPE_H

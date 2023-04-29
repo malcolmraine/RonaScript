@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_IFSTMT_H
-#define RONASCRIPT_IFSTMT_H
+#pragma once
 
 #include "AstNode.h"
 
@@ -21,5 +20,3 @@ public:
     std::shared_ptr<AstNode> consequent = nullptr;
     std::shared_ptr<AstNode> alternative = nullptr;
 };
-
-#endif  //RONASCRIPT_IFSTMT_H

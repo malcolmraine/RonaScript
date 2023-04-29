@@ -7,9 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_LISTLITERAL_H
-#define RONASCRIPT_LISTLITERAL_H
-
+#pragma once
 #include <string>
 #include <vector>
 #include "AstNode.h"
@@ -24,4 +22,3 @@ public:
     std::vector<std::shared_ptr<AstNode>> items;
 };
 
-#endif  //RONASCRIPT_LISTLITERAL_H

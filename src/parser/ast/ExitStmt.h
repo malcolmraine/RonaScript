@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_EXITSTMT_H
-#define RONASCRIPT_EXITSTMT_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -25,4 +24,3 @@ public:
     std::shared_ptr<IntLiteral> exit_code = nullptr;
 };
 
-#endif  //RONASCRIPT_EXITSTMT_H

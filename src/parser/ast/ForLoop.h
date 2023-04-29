@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_FORLOOP_H
-#define RONASCRIPT_FORLOOP_H
+#pragma once
 
 #include "AstNode.h"
 
@@ -27,4 +26,3 @@ public:
     std::shared_ptr<ScopeNode> scope = nullptr;
 };
 
-#endif  //RONASCRIPT_FORLOOP_H

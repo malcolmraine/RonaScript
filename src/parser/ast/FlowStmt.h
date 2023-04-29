@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_FLOWSTMT_H
-#define RONASCRIPT_FLOWSTMT_H
+#pragma once
 
 #include "AstNode.h"
 
@@ -19,4 +18,3 @@ public:
     std::string ToString(bool nl) override;
 };
 
-#endif  //RONASCRIPT_FLOWSTMT_H

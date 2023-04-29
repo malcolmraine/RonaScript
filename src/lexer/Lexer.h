@@ -25,8 +25,7 @@
 * SOFTWARE.
 *******************************************************************************/
 
-#ifndef RONASCRIPT_LEXER_H
-#define RONASCRIPT_LEXER_H
+#pragma once
 
 #include <sys/stat.h>
 #include <fstream>
@@ -103,5 +102,3 @@ protected:
     std::vector<std::string> _error_messages;
     size_t _current_line_start = 0;
 };
-
-#endif  //RONASCRIPT_LEXER_H

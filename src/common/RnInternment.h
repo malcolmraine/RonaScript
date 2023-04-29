@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNINTERNMENT_H
-#define RONASCRIPT_RNINTERNMENT_H
+#pragma once
 
 #include <functional>
 #include <string>
@@ -76,5 +75,3 @@ public:
 
     static RnInternment<RnObject*>* object_internment;
 };
-
-#endif  //RONASCRIPT_RNINTERNMENT_H

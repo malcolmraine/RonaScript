@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_SRC_UTIL_FILE_H
-#define RONASCRIPT_SRC_UTIL_FILE_H
+#pragma once
 
 #include <string>
 
@@ -23,5 +22,3 @@ private:
     File() = default;
     ~File() = default;
 };
-
-#endif  //RONASCRIPT_SRC_UTIL_FILE_H

@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNCODEGENVISITOR_H
-#define RONASCRIPT_RNCODEGENVISITOR_H
+#pragma once
 
 #include <utility>
 #include <vector>
@@ -104,5 +103,3 @@ private:
     std::vector<std::vector<RnInstruction*>> _break_instructions;
     std::vector<std::vector<RnInstruction*>> _continue_instructions;
 };
-
-#endif  //RONASCRIPT_RNCODEGENVISITOR_H

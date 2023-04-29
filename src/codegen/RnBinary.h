@@ -7,8 +7,7 @@
 *
 *****************************************************************************/
 
-#ifndef RONASCRIPT_SRC_CODEGEN_RNBINARY_H_
-#define RONASCRIPT_SRC_CODEGEN_RNBINARY_H_
+#pragma once
 
 #include <string>
 #include "../codegen/RnInstruction.h"
@@ -43,7 +42,3 @@ public:
 private:
     std::string _infile;
 };
-
-
-
-#endif  //RONASCRIPT_SRC_CODEGEN_RNBINARY_H_

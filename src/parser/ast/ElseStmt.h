@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef VARSTACKTEST_ELSESTMT_H
-#define VARSTACKTEST_ELSESTMT_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -23,4 +22,3 @@ public:
     std::shared_ptr<ScopeNode> consequent = nullptr;
 };
 
-#endif  //VARSTACKTEST_ELSESTMT_H

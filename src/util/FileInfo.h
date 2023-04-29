@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_FILEINFO_H
-#define RONASCRIPT_FILEINFO_H
+#pragma once
 
 #include <fstream>
 #include <memory>
@@ -92,5 +91,3 @@ protected:
     std::string _line_prefix = "\033[1;31m>";
     std::string _line_suffix = "\033[0m";
 };
-
-#endif  //RONASCRIPT_FILEINFO_H

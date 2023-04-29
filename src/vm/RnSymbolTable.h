@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNSYMBOLTABLE_H
-#define RONASCRIPT_RNSYMBOLTABLE_H
+#pragma once
 
 #include <string>
 #include <unordered_map>
@@ -39,5 +38,3 @@ private:
     RnSymbolTable* _parent_table = nullptr;
     std::unordered_map<RnIntNative, RnObject*> _table;
 };
-
-#endif  //RONASCRIPT_RNSYMBOLTABLE_H

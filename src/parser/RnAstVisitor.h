@@ -1,11 +1,6 @@
-//
-// Created by Malcolm Hall on 2/2/23.
-//
 
-#ifndef RONASCRIPT_SRC_PARSER_RNASTVISITOR_H_
-#define RONASCRIPT_SRC_PARSER_RNASTVISITOR_H_
 
-#include <memory>
+#pragma once
 
 class StringLiteral;
 class ScopeNode;
@@ -80,5 +75,3 @@ class RnAstVisitor {
     virtual T Visit(IndexedExpr* node) = 0;
     virtual T Visit(BreakStmt* node) = 0;
 };
-
-#endif  //RONASCRIPT_SRC_PARSER_RNASTVISITOR_H_

@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef VARSTACKTEST_BOOLLITERAL_H
-#define VARSTACKTEST_BOOLLITERAL_H
+#pragma once
 
 #include <string>
 #include "AstNode.h"
@@ -35,4 +34,3 @@ private:
     bool _data = false;
 };
 
-#endif  //VARSTACKTEST_BOOLLITERAL_H

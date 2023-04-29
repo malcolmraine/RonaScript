@@ -7,8 +7,7 @@
 *
 ******************************************************************************/
 
-#ifndef RONASCRIPT_RNNULLOBJECT_H
-#define RONASCRIPT_RNNULLOBJECT_H
+#pragma once
 
 #include "RnObjectBase.h"
 
@@ -26,5 +25,3 @@ public:
         return RnType::RN_NULL;
     }
 };
-
-#endif  //RONASCRIPT_RNNULLOBJECT_H
