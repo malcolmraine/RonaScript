@@ -9,8 +9,8 @@ BUILD_TYPE="Release"
 # -----------------------------------------------------------------------------
 function build_project() {
     mkdir "$BUILD_DIR"
-    cmake -S. -B "$BUILD_DIR"
-    cmake --build "$BUILD_DIR" "-j $PROC_COUNT" --config $BUILD_TYPE
+    cmake -S. -B "$BUILD_DIR" -D CMAKE_BUILD_TYPE=Release
+    cmake --build "$BUILD_DIR" "-j $PROC_COUNT"
 
     if [[ ! -f "$BUILD_DIR/RonaScript" ]];
     then
