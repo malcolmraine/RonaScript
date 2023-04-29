@@ -17,7 +17,6 @@ const std::string CODE_HEADER = "$$CODE$$";
 
 #define INSTRUCTION_BYTE_COUNT (4)
 
-
 typedef struct {
     uint32_t timestamp;
     uint8_t int_width;
@@ -120,12 +119,12 @@ BinaryReader::~BinaryReader() = default;
 
 /*****************************************************************************/
 RnIntNative GetSizeFromBuf(char* buf) {
-//    IntByteConversion conversion;
-//    std::memset(conversion.bytes, 0, RN_SIZE_BYTES_LENGTH);
-//    for (int i = 0; i < RN_SIZE_BYTES_LENGTH; i++) {
-//        conversion.bytes[i] = buf[i];
-//    }
-    return *(reinterpret_cast<RnIntNative *>(buf));
+    //    IntByteConversion conversion;
+    //    std::memset(conversion.bytes, 0, RN_SIZE_BYTES_LENGTH);
+    //    for (int i = 0; i < RN_SIZE_BYTES_LENGTH; i++) {
+    //        conversion.bytes[i] = buf[i];
+    //    }
+    return *(reinterpret_cast<RnIntNative*>(buf));
 }
 
 /*****************************************************************************/

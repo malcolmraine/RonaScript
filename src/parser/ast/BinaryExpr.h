@@ -26,4 +26,3 @@ public:
     std::shared_ptr<AstNode> _right = nullptr;
     std::string _op;
 };
-

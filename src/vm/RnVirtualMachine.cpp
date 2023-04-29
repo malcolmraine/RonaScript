@@ -330,8 +330,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto object = GetScope()->GetObject(key);
 
             if (object) {
-                //                Log::DEBUG("Loading (" + RnConstStore::GetInternedString(key) + ", " +
-                //                           RnType::TypeToString(object->GetType()) + ")");
                 if (object->IsClass() &&
                     _instructions[index + 1]->GetOpcode() == OP_CALL) {
                     auto class_obj = dynamic_cast<RnClassObject*>(object);
@@ -552,6 +550,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_DESTROY_CONTEXT: {
+            PREDICTION_TARGET(OP_DESTROY_CONTEXT)
             auto scope = _scopes.back();
             _scopes.pop_back();
             _memory_manager->DestroyScope(scope);
@@ -559,6 +558,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             if (!_call_stack.empty()) {
                 _call_stack.back()->DecrLinkedScopeCount();
             }
+            PREDICT_OPCODE(OP_DESTROY_CONTEXT)
             break;
         }
         case OP_RESET_CONTEXT: {
@@ -707,7 +707,7 @@ RnIntNative RnVirtualMachine::Run() {
     }
     stopwatch.Stop();
 
-    Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
+    //    Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
     return GetStack().back()->ToInt();
 }
 

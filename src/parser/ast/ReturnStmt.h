@@ -38,4 +38,3 @@ public:
     std::string ToString(bool nl) override;
     std::shared_ptr<AstNode> expr = nullptr;
 };
-

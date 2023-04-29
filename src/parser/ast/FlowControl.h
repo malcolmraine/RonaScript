@@ -1,5 +1,5 @@
 /*****************************************************************************
-* File:
+* File: FlowControl.h
 * Description:
 * Author: Malcolm Hall
 * Date:
@@ -28,12 +28,12 @@
 
 #pragma once
 
+#include <string>
 #include "AstNode.h"
 
-class ContinueStmt : public AstNode {
+class FlowControl : public AstNode {
 public:
-    ContinueStmt();
-    ~ContinueStmt() override;
+    FlowControl();
+    ~FlowControl() override;
     std::string ToString(bool nl) override;
 };
-

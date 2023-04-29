@@ -77,4 +77,3 @@ private:
 };
 
 #undef RONASCRIPT_SRC_UTIL_CLOCK
-

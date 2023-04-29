@@ -100,4 +100,3 @@ private:
     size_t _max_size = 0;
     T* _stack_ptr = nullptr;
 };
-

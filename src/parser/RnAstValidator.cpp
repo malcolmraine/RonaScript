@@ -33,25 +33,24 @@
 #include "../parser/ast/AssignmentStmt.h"
 #include "../parser/ast/AttributeAccess.h"
 #include "../parser/ast/BinaryExpr.h"
-#include "../parser/ast/LiteralValue.h"
-#include "../parser/ast/BreakStmt.h"
 #include "../parser/ast/CatchBlock.h"
 #include "../parser/ast/ClassDecl.h"
-#include "../parser/ast/ContinueStmt.h"
+#include "../parser/ast/ConditionalStmt.h"
 #include "../parser/ast/DeleteStmt.h"
 #include "../parser/ast/ExitStmt.h"
 #include "../parser/ast/Expr.h"
+#include "../parser/ast/FlowControl.h"
 #include "../parser/ast/FuncCall.h"
 #include "../parser/ast/FuncDecl.h"
-#include "../parser/ast/ConditionalStmt.h"
 #include "../parser/ast/ImportStmt.h"
 #include "../parser/ast/IndexedExpr.h"
+#include "../parser/ast/LiteralValue.h"
+#include "../parser/ast/Loop.h"
 #include "../parser/ast/ReturnStmt.h"
 #include "../parser/ast/ScopeNode.h"
 #include "../parser/ast/TryBlock.h"
 #include "../parser/ast/UnaryExpr.h"
 #include "../parser/ast/VarDecl.h"
-#include "../parser/ast/Loop.h"
 #include "../util/log.h"
 
 /*****************************************************************************/
@@ -184,27 +183,31 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
         case AST_STRING_LITERAL: {
             auto node = std::dynamic_pointer_cast<LiteralValue>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_STRING);
-            auto value = static_cast<RnIntNative>(std::get<RnStringNative >(node->data).length());
+            auto value =
+                static_cast<RnIntNative>(std::get<RnStringNative>(node->data).length());
             type->SetBounds(value, value);
             return type;
         }
         case AST_BOOL_LITERAL: {
             auto node = std::dynamic_pointer_cast<LiteralValue>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_BOOLEAN);
-            auto value = static_cast<RnIntNative>(std::get<RnBoolNative >(node->data) ? 1 : 0);
+            auto value =
+                static_cast<RnIntNative>(std::get<RnBoolNative>(node->data) ? 1 : 0);
             type->SetBounds(value, value);
             return type;
         }
         case AST_FLOAT_LITERAL: {
             auto node = std::dynamic_pointer_cast<LiteralValue>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_FLOAT);
-            type->SetBounds(std::get<RnFloatNative >(node->data), std::get<RnFloatNative >(node->data));
+            type->SetBounds(std::get<RnFloatNative>(node->data),
+                            std::get<RnFloatNative>(node->data));
             return type;
         }
         case AST_INT_LITERAL: {
             auto node = std::dynamic_pointer_cast<LiteralValue>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_INT);
-            type->SetBounds(std::get<RnIntNative >(node->data), std::get<RnIntNative >(node->data));
+            type->SetBounds(std::get<RnIntNative>(node->data),
+                            std::get<RnIntNative>(node->data));
             return type;
         }
         case AST_RETURN_STMT: {
@@ -245,7 +248,7 @@ bool RnAstValidator::GeneralVisit(AstNode* node) {
         case AST_EXPR:
             return Visit(dynamic_cast<Expr*>(node));
         case AST_CONTINUE_STMT:
-            return Visit(dynamic_cast<ContinueStmt*>(node));
+            return Visit(dynamic_cast<FlowControl*>(node));
         case AST_FUNC_CALL:
             return Visit(dynamic_cast<FuncCall*>(node));
         case AST_FUNC_DECL:
@@ -276,7 +279,7 @@ bool RnAstValidator::GeneralVisit(AstNode* node) {
         case AST_SCOPE:
             return Visit(dynamic_cast<ScopeNode*>(node));
         case AST_BREAK_STMT:
-            return Visit(dynamic_cast<BreakStmt*>(node));
+            return Visit(dynamic_cast<FlowControl*>(node));
         case AST_MODULE:
             return Visit(dynamic_cast<Module*>(node));
         case AST_EXIT_STMT:
@@ -421,9 +424,9 @@ bool RnAstValidator::Visit(CatchBlock* node) {
 /*****************************************************************************/
 bool RnAstValidator::Visit(ConditionalStmt* node) {
     if (node->consequent)
-    GeneralVisit(node->consequent);
+        GeneralVisit(node->consequent);
     if (node->alternative)
-    GeneralVisit(node->alternative);
+        GeneralVisit(node->alternative);
     return true;
 }
 
@@ -476,16 +479,11 @@ bool RnAstValidator::Visit(BinaryExpr* node) {
 }
 
 /*****************************************************************************/
-bool RnAstValidator::Visit(ContinueStmt* node) {
-    return true;
-}
-
-/*****************************************************************************/
 bool RnAstValidator::Visit(IndexedExpr* node) {
     return true;
 }
 
 /*****************************************************************************/
-bool RnAstValidator::Visit(BreakStmt* node) {
+bool RnAstValidator::Visit(FlowControl* node) {
     return true;
 }

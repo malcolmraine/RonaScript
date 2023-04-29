@@ -41,19 +41,19 @@
 #include "ast/Ast.h"
 #include "ast/AstNode.h"
 #include "ast/BinaryExpr.h"
-#include "ast/LiteralValue.h"
-#include "ast/BreakStmt.h"
 #include "ast/CatchBlock.h"
 #include "ast/ClassDecl.h"
-#include "ast/ContinueStmt.h"
+#include "ast/ConditionalStmt.h"
 #include "ast/DeleteStmt.h"
 #include "ast/ExitStmt.h"
 #include "ast/Expr.h"
+#include "ast/FlowControl.h"
 #include "ast/FuncCall.h"
 #include "ast/FuncDecl.h"
-#include "ast/ConditionalStmt.h"
 #include "ast/ImportStmt.h"
 #include "ast/IndexedExpr.h"
+#include "ast/LiteralValue.h"
+#include "ast/Loop.h"
 #include "ast/Module.h"
 #include "ast/Name.h"
 #include "ast/NodeType.h"
@@ -63,7 +63,6 @@
 #include "ast/TryBlock.h"
 #include "ast/UnaryExpr.h"
 #include "ast/VarDecl.h"
-#include "ast/Loop.h"
 
 std::vector<std::string> Parser::parsed_files;
 
@@ -467,25 +466,29 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
             case TokenType::INT_LITERAL: {
                 node = std::make_shared<LiteralValue>();
                 node->node_type = AST_INT_LITERAL;
-                std::dynamic_pointer_cast<LiteralValue>(node)->data = static_cast<RnIntNative>(std::stol(Lookback()->lexeme));
+                std::dynamic_pointer_cast<LiteralValue>(node)->data =
+                    static_cast<RnIntNative>(std::stol(Lookback()->lexeme));
                 break;
             }
             case TokenType::FLOAT_LITERAL: {
                 node = std::make_shared<LiteralValue>();
                 node->node_type = AST_FLOAT_LITERAL;
-                std::dynamic_pointer_cast<LiteralValue>(node)->data = static_cast<RnFloatNative>(std::stod(Lookback()->lexeme));
+                std::dynamic_pointer_cast<LiteralValue>(node)->data =
+                    static_cast<RnFloatNative>(std::stod(Lookback()->lexeme));
                 break;
             }
             case TokenType::STRING_LITERAL: {
                 node = std::make_shared<LiteralValue>();
                 node->node_type = AST_STRING_LITERAL;
-                std::dynamic_pointer_cast<LiteralValue>(node)->data = Lookback()->lexeme;
+                std::dynamic_pointer_cast<LiteralValue>(node)->data =
+                    Lookback()->lexeme;
                 break;
             }
             case TokenType::BOOL_LITERAL: {
                 node = std::make_shared<LiteralValue>();
                 node->node_type = AST_BOOL_LITERAL;
-                std::dynamic_pointer_cast<LiteralValue>(node)->data =Lookback()->lexeme == "true";
+                std::dynamic_pointer_cast<LiteralValue>(node)->data =
+                    Lookback()->lexeme == "true";
                 break;
             }
             case TokenType::NULL_LITERAL: {
@@ -676,20 +679,15 @@ std::shared_ptr<UnaryExpr> Parser::ParseUnaryExpr(
 }
 
 /*****************************************************************************/
-std::shared_ptr<BreakStmt> Parser::ParseBreakStmt() {
-    auto node = std::make_shared<BreakStmt>();
+std::shared_ptr<FlowControl> Parser::ParseFlowControlStmt() {
+    auto node = std::make_shared<FlowControl>();
     AddCurrentFileInfo(node);
     Expect(TokenType::SEMICOLON);
-    AdvanceBuffer(2);
-
-    return node;
-}
-
-/*****************************************************************************/
-std::shared_ptr<ContinueStmt> Parser::ParseContinueStmt() {
-    auto node = std::make_shared<ContinueStmt>();
-    AddCurrentFileInfo(node);
-    Expect(TokenType::SEMICOLON);
+    if (Current()->token_type == TokenType::CONTINUE) {
+        node->node_type = AST_CONTINUE_STMT;
+    } else {
+        node->node_type = AST_BREAK_STMT;
+    }
     AdvanceBuffer(2);
 
     return node;
@@ -741,8 +739,7 @@ std::shared_ptr<ExitStmt> Parser::ParseExitStmt() {
     } else {
         node->exit_code = std::make_shared<LiteralValue>();
         node->exit_code->node_type = AST_INT_LITERAL;
-        node->exit_code->data =
-            static_cast<RnIntNative>(std::stoi(Current()->lexeme));
+        node->exit_code->data = static_cast<RnIntNative>(std::stoi(Current()->lexeme));
         AdvanceBuffer(2);
     }
 
@@ -1138,10 +1135,8 @@ void Parser::Parse() {
                     _current_scope->AddSubTree(ParseExitStmt());
                     break;
                 case TokenType::BREAK:
-                    _current_scope->AddSubTree(ParseBreakStmt());
-                    break;
                 case TokenType::CONTINUE:
-                    _current_scope->AddSubTree(ParseContinueStmt());
+                    _current_scope->AddSubTree(ParseFlowControlStmt());
                     break;
                 case TokenType::CLASS: {
                     _previous_state = _current_state;
@@ -1253,20 +1248,6 @@ std::shared_ptr<AstNode> Parser::TransformBinaryExpr(
             right_tmp->expr = TransformBinaryExpr(binary_expr);
 
             return right_tmp;
-        }
-    } else if (binary_expr->_op == "+" || binary_expr->_op == "-") {
-        if (binary_expr->_left->node_type == AST_NAME &&
-            binary_expr->_right->node_type == AST_INT_LITERAL &&
-            std::get<RnIntNative>(std::dynamic_pointer_cast<LiteralValue>(binary_expr->_right)->data) == 1) {
-            auto unary_node = std::make_shared<UnaryExpr>();
-            unary_node->expr = binary_expr->_left;
-
-            if (binary_expr->_op == "+") {
-                unary_node->op = "++";
-            } else {
-                unary_node->op = "--";
-            }
-            return unary_node;
         }
     }
 

@@ -24,4 +24,3 @@ public:
     static void DEBUG(const std::string& msg);
     static void ERROR(const std::string& msg);
 };
-

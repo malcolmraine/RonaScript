@@ -1,5 +1,5 @@
 /*****************************************************************************
-* File:
+* File: FlowControl.cpp
 * Description:
 * Author: Malcolm Hall
 * Date:
@@ -26,20 +26,23 @@
 * SOFTWARE.
 ******************************************************************************/
 
-#include "BreakStmt.h"
-#include "../../codegen/RnCodeGenVisitor.h"
+#include "FlowControl.h"
 
 /*****************************************************************************/
-BreakStmt::BreakStmt() {
-    node_type = AST_BREAK_STMT;
-}
+FlowControl::FlowControl() = default;
 
 /*****************************************************************************/
-BreakStmt::~BreakStmt() {}
+FlowControl::~FlowControl() = default;
 
 /*****************************************************************************/
-std::string BreakStmt::ToString(bool nl) {
-    std::string s = MakeTabStr() + "BreakStmt( )";
+std::string FlowControl::ToString(bool nl) {
+    std::string s = MakeTabStr();
+
+    if (node_type == AST_BREAK_STMT) {
+        s += "BreakStmt( )";
+    } else {
+        s += "ContinueStmt( )";
+    }
     if (nl) {
         s += "\n";
     }

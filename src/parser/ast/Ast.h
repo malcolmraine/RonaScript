@@ -23,4 +23,3 @@ public:
     std::shared_ptr<ScopeNode> root = nullptr;
     FileInfo* file_info{};
 };
-

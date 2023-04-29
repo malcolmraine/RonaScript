@@ -9,5 +9,3 @@ true
 1342312313953
 true
 true
-
-Runtime duration:

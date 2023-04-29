@@ -43,4 +43,3 @@ public:
     std::shared_ptr<ScopeNode> scope = nullptr;
     std::shared_ptr<CatchBlock> catch_block = nullptr;
 };
-

@@ -30,4 +30,3 @@ public:
 private:
     std::shared_ptr<AstNode> _name = nullptr;
 };
-

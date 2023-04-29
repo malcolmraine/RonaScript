@@ -46,4 +46,3 @@ private:
     std::shared_ptr<AstNode> _name = nullptr;
     std::string _op;
 };
-

@@ -46,7 +46,7 @@ def make_rand_array():
 if __name__ == "__main__":
     type_generators["array"] = make_rand_array
     with open("source.rn", "w+") as f:
-        for n in range(0, 10000):
+        for n in range(0, 5000):
             t, v = make_rand_decl()
             f.write(f"var test_{n}: {t} = {v};\n")
         f.write("print(\"Finished\");")

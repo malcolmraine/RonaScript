@@ -30,14 +30,13 @@ class FuncCall;
 class IndexedExpr;
 class ClassDecl;
 class Loop;
-class BreakStmt;
+class FlowControl;
 class ConditionalStmt;
 class FuncDecl;
 class BinaryExpr;
 class AssignmentStmt;
 class ArrayLiteral;
 class IntLiteral;
-class ContinueStmt;
 class Name;
 class TryBlock;
 class CatchBlock;
@@ -77,9 +76,8 @@ public:
     InstructionBlock Visit(ArgDecl* node) override;
     InstructionBlock Visit(AssignmentStmt* node) override;
     InstructionBlock Visit(BinaryExpr* node) override;
-    InstructionBlock Visit(ContinueStmt* node) override;
     InstructionBlock Visit(IndexedExpr* node) override;
-    InstructionBlock Visit(BreakStmt* node) override;
+    InstructionBlock Visit(FlowControl* node) override;
 
     InstructionBlock GetInstructions() {
         return _instructions;

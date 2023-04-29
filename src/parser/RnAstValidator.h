@@ -27,17 +27,15 @@ class FuncCall;
 class IndexedExpr;
 class ClassDecl;
 class Loop;
-class BreakStmt;
+class FlowControl;
 class ConditionalStmt;
 class FuncDecl;
 class BinaryExpr;
 class AssignmentStmt;
 class ArrayLiteral;
-class ContinueStmt;
 class Name;
 class TryBlock;
 class CatchBlock;
-class BoolLiteral;
 class DeleteStmt;
 class Module;
 class ExitStmt;
@@ -75,9 +73,8 @@ public:
     bool Visit(ArgDecl* node) override;
     bool Visit(AssignmentStmt* node) override;
     bool Visit(BinaryExpr* node) override;
-    bool Visit(ContinueStmt* node) override;
     bool Visit(IndexedExpr* node) override;
-    bool Visit(BreakStmt* node) override;
+    bool Visit(FlowControl* node) override;
 
 private:
     void SymbolRedeclarationCheck(const std::string& symbol);

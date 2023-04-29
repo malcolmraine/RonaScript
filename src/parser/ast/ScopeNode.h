@@ -37,4 +37,3 @@ public:
     std::unordered_map<std::string, std::string> pragma_table;
     std::map<std::string, std::shared_ptr<AstNode>> _literal_map;
 };
-
