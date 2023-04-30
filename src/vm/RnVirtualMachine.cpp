@@ -179,6 +179,8 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
 #define PREDICTION_TARGET(op) TARGET_##op:
 #else
 #define PREDICT_OPCODE(op)
+#define PREDICT_OPCODE2(op, op1)
+#define PREDICT_OPCODE3(op, op1, op2)
 #define PREDICTION_TARGET(op)
 #endif
 
