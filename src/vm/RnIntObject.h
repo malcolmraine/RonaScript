@@ -83,15 +83,15 @@ public:
         return RnObject::Create(_data.i_data << obj->ToInt());
     }
 
-    [[nodiscard]] RnFloatNative ToFloat() const override {
+    [[nodiscard]] inline RnFloatNative ToFloat() const override {
         return static_cast<RnFloatNative>(_data.i_data);
     }
 
-    [[nodiscard]] RnStringNative ToString() const override {
+    [[nodiscard]] inline RnStringNative ToString() const override {
         return std::to_string(_data.i_data);
     }
 
-    [[nodiscard]] RnBoolNative ToBool() const override {
+    [[nodiscard]] inline RnBoolNative ToBool() const override {
         return static_cast<bool>(_data.i_data);
     }
 

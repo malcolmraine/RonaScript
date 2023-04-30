@@ -27,38 +27,31 @@ public:
     ~RnInternment() = default;
 
     InternmentKey InternItem(T item) {
-        for (const auto& [key, value] : _key_item_map) {
-            if (_compare(item, value)) {
-                return key;
+        for (size_t i = 0; i < static_cast<InternmentKey>(_items.size()); i++) {
+            if (_compare(item, _items[i])) {
+                return i;
             }
         }
-        _index++;
-        _item_key_map[item] = _index;
-        _key_item_map[_index] = item;
-
-        return _index;
+        _items.push_back(item);
+        return _items.size() - 1;
     }
 
     T GetInternedItem(InternmentKey key) {
-        return _key_item_map[key];
+        return _items[key];
     }
 
     [[nodiscard]] InternmentKey GetIndex() const {
-        return _index;
+        return _items.size() - 1;
     }
 
     // This is used for loading the internment from a binary file
     void LoadObject(RnObject* object) {
-        _index++;
-        _key_item_map[_index] = object;
-        _item_key_map[object] = _index;
+        _items.push_back(object);
     }
 
 protected:
     FUNC _compare;
-    InternmentKey _index = 0;
-    std::unordered_map<InternmentKey, T> _key_item_map;
-    std::unordered_map<T, InternmentKey> _item_key_map;
+    std::vector<T> _items;
 };
 
 class RnConstStore {
