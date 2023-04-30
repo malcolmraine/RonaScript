@@ -29,6 +29,7 @@
 #include "Parser.h"
 #include <memory>
 #include <utility>
+#include "../common/RnInternment.h"
 #include "../lexer/Lexer.h"
 #include "../lexer/Token.h"
 #include "../util/LoopCounter.h"
@@ -467,6 +468,7 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
                 node->node_type = AST_INT_LITERAL;
                 std::dynamic_pointer_cast<LiteralValue>(node)->data =
                     static_cast<RnIntNative>(std::stol(Lookback()->lexeme));
+                _intern_count++;
                 break;
             }
             case TokenType::FLOAT_LITERAL: {
@@ -474,6 +476,7 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
                 node->node_type = AST_FLOAT_LITERAL;
                 std::dynamic_pointer_cast<LiteralValue>(node)->data =
                     static_cast<RnFloatNative>(std::stod(Lookback()->lexeme));
+                _intern_count++;
                 break;
             }
             case TokenType::STRING_LITERAL: {
@@ -481,6 +484,7 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
                 node->node_type = AST_STRING_LITERAL;
                 std::dynamic_pointer_cast<LiteralValue>(node)->data =
                     Lookback()->lexeme;
+                _intern_count++;
                 break;
             }
             case TokenType::BOOL_LITERAL: {
@@ -488,6 +492,7 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
                 node->node_type = AST_BOOL_LITERAL;
                 std::dynamic_pointer_cast<LiteralValue>(node)->data =
                     Lookback()->lexeme == "true";
+                _intern_count++;
                 break;
             }
             case TokenType::NULL_LITERAL: {
@@ -734,11 +739,13 @@ std::shared_ptr<ExitStmt> Parser::ParseExitStmt() {
         node->exit_code = std::make_shared<LiteralValue>();
         node->exit_code->node_type = AST_INT_LITERAL;
         node->exit_code->data = 0L;
+        _intern_count++;
         AdvanceBuffer(1);
     } else {
         node->exit_code = std::make_shared<LiteralValue>();
         node->exit_code->node_type = AST_INT_LITERAL;
         node->exit_code->data = static_cast<RnIntNative>(std::stoi(Current()->lexeme));
+        _intern_count++;
         AdvanceBuffer(2);
     }
 
@@ -1012,6 +1019,7 @@ std::shared_ptr<Name> Parser::ParseName() {
     AddCurrentFileInfo(node);
     node->value = Current()->lexeme;
     AdvanceBuffer(1);
+    _intern_count++;
 
     return node;
 }
@@ -1218,6 +1226,7 @@ void Parser::Parse() {
             }
         }
     }
+    RnConstStore::Init(_intern_count);
 }
 
 /*****************************************************************************/

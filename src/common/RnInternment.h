@@ -49,6 +49,10 @@ public:
         _items.push_back(object);
     }
 
+    void Init(size_t size) {
+        _items.reserve(size);
+    }
+
 protected:
     FUNC _compare;
     std::vector<T> _items;
@@ -65,6 +69,6 @@ public:
     static RnIntNative InternValue(const RnStringNative& x);
     static RnIntNative InternValue(RnIntNative x);
     static void LoadObject(RnObject* object);
-
+    static void Init(size_t size);
     static RnInternment<RnObject*>* object_internment;
 };

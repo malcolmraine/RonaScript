@@ -5,6 +5,7 @@
 #include "codegen/RnCodeGenerator.h"
 #include "common/RnInternment.h"
 #include "lexer/Lexer.h"
+#include "util/StopWatch.h"
 #include "lexer/Token.h"
 #include "parser/Parser.h"
 #include "parser/RnAstValidator.h"
@@ -61,7 +62,10 @@ void Compile(const std::filesystem::path& infile, RnCodeGenerator& code_generato
     }
 
     try {
+        auto stopwatch = StopWatch();
+        stopwatch.Start();
         code_generator.Generate(parser.ast);
+        stopwatch.Stop();
         if (arg_parser.IsSet("-p")) {
             size_t index = 0;
             for (auto& instruction : code_generator.GetInstructions()) {
@@ -69,6 +73,7 @@ void Compile(const std::filesystem::path& infile, RnCodeGenerator& code_generato
                           instruction->ToString());
             }
         }
+        Log::INFO("CodeGen Duration: " + std::to_string(stopwatch.Duration()));
     } catch (const std::exception& e) {
         Log::ERROR("Codegen Error: " + std::string(e.what()));
         return;

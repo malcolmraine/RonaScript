@@ -134,4 +134,5 @@ private:
     ParserState _current_state = GENERAL_CONTEXT;
     std::unordered_map<std::string, std::shared_ptr<RnTypeComposite>>
         _user_defined_type_map;
+    size_t _intern_count = 0; // Used to track how much space we shoul reserve in the const internment later
 };
