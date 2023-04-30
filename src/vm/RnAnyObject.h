@@ -12,6 +12,7 @@
 #include "RnObjectBase.h"
 #include "RnStringObject.h"
 
+
 class RnAnyObject
     : public RnObjectBase<
           std::variant<RnIntObject, RnFloatObject, RnBoolObject, RnClassObject,

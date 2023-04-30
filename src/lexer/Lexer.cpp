@@ -181,7 +181,7 @@ const std::unordered_set<std::string> Lexer::_binary_ops = {
 
 /*****************************************************************************/
 Lexer::Lexer() {
-    file_info = new FileInfo(_file_path);
+    file_info.SetFilePath(_file_path);
     FillBuffer('\0');
 }
 
@@ -211,7 +211,7 @@ Token* Lexer::Emit(TokenType type) {
 /*****************************************************************************/
 Token* Lexer::MakeToken(const std::string& s, TokenType initial_type) const {
     auto token = new Token(s, initial_type);
-    token->file_info = new FileInfo(*file_info);
+    token->file_info = file_info;
 
     // A number can have an abitrary number of signs in front of it
     auto normalize_sign = [](const std::string& s) {
@@ -499,11 +499,11 @@ void Lexer::ProcessTokens() {
 
 /*****************************************************************************/
 void Lexer::LoadFile(const std::string& path) {
-    file_info->SetFilePath(path);
-    _file_obj.open(file_info->GetFilePath());
+    file_info.SetFilePath(path);
+    _file_obj.open(file_info.GetFilePath());
 
     if (_file_obj.fail())
-        throw std::runtime_error("Failed to open " + file_info->GetFilePath());
+        throw std::runtime_error("Failed to open " + file_info.GetFilePath());
 
     // Get the number of characters in the file
     _file_obj.seekg(0, std::ios_base::end);
@@ -547,12 +547,12 @@ char Lexer::GetCurrentAsExpectedType() {
 
 /*****************************************************************************/
 void Lexer::RunAdvanceBufferSideEffects() {
-    file_info->IncrementCharNum();
+    file_info.IncrementCharNum();
 
     if (Lookback() == '\n' || Lookback() == '\r') {
-        file_info->IncrementLineNum();
-        file_info->SetCharNum(1);
-        file_info->UpdateLineStartValues(_current_line_start);
+        file_info.IncrementLineNum();
+        file_info.SetCharNum(1);
+        file_info.UpdateLineStartValues(_current_line_start);
         _current_line_start = _data_idx;
     }
 }
@@ -581,7 +581,7 @@ void Lexer::LoadNextItem() {
 /*****************************************************************************/
 void Lexer::HandleUnexpectedItem() {
     std::string msg = "Unexpected character '" + std::string(1, Current()) + "'" +
-                      " in " + file_info->ToString() + "\nExpected one of [";
+                      " in " + file_info.ToString() + "\nExpected one of [";
 
     for (auto& expected_char : _expected_items)
         msg.append("'" + std::string(1, expected_char) + "', ");
@@ -590,7 +590,7 @@ void Lexer::HandleUnexpectedItem() {
         msg = msg.substr(0, msg.length() - 2);
 
     msg += "]\n\n";
-    msg += file_info->GetContextualBlock();
+    msg += file_info.GetContextualBlock();
 
     throw std::runtime_error(msg);
 }

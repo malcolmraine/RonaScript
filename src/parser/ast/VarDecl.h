@@ -13,10 +13,10 @@
 #include <vector>
 #include "../../common/RnType.h"
 #include "AstNode.h"
+#include "../../lexer/Token.h"
 
 class RnCodeGenVisitor;
 class RnInstruction;
-class Token;
 class RnInstruction;
 
 class VarDecl : public AstNode {

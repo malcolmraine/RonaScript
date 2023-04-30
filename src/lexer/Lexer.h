@@ -34,6 +34,7 @@
 #include <vector>
 #include "../util/RnSequencer.h"
 #include "TokenType.h"
+#include "../util/FileInfo.h"
 
 #define STRING_LITERAL_MAX_LENGTH 1000000
 #define BLOCK_COMMENT_START "/*"
@@ -47,7 +48,6 @@
 #define IS_SIGNED_POSITIVE_LITERAL(s) ((s)[0] == '+')
 
 class Token;
-class FileInfo;
 
 class Lexer : public RnSequencer<char, char> {
 public:
@@ -85,7 +85,7 @@ public:
 
     std::vector<Token*> tokens;
     std::string _lexeme;
-    FileInfo* file_info = nullptr;
+    FileInfo file_info;
     long file_char_cnt = -1;
 
 protected:

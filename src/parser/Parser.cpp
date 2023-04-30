@@ -297,8 +297,7 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
     }
 
     AdvanceBuffer(1);
-    node->file_pos.line_num = Current()->file_pos.line_num;
-    node->file_pos.char_num = Current()->file_pos.char_num;
+    AddCurrentFileInfo(node);
     node->id = Current()->lexeme;
     Expect(TokenType::COLON);
     AdvanceBuffer(1);
@@ -1287,8 +1286,8 @@ std::string Parser::ItemToString(Token* token) {
 /*****************************************************************************/
 void Parser::HandleUnexpectedItem() {
     auto msg = "Unexpected token '" + Current()->lexeme + "'";
-    msg += +" in file " + Current()->file_info->ToString();
-    msg += "\n\n" + Current()->file_info->GetContextualBlock();
+    msg += +" in file " + Current()->file_info.ToString();
+    msg += "\n\n" + Current()->file_info.GetContextualBlock();
     throw std::runtime_error(msg);
 }
 
@@ -1329,8 +1328,6 @@ std::shared_ptr<RnTypeComposite> Parser::ParseType() {
 
 /*****************************************************************************/
 std::shared_ptr<AstNode> Parser::AddCurrentFileInfo(std::shared_ptr<AstNode> node) {
-    if (node && !node->file_info) {
-        node->file_info = new FileInfo(*(Current()->file_info));
-    }
+    node->file_info = Current()->file_info;
     return node;
 }

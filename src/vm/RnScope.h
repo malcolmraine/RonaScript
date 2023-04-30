@@ -23,6 +23,7 @@ class RnClassObject;
 class RnStringObject;
 class RnFunctionObject;
 class RnAnyObject;
+class RnMemoryGroup;
 
 class RnScope {
 public:

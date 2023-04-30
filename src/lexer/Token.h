@@ -35,10 +35,6 @@
 #include "../util/FileInfo.h"
 #include "TokenType.h"
 
-struct FilePosition {
-    int line_num = 1;
-    int char_num = 1;
-};
 
 class Token {
 public:
@@ -52,10 +48,9 @@ public:
     [[nodiscard]] bool IsOperator() const;
     [[nodiscard]] bool IsType() const;
     [[nodiscard]] std::string ToString() const;
-    bool IsOneOf(const std::unordered_set<TokenType>& tokens) const;
+    [[nodiscard]] bool IsOneOf(const std::unordered_set<TokenType>& tokens) const;
 
     TokenType token_type = TokenType::UNDEFINED;
     std::string lexeme;
-    FilePosition file_pos;
-    FileInfo* file_info;
+    FileInfo file_info;
 };

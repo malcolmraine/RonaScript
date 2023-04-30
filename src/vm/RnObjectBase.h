@@ -11,7 +11,6 @@
 
 #include <vector>
 #include "RnObject.h"
-#include "RnScope.h"
 
 #define UNDEFINED_OPERATOR(op)                                                      \
     auto operator op(RnObject* obj)->RnObject* override {                           \
