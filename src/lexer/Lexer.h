@@ -86,19 +86,15 @@ public:
     std::vector<Token*> tokens;
     std::string _lexeme;
     FileInfo file_info;
-    long file_char_cnt = -1;
 
 protected:
     bool _use_loaded_string = false;
     std::string _file_path;
-    long _char_idx = 0;
     std::ifstream _file_obj;
     static std::unordered_map<std::string, TokenType> _token_map;
     static const std::unordered_set<std::string> _compounds;
     static const std::unordered_set<std::string> _binary_ops;
-    static const std::unordered_set<std::string> _unary_ops;
     static const std::unordered_set<std::string> _reserved_words;
-    static const std::unordered_set<std::string> _compound_ops;
     std::vector<std::string> _error_messages;
     size_t _current_line_start = 0;
 };

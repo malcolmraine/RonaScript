@@ -136,28 +136,6 @@ const std::unordered_set<std::string> Lexer::_compounds = {
     "~=", "^=", "!=", "->", "::", ">=", "<=", "==", ">>", "<<", "::", "??",
 };
 
-const std::unordered_set<std::string> Lexer::_compound_ops = {
-    "+="
-    "-="
-    "%="
-    "&="
-    "|="
-    "/="
-    "*="
-    "~="
-    "^="
-    ">="
-    "<="};
-
-const std::unordered_set<std::string> Lexer::_unary_ops = {
-    "++"
-    "--"
-    "**"
-    "!"
-    "~"
-    "-"
-    "+"};
-
 const std::unordered_set<std::string> Lexer::_binary_ops = {
     "+"
     "-"
