@@ -10,6 +10,7 @@
 #pragma once
 
 #include "AstNode.h"
+#include <vector>
 
 class Name;
 class ScopeNode;

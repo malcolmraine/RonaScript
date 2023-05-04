@@ -27,15 +27,15 @@ class RnVirtualMachine {
 public:
     ~RnVirtualMachine();
 
-    RnScope* GetScope() {
+    inline RnScope* GetScope() {
         return _scopes.back();
     }
 
-    [[nodiscard]] RnArrayNative& GetStack() {
+    [[nodiscard]] inline RnArrayNative& GetStack() {
         return _scopes.back()->GetStack();
     }
 
-    RnObject* StackPop() {
+    inline RnObject* StackPop() {
         auto item = _scopes.back()->GetStack().back();
         _scopes.back()->GetStack().pop_back();
         assert(item);

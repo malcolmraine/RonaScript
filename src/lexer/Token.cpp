@@ -131,8 +131,8 @@ std::unordered_map<TokenType, std::string> Token::token_type_string_names{
 /*****************************************************************************/
 Token::Token(std::string s, TokenType token, int line_num, int char_num) {
     lexeme = std::move(s);
-    file_pos.line_num = line_num;
-    file_pos.char_num = char_num;
+    file_info.SetCharNum(char_num);
+    file_info.SetLineNum(line_num);
     token_type = token;
 }
 
@@ -186,9 +186,4 @@ bool Token::IsType() const {
 std::string Token::ToString() const {
     return "Token('" + lexeme + "', " + Token::token_type_string_names[token_type] +
            ")";
-}
-
-/*****************************************************************************/
-bool Token::IsOneOf(const std::unordered_set<TokenType>& tokens) const {
-    return tokens.contains(token_type);
 }

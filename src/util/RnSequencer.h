@@ -19,28 +19,20 @@ public:
     static const int DEFAULT_BUFFER_SIZE = 3;
 
     RnSequencer();
-    ~RnSequencer() = default;
-    T Peek(int n = 1) const;
+    virtual ~RnSequencer() {
+        delete [] _data;
+        _data = nullptr;
+    }
+
+    T Peek(size_t n = 1) const;
     T Current() const;
-    T Lookback(int n = 1) const;
+    T Lookback(size_t n = 1) const;
     void Expect(E item);
     void Expect(std::vector<E> items);
-    void AdvanceBuffer(int n);
+    void AdvanceBuffer(size_t n);
     virtual void LoadNextItem();
     virtual bool CheckExpected();
     virtual std::string ItemToString(T item) = 0;
-
-    /*************************************************************************/
-    virtual bool CheckCurrent(E item) {
-        Expect(item);
-        return CheckExpected();
-    }
-
-    /*************************************************************************/
-    virtual bool CheckCurrent(std::vector<E> items) {
-        Expect(items);
-        return CheckExpected();
-    }
 
     [[nodiscard]] virtual bool EndOfSequence() const;
 
@@ -76,28 +68,8 @@ public:
     }
 
     /*************************************************************************/
-    void ClearUnexpectedItems() {
-        _unexpected_captures.clear();
-    }
-
-    /*************************************************************************/
     [[nodiscard]] size_t GetDataSize() const {
-        return _data.size();
-    }
-
-    /*************************************************************************/
-    void SetWindowIdxCurrent(int i) {
-        _window_idx_current = i;
-    }
-
-    /*************************************************************************/
-    [[nodiscard]] int GetWindowIdxCurrent() const {
-        return _window_idx_current;
-    }
-
-    /*************************************************************************/
-    [[nodiscard]] size_t GetDataIdx() const {
-        return _data_idx;
+        return _data_size;
     }
 
     /*************************************************************************/
@@ -116,8 +88,18 @@ public:
     }
 
     /*************************************************************************/
-    void LoadData(std::vector<T> data) {
-        _data.insert(_data.begin(), data.begin(), data.end());
+    void SetFromPtr(const T* data, size_t size) {
+        delete[] _data;
+        _data_size = size;
+        _data = new T[_data_size];
+        std::memcpy(_data, data, _data_size * sizeof(T));
+    }
+
+    T* GetData(bool release = false) {
+        auto data = _data;
+        if (release)
+            _data = nullptr;
+        return data;
     }
 
     virtual E GetCurrentAsExpectedType() = 0;
@@ -125,8 +107,9 @@ public:
 protected:
     std::vector<T> _buffer;  // Window buffer
     int _window_idx_current = 1;
-    std::vector<T> _data;  // All the data
+    T* _data = nullptr;
     size_t _data_idx = 0;
+    size_t _data_size = 0;
     std::vector<E> _expected_items;
     std::vector<T> _unexpected_captures;
     std::string _item_type_name;
@@ -135,9 +118,8 @@ protected:
 
 private:
     /*************************************************************************/
-    [[nodiscard]] int ClampIndex(int idx) const {
-        return std::max((long long)0,
-                        (long long)std::min((long long)_buffer.size(), (long long)idx));
+    [[nodiscard]] int ClampIndex(size_t idx) const {
+        return std::max((size_t)0, std::min(_buffer.size(), idx));
     }
 };
 
@@ -149,20 +131,20 @@ RnSequencer<T, E>::RnSequencer() {
 
 /*****************************************************************************/
 template <class T, typename E>
-T RnSequencer<T, E>::Peek(int n) const {
-    return _buffer[ClampIndex(GetWindowIdxCurrent() + n)];
+T RnSequencer<T, E>::Peek(size_t n) const {
+    return _buffer[ClampIndex(_window_idx_current + n)];
 }
 
 /*****************************************************************************/
 template <class T, typename E>
 T RnSequencer<T, E>::Current() const {
-    return _buffer[ClampIndex(GetWindowIdxCurrent())];
+    return _buffer[ClampIndex(_window_idx_current)];
 }
 
 /*****************************************************************************/
 template <class T, typename E>
-T RnSequencer<T, E>::Lookback(int n) const {
-    return _buffer[ClampIndex(GetWindowIdxCurrent() - n)];
+T RnSequencer<T, E>::Lookback(size_t n) const {
+    return _buffer[ClampIndex(_window_idx_current - n)];
 }
 
 /*****************************************************************************/
@@ -180,7 +162,7 @@ void RnSequencer<T, E>::Expect(std::vector<E> items) {
 
 /*****************************************************************************/
 template <class T, typename E>
-void RnSequencer<T, E>::AdvanceBuffer(int n) {
+void RnSequencer<T, E>::AdvanceBuffer(size_t n) {
     for (int i = 0; i < n; ++i) {
         for (size_t j = 0; j < _buffer.size() - 1; ++j) {
             _buffer[j] = _buffer[j + 1];
@@ -216,13 +198,13 @@ bool RnSequencer<T, E>::CheckExpected() {
 /*****************************************************************************/
 template <class T, typename E>
 bool RnSequencer<T, E>::EndOfSequence() const {
-    return GetDataIdx() == GetDataSize();
+    return _data_idx > _data_size;
 }
 
 /*****************************************************************************/
 template <class T, typename E>
 void RnSequencer<T, E>::LoadNextItem() {
-    if (!EndOfSequence()) {
+    if (_data_idx <= _data_size) {
         _buffer[GetBufferSize() - 1] = _data[_data_idx++];
     }
 }

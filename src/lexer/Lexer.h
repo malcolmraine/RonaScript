@@ -34,6 +34,7 @@
 #include <vector>
 #include "../util/RnSequencer.h"
 #include "TokenType.h"
+#include "../util/FileInfo.h"
 
 #define STRING_LITERAL_MAX_LENGTH 1000000
 #define BLOCK_COMMENT_START "/*"
@@ -47,15 +48,12 @@
 #define IS_SIGNED_POSITIVE_LITERAL(s) ((s)[0] == '+')
 
 class Token;
-class FileInfo;
 
 class Lexer : public RnSequencer<char, char> {
 public:
     Lexer();
     ~Lexer();
-    void LoadNextItem() override;
     Token* Emit(TokenType type = TokenType::UNDEFINED);
-    Token* MakeToken(TokenType type);
     Token* MakeToken(const std::string& s,
                      TokenType initial_type = TokenType::UNDEFINED) const;
     static bool IsIntLiteral(std::string s);          // TODO: Unit test
@@ -74,31 +72,25 @@ public:
     Token* Consume();
     void ProcessTokens();
     void LoadFile(const std::string& path);
-    void LoadString(const std::string& input);
-    bool EndOfFile() const;  // TODO: Use RnSequencer
-    bool EndOfSequence() const override;
     char GetCurrentAsExpectedType() override;
     void HandleUnexpectedItem() override;
     void RunAdvanceBufferSideEffects() override;
-    bool IsWhiteSpace(char c) const;               // TODO: Unit test
+    static bool IsWhiteSpace(char c) ;               // TODO: Unit test
     std::string ItemToString(char item) override;  // TODO: Unit test
+    void Reset();
 
     std::vector<Token*> tokens;
     std::string _lexeme;
-    FileInfo* file_info = nullptr;
-    long file_char_cnt = -1;
+    FileInfo file_info;
 
 protected:
     bool _use_loaded_string = false;
     std::string _file_path;
-    long _char_idx = 0;
     std::ifstream _file_obj;
     static std::unordered_map<std::string, TokenType> _token_map;
     static const std::unordered_set<std::string> _compounds;
     static const std::unordered_set<std::string> _binary_ops;
-    static const std::unordered_set<std::string> _unary_ops;
     static const std::unordered_set<std::string> _reserved_words;
-    static const std::unordered_set<std::string> _compound_ops;
     std::vector<std::string> _error_messages;
     size_t _current_line_start = 0;
 };

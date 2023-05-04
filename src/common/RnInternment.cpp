@@ -62,3 +62,8 @@ RnIntNative RnConstStore::InternValue(RnIntNative x) {
 void RnConstStore::LoadObject(RnObject* object) {
     object_internment->LoadObject(object);
 }
+
+/*****************************************************************************/
+void RnConstStore::Init(size_t size) {
+    object_internment->Init(size);
+}

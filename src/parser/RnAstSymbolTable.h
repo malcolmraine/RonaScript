@@ -31,6 +31,7 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <map>
 #include <vector>
 #include "../common/RnType.h"
 #include "ast/AstNode.h"

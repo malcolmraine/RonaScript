@@ -65,7 +65,7 @@ enum ParserState {
 class Parser : public RnSequencer<Token*, TokenType> {
 public:
     Parser();
-    ~Parser();
+    ~Parser() override;
 
     void ConditionalBufAdvance(TokenType t);
     std::shared_ptr<ImportStmt> ParseImportStmt();
@@ -102,7 +102,6 @@ public:
     void ConvertScope(const std::shared_ptr<ScopeNode>& scope);
     [[nodiscard]] std::string DumpsAst() const;
     void Parse();
-    void LoadTokens(std::vector<Token*> t);
     std::shared_ptr<AstNode> TransformBinaryExpr(
         std::shared_ptr<BinaryExpr> binary_expr);
 
@@ -111,12 +110,12 @@ public:
     std::string ItemToString(Token* token) override;
     void HandleUnexpectedItem() override;
     std::shared_ptr<RnTypeComposite> ParseType();
+    void Reset();
 
 public:
     std::string working_dir = ".";
     std::filesystem::path file;
-    std::vector<Token*> tokens;
-    Ast* ast;
+    std::shared_ptr<Ast> ast;
     static std::vector<std::string> parsed_files;
 
 private:
@@ -134,4 +133,5 @@ private:
     ParserState _current_state = GENERAL_CONTEXT;
     std::unordered_map<std::string, std::shared_ptr<RnTypeComposite>>
         _user_defined_type_map;
+    size_t _intern_count = 0; // Used to track how much space we shoul reserve in the const internment later
 };

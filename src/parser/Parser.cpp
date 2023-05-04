@@ -29,6 +29,7 @@
 #include "Parser.h"
 #include <memory>
 #include <utility>
+#include "../common/RnInternment.h"
 #include "../lexer/Lexer.h"
 #include "../lexer/Token.h"
 #include "../util/LoopCounter.h"
@@ -187,7 +188,7 @@ std::unordered_map<TokenType, Associativity> Parser::_associativity = {
 /*****************************************************************************/
 Parser::Parser() {
     FillBuffer(nullptr);
-    ast = new Ast();
+    ast = std::make_shared<Ast>();
     _current_scope = ast->root;
 
     // TODO: Add rest of builtin functions
@@ -215,9 +216,7 @@ Parser::Parser() {
 }
 
 /*****************************************************************************/
-Parser::~Parser() {
-    delete ast;
-}
+Parser::~Parser() = default;
 
 /*****************************************************************************/
 void Parser::ConditionalBufAdvance(TokenType t) {
@@ -256,7 +255,7 @@ std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
     lexer.ProcessTokens();
     Parser parser;
     parser.working_dir = module_file.parent_path();
-    parser.LoadTokens(lexer.tokens);
+    parser.SetFromPtr(lexer.tokens.data(), lexer.tokens.size());
     parser.Parse();
 
     for (auto& [key, m] : parser.ast->modules) {
@@ -297,8 +296,7 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
     }
 
     AdvanceBuffer(1);
-    node->file_pos.line_num = Current()->file_pos.line_num;
-    node->file_pos.char_num = Current()->file_pos.char_num;
+    AddCurrentFileInfo(node);
     node->id = Current()->lexeme;
     Expect(TokenType::COLON);
     AdvanceBuffer(1);
@@ -468,6 +466,7 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
                 node->node_type = AST_INT_LITERAL;
                 std::dynamic_pointer_cast<LiteralValue>(node)->data =
                     static_cast<RnIntNative>(std::stol(Lookback()->lexeme));
+                _intern_count++;
                 break;
             }
             case TokenType::FLOAT_LITERAL: {
@@ -475,6 +474,7 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
                 node->node_type = AST_FLOAT_LITERAL;
                 std::dynamic_pointer_cast<LiteralValue>(node)->data =
                     static_cast<RnFloatNative>(std::stod(Lookback()->lexeme));
+                _intern_count++;
                 break;
             }
             case TokenType::STRING_LITERAL: {
@@ -482,6 +482,7 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
                 node->node_type = AST_STRING_LITERAL;
                 std::dynamic_pointer_cast<LiteralValue>(node)->data =
                     Lookback()->lexeme;
+                _intern_count++;
                 break;
             }
             case TokenType::BOOL_LITERAL: {
@@ -489,6 +490,7 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
                 node->node_type = AST_BOOL_LITERAL;
                 std::dynamic_pointer_cast<LiteralValue>(node)->data =
                     Lookback()->lexeme == "true";
+                _intern_count++;
                 break;
             }
             case TokenType::NULL_LITERAL: {
@@ -735,11 +737,13 @@ std::shared_ptr<ExitStmt> Parser::ParseExitStmt() {
         node->exit_code = std::make_shared<LiteralValue>();
         node->exit_code->node_type = AST_INT_LITERAL;
         node->exit_code->data = 0L;
+        _intern_count++;
         AdvanceBuffer(1);
     } else {
         node->exit_code = std::make_shared<LiteralValue>();
         node->exit_code->node_type = AST_INT_LITERAL;
         node->exit_code->data = static_cast<RnIntNative>(std::stoi(Current()->lexeme));
+        _intern_count++;
         AdvanceBuffer(2);
     }
 
@@ -1013,6 +1017,7 @@ std::shared_ptr<Name> Parser::ParseName() {
     AddCurrentFileInfo(node);
     node->value = Current()->lexeme;
     AdvanceBuffer(1);
+    _intern_count++;
 
     return node;
 }
@@ -1087,6 +1092,9 @@ void Parser::Parse() {
     if (GetTokenCount()) {
         MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
         while (true) {
+            if (EndOfSequence()) {
+                return;
+            }
             INCR_LOOP_COUNTER
             switch (Current()->token_type) {
                 case TokenType::BLOCK_COMMENT:
@@ -1219,12 +1227,7 @@ void Parser::Parse() {
             }
         }
     }
-}
-
-/*****************************************************************************/
-void Parser::LoadTokens(std::vector<Token*> t) {
-    LoadData(std::move(t));
-    AdvanceBuffer(2);
+    RnConstStore::Init(_intern_count);
 }
 
 /*****************************************************************************/
@@ -1287,8 +1290,8 @@ std::string Parser::ItemToString(Token* token) {
 /*****************************************************************************/
 void Parser::HandleUnexpectedItem() {
     auto msg = "Unexpected token '" + Current()->lexeme + "'";
-    msg += +" in file " + Current()->file_info->ToString();
-    msg += "\n\n" + Current()->file_info->GetContextualBlock();
+    msg += +" in file " + Current()->file_info.ToString();
+    msg += "\n\n" + Current()->file_info.GetContextualBlock();
     throw std::runtime_error(msg);
 }
 
@@ -1328,9 +1331,14 @@ std::shared_ptr<RnTypeComposite> Parser::ParseType() {
 }
 
 /*****************************************************************************/
+void Parser::Reset() {
+    FillBuffer(nullptr);
+    ast = std::make_shared<Ast>();
+    _current_scope = ast->root;
+}
+
+/*****************************************************************************/
 std::shared_ptr<AstNode> Parser::AddCurrentFileInfo(std::shared_ptr<AstNode> node) {
-    if (node && !node->file_info) {
-        node->file_info = new FileInfo(*(Current()->file_info));
-    }
+    node->file_info = Current()->file_info;
     return node;
 }

@@ -132,8 +132,7 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
     auto result = *a op b;                           \
     GetScope()->GetMemoryGroup()->AddObject(result); \
     GetStack().push_back(result);                    \
-    PREDICT_OPCODE(OP_LOAD_VALUE)                    \
-    PREDICT_OPCODE(OP_LOAD_LITERAL)
+    PREDICT_OPCODE2(OP_LOAD_VALUE, OP_LOAD_LITERAL)
 
 // This is exactly how cpython handles opcode prediction, so all credit to the
 // authors there
@@ -145,9 +144,43 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
             goto TARGET_##op;                              \
         }                                                  \
     }
+
+#define PREDICT_OPCODE2(op1, op2)                        \
+    {                                                    \
+        switch (_instructions[index + 1]->GetOpcode()) { \
+            case op1:                                    \
+                instruction = _instructions[++index];    \
+                goto TARGET_##op1;                       \
+            case op2:                                    \
+                instruction = _instructions[++index];    \
+                goto TARGET_##op2;                       \
+            default:                                     \
+                break;                                   \
+        }                                                \
+    }
+
+#define PREDICT_OPCODE3(op1, op2, op3)                   \
+    {                                                    \
+        switch (_instructions[index + 1]->GetOpcode()) { \
+            case op1:                                    \
+                instruction = _instructions[++index];    \
+                goto TARGET_##op1;                       \
+            case op2:                                    \
+                instruction = _instructions[++index];    \
+                goto TARGET_##op2;                       \
+            case op3:                                    \
+                instruction = _instructions[++index];    \
+                goto TARGET_##op3;                       \
+            default:                                     \
+                break;                                   \
+        }                                                \
+    }
+
 #define PREDICTION_TARGET(op) TARGET_##op:
 #else
 #define PREDICT_OPCODE(op)
+#define PREDICT_OPCODE2(op, op1)
+#define PREDICT_OPCODE3(op, op1, op2)
 #define PREDICTION_TARGET(op)
 #endif
 
@@ -215,10 +248,22 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_BINARY_POWER: {
             auto b = StackPop();
             auto a = StackPop();
-            auto result = CreateObject(std::pow(a->ToFloat(), b->ToFloat()));
+            RnObject* result = nullptr;
+            if (b->GetType() == RnType::RN_INT) {
+                if (b->ToInt() == 2) {
+                    result = CreateObject(a->ToFloat() * a->ToFloat());
+                } else if (b->ToInt() == 3) {
+                    result = CreateObject(a->ToFloat() * a->ToFloat() * a->ToFloat());
+                } else {
+                    result = CreateObject(std::pow(a->ToFloat(), b->ToFloat()));
+                }
+            } else {
+                result = CreateObject(std::pow(a->ToFloat(), b->ToFloat()));
+            }
             assert(result);
             GetScope()->GetMemoryGroup()->AddObject(result);
             GetStack().push_back(result);
+            PREDICT_OPCODE2(OP_LOAD_VALUE, OP_LOAD_LITERAL)
             break;
         }
         case OP_BINARY_RSH: {
@@ -320,8 +365,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             PREDICTION_TARGET(OP_LOAD_LITERAL)
             auto obj = RnConstStore::GetInternedObject(instruction->GetArg1());
             GetStack().push_back(obj);
-            PREDICT_OPCODE(OP_LOAD_VALUE)
-            PREDICT_OPCODE(OP_LOAD_LITERAL)
+            PREDICT_OPCODE2(OP_LOAD_VALUE, OP_LOAD_LITERAL)
             break;
         }
         case OP_LOAD_VALUE: {
@@ -355,9 +399,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 throw std::runtime_error("Symbol does not exist: " +
                                          RnConstStore::GetInternedString(key));
             }
-            PREDICT_OPCODE(OP_LOAD_VALUE)
-            PREDICT_OPCODE(OP_LOAD_LITERAL)
-            PREDICT_OPCODE(OP_CALL)
+            PREDICT_OPCODE3(OP_LOAD_VALUE, OP_LOAD_LITERAL, OP_CALL)
             PREDICT_OPCODE(OP_STORE)
             break;
         }
@@ -563,8 +605,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_RESET_CONTEXT: {
             GetScope()->Reset();
-            PREDICT_OPCODE(OP_UNARY_INCREMENT)
-            PREDICT_OPCODE(OP_UNARY_DECREMENT)
+            PREDICT_OPCODE2(OP_UNARY_INCREMENT, OP_UNARY_DECREMENT)
             break;
         }
         case OP_DELETE: {
@@ -706,13 +747,14 @@ RnIntNative RnVirtualMachine::Run() {
         i_idx++;
     }
     stopwatch.Stop();
-
-    //    Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
+//    Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
     return GetStack().back()->ToInt();
 }
 
 /*****************************************************************************/
 void RnVirtualMachine::LoadInstructions(std::vector<RnInstruction*> instructions) {
+    _instructions.clear();
+    i_idx = 0;
     _instructions = std::move(instructions);
 }
 

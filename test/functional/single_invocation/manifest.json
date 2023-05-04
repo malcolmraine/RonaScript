@@ -1,6 +1,6 @@
 {
-  "name": "conditional_stmts",
-  "title": "Conditional Statements",
+  "name": "single_invocation",
+  "title": "Single Invocation",
   "args": [],
   "timeout": 5,
   "invoke_count": 1,
