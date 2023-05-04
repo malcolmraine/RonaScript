@@ -28,7 +28,6 @@
 #include <algorithm>
 #include <iostream>
 #include <utility>
-#include "../util/FileInfo.h"
 #include "Token.h"
 #include "TokenType.h"
 
@@ -174,7 +173,7 @@ Lexer::~Lexer() {
 Token* Lexer::Emit(TokenType type) {
     auto token = MakeToken(_lexeme, type);
 
-    // This is a little awkward but it handles repeated unary operators
+    // This is a little awkward, but it handles repeated unary operators
     if (token->token_type == TokenType::NAME &&
         (token->lexeme[0] == '+' || token->lexeme[0] == '-')) {
         tokens.emplace_back(MakeToken(std::string(1, token->lexeme[0])));
@@ -341,11 +340,11 @@ Token* Lexer::ProcessDefault() {
 Token* Lexer::ProcessComment(bool is_block_comment) {
     if (_lexeme.empty()) {
         if (is_block_comment) {
-            while (GetCompoundCandidate() != BLOCK_COMMENT_END && !EndOfFile())
+            while (GetCompoundCandidate() != BLOCK_COMMENT_END && !EndOfSequence())
                 AdvanceBuffer(1);
         } else {
             while (Current() != INLINE_COMMENT_END_N &&
-                   Current() != INLINE_COMMENT_END_R && !EndOfFile())
+                   Current() != INLINE_COMMENT_END_R && !EndOfSequence())
                 AdvanceBuffer(1);
         }
         AdvanceBuffer(1);
@@ -403,7 +402,7 @@ Token* Lexer::Consume() {
                 AdvanceBuffer(1);
                 return ProcessReservedWord();
             } else {
-                while (IsWhiteSpace(Current()) && !EndOfFile())
+                while (IsWhiteSpace(Current()) && !EndOfSequence())
                     AdvanceBuffer(1);
                 break;
             }
@@ -466,7 +465,7 @@ Token* Lexer::Consume() {
 
 /*****************************************************************************/
 void Lexer::ProcessTokens() {
-    while (!EndOfFile())
+    while (!EndOfSequence())
         Consume();
     Consume();
 
@@ -483,39 +482,13 @@ void Lexer::LoadFile(const std::string& path) {
     if (_file_obj.fail())
         throw std::runtime_error("Failed to open " + file_info.GetFilePath());
 
-    // Get the number of characters in the file
-    _file_obj.seekg(0, std::ios_base::end);
-    std::streampos end_pos = _file_obj.tellg();
-    file_char_cnt = end_pos;
-
-    // Reset the file position
-    _file_obj.seekg(0, std::ios_base::beg);
-
-    // Initialize the buffer
+    auto file_size = std::filesystem::file_size(path);
+    _data = new char[file_size];
+    std::memset(_data, 0, file_size);
+    _file_obj.read(_data, file_size);
+    _data_size = file_size;
+    _file_obj.close();
     AdvanceBuffer(2);
-}
-
-/*****************************************************************************/
-void Lexer::LoadString(const std::string& input) {
-    _use_loaded_string = true;
-    _data.clear();
-    _data.reserve(input.length());
-    for (auto c : input) {
-        _data.push_back(c);
-    }
-}
-
-/*****************************************************************************/
-bool Lexer::EndOfFile() const {
-    if (_use_loaded_string) {
-        return _data_idx == _data.size() - 1;
-    }
-    return _file_obj.gcount() == 0;
-}
-
-/*****************************************************************************/
-bool Lexer::EndOfSequence() const {
-    return EndOfFile();
 }
 
 /*****************************************************************************/
@@ -536,7 +509,7 @@ void Lexer::RunAdvanceBufferSideEffects() {
 }
 
 /*****************************************************************************/
-bool Lexer::IsWhiteSpace(char c) const {
+bool Lexer::IsWhiteSpace(char c) {
     std::vector<char> ws_chars = {'\r', '\t', ' ', '\n'};
     return std::find(ws_chars.begin(), ws_chars.end(), c) != ws_chars.end();
 }
@@ -544,16 +517,6 @@ bool Lexer::IsWhiteSpace(char c) const {
 /*****************************************************************************/
 std::string Lexer::ItemToString(char item) {
     return {1, item};
-}
-
-/*****************************************************************************/
-void Lexer::LoadNextItem() {
-    if (_use_loaded_string) {
-        _buffer[2] = _data[_data_idx++];
-    } else {
-        _data_idx++;
-        _file_obj.get(_buffer[2]);
-    }
 }
 
 /*****************************************************************************/

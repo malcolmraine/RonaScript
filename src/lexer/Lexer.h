@@ -53,9 +53,7 @@ class Lexer : public RnSequencer<char, char> {
 public:
     Lexer();
     ~Lexer();
-    void LoadNextItem() override;
     Token* Emit(TokenType type = TokenType::UNDEFINED);
-    Token* MakeToken(TokenType type);
     Token* MakeToken(const std::string& s,
                      TokenType initial_type = TokenType::UNDEFINED) const;
     static bool IsIntLiteral(std::string s);          // TODO: Unit test
@@ -74,13 +72,10 @@ public:
     Token* Consume();
     void ProcessTokens();
     void LoadFile(const std::string& path);
-    void LoadString(const std::string& input);
-    bool EndOfFile() const;  // TODO: Use RnSequencer
-    bool EndOfSequence() const override;
     char GetCurrentAsExpectedType() override;
     void HandleUnexpectedItem() override;
     void RunAdvanceBufferSideEffects() override;
-    bool IsWhiteSpace(char c) const;               // TODO: Unit test
+    static bool IsWhiteSpace(char c) ;               // TODO: Unit test
     std::string ItemToString(char item) override;  // TODO: Unit test
 
     std::vector<Token*> tokens;

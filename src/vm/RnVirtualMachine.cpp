@@ -747,12 +747,14 @@ RnIntNative RnVirtualMachine::Run() {
         i_idx++;
     }
     stopwatch.Stop();
-    Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
+//    Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
     return GetStack().back()->ToInt();
 }
 
 /*****************************************************************************/
 void RnVirtualMachine::LoadInstructions(std::vector<RnInstruction*> instructions) {
+    _instructions.clear();
+    i_idx = 0;
     _instructions = std::move(instructions);
 }
 

@@ -15,6 +15,7 @@
 #include "vm/RnMemoryManager.h"
 #include "vm/RnObject.h"
 #include "vm/RnVirtualMachine.h"
+#include "util/File.h"
 
 // @formatter:off
 #include "RnBuildInfo.h"
@@ -45,7 +46,8 @@ void Compile(const std::filesystem::path& infile, RnCodeGenerator& code_generato
     try {
         parser.working_dir = infile.parent_path();
         parser.file = infile;
-        parser.LoadTokens(lexer.tokens);
+        parser.SetFromPtr(lexer.tokens.data(), lexer.tokens.size());
+        parser.AdvanceBuffer(2);
         parser.Parse();
 
         if (arg_parser.IsSet("-a")) {
@@ -64,7 +66,7 @@ void Compile(const std::filesystem::path& infile, RnCodeGenerator& code_generato
     try {
         auto stopwatch = StopWatch();
         stopwatch.Start();
-        code_generator.Generate(parser.ast);
+        code_generator.Generate(parser.ast.get());
         stopwatch.Stop();
         if (arg_parser.IsSet("-p")) {
             size_t index = 0;
@@ -73,7 +75,7 @@ void Compile(const std::filesystem::path& infile, RnCodeGenerator& code_generato
                           instruction->ToString());
             }
         }
-        Log::INFO("CodeGen Duration: " + std::to_string(stopwatch.Duration()));
+//        Log::INFO("CodeGen Duration: " + std::to_string(stopwatch.Duration()));
     } catch (const std::exception& e) {
         Log::ERROR("Codegen Error: " + std::string(e.what()));
         return;

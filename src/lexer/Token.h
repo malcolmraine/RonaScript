@@ -35,7 +35,6 @@
 #include "../util/FileInfo.h"
 #include "TokenType.h"
 
-
 class Token {
 public:
     static std::unordered_map<TokenType, std::string> token_type_string_names;
@@ -48,7 +47,10 @@ public:
     [[nodiscard]] bool IsOperator() const;
     [[nodiscard]] bool IsType() const;
     [[nodiscard]] std::string ToString() const;
-    [[nodiscard]] bool IsOneOf(const std::unordered_set<TokenType>& tokens) const;
+
+    [[nodiscard]] inline bool IsOneOf(const std::unordered_set<TokenType>& tokens) const {
+        return tokens.contains(token_type);
+    }
 
     TokenType token_type = TokenType::UNDEFINED;
     std::string lexeme;

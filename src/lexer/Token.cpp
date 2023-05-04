@@ -187,8 +187,3 @@ std::string Token::ToString() const {
     return "Token('" + lexeme + "', " + Token::token_type_string_names[token_type] +
            ")";
 }
-
-/*****************************************************************************/
-bool Token::IsOneOf(const std::unordered_set<TokenType>& tokens) const {
-    return tokens.contains(token_type);
-}

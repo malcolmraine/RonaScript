@@ -188,7 +188,7 @@ std::unordered_map<TokenType, Associativity> Parser::_associativity = {
 /*****************************************************************************/
 Parser::Parser() {
     FillBuffer(nullptr);
-    ast = new Ast();
+    ast = std::make_shared<Ast>();
     _current_scope = ast->root;
 
     // TODO: Add rest of builtin functions
@@ -216,9 +216,7 @@ Parser::Parser() {
 }
 
 /*****************************************************************************/
-Parser::~Parser() {
-    delete ast;
-}
+Parser::~Parser() = default;
 
 /*****************************************************************************/
 void Parser::ConditionalBufAdvance(TokenType t) {
@@ -257,7 +255,7 @@ std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
     lexer.ProcessTokens();
     Parser parser;
     parser.working_dir = module_file.parent_path();
-    parser.LoadTokens(lexer.tokens);
+    parser.SetFromPtr(lexer.tokens.data(), lexer.tokens.size());
     parser.Parse();
 
     for (auto& [key, m] : parser.ast->modules) {
@@ -1094,6 +1092,9 @@ void Parser::Parse() {
     if (GetTokenCount()) {
         MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
         while (true) {
+            if (EndOfSequence()) {
+                return;
+            }
             INCR_LOOP_COUNTER
             switch (Current()->token_type) {
                 case TokenType::BLOCK_COMMENT:
@@ -1227,12 +1228,6 @@ void Parser::Parse() {
         }
     }
     RnConstStore::Init(_intern_count);
-}
-
-/*****************************************************************************/
-void Parser::LoadTokens(std::vector<Token*> t) {
-    LoadData(std::move(t));
-    AdvanceBuffer(2);
 }
 
 /*****************************************************************************/
