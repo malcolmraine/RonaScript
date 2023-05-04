@@ -20,7 +20,7 @@ public:
 
     RnSequencer();
     virtual ~RnSequencer() {
-        delete [] _data;
+        delete[] _data;
         _data = nullptr;
     }
 

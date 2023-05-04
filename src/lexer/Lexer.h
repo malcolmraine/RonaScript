@@ -32,9 +32,9 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include "../util/FileInfo.h"
 #include "../util/RnSequencer.h"
 #include "TokenType.h"
-#include "../util/FileInfo.h"
 
 #define STRING_LITERAL_MAX_LENGTH 1000000
 #define BLOCK_COMMENT_START "/*"
@@ -75,7 +75,7 @@ public:
     char GetCurrentAsExpectedType() override;
     void HandleUnexpectedItem() override;
     void RunAdvanceBufferSideEffects() override;
-    static bool IsWhiteSpace(char c) ;               // TODO: Unit test
+    static bool IsWhiteSpace(char c);              // TODO: Unit test
     std::string ItemToString(char item) override;  // TODO: Unit test
     void Reset();
 

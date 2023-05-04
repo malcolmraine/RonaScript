@@ -11,8 +11,8 @@
 
 #include <string>
 #include <vector>
-#include "NodeType.h"
 #include "../../util/FileInfo.h"
+#include "NodeType.h"
 
 class RnCodeGenVisitor;
 

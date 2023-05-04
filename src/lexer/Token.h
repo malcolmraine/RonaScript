@@ -48,7 +48,8 @@ public:
     [[nodiscard]] bool IsType() const;
     [[nodiscard]] std::string ToString() const;
 
-    [[nodiscard]] inline bool IsOneOf(const std::unordered_set<TokenType>& tokens) const {
+    [[nodiscard]] inline bool IsOneOf(
+        const std::unordered_set<TokenType>& tokens) const {
         return tokens.contains(token_type);
     }
 

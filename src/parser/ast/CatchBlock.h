@@ -9,8 +9,8 @@
 
 #pragma once
 
-#include "AstNode.h"
 #include <vector>
+#include "AstNode.h"
 
 class Name;
 class ScopeNode;

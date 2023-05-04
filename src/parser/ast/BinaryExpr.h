@@ -12,7 +12,6 @@
 #include <string>
 #include "AstNode.h"
 
-
 class BinaryExpr : public AstNode {
 public:
     BinaryExpr();
