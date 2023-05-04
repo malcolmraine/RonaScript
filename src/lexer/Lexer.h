@@ -77,6 +77,7 @@ public:
     void RunAdvanceBufferSideEffects() override;
     static bool IsWhiteSpace(char c) ;               // TODO: Unit test
     std::string ItemToString(char item) override;  // TODO: Unit test
+    void Reset();
 
     std::vector<Token*> tokens;
     std::string _lexeme;

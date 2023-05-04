@@ -520,6 +520,14 @@ std::string Lexer::ItemToString(char item) {
 }
 
 /*****************************************************************************/
+void Lexer::Reset() {
+    for (auto token : tokens) {
+        delete token;
+    }
+    tokens.clear();
+}
+
+/*****************************************************************************/
 void Lexer::HandleUnexpectedItem() {
     std::string msg = "Unexpected character '" + std::string(1, Current()) + "'" +
                       " in " + file_info.ToString() + "\nExpected one of [";

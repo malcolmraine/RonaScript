@@ -1331,6 +1331,13 @@ std::shared_ptr<RnTypeComposite> Parser::ParseType() {
 }
 
 /*****************************************************************************/
+void Parser::Reset() {
+    FillBuffer(nullptr);
+    ast = std::make_shared<Ast>();
+    _current_scope = ast->root;
+}
+
+/*****************************************************************************/
 std::shared_ptr<AstNode> Parser::AddCurrentFileInfo(std::shared_ptr<AstNode> node) {
     node->file_info = Current()->file_info;
     return node;

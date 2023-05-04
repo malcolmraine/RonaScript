@@ -123,11 +123,59 @@ void PrintInstructions(const InstructionBlock& instructions) {
 }
 
 /*****************************************************************************/
+void Repl() {
+    std::cout << "RonaScript (" << std::string(RONASCRIPT_VERSION) << ")" << std::endl;
+    std::cout << "----------------------------------------" << std::endl;
+    std::string line;
+    Lexer lexer;
+    Parser parser;
+    RnCodeGenerator code_generator;
+    auto vm = RnVirtualMachine::GetInstance();
+
+    while (true) {
+        line.clear();
+        std::cout << ">>> ";
+        std::cin >> line;
+
+        if (line.empty()) {
+            std::cout << std::endl;
+            continue;
+        }
+
+        if (line == "q") {
+            break;
+        } else {
+            try {
+                lexer.SetFromPtr(line.c_str(), line.length());
+                lexer.AdvanceBuffer(2);
+                lexer.ProcessTokens();
+
+                parser.SetFromPtr(lexer.tokens.data(), lexer.tokens.size());
+                parser.AdvanceBuffer(2);
+                parser.Parse();
+
+                code_generator.Generate(parser.ast.get());
+                vm->LoadInstructions(code_generator.GetInstructions());
+                vm->Run();
+                parser.Reset();
+                lexer.Reset();
+            } catch (const std::exception& e) {
+                Log::ERROR(e.what());
+            }
+//            if (!vm->GetStack().empty()) {
+//                std::cout << "\n" << vm->GetStack().back()->ToString() << std::endl;
+//            }
+        }
+    }
+}
+
+/*****************************************************************************/
 void RonaScriptMain(int argc, char* argv[]) {
 
     arg_parser.SetMainDescription("Usage: RonaScript <file> [options...]");
     arg_parser.AddArgument("<file>", {}, "Input file (*.rn | *.rnc)");
     arg_parser.AddArgument("-c", {}, "Compile to *.rnc file");
+    arg_parser.AddArgument("--repl", {}, "REPL");
     arg_parser.AddArgument("-r", {"--norun"}, "Compile to *.rnc file without running");
     arg_parser.AddArgument("--no-validation", {}, "Don't perform AST validation");
     arg_parser.AddArgument("-a", {"--print-ast"}, "Print AST after parsing");
@@ -146,6 +194,11 @@ void RonaScriptMain(int argc, char* argv[]) {
         return;
     } else if (arg_parser.GetInputFile().empty()) {
         Log::ERROR("RonaScript: Error: No input file");
+        return;
+    }
+
+    if (arg_parser.IsSet("--repl")) {
+        Repl();
         return;
     }
 

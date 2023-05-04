@@ -110,6 +110,7 @@ public:
     std::string ItemToString(Token* token) override;
     void HandleUnexpectedItem() override;
     std::shared_ptr<RnTypeComposite> ParseType();
+    void Reset();
 
 public:
     std::string working_dir = ".";

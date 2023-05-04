@@ -88,7 +88,7 @@ public:
     }
 
     /*************************************************************************/
-    void SetFromPtr(T* data, size_t size) {
+    void SetFromPtr(const T* data, size_t size) {
         delete[] _data;
         _data_size = size;
         _data = new T[_data_size];
