@@ -27,103 +27,108 @@
 
 #pragma once
 
-enum TokenType : int {
-    L_BRACE,         // {
-    R_BRACE,         // }
-    R_PARAN,         // (
-    L_PARAN,         // )
-    R_BRACK,         // [
-    L_BRACK,         // ]
-    R_CARAT,         // <
-    L_CARAT,         // >
-    SLASH,           // /
-    PLUS,            // +
-    STAR,            // *
-    MINUS,           // -
-    PERCENT,         // %
-    AMPER,           // %
-    BAR,             // |
-    UP_ARROW,        // ^
-    BLOCK_COMMENT,   // /*
-    INLINE_COMMENT,  // //
-    DOLLAR,          // $
-    NOT,             // !
-    EQUAL,           // =
-    COMMA,           // ,
-    DOT,             // .
-    COLON,           // :
-    SEMICOLON,       // ;
-    DBL_QUOTE,       // "
-    DBL_PLUS,        // ++
-    DBL_MINUS,       // --
-    DBL_EQUAL,       // ==
-    NOT_EQUAL,       // !=
-    DBL_AMPER,       // &&
-    DBL_BAR,         // ||
-    DBL_COLON,       // ::
-    FLOAT,           // float
-    INT,             // int
-    STRING,          // string
-    ARRAY,           // list
-    CLASS,           // class
-    CALLABLE,
-    NAME,
-    SLASH_EQUAL,    // /=
-    MINUS_EQUAL,    // -=
-    PLUS_EQUAL,     // +=
-    PERCENT_EQUAL,  // %=
-    AMPER_EQUAL,    // &=
-    BAR_EQUAL,      // |=
-    STAR_EQUAL,     // *=
-    DBL_R_CARAT,    // >>
-    DBL_L_CARAT,    // <<
-    FUNC,           // func
-    ROUTINE,        // routine
-    VAR,            // var
-    LITERAL,        // literal
-    CONST,          // const
-    IMPORT,         // import
-    RETURN,         // return
-    BREAK,          // break
-    VOID,           // void
-    STRING_LITERAL,
-    DBL_STAR,  // **
-    UNDEFINED,
-    NULL_LITERAL,  // null
-    BOOL,          // bool
-    LEQ,           // <=
-    GEQ,           // >=
-    XOREQ,         // ^=
-    EMPTY_LIST,    // []
-    TILDE_EQUAL,   // ~=
-    TILDE,         // ~
-    CONSTRUCT,     // construct
-    DESTRUCT,      // destruct
-    R_ARROW,
-    DOUBLE_COLON,  // ->
-    IF,            // if
-    ELIF,          // elif
-    ELSE,          // else
-    IS,            // is
-    ALIAS,         // alias
-    WHILE,         // while
-    FOR,           // for
-    INT_LITERAL,
-    FLOAT_LITERAL,
-    BOOL_LITERAL,
-    CONTINUE,
-    OBJECT,
-    TYPE,
-    TRY,
-    CATCH,
-    GLOBAL,
-    LOCAL,
-    QUESTION_MARK,
-    DBL_QUESTION_MARK,
-    DELETE,
-    EXIT,
-    EXTENDS,
-    MODULE,
-    RANGE,
-    ANY,
-};
+// token, lexeme
+#define RN_TOKEN_LIST                     \
+    TOKEN_DEF(L_BRACE, "{")               \
+    TOKEN_DEF(R_BRACE, "}")               \
+    TOKEN_DEF(R_PARAN, "(")               \
+    TOKEN_DEF(L_PARAN, ")")                \
+    TOKEN_DEF(R_BRACK, "[")                \
+    TOKEN_DEF(L_BRACK, "]")                \
+    TOKEN_DEF(R_CARAT, "<")                \
+    TOKEN_DEF(L_CARAT, ">")                \
+    TOKEN_DEF(SLASH, "/")                 \
+    TOKEN_DEF(PLUS, "+")                  \
+    TOKEN_DEF(STAR, "*")                  \
+    TOKEN_DEF(MINUS, "-")                 \
+    TOKEN_DEF(PERCENT, "%")               \
+    TOKEN_DEF(AMPER, "&")                 \
+    TOKEN_DEF(BAR, "|")                   \
+    TOKEN_DEF(UP_ARROW, "^")              \
+    TOKEN_DEF(BLOCK_COMMENT, "/*")        \
+    TOKEN_DEF(INLINE_COMMENT, "//")       \
+    TOKEN_DEF(DOLLAR, "$")                \
+    TOKEN_DEF(NOT, "!")                   \
+    TOKEN_DEF(EQUAL, "=")                 \
+    TOKEN_DEF(COMMA, ",")                 \
+    TOKEN_DEF(DOT, ".")                   \
+    TOKEN_DEF(COLON, ":")                 \
+    TOKEN_DEF(SEMICOLON, ";")             \
+    TOKEN_DEF(DBL_QUOTE, "\"")            \
+    TOKEN_DEF(DBL_PLUS, "++")             \
+    TOKEN_DEF(DBL_MINUS, "--")            \
+    TOKEN_DEF(DBL_EQUAL, "==")            \
+    TOKEN_DEF(NOT_EQUAL, "!=")            \
+    TOKEN_DEF(DBL_AMPER, "&&")            \
+    TOKEN_DEF(DBL_BAR, "||")              \
+    TOKEN_DEF(DBL_COLON, "::")            \
+    RESERVED_WORD(FLOAT, "float")             \
+    RESERVED_WORD(INT, "int")                 \
+    RESERVED_WORD(STRING, "string")           \
+    RESERVED_WORD(ARRAY, "array")             \
+    RESERVED_WORD(CLASS, "class")             \
+    RESERVED_WORD(CALLABLE, "callable")       \
+    TOKEN_DEF(NAME, "")               \
+    TOKEN_DEF(SLASH_EQUAL, "/=")          \
+    TOKEN_DEF(MINUS_EQUAL, "-=")          \
+    TOKEN_DEF(PLUS_EQUAL, "+=")           \
+    TOKEN_DEF(PERCENT_EQUAL, "%=")        \
+    TOKEN_DEF(AMPER_EQUAL, "&=")          \
+    TOKEN_DEF(BAR_EQUAL, "|=")            \
+    TOKEN_DEF(STAR_EQUAL, "*=")           \
+    TOKEN_DEF(DBL_R_CARAT, ">>")          \
+    TOKEN_DEF(DBL_L_CARAT, "<<")          \
+    RESERVED_WORD(FUNC, "func")           \
+    RESERVED_WORD(ROUTINE, "routine")     \
+    RESERVED_WORD(VAR, "var")             \
+    RESERVED_WORD(LITERAL, "literal")     \
+    RESERVED_WORD(CONST, "const")         \
+    RESERVED_WORD(IMPORT, "import")       \
+    RESERVED_WORD(RETURN, "return")       \
+    RESERVED_WORD(BREAK, "break")         \
+    RESERVED_WORD(VOID, "void")               \
+    TOKEN_DEF(STRING_LITERAL, "")         \
+    TOKEN_DEF(DBL_STAR, "**")             \
+    TOKEN_DEF(UNDEFINED, "")              \
+    RESERVED_WORD(NULL_LITERAL, "null")       \
+    RESERVED_WORD(BOOL, "bool")               \
+    TOKEN_DEF(LEQ, "<=")                  \
+    TOKEN_DEF(GEQ, ">=")                  \
+    TOKEN_DEF(XOREQ, "^=")                \
+    TOKEN_DEF(EMPTY_LIST, "[]")           \
+    TOKEN_DEF(TILDE_EQUAL, "~=")          \
+    TOKEN_DEF(TILDE, "~")                 \
+    RESERVED_WORD(CONSTRUCT, "construct") \
+    RESERVED_WORD(DESTRUCT, "destruct")   \
+    TOKEN_DEF(R_ARROW, ">")               \
+    TOKEN_DEF(DOUBLE_COLON, "::")         \
+    RESERVED_WORD(IF, "if")               \
+    RESERVED_WORD(ELIF, "elif")           \
+    RESERVED_WORD(ELSE, "else")           \
+    RESERVED_WORD(IS, "is")               \
+    RESERVED_WORD(ALIAS, "alias")         \
+    RESERVED_WORD(WHILE, "while")         \
+    RESERVED_WORD(FOR, "for")             \
+    TOKEN_DEF(INT_LITERAL, "")            \
+    TOKEN_DEF(FLOAT_LITERAL, "")          \
+    TOKEN_DEF(BOOL_LITERAL, "")           \
+    RESERVED_WORD(CONTINUE, "continue")   \
+    RESERVED_WORD(OBJECT, "object")           \
+    TOKEN_DEF(TYPE, "")                   \
+    RESERVED_WORD(TRY, "try")             \
+    RESERVED_WORD(CATCH, "catch")         \
+    RESERVED_WORD(GLOBAL, "global")       \
+    RESERVED_WORD(LOCAL, "local")         \
+    TOKEN_DEF(QUESTION_MARK, "?")         \
+    TOKEN_DEF(DBL_QUESTION_MARK, "??")    \
+    RESERVED_WORD(DELETE, "delete")       \
+    RESERVED_WORD(EXIT, "exit")           \
+    RESERVED_WORD(EXTENDS, "extends")     \
+    RESERVED_WORD(MODULE, "module")       \
+    RESERVED_WORD(RANGE, "range")             \
+    RESERVED_WORD(ANY, "any")
+
+#define RESERVED_WORD TOKEN_DEF
+#define TOKEN_DEF(token, lexeme) token,
+
+enum TokenType : int { RN_TOKEN_LIST };
