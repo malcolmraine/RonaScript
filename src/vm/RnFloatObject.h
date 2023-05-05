@@ -72,10 +72,10 @@ public:
     [[nodiscard]] auto ToString() const -> RnStringNative override;
 
     [[nodiscard]] auto ToInt() const -> RnIntNative override {
-        return static_cast<RnIntNative>(_data.d_data);
+        return static_cast<RnIntNative>(std::llround(_data.d_data));
     }
     [[nodiscard]] auto ToBool() const -> RnBoolNative override {
-        return static_cast<bool>(_data.d_data);
+        return static_cast<bool>(std::llround(_data.d_data));
     }
 
     void SetData(RnIntNative data) override {

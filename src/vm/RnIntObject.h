@@ -29,6 +29,7 @@
 #pragma once
 
 #include "RnNumericObject.h"
+#include <cmath>
 
 class RnIntObject : public RnNumericObject {
 public:
@@ -97,7 +98,7 @@ public:
 
     void SetData(RnFloatNative data) override {
         ConstInitCheck();
-        _data.i_data = static_cast<RnIntNative>(data);
+        _data.i_data = static_cast<RnIntNative>(std::llround(data));
     }
 
     void SetData(RnObject* data) override {
