@@ -38,6 +38,8 @@
 #define RN_TOKEN_LIST                     \
     TOKEN_DEF(L_BRACE, "{")               \
     TOKEN_DEF(R_BRACE, "}")               \
+    TOKEN_DEF(BEGIN, "begin")             \
+    TOKEN_DEF(END, "end")                 \
     TOKEN_DEF(R_PARAN, "(")               \
     TOKEN_DEF(L_PARAN, ")")               \
     TOKEN_DEF(R_BRACK, "[")               \
@@ -85,7 +87,6 @@
     TOKEN_DEF(STAR_EQUAL, "*=")           \
     TOKEN_DEF(DBL_R_CARAT, ">>")          \
     TOKEN_DEF(DBL_L_CARAT, "<<")          \
-    RESERVED_WORD(FUNC, "func")           \
     RESERVED_WORD(ROUTINE, "routine")     \
     RESERVED_WORD(VAR, "var")             \
     RESERVED_WORD(LITERAL, "literal")     \

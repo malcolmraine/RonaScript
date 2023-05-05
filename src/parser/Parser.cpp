@@ -251,7 +251,7 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
         node->qualifiers = std::move(qualifiers);
     }
 
-    ConditionalBufAdvance(TokenType::FUNC);
+    ConditionalBufAdvance(TokenType::ROUTINE);
 
     node->id = Current()->lexeme;
     AdvanceBuffer(2);
@@ -336,7 +336,7 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
     node->id = Current()->lexeme;
     _user_defined_type_map[node->id] =
         std::make_shared<RnTypeComposite>(RnType::RN_OBJECT);
-    Expect({TokenType::EXTENDS, TokenType::R_BRACE, TokenType::IS});
+    Expect({TokenType::EXTENDS, TokenType::BEGIN, TokenType::IS});
     AdvanceBuffer(1);
 
     // Check for inherited classes and parse if necessary
@@ -423,6 +423,9 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
         }
     }
 
+    if (!node) {
+        throw std::runtime_error("Failed to parse expression component");
+    }
     return AddCurrentFileInfo(node);
 }
 
@@ -483,7 +486,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         }
 
         if (Current()->IsOneOf(
-                {TokenType::R_BRACE, TokenType::SEMICOLON, TokenType::L_BRACK}) ||
+                {TokenType::BEGIN, TokenType::SEMICOLON, TokenType::L_BRACK}) ||
             (Current()->token_type == TokenType::L_PARAN && op_stack.IsEmpty()) ||
             Current()->token_type == stop_token || Current()->IsCompoundOp()) {
             // We should only get here at the end of an expression and at
@@ -734,7 +737,7 @@ std::shared_ptr<ConditionalStmt> Parser::ParseElifStmt() {
     AdvanceBuffer(1);
     node->test = ParseExpr(TokenType::COLON);
     node->consequent = ParseScope();
-    //    ConditionalBufAdvance(TokenType::L_BRACE);
+    //    ConditionalBufAdvance(TokenType::END);
 
     if (Current()->token_type == TokenType::ELIF) {
         node->alternative = ParseElifStmt();
@@ -772,15 +775,20 @@ std::shared_ptr<ScopeNode> Parser::ParseScope() {
         node->pragma_table[entry.first] = entry.second;
     }
     ConvertScope(node);
-    ConditionalBufAdvance(TokenType::R_BRACE);
+    ConditionalBufAdvance(TokenType::BEGIN);
     ConditionalBufAdvance(TokenType::COLON);
     Parse();
 
-    if (Current()->token_type == TokenType::L_BRACE ||
+    if (!Current() && _data_idx > _data_size) {
+        Log::WARN("Out of bounds parser index");
+        return node;
+    }
+
+    if (Current()->token_type == TokenType::END ||
         Current()->token_type == TokenType::ELSE ||
         Current()->token_type == TokenType::ELIF) {
         RevertScope();
-        ConditionalBufAdvance(TokenType::L_BRACE);
+        ConditionalBufAdvance(TokenType::END);
     }
 
     return node;
@@ -872,7 +880,7 @@ std::shared_ptr<Loop> Parser::ParseForLoop() {
         node->update = ParseExpr();
     }
     ConditionalBufAdvance(TokenType::L_PARAN);
-    ConditionalBufAdvance(TokenType::R_BRACE);
+    ConditionalBufAdvance(TokenType::BEGIN);
     node->scope = ParseScope();
 
     if (node->init->node_type == AST_VAR_DECL) {
@@ -1030,10 +1038,10 @@ void Parser::Parse() {
                     ast->modules[node->name->value] = node;
                     break;
                 }
-                case TokenType::R_BRACE:
+                case TokenType::BEGIN:
                     _current_scope->AddSubTree(ParseScope());
                     break;
-                case TokenType::L_BRACE:
+                case TokenType::END:
                 case TokenType::ELIF:
                 case TokenType::ELSE:
                     return;
@@ -1050,7 +1058,7 @@ void Parser::Parse() {
                 case TokenType::ALIAS:
                     _current_scope->AddSubTree(ParseAliasDecl());
                     break;
-                case TokenType::FUNC:
+                case TokenType::ROUTINE:
                     _current_scope->AddFuncDecl(ParseFuncDecl(qualifiers));
                     qualifiers.clear();
                     break;
