@@ -29,7 +29,6 @@
 #include <iostream>
 #include <utility>
 #include "Token.h"
-#include "TokenType.h"
 
 #undef TOKEN_DEF
 #undef RESERVED_WORD

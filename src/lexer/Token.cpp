@@ -33,7 +33,7 @@
 #undef RESERVED_WORD
 #define TOKEN_DEF(token, lexeme) {TokenType::token, #token},
 #define RESERVED_WORD TOKEN_DEF
-std::unordered_map<TokenType, std::string> Token::token_type_string_names{
+std::unordered_map<TokenType, std::string> Token::token_name_map{
     RN_TOKEN_LIST
 };
 
@@ -93,6 +93,6 @@ bool Token::IsType() const {
 
 /*****************************************************************************/
 std::string Token::ToString() const {
-    return "Token('" + lexeme + "', " + Token::token_type_string_names[token_type] +
+    return "Token('" + lexeme + "', " + Token::token_name_map[token_type] +
            ")";
 }

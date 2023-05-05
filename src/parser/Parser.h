@@ -16,12 +16,11 @@
 #include <unordered_set>
 #include <vector>
 #include "../common/RnType.h"
-#include "../lexer/TokenType.h"
+#include "../lexer/Token.h"
 #include "../util/RnSequencer.h"
 #include "ast/Ast.h"
 
 class Token;
-class StringLiteral;
 class ScopeNode;
 class ImportStmt;
 class ArgDecl;
@@ -29,7 +28,6 @@ class AstNode;
 class AliasDecl;
 class Expr;
 class VarDecl;
-class FloatLiteral;
 class UnaryExpr;
 class ReturnStmt;
 class FuncCall;
@@ -125,7 +123,6 @@ private:
     std::shared_ptr<ScopeNode> _current_scope = nullptr;
     std::unordered_set<TokenType> unary_lookback_set = {
         TokenType::EQUAL, TokenType::R_PARAN, TokenType::COMMA};
-    static const std::unordered_map<TokenType, std::string> _char_map;
     static std::unordered_map<TokenType, int> _prec_tbl;
     static std::unordered_map<TokenType, Associativity> _associativity;
     std::unordered_map<std::string, std::string> _pragma_table;

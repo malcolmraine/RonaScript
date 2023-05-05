@@ -34,7 +34,7 @@
 #include <vector>
 #include "../util/FileInfo.h"
 #include "../util/RnSequencer.h"
-#include "TokenType.h"
+#include "Token.h"
 
 #define STRING_LITERAL_MAX_LENGTH 1000000
 #define BLOCK_COMMENT_START "/*"
