@@ -160,6 +160,7 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
     {                                                      \
         if (_instructions[index + 1]->GetOpcode() == op) { \
             instruction = _instructions[++index];          \
+            Log::INFO(instruction->ToString());                                               \
             goto TARGET_##op;                              \
         }                                                  \
     }
@@ -169,9 +170,11 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
         switch (_instructions[index + 1]->GetOpcode()) { \
             case op1:                                    \
                 instruction = _instructions[++index];    \
+                Log::INFO(instruction->ToString());                                         \
                 goto TARGET_##op1;                       \
             case op2:                                    \
                 instruction = _instructions[++index];    \
+                Log::INFO(instruction->ToString());                                         \
                 goto TARGET_##op2;                       \
             default:                                     \
                 break;                                   \
@@ -183,12 +186,15 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
         switch (_instructions[index + 1]->GetOpcode()) { \
             case op1:                                    \
                 instruction = _instructions[++index];    \
+                Log::INFO(instruction->ToString());                                         \
                 goto TARGET_##op1;                       \
             case op2:                                    \
                 instruction = _instructions[++index];    \
+                Log::INFO(instruction->ToString());                                         \
                 goto TARGET_##op2;                       \
             case op3:                                    \
                 instruction = _instructions[++index];    \
+                Log::INFO(instruction->ToString());                                         \
                 goto TARGET_##op3;                       \
             default:                                     \
                 break;                                   \
@@ -212,7 +218,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
     }
 
     auto instruction = _instructions[index];
-    //    Log::DEBUG(instruction->ToString());
+    Log::INFO(instruction->ToString());
     switch (instruction->GetOpcode()) {
         case OP_BINARY_ADD: {
             SIMPLE_BINARY_OPERATION(+)
@@ -675,7 +681,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             // reasons. Checking the bounds for each access would be unnecessarily
             // costly.
             try {
-                auto result = obj->ToArray().at(idx_value);
+                auto result = obj->At(idx_value);
                 GetStack().push_back(result);
             } catch (const std::exception& e) {
                 if (idx_value >= obj->ToArray().size() || idx_value < 0) {

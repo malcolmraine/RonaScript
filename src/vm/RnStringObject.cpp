@@ -110,3 +110,8 @@ size_t RnStringObject::GetBytes(char* buf) {
 void RnStringObject::SetBytes(const char* buf, size_t n) {
     _data = std::string(buf, n);
 }
+
+/*************************************************************************/
+RnObject* RnStringObject::At(RnIntNative index) {
+    return RnObject::Create(std::string(1, _data[index]));
+}

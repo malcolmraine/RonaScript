@@ -63,4 +63,5 @@ public:
     }
 
     bool ContentsEqual(const RnArrayNative& data);
+    RnObject* At(RnIntNative index) override;
 };
