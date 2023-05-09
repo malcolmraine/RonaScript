@@ -33,11 +33,117 @@
 #include <unordered_set>
 #include <vector>
 #include "../util/FileInfo.h"
-#include "TokenType.h"
+
+// token, lexeme
+#define RN_TOKEN_LIST                     \
+    TOKEN_DEF(L_BRACE, "{")               \
+    TOKEN_DEF(R_BRACE, "}")               \
+    TOKEN_DEF(BEGIN, "begin")             \
+    TOKEN_DEF(END, "end")                 \
+    TOKEN_DEF(R_PARAN, "(")               \
+    TOKEN_DEF(L_PARAN, ")")               \
+    TOKEN_DEF(R_BRACK, "[")               \
+    TOKEN_DEF(L_BRACK, "]")               \
+    TOKEN_DEF(R_CARAT, "<")               \
+    TOKEN_DEF(L_CARAT, ">")               \
+    TOKEN_DEF(SLASH, "/")                 \
+    TOKEN_DEF(PLUS, "+")                  \
+    TOKEN_DEF(STAR, "*")                  \
+    TOKEN_DEF(MINUS, "-")                 \
+    TOKEN_DEF(PERCENT, "%")               \
+    TOKEN_DEF(AMPER, "&")                 \
+    TOKEN_DEF(BAR, "|")                   \
+    TOKEN_DEF(UP_ARROW, "^")              \
+    TOKEN_DEF(BLOCK_COMMENT, "/*")        \
+    TOKEN_DEF(INLINE_COMMENT, "//")       \
+    TOKEN_DEF(DOLLAR, "$")                \
+    TOKEN_DEF(NOT, "!")                   \
+    TOKEN_DEF(EQUAL, "=")                 \
+    TOKEN_DEF(COMMA, ",")                 \
+    TOKEN_DEF(DOT, ".")                   \
+    TOKEN_DEF(COLON, ":")                 \
+    TOKEN_DEF(SEMICOLON, ";")             \
+    TOKEN_DEF(DBL_QUOTE, "\"")            \
+    TOKEN_DEF(DBL_PLUS, "++")             \
+    TOKEN_DEF(DBL_MINUS, "--")            \
+    TOKEN_DEF(DBL_EQUAL, "==")            \
+    TOKEN_DEF(NOT_EQUAL, "!=")            \
+    TOKEN_DEF(DBL_AMPER, "&&")            \
+    TOKEN_DEF(DBL_BAR, "||")              \
+    TOKEN_DEF(DBL_COLON, "::")            \
+    RESERVED_WORD(FLOAT, "float")         \
+    RESERVED_WORD(INT, "int")             \
+    RESERVED_WORD(STRING, "string")       \
+    RESERVED_WORD(ARRAY, "array")         \
+    RESERVED_WORD(CLASS, "class")         \
+    RESERVED_WORD(CALLABLE, "callable")   \
+    TOKEN_DEF(NAME, "")                   \
+    TOKEN_DEF(SLASH_EQUAL, "/=")          \
+    TOKEN_DEF(MINUS_EQUAL, "-=")          \
+    TOKEN_DEF(PLUS_EQUAL, "+=")           \
+    TOKEN_DEF(PERCENT_EQUAL, "%=")        \
+    TOKEN_DEF(AMPER_EQUAL, "&=")          \
+    TOKEN_DEF(BAR_EQUAL, "|=")            \
+    TOKEN_DEF(STAR_EQUAL, "*=")           \
+    TOKEN_DEF(DBL_R_CARAT, ">>")          \
+    TOKEN_DEF(DBL_L_CARAT, "<<")          \
+    RESERVED_WORD(ROUTINE, "routine")     \
+    RESERVED_WORD(VAR, "var")             \
+    RESERVED_WORD(LITERAL, "literal")     \
+    RESERVED_WORD(CONST, "const")         \
+    RESERVED_WORD(IMPORT, "import")       \
+    RESERVED_WORD(RETURN, "return")       \
+    RESERVED_WORD(BREAK, "break")         \
+    RESERVED_WORD(VOID, "void")           \
+    TOKEN_DEF(STRING_LITERAL, "")         \
+    TOKEN_DEF(DBL_STAR, "**")             \
+    TOKEN_DEF(UNDEFINED, "")              \
+    RESERVED_WORD(NULL_LITERAL, "null")   \
+    RESERVED_WORD(BOOL, "bool")           \
+    TOKEN_DEF(LEQ, "<=")                  \
+    TOKEN_DEF(GEQ, ">=")                  \
+    TOKEN_DEF(XOREQ, "^=")                \
+    TOKEN_DEF(EMPTY_LIST, "[]")           \
+    TOKEN_DEF(TILDE_EQUAL, "~=")          \
+    TOKEN_DEF(TILDE, "~")                 \
+    RESERVED_WORD(CONSTRUCT, "construct") \
+    RESERVED_WORD(DESTRUCT, "destruct")   \
+    TOKEN_DEF(R_ARROW, "->")               \
+    TOKEN_DEF(DOUBLE_COLON, "::")         \
+    RESERVED_WORD(IF, "if")               \
+    RESERVED_WORD(ELIF, "elif")           \
+    RESERVED_WORD(ELSE, "else")           \
+    RESERVED_WORD(IS, "is")               \
+    RESERVED_WORD(ALIAS, "alias")         \
+    RESERVED_WORD(WHILE, "while")         \
+    RESERVED_WORD(FOR, "for")             \
+    TOKEN_DEF(INT_LITERAL, "")            \
+    TOKEN_DEF(FLOAT_LITERAL, "")          \
+    TOKEN_DEF(BOOL_LITERAL, "")           \
+    RESERVED_WORD(CONTINUE, "continue")   \
+    RESERVED_WORD(OBJECT, "object")       \
+    TOKEN_DEF(TYPE, "")                   \
+    RESERVED_WORD(TRY, "try")             \
+    RESERVED_WORD(CATCH, "catch")         \
+    RESERVED_WORD(GLOBAL, "global")       \
+    RESERVED_WORD(LOCAL, "local")         \
+    TOKEN_DEF(QUESTION_MARK, "?")         \
+    TOKEN_DEF(DBL_QUESTION_MARK, "??")    \
+    RESERVED_WORD(DELETE, "delete")       \
+    RESERVED_WORD(EXIT, "exit")           \
+    RESERVED_WORD(EXTENDS, "extends")     \
+    RESERVED_WORD(MODULE, "module")       \
+    RESERVED_WORD(RANGE, "range")         \
+    RESERVED_WORD(ANY, "any")
+
+#define RESERVED_WORD TOKEN_DEF
+#define TOKEN_DEF(token, lexeme) token,
+
+enum TokenType : int { RN_TOKEN_LIST };
 
 class Token {
 public:
-    static std::unordered_map<TokenType, std::string> token_type_string_names;
+    static std::unordered_map<TokenType, std::string> token_name_map;
     Token(std::string s, TokenType token, int line_num = -1, int char_num = -1);
     ~Token() = default;
     [[nodiscard]] bool IsLiteral() const;
@@ -48,7 +154,8 @@ public:
     [[nodiscard]] bool IsType() const;
     [[nodiscard]] std::string ToString() const;
 
-    [[nodiscard]] inline bool IsOneOf(const std::unordered_set<TokenType>& tokens) const {
+    [[nodiscard]] inline bool IsOneOf(
+        const std::unordered_set<TokenType>& tokens) const {
         return tokens.contains(token_type);
     }
 

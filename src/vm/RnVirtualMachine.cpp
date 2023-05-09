@@ -5,6 +5,25 @@
  * Date: 6/19/22
  * Version: 1
  *
+* MIT License
+*
+* Copyright (c) 2021 Malcolm Hall
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
  *****************************************************************************/
 
 #include "RnVirtualMachine.h"
@@ -141,6 +160,7 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
     {                                                      \
         if (_instructions[index + 1]->GetOpcode() == op) { \
             instruction = _instructions[++index];          \
+            Log::INFO(instruction->ToString());                                               \
             goto TARGET_##op;                              \
         }                                                  \
     }
@@ -150,9 +170,11 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
         switch (_instructions[index + 1]->GetOpcode()) { \
             case op1:                                    \
                 instruction = _instructions[++index];    \
+                Log::INFO(instruction->ToString());                                         \
                 goto TARGET_##op1;                       \
             case op2:                                    \
                 instruction = _instructions[++index];    \
+                Log::INFO(instruction->ToString());                                         \
                 goto TARGET_##op2;                       \
             default:                                     \
                 break;                                   \
@@ -164,12 +186,15 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
         switch (_instructions[index + 1]->GetOpcode()) { \
             case op1:                                    \
                 instruction = _instructions[++index];    \
+                Log::INFO(instruction->ToString());                                         \
                 goto TARGET_##op1;                       \
             case op2:                                    \
                 instruction = _instructions[++index];    \
+                Log::INFO(instruction->ToString());                                         \
                 goto TARGET_##op2;                       \
             case op3:                                    \
                 instruction = _instructions[++index];    \
+                Log::INFO(instruction->ToString());                                         \
                 goto TARGET_##op3;                       \
             default:                                     \
                 break;                                   \
@@ -193,7 +218,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
     }
 
     auto instruction = _instructions[index];
-    //    Log::DEBUG(instruction->ToString());
+    Log::INFO(instruction->ToString());
     switch (instruction->GetOpcode()) {
         case OP_BINARY_ADD: {
             SIMPLE_BINARY_OPERATION(+)
@@ -656,7 +681,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             // reasons. Checking the bounds for each access would be unnecessarily
             // costly.
             try {
-                auto result = obj->ToArray().at(idx_value);
+                auto result = obj->At(idx_value);
                 GetStack().push_back(result);
             } catch (const std::exception& e) {
                 if (idx_value >= obj->ToArray().size() || idx_value < 0) {
@@ -747,7 +772,7 @@ RnIntNative RnVirtualMachine::Run() {
         i_idx++;
     }
     stopwatch.Stop();
-//    Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
+    //    Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
     return GetStack().back()->ToInt();
 }
 

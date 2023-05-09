@@ -27,6 +27,7 @@ public:
     [[nodiscard]] size_t GetByteSize() const override;
     size_t GetBytes(char* buf) override;
     void SetBytes(const char* buf, size_t n) override;
+    RnObject* At(RnIntNative index) override;
 
     [[nodiscard]] RnType::Type GetType() const override {
         return RnType::RN_STRING;

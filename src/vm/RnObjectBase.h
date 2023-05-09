@@ -159,6 +159,11 @@ public:
         }
     }
 
+    /*************************************************************************/
+    RnObject* At(RnIntNative index) override {
+        throw std::runtime_error(RnType::TypeToString(GetType()) + " type does not indices");
+    }
+
 protected:
     /*************************************************************************/
     void ConstInitCheck() {

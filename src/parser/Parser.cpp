@@ -67,85 +67,6 @@
 
 std::vector<std::string> Parser::parsed_files;
 
-const std::unordered_map<TokenType, std::string> Parser::_char_map = {
-    {TokenType::R_BRACE, "{"},
-    {TokenType::L_BRACE, "}"},
-    {TokenType::R_PARAN, "("},
-    {TokenType::L_PARAN, ")"},
-    {TokenType::R_BRACK, "["},
-    {TokenType::L_BRACK, "]"},
-    {TokenType::R_CARAT, "<"},
-    {TokenType::L_CARAT, ">"},
-    {TokenType::SLASH, "/"},
-    {TokenType::PLUS, "+"},
-    {TokenType::STAR, "*"},
-    {TokenType::MINUS, "-"},
-    {TokenType::PERCENT, "%"},
-    {TokenType::AMPER, "&"},
-    {TokenType::BAR, "|"},
-    {TokenType::UP_ARROW, "^"},
-    {TokenType::TILDE, "~"},
-    {TokenType::BLOCK_COMMENT, "/*"},
-    {TokenType::INLINE_COMMENT, "//"},
-    {TokenType::DOLLAR, "$"},
-    {TokenType::NOT, "!"},
-    {TokenType::EQUAL, "="},
-    {TokenType::COMMA, ","},
-    {TokenType::DOT, "."},
-    {TokenType::COLON, ":"},
-    {TokenType::SEMICOLON, ":"},
-    {TokenType::DBL_QUOTE, "\""},
-    {TokenType::DBL_PLUS, "++"},
-    {TokenType::DBL_MINUS, "--"},
-    {TokenType::DBL_EQUAL, "=="},
-    {TokenType::PLUS_EQUAL, "+="},
-    {TokenType::MINUS_EQUAL, "-="},
-    {TokenType::PERCENT_EQUAL, "%="},
-    {TokenType::SLASH_EQUAL, "/="},
-    {TokenType::NOT_EQUAL, "!="},
-    {TokenType::AMPER_EQUAL, "&="},
-    {TokenType::BAR_EQUAL, "|="},
-    {TokenType::STAR_EQUAL, "*="},
-    {TokenType::DBL_STAR, "**"},
-    {TokenType::TILDE_EQUAL, "~="},
-    {TokenType::DBL_AMPER, "&&"},
-    {TokenType::DBL_BAR, "||"},
-    {TokenType::EMPTY_LIST, "{[]"},
-    {TokenType::LEQ, "<="},
-    {TokenType::GEQ, ">="},
-    {TokenType::XOREQ, "^="},
-    {TokenType::R_ARROW, "->"},
-    {TokenType::DOUBLE_COLON, "::"},
-    {TokenType::FLOAT, "float"},
-    {TokenType::BOOL, "bool"},
-    {TokenType::INT, "int"},
-    {TokenType::STRING, "string"},
-    {TokenType::ANY, "any"},
-    {TokenType::OBJECT, "object"},
-    {TokenType::ARRAY, "array"},
-    {TokenType::CLASS, "class"},
-    {TokenType::VAR, "var"},
-    {TokenType::FUNC, "func"},
-    {TokenType::R_BRACE, "begin"},
-    {TokenType::L_BRACE, "end"},
-    {TokenType::IMPORT, "IMPORT"},
-    {TokenType::RETURN, "return"},
-    {TokenType::BREAK, "break"},
-    {TokenType::VOID, "void"},
-    {TokenType::NULL_LITERAL, "null"},
-    {TokenType::CONSTRUCT, "construct"},
-    {TokenType::DESTRUCT, "destruct"},
-    {TokenType::IF, "if"},
-    {TokenType::ELIF, "elif"},
-    {TokenType::ELSE, "else"},
-    {TokenType::IS, "is"},
-    {TokenType::ALIAS, "alias"},
-    {TokenType::WHILE, "while"},
-    {TokenType::FOR, "for"},
-    {TokenType::LOCAL, "local"},
-    {TokenType::GLOBAL, "global"},
-};
-
 std::unordered_map<TokenType, int> Parser::_prec_tbl = {
     {TokenType::DBL_COLON, 200},  {TokenType::R_ARROW, 200},
     {TokenType::R_PARAN, 100},    {TokenType::STAR, 90},
@@ -330,7 +251,7 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
         node->qualifiers = std::move(qualifiers);
     }
 
-    ConditionalBufAdvance(TokenType::FUNC);
+    ConditionalBufAdvance(TokenType::ROUTINE);
 
     node->id = Current()->lexeme;
     AdvanceBuffer(2);
@@ -415,7 +336,7 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
     node->id = Current()->lexeme;
     _user_defined_type_map[node->id] =
         std::make_shared<RnTypeComposite>(RnType::RN_OBJECT);
-    Expect({TokenType::EXTENDS, TokenType::R_BRACE, TokenType::IS});
+    Expect({TokenType::EXTENDS, TokenType::BEGIN, TokenType::IS});
     AdvanceBuffer(1);
 
     // Check for inherited classes and parse if necessary
@@ -502,6 +423,9 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
         }
     }
 
+    if (!node) {
+        throw std::runtime_error("Failed to parse expression component");
+    }
     return AddCurrentFileInfo(node);
 }
 
@@ -562,7 +486,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         }
 
         if (Current()->IsOneOf(
-                {TokenType::R_BRACE, TokenType::SEMICOLON, TokenType::L_BRACK}) ||
+                {TokenType::BEGIN, TokenType::SEMICOLON, TokenType::L_BRACK}) ||
             (Current()->token_type == TokenType::L_PARAN && op_stack.IsEmpty()) ||
             Current()->token_type == stop_token || Current()->IsCompoundOp()) {
             // We should only get here at the end of an expression and at
@@ -813,7 +737,7 @@ std::shared_ptr<ConditionalStmt> Parser::ParseElifStmt() {
     AdvanceBuffer(1);
     node->test = ParseExpr(TokenType::COLON);
     node->consequent = ParseScope();
-    //    ConditionalBufAdvance(TokenType::L_BRACE);
+    //    ConditionalBufAdvance(TokenType::END);
 
     if (Current()->token_type == TokenType::ELIF) {
         node->alternative = ParseElifStmt();
@@ -851,15 +775,20 @@ std::shared_ptr<ScopeNode> Parser::ParseScope() {
         node->pragma_table[entry.first] = entry.second;
     }
     ConvertScope(node);
-    ConditionalBufAdvance(TokenType::R_BRACE);
+    ConditionalBufAdvance(TokenType::BEGIN);
     ConditionalBufAdvance(TokenType::COLON);
     Parse();
 
-    if (Current()->token_type == TokenType::L_BRACE ||
+    if (!Current() && _data_idx > _data_size) {
+        Log::WARN("Out of bounds parser index");
+        return node;
+    }
+
+    if (Current()->token_type == TokenType::END ||
         Current()->token_type == TokenType::ELSE ||
         Current()->token_type == TokenType::ELIF) {
         RevertScope();
-        ConditionalBufAdvance(TokenType::L_BRACE);
+        ConditionalBufAdvance(TokenType::END);
     }
 
     return node;
@@ -951,7 +880,7 @@ std::shared_ptr<Loop> Parser::ParseForLoop() {
         node->update = ParseExpr();
     }
     ConditionalBufAdvance(TokenType::L_PARAN);
-    ConditionalBufAdvance(TokenType::R_BRACE);
+    ConditionalBufAdvance(TokenType::BEGIN);
     node->scope = ParseScope();
 
     if (node->init->node_type == AST_VAR_DECL) {
@@ -1109,10 +1038,10 @@ void Parser::Parse() {
                     ast->modules[node->name->value] = node;
                     break;
                 }
-                case TokenType::R_BRACE:
+                case TokenType::BEGIN:
                     _current_scope->AddSubTree(ParseScope());
                     break;
-                case TokenType::L_BRACE:
+                case TokenType::END:
                 case TokenType::ELIF:
                 case TokenType::ELSE:
                     return;
@@ -1129,7 +1058,7 @@ void Parser::Parse() {
                 case TokenType::ALIAS:
                     _current_scope->AddSubTree(ParseAliasDecl());
                     break;
-                case TokenType::FUNC:
+                case TokenType::ROUTINE:
                     _current_scope->AddFuncDecl(ParseFuncDecl(qualifiers));
                     qualifiers.clear();
                     break;

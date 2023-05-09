@@ -1,9 +1,9 @@
 /*****************************************************************************
- * File: ArgParser.cpp
- * Description:
- * Author: Malcolm Hall
- * Date: 1/25/23
- * Version: 1
+* File: ArgParser.cpp
+* Description:
+* Author: Malcolm Hall
+* Date: 1/25/23
+* Version: 1
 *
 * MIT License
 *
