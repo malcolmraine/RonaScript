@@ -27,3 +27,9 @@
 ******************************************************************************/
 
 #include "RnBuiltins_Time.h"
+
+#undef BUILTIN_CLASS
+#define BUILTIN_CLASS RnBuiltins_Time
+
+#undef RN_BUILTIN_FUNC
+#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE

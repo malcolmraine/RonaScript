@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "../common/RnType.h"
+#include "RnBuiltins.h"
 
 class RnScope;
 class RnObject;
@@ -44,16 +44,18 @@ class RnObject;
  *
  */
 
+#undef RN_BUILTIN_IO_REGISTRATIONS
+#define RN_BUILTIN_IO_REGISTRATIONS                                 \
+    RN_BUILTIN_FUNC(RnBuiltins_IO, file_size, RnType::RN_INT, 1)    \
+    RN_BUILTIN_FUNC(RnBuiltins_IO, file_write, RnType::RN_INT, 2)   \
+    RN_BUILTIN_FUNC(RnBuiltins_IO, print, RnType::RN_VOID, 1)       \
+    RN_BUILTIN_FUNC(RnBuiltins_IO, file_read, RnType::RN_STRING, 1) \
+    RN_BUILTIN_FUNC(RnBuiltins_IO, prompt, RnType::RN_STRING, 1)
+
+#undef RN_BUILTIN_FUNC
+#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DECLARE
+
 class RnBuiltins_IO {
 public:
-    static void rn_builtin_file_size(RnScope* scope, const RnArrayNative& args,
-                                     RnObject* ret_val);
-    static void rn_builtin_file_write(RnScope* scope, const RnArrayNative& args,
-                                      RnObject* ret_val);
-    static void rn_builtin_print(RnScope* scope, const RnArrayNative& args,
-                                 RnObject* ret_val);
-    static void rn_builtin_read(RnScope* scope, const RnArrayNative& args,
-                                RnObject* ret_val);
-    static void rn_builtin_prompt(RnScope* scope, const RnArrayNative& args,
-                                  RnObject* ret_val);
+    RN_BUILTIN_IO_REGISTRATIONS
 };

@@ -1,6 +1,7 @@
 Usage: RonaScript <file> [options...]
   <file>                   Input file (*.rn | *.rnc)
   -c                       Compile to *.rnc file
+  --repl                   REPL
   -r, --norun              Compile to *.rnc file without running
   --no-validation          Don't perform AST validation
   -a, --print-ast          Print AST after parsing

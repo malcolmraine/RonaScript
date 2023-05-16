@@ -12,6 +12,7 @@
 #include <limits>
 #include <string>
 #include <utility>
+#include <cassert>
 #include <vector>
 
 class RnObject;

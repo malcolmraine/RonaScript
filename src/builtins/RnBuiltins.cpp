@@ -30,8 +30,6 @@
 #include <array>
 #include <cstdio>
 #include <cstdlib>
-#include <fstream>
-#include <sstream>
 #include <stdexcept>
 #include "../util/String.h"
 #include "../vm/RnArrayObject.h"
@@ -39,11 +37,13 @@
 #include "../vm/RnFunctionObject.h"
 #include "../vm/RnScope.h"
 
+#undef RN_BUILTIN_FUNC
+#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE
+#define BUILTIN_CLASS RnBuiltins
+
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_unpack(RnScope* scope, const RnArrayNative& args,
-                                   RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, unpack, RnType::RN_VOID, 1) {
+    BUILTIN_ASSERTS
 
     auto parent_scope = scope->GetParent();
     RnScope* unpack_scope = parent_scope;
@@ -57,26 +57,8 @@ void RnBuiltins::rn_builtin_unpack(RnScope* scope, const RnArrayNative& args,
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_call(RnScope* scope, const RnArrayNative& args,
-                                 RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
-
-    auto obj = scope->GetObject(RnConstStore::InternValue(args.front()->ToString()));
-    auto func_obj = dynamic_cast<RnFunctionObject*>(obj);
-    auto func = func_obj->GetData();
-    RnArrayNative callArgs(args.begin() + 1, args.end());
-    RnObject* call_ret_val = RnObject::Create(func->GetReturnType());
-    func->Call(callArgs, call_ret_val);
-    RnArrayNative ret_vals = {call_ret_val};
-    ret_val->SetData(ret_vals);
-}
-
-/*****************************************************************************/
-void RnBuiltins::rn_builtin_system(RnScope* scope, const RnArrayNative& args,
-                                   RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, system, RnType::RN_ANY, 1) {
+    BUILTIN_ASSERTS
 
     std::array<char, 128> buffer{};
     std::string result;
@@ -94,10 +76,22 @@ void RnBuiltins::rn_builtin_system(RnScope* scope, const RnArrayNative& args,
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_lload(RnScope* scope, const RnArrayNative& args,
-                                  RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, call, RnType::RN_ANY, 2) {
+    BUILTIN_ASSERTS
+
+    auto obj = scope->GetObject(RnConstStore::InternValue(args.front()->ToString()));
+    auto func_obj = dynamic_cast<RnFunctionObject*>(obj);
+    auto func = func_obj->GetData();
+    RnArrayNative callArgs(args.begin() + 1, args.end());
+    RnObject* call_ret_val = RnObject::Create(func->GetReturnType());
+    func->Call(callArgs, call_ret_val);
+    RnArrayNative ret_vals = {call_ret_val};
+    ret_val->SetData(ret_vals);
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(BUILTIN_CLASS, lload, RnType::RN_OBJECT, 1) {
+    BUILTIN_ASSERTS
 
     // TODO: Add file existence check for library
     // TODO: Add check to make sure library actually loaded and return status accordingly
@@ -107,11 +101,8 @@ void RnBuiltins::rn_builtin_lload(RnScope* scope, const RnArrayNative& args,
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_bind(RnScope* scope, const RnArrayNative& args,
-                                 RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
-
+RN_BUILTIN_FUNC(BUILTIN_CLASS, bind, RnType::RN_VOID, 2) {
+    BUILTIN_ASSERTS
     // arg 1: object to bind to
     // arg 2: function object
 
@@ -128,38 +119,30 @@ void RnBuiltins::rn_builtin_bind(RnScope* scope, const RnArrayNative& args,
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_setenv(RnScope* scope, const RnArrayNative& args,
-                                   RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, setenv, RnType::RN_VOID, 2) {
+    BUILTIN_ASSERTS
 
     ret_val->SetData(static_cast<RnIntNative>(
         setenv(args[0]->ToString().c_str(), args[1]->ToString().c_str(), 1)));
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_getenv(RnScope* scope, const RnArrayNative& args,
-                                   RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, getenv, RnType::RN_ANY, 1) {
+    BUILTIN_ASSERTS
 
     ret_val->SetData(getenv(args[0]->ToString().c_str()));
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_unsetenv(RnScope* scope, const RnArrayNative& args,
-                                     RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, unsetenv, RnType::RN_VOID, 1) {
+    BUILTIN_ASSERTS
 
     ret_val->SetData(static_cast<RnIntNative>(unsetenv(args[0]->ToString().c_str())));
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_listattr(RnScope* scope, const RnArrayNative& args,
-                                     RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, listattr, RnType::RN_ARRAY, 1) {
+    BUILTIN_ASSERTS
 
     RnArrayNative attrs;
     for (const auto& attr : args.front()->ToObject()->GetSymbolTable()->GetSymbols()) {
@@ -169,10 +152,8 @@ void RnBuiltins::rn_builtin_listattr(RnScope* scope, const RnArrayNative& args,
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_attrpairs(RnScope* scope, const RnArrayNative& args,
-                                      RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, attrpairs, RnType::RN_ARRAY, 1) {
+    BUILTIN_ASSERTS
 
     if (args.front()->GetType() != RnType::RN_OBJECT) {
         return;
@@ -192,10 +173,8 @@ void RnBuiltins::rn_builtin_attrpairs(RnScope* scope, const RnArrayNative& args,
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_hasattr(RnScope* scope, const RnArrayNative& args,
-                                    RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, hasattr, RnType::RN_VOID, 2) {
+    BUILTIN_ASSERTS
 
     auto obj = args[0]->ToObject();
     auto attr_key = RnConstStore::InternValue(args[1]->ToString());
@@ -203,10 +182,8 @@ void RnBuiltins::rn_builtin_hasattr(RnScope* scope, const RnArrayNative& args,
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_getattr(RnScope* scope, const RnArrayNative& args,
-                                    RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, getattr, RnType::RN_VOID, 2) {
+    BUILTIN_ASSERTS
 
     auto obj = args[0]->ToObject();
     auto attr_key = RnConstStore::InternValue(args[1]->ToString());
@@ -220,10 +197,8 @@ void RnBuiltins::rn_builtin_getattr(RnScope* scope, const RnArrayNative& args,
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_setattr(RnScope* scope, const RnArrayNative& args,
-                                    RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, setattr, RnType::RN_VOID, 3) {
+    BUILTIN_ASSERTS
 
     auto obj = args[0]->ToObject();
     auto attr_key = RnConstStore::InternValue(args[1]->ToString());
@@ -239,10 +214,8 @@ void RnBuiltins::rn_builtin_setattr(RnScope* scope, const RnArrayNative& args,
 }
 
 /*****************************************************************************/
-void RnBuiltins::rn_builtin_delattr(RnScope* scope, const RnArrayNative& args,
-                                    RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, delattr, RnType::RN_VOID, 2) {
+    BUILTIN_ASSERTS
 
     auto obj = args[0]->ToObject();
     auto attr_key = RnConstStore::InternValue(args[1]->ToString());

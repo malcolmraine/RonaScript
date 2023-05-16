@@ -30,9 +30,15 @@
 #include "../vm/RnObject.h"
 #include "../vm/RnScope.h"
 
+#undef BUILTIN_CLASS
+#define BUILTIN_CLASS RnBuiltins_Type
+
+#undef RN_BUILTIN_FUNC
+#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE
+
+
 /*****************************************************************************/
-void RnBuiltins_Type::rn_builtin_to_int(RnScope* scope, const RnArrayNative& args,
-                                        RnObject* ret_val) {
+RN_BUILTIN_FUNC(RnBuiltins_Type, to_int, RnType::RN_INT, 1)          {
     assert(ret_val);
     assert(scope);
 
@@ -40,8 +46,7 @@ void RnBuiltins_Type::rn_builtin_to_int(RnScope* scope, const RnArrayNative& arg
 }
 
 /*****************************************************************************/
-void RnBuiltins_Type::rn_builtin_to_float(RnScope* scope, const RnArrayNative& args,
-                                          RnObject* ret_val) {
+RN_BUILTIN_FUNC(RnBuiltins_Type, to_float, RnType::RN_FLOAT, 1)       {
     assert(ret_val);
     assert(scope);
 
@@ -49,8 +54,7 @@ void RnBuiltins_Type::rn_builtin_to_float(RnScope* scope, const RnArrayNative& a
 }
 
 /*****************************************************************************/
-void RnBuiltins_Type::rn_builtin_to_string(RnScope* scope, const RnArrayNative& args,
-                                           RnObject* ret_val) {
+RN_BUILTIN_FUNC(RnBuiltins_Type, to_string, RnType::RN_STRING, 1)    {
     assert(ret_val);
     assert(scope);
 
@@ -58,8 +62,7 @@ void RnBuiltins_Type::rn_builtin_to_string(RnScope* scope, const RnArrayNative& 
 }
 
 /*****************************************************************************/
-void RnBuiltins_Type::rn_builtin_to_bool(RnScope* scope, const RnArrayNative& args,
-                                         RnObject* ret_val) {
+RN_BUILTIN_FUNC(RnBuiltins_Type, to_bool, RnType::RN_BOOLEAN, 1)      {
     assert(ret_val);
     assert(scope);
 
@@ -67,8 +70,7 @@ void RnBuiltins_Type::rn_builtin_to_bool(RnScope* scope, const RnArrayNative& ar
 }
 
 /*****************************************************************************/
-void RnBuiltins_Type::rn_builtin_is_string(RnScope* scope, const RnArrayNative& args,
-                                           RnObject* ret_val) {
+RN_BUILTIN_FUNC(RnBuiltins_Type, is_string, RnType::RN_BOOLEAN, 1)   {
     assert(ret_val);
     assert(scope);
 
@@ -76,8 +78,15 @@ void RnBuiltins_Type::rn_builtin_is_string(RnScope* scope, const RnArrayNative& 
 }
 
 /*****************************************************************************/
-void RnBuiltins_Type::rn_builtin_is_float(RnScope* scope, const RnArrayNative& args,
-                                          RnObject* ret_val) {
+RN_BUILTIN_FUNC(RnBuiltins_Type, is_int, RnType::RN_BOOLEAN, 1)     {
+    assert(ret_val);
+    assert(scope);
+
+    ret_val->SetData(static_cast<bool>(args[0]->GetActiveType() == RnType::RN_INT));
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_Type, is_float, RnType::RN_BOOLEAN, 1)     {
     assert(ret_val);
     assert(scope);
 
@@ -85,26 +94,7 @@ void RnBuiltins_Type::rn_builtin_is_float(RnScope* scope, const RnArrayNative& a
 }
 
 /*****************************************************************************/
-void RnBuiltins_Type::rn_builtin_is_array(RnScope* scope, const RnArrayNative& args,
-                                          RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
-
-    ret_val->SetData(static_cast<bool>(args[0]->GetActiveType() == RnType::RN_ARRAY));
-}
-
-/*****************************************************************************/
-void RnBuiltins_Type::rn_builtin_is_object(RnScope* scope, const RnArrayNative& args,
-                                           RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
-
-    ret_val->SetData(static_cast<bool>(args[0]->GetActiveType() == RnType::RN_OBJECT));
-}
-
-/*****************************************************************************/
-void RnBuiltins_Type::rn_builtin_is_bool(RnScope* scope, const RnArrayNative& args,
-                                         RnObject* ret_val) {
+RN_BUILTIN_FUNC(RnBuiltins_Type, is_bool, RnType::RN_BOOLEAN, 1)     {
     assert(ret_val);
     assert(scope);
 
@@ -112,8 +102,23 @@ void RnBuiltins_Type::rn_builtin_is_bool(RnScope* scope, const RnArrayNative& ar
 }
 
 /*****************************************************************************/
-void RnBuiltins_Type::rn_builtin_is_callable(RnScope* scope, const RnArrayNative& args,
-                                             RnObject* ret_val) {
+RN_BUILTIN_FUNC(RnBuiltins_Type, is_array, RnType::RN_BOOLEAN, 1)    {
+    assert(ret_val);
+    assert(scope);
+
+    ret_val->SetData(static_cast<bool>(args[0]->GetActiveType() == RnType::RN_ARRAY));
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_Type, is_object, RnType::RN_BOOLEAN, 1)    {
+    assert(ret_val);
+    assert(scope);
+
+    ret_val->SetData(static_cast<bool>(args[0]->GetActiveType() == RnType::RN_OBJECT));
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_Type, is_callable, RnType::RN_BOOLEAN, 1) {
     assert(ret_val);
     assert(scope);
 
@@ -122,19 +127,10 @@ void RnBuiltins_Type::rn_builtin_is_callable(RnScope* scope, const RnArrayNative
 }
 
 /*****************************************************************************/
-void RnBuiltins_Type::rn_builtin_is_int(RnScope* scope, const RnArrayNative& args,
-                                        RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
-
-    ret_val->SetData(static_cast<bool>(args[0]->GetActiveType() == RnType::RN_INT));
-}
-
-/*****************************************************************************/
-void RnBuiltins_Type::rn_builtin_is_any(RnScope* scope, const RnArrayNative& args,
-                                        RnObject* ret_val) {
+RN_BUILTIN_FUNC(RnBuiltins_Type, is_any, RnType::RN_BOOLEAN, 1){
     assert(ret_val);
     assert(scope);
 
     ret_val->SetData(static_cast<bool>(args[0]->GetType() == RnType::RN_ANY));
 }
+
