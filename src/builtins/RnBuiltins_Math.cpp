@@ -31,64 +31,14 @@
 #include "../vm/RnObject.h"
 #include "../vm/RnScope.h"
 
-/*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_pow(RnScope* scope, const RnArrayNative& args,
-                                     RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+#undef BUILTIN_CLASS
+#define BUILTIN_CLASS RnBuiltins_Math
 
-    ret_val->SetData(std::pow(args.front()->ToFloat(), args.back()->ToFloat()));
-}
+#undef RN_BUILTIN_FUNC
+#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE
 
 /*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_mod(RnScope* scope, const RnArrayNative& args,
-                                     RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
-}
-
-/*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_sqrt(RnScope* scope, const RnArrayNative& args,
-                                      RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
-
-    ret_val->SetData(std::sqrt(args.front()->ToFloat()));
-}
-
-/*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_cbrt(RnScope* scope, const RnArrayNative& args,
-                                      RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
-
-    ret_val->SetData(std::cbrt(args.front()->ToFloat()));
-}
-
-/*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_randf(RnScope* scope, const RnArrayNative& args,
-                                       RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
-}
-
-/*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_randint(RnScope* scope, const RnArrayNative& args,
-                                         RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
-}
-
-/*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_normal(RnScope* scope, const RnArrayNative& args,
-                                        RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
-}
-
-/*****************************************************************************/
-void RnBuiltins_Math::rn_builtin_sum(RnScope* scope, const RnArrayNative& args,
-                                     RnObject* ret_val) {
+RN_BUILTIN_FUNC(RnBuiltins_Math, sum, RnType::RN_FLOAT, 1){
     assert(ret_val);
     assert(scope);
 
@@ -99,4 +49,52 @@ void RnBuiltins_Math::rn_builtin_sum(RnScope* scope, const RnArrayNative& args,
     }
 
     ret_val->SetData(result);
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_Math, pow, RnType::RN_FLOAT, 2) {
+    assert(ret_val);
+    assert(scope);
+
+    ret_val->SetData(std::pow(args.front()->ToFloat(), args.back()->ToFloat()));
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_Math, mod, RnType::RN_INT, 2) {
+    assert(ret_val);
+    assert(scope);
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_Math, sqrt, RnType::RN_FLOAT, 2)   {
+    assert(ret_val);
+    assert(scope);
+
+    ret_val->SetData(std::sqrt(args.front()->ToFloat()));
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_Math, cbrt, RnType::RN_FLOAT, 2)  {
+    assert(ret_val);
+    assert(scope);
+
+    ret_val->SetData(std::cbrt(args.front()->ToFloat()));
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_Math, randf, RnType::RN_FLOAT, 2)  {
+    assert(ret_val);
+    assert(scope);
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_Math, randint, RnType::RN_INT, 2)  {
+    assert(ret_val);
+    assert(scope);
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_Math, normal, RnType::RN_ARRAY, 1) {
+    assert(ret_val);
+    assert(scope);
 }

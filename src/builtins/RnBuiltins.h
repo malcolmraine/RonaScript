@@ -29,38 +29,60 @@
 #pragma once
 
 #include "../common/RnType.h"
+#include <cassert>
 
 class RnScope;
 class RnObject;
 
+
+#define RN_BUILTIN_REGISTRATIONS     \
+    RN_BUILTIN_GENERAL_REGISTRATIONS \
+    RN_BUILTIN_TIME_REGISTRATIONS    \
+    RN_BUILTIN_MATH_REGISTRATIONS    \
+    RN_BUILTIN_IO_REGISTRATIONS      \
+    RN_BUILTIN_STRING_REGISTRATIONS  \
+    RN_BUILTIN_TYPE_REGISTRATIONS    \
+    RN_BUILTIN_ARRAY_REGISTRATIONS
+
+#define RN_BUILTIN_TIME_REGISTRATIONS
+#define RN_BUILTIN_MATH_REGISTRATIONS
+#define RN_BUILTIN_IO_REGISTRATIONS
+#define RN_BUILTIN_STRING_REGISTRATIONS
+#define RN_BUILTIN_TYPE_REGISTRATIONS
+#define RN_BUILTIN_ARRAY_REGISTRATIONS
+
+#define RN_BUILTIN_GENERAL_REGISTRATIONS            \
+    RN_BUILTIN_FUNC(RnBuiltins, unpack, RnType::RN_VOID, 1)     \
+    RN_BUILTIN_FUNC(RnBuiltins, system, RnType::RN_ANY, 1)      \
+    RN_BUILTIN_FUNC(RnBuiltins, call, RnType::RN_ANY, 2)        \
+    RN_BUILTIN_FUNC(RnBuiltins, lload, RnType::RN_OBJECT, 1)    \
+    RN_BUILTIN_FUNC(RnBuiltins, bind, RnType::RN_VOID, 2)       \
+    RN_BUILTIN_FUNC(RnBuiltins, setenv, RnType::RN_VOID, 2)     \
+    RN_BUILTIN_FUNC(RnBuiltins, getenv, RnType::RN_ANY, 1)      \
+    RN_BUILTIN_FUNC(RnBuiltins, unsetenv, RnType::RN_VOID, 1)   \
+    RN_BUILTIN_FUNC(RnBuiltins, listattr, RnType::RN_ARRAY, 1)  \
+    RN_BUILTIN_FUNC(RnBuiltins, attrpairs, RnType::RN_ARRAY, 1) \
+    RN_BUILTIN_FUNC(RnBuiltins, hasattr, RnType::RN_VOID, 2)    \
+    RN_BUILTIN_FUNC(RnBuiltins, getattr, RnType::RN_VOID, 2)    \
+    RN_BUILTIN_FUNC(RnBuiltins, setattr, RnType::RN_VOID, 3)    \
+    RN_BUILTIN_FUNC(RnBuiltins, delattr, RnType::RN_VOID, 2)
+
+
+#define BUILTIN_ASSERTS \
+    assert(ret_val);    \
+    assert(scope);
+
+#define RN_BUILTIN_FUNC_DECLARE(ns, name, retval, argcnt)                                \
+    static void rn_builtin_##name(RnScope* scope, const RnArrayNative& args, \
+                                  RnObject* ret_val);
+
+#define RN_BUILTIN_FUNC_DEFINE(ns, name, retval, argcnt)                                   \
+    void BUILTIN_CLASS::rn_builtin_##name(RnScope* scope, const RnArrayNative& args, \
+                                       RnObject* ret_val)
+
+#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DECLARE
+
 class RnBuiltins {
 public:
-    static void rn_builtin_unpack(RnScope* scope, const RnArrayNative& args,
-                                  RnObject* ret_val);
-    static void rn_builtin_call(RnScope* scope, const RnArrayNative& args,
-                                RnObject* ret_val);
-    static void rn_builtin_system(RnScope* scope, const RnArrayNative& args,
-                                  RnObject* ret_val);
-    static void rn_builtin_lload(RnScope* scope, const RnArrayNative& args,
-                                 RnObject* ret_val);
-    static void rn_builtin_bind(RnScope* scope, const RnArrayNative& args,
-                                RnObject* ret_val);
-    static void rn_builtin_setenv(RnScope* scope, const RnArrayNative& args,
-                                  RnObject* ret_val);
-    static void rn_builtin_getenv(RnScope* scope, const RnArrayNative& args,
-                                  RnObject* ret_val);
-    static void rn_builtin_unsetenv(RnScope* scope, const RnArrayNative& args,
-                                    RnObject* ret_val);
-    static void rn_builtin_listattr(RnScope* scope, const RnArrayNative& args,
-                                    RnObject* ret_val);
-    static void rn_builtin_attrpairs(RnScope* scope, const RnArrayNative& args,
-                                     RnObject* ret_val);
-    static void rn_builtin_hasattr(RnScope* scope, const RnArrayNative& args,
-                                   RnObject* ret_val);
-    static void rn_builtin_getattr(RnScope* scope, const RnArrayNative& args,
-                                   RnObject* ret_val);
-    static void rn_builtin_setattr(RnScope* scope, const RnArrayNative& args,
-                                   RnObject* ret_val);
-    static void rn_builtin_delattr(RnScope* scope, const RnArrayNative& args,
-                                   RnObject* ret_val);
+    RN_BUILTIN_GENERAL_REGISTRATIONS
 };

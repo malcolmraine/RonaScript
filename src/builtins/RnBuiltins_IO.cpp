@@ -34,27 +34,26 @@
 #include "../vm/RnObject.h"
 #include "../vm/RnScope.h"
 
+#undef BUILTIN_CLASS
+#define BUILTIN_CLASS RnBuiltins_IO
+
+#undef RN_BUILTIN_FUNC
+#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE
+
 /*****************************************************************************/
-void RnBuiltins_IO::rn_builtin_file_size(RnScope* scope, const RnArrayNative& args,
-                                         RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(RnBuiltins_IO, file_size, RnType::RN_INT, 1)    {
+    BUILTIN_ASSERTS
     std::string path = args.front()->ToString();
     ret_val->SetData(static_cast<RnIntNative>(std::filesystem::file_size(path)));
 }
 
 /*****************************************************************************/
-void RnBuiltins_IO::rn_builtin_file_write(RnScope* scope, const RnArrayNative& args,
-                                          RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(RnBuiltins_IO, file_write, RnType::RN_INT, 2)   {
+    BUILTIN_ASSERTS
 }
 
 /*****************************************************************************/
-void RnBuiltins_IO::rn_builtin_print(RnScope* scope, const RnArrayNative& args,
-                                     RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(RnBuiltins_IO, print, RnType::RN_VOID, 1)        {
     std::string s;
     for (auto arg : args) {
         assert(arg);
@@ -67,10 +66,8 @@ void RnBuiltins_IO::rn_builtin_print(RnScope* scope, const RnArrayNative& args,
 }
 
 /*****************************************************************************/
-void RnBuiltins_IO::rn_builtin_read(RnScope* scope, const RnArrayNative& args,
-                                    RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(RnBuiltins_IO, file_read, RnType::RN_STRING, 1) {
+    BUILTIN_ASSERTS
     std::ifstream file;
     file.open(args.front()->ToString());
 
@@ -86,8 +83,7 @@ void RnBuiltins_IO::rn_builtin_read(RnScope* scope, const RnArrayNative& args,
 }
 
 /*****************************************************************************/
-void RnBuiltins_IO::rn_builtin_prompt(RnScope* scope, const RnArrayNative& args,
-                                      RnObject* ret_val) {
+RN_BUILTIN_FUNC(RnBuiltins_IO, prompt, RnType::RN_STRING, 1) {
     std::string input;
     std::cout << args.front()->ToString();
     std::cin >> input;

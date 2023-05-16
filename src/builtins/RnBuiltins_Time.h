@@ -28,9 +28,15 @@
 
 #pragma once
 
-#include "../common/RnType.h"
+#include "RnBuiltins.h"
+
+#undef RN_BUILTIN_TIME_REGISTRATIONS
+#define RN_BUILTIN_TIME_REGISTRATIONS
 
 class RnScope;
 class RnObject;
+
+#undef RN_BUILTIN_FUNC
+#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DECLARE
 
 class RnBuiltins_Time {};

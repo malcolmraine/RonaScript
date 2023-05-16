@@ -31,45 +31,41 @@
 #include "../vm/RnObject.h"
 #include "../vm/RnScope.h"
 
+
+#undef BUILTIN_CLASS
+#define BUILTIN_CLASS RnBuiltins_String
+
+#undef RN_BUILTIN_FUNC
+#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE
+
 /*****************************************************************************/
-void RnBuiltins_String::rn_builtin_str_titlecase(RnScope* scope,
-                                                 const RnArrayNative& args,
-                                                 RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(RnBuiltins_String, str_titlecase, RnType::RN_STRING, 1)  {
+    BUILTIN_ASSERTS
     ret_val->SetData(String::TitleCase(args.front()->ToString()));
 }
 
 /*****************************************************************************/
-void RnBuiltins_String::rn_builtin_str_lower(RnScope* scope, const RnArrayNative& args,
-                                             RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(RnBuiltins_String, str_lower, RnType::RN_STRING, 1)    {
+    BUILTIN_ASSERTS
     ret_val->SetData(String::Lower(args.front()->ToString()));
 }
 
 /*****************************************************************************/
-void RnBuiltins_String::rn_builtin_str_upper(RnScope* scope, const RnArrayNative& args,
-                                             RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(RnBuiltins_String, str_upper, RnType::RN_STRING, 1)       {
+    BUILTIN_ASSERTS
     ret_val->SetData(String::Upper(args.front()->ToString()));
 }
 
 /*****************************************************************************/
-void RnBuiltins_String::rn_builtin_str_snakecase(RnScope* scope,
-                                                 const RnArrayNative& args,
-                                                 RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(RnBuiltins_String, str_snakecase, RnType::RN_STRING, 1)  {
+    BUILTIN_ASSERTS
     ret_val->SetData(String::SnakeCase(args.front()->ToString()));
 }
 
 /*****************************************************************************/
-void RnBuiltins_String::rn_builtin_str_split(RnScope* scope, const RnArrayNative& args,
-                                             RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(RnBuiltins_String, str_split, RnType::RN_ARRAY, 1)   {
+    BUILTIN_ASSERTS
+
     RnArrayNative result;
 
     if (args.size() == 1 || args.size() == 2 && args[1]->ToString().empty()) {
@@ -89,10 +85,9 @@ void RnBuiltins_String::rn_builtin_str_split(RnScope* scope, const RnArrayNative
 }
 
 /*****************************************************************************/
-void RnBuiltins_String::rn_builtin_str_substr(RnScope* scope, const RnArrayNative& args,
-                                              RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(RnBuiltins_String, str_substr, RnType::RN_STRING, 1)    {
+    BUILTIN_ASSERTS
+
     assert(args.size() == 2 || args.size() == 3);
     // original string, position, count
     if (args.size() == 2) {
@@ -104,11 +99,9 @@ void RnBuiltins_String::rn_builtin_str_substr(RnScope* scope, const RnArrayNativ
 }
 
 /*****************************************************************************/
-void RnBuiltins_String::rn_builtin_str_startswith(RnScope* scope,
-                                                  const RnArrayNative& args,
-                                                  RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(RnBuiltins_String, str_startswith, RnType::RN_BOOLEAN, 1) {
+    BUILTIN_ASSERTS
+
     assert(args.size() == 2);
 
     // subject, search
@@ -117,11 +110,9 @@ void RnBuiltins_String::rn_builtin_str_startswith(RnScope* scope,
 }
 
 /*****************************************************************************/
-void RnBuiltins_String::rn_builtin_str_endswith(RnScope* scope,
-                                                const RnArrayNative& args,
-                                                RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(RnBuiltins_String, str_endswith, RnType::RN_BOOLEAN, 1)    {
+    BUILTIN_ASSERTS
+
     assert(args.size() == 2);
 
     // subject, search
@@ -130,10 +121,9 @@ void RnBuiltins_String::rn_builtin_str_endswith(RnScope* scope,
 }
 
 /*****************************************************************************/
-void RnBuiltins_String::rn_builtin_str_join(RnScope* scope, const RnArrayNative& args,
-                                            RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(RnBuiltins_String, str_join, RnType::RN_STRING, 1) {
+    BUILTIN_ASSERTS
+
     assert(args.size() == 1 || args.size() == 2 || args.size() == 3);
     std::string result;
     auto strings = args[0]->ToArray();

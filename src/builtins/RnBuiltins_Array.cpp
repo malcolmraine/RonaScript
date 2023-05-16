@@ -30,34 +30,28 @@
 #include "../vm/RnArrayObject.h"
 #include "../vm/RnScope.h"
 
+#undef BUILTIN_CLASS
+#define BUILTIN_CLASS RnBuiltins_Array
+
+#undef RN_BUILTIN_FUNC
+#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE
+
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_array_filter(RnScope* scope,
-                                               const RnArrayNative& args,
-                                               RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, filter, RnType::RN_ARRAY, 1){BUILTIN_ASSERTS}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(BUILTIN_CLASS, union, RnType::RN_ARRAY, 1) {
+    BUILTIN_ASSERTS
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_array_union(RnScope* scope, const RnArrayNative& args,
-                                              RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, intersect, RnType::RN_ARRAY, 1) {
+    BUILTIN_ASSERTS
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_array_intersect(RnScope* scope,
-                                                  const RnArrayNative& args,
-                                                  RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
-}
-
-/*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_array_merge(RnScope* scope, const RnArrayNative& args,
-                                              RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, count, RnType::RN_INT, 1) {
+    BUILTIN_ASSERTS
 
     RnArrayNative data;
     for (auto arg : args) {
@@ -69,10 +63,8 @@ void RnBuiltins_Array::rn_builtin_array_merge(RnScope* scope, const RnArrayNativ
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_count(RnScope* scope, const RnArrayNative& args,
-                                        RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, array_merge, RnType::RN_ARRAY, 1) {
+    BUILTIN_ASSERTS
 
     auto obj = args.front();
     if (obj->GetType() == RnType::RN_STRING) {
@@ -83,10 +75,8 @@ void RnBuiltins_Array::rn_builtin_count(RnScope* scope, const RnArrayNative& arg
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_array_push(RnScope* scope, const RnArrayNative& args,
-                                             RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, array_push, RnType::RN_VOID, 1) {
+    BUILTIN_ASSERTS
 
     auto array_obj = dynamic_cast<RnArrayObject*>(args.front());
     for (size_t i = 1; i < args.size(); i++) {
@@ -95,17 +85,13 @@ void RnBuiltins_Array::rn_builtin_array_push(RnScope* scope, const RnArrayNative
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_array_pop(RnScope* scope, const RnArrayNative& args,
-                                            RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, array_pop, RnType::RN_ANY, 1) {
+    BUILTIN_ASSERTS
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_array_zeros(RnScope* scope, const RnArrayNative& args,
-                                              RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, array_zeros, RnType::RN_ARRAY, 1) {
+    BUILTIN_ASSERTS
 
     assert(args.size() == 1);
     RnArrayNative data;
@@ -117,18 +103,14 @@ void RnBuiltins_Array::rn_builtin_array_zeros(RnScope* scope, const RnArrayNativ
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_array_fill(RnScope* scope, const RnArrayNative& args,
-                                             RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, array_fill, RnType::RN_ARRAY, 1) {
+    BUILTIN_ASSERTS
     assert(args.size() == 2);
 }
 
 /*****************************************************************************/
-void RnBuiltins_Array::rn_builtin_sequence(RnScope* scope, const RnArrayNative& args,
-                                           RnObject* ret_val) {
-    assert(ret_val);
-    assert(scope);
+RN_BUILTIN_FUNC(BUILTIN_CLASS, sequence, RnType::RN_ARRAY, 1) {
+    BUILTIN_ASSERTS
     assert(args.size() > 2 && args.size() < 4);
     /**
 	 * arg1: array
