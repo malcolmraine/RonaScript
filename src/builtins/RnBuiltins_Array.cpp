@@ -40,17 +40,25 @@
 RN_BUILTIN_FUNC(BUILTIN_CLASS, filter, RnType::RN_ARRAY, 1){BUILTIN_ASSERTS}
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, union, RnType::RN_ARRAY, 1) {
-    BUILTIN_ASSERTS
-}
+RN_BUILTIN_FUNC(BUILTIN_CLASS, union, RnType::RN_ARRAY, 1){BUILTIN_ASSERTS}
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, intersect, RnType::RN_ARRAY, 1) {
-    BUILTIN_ASSERTS
-}
+RN_BUILTIN_FUNC(BUILTIN_CLASS, intersect, RnType::RN_ARRAY, 1){BUILTIN_ASSERTS}
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC(BUILTIN_CLASS, count, RnType::RN_INT, 1) {
+    BUILTIN_ASSERTS
+
+    auto obj = args.front();
+    if (obj->GetType() == RnType::RN_STRING) {
+        ret_val->SetData(static_cast<RnIntNative>(obj->ToString().length()));
+    } else {
+        ret_val->SetData(static_cast<RnIntNative>(obj->ToArray().size()));
+    }
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(BUILTIN_CLASS, array_merge, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
 
     RnArrayNative data;
@@ -60,18 +68,6 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, count, RnType::RN_INT, 1) {
         }
     }
     ret_val->SetData(data);
-}
-
-/*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, array_merge, RnType::RN_ARRAY, 1) {
-    BUILTIN_ASSERTS
-
-    auto obj = args.front();
-    if (obj->GetType() == RnType::RN_STRING) {
-        ret_val->SetData(static_cast<RnIntNative>(obj->ToString().length()));
-    } else {
-        ret_val->SetData(static_cast<RnIntNative>(obj->ToArray().size()));
-    }
 }
 
 /*****************************************************************************/
@@ -85,9 +81,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, array_push, RnType::RN_VOID, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, array_pop, RnType::RN_ANY, 1) {
-    BUILTIN_ASSERTS
-}
+RN_BUILTIN_FUNC(BUILTIN_CLASS, array_pop, RnType::RN_ANY, 1){BUILTIN_ASSERTS}
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC(BUILTIN_CLASS, array_zeros, RnType::RN_ARRAY, 1) {
