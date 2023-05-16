@@ -52,8 +52,10 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, count, RnType::RN_INT, 1) {
     auto obj = args.front();
     if (obj->GetType() == RnType::RN_STRING) {
         ret_val->SetData(static_cast<RnIntNative>(obj->ToString().length()));
-    } else {
+    } else if (obj->GetType() == RnType::RN_ARRAY) {
         ret_val->SetData(static_cast<RnIntNative>(obj->ToArray().size()));
+    } else {
+        ret_val->SetData(static_cast<RnIntNative>(1));
     }
 }
 
@@ -81,7 +83,12 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, array_push, RnType::RN_VOID, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, array_pop, RnType::RN_ANY, 1){BUILTIN_ASSERTS}
+RN_BUILTIN_FUNC(BUILTIN_CLASS, array_pop, RnType::RN_ANY, 1) {
+    BUILTIN_ASSERTS
+    auto data = args.front()->ToArray();
+    ret_val->SetData(data.back());
+    data.pop_back();
+}
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC(BUILTIN_CLASS, array_zeros, RnType::RN_ARRAY, 1) {
@@ -91,7 +98,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, array_zeros, RnType::RN_ARRAY, 1) {
     RnArrayNative data;
     data.reserve(args.front()->ToInt());
     for (RnIntNative i = 0; i < args.front()->ToInt(); i++) {
-        // make objects and add to vector
+        data.push_back(RnObject::Create(static_cast<RnIntNative>(0)));
     }
     ret_val->SetData(data);
 }
