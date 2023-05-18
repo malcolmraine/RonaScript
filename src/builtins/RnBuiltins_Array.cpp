@@ -50,9 +50,9 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, count, RnType::RN_INT, 1) {
     BUILTIN_ASSERTS
 
     auto obj = args.front();
-    if (obj->GetType() == RnType::RN_STRING) {
+    if (obj->GetActiveType() == RnType::RN_STRING) {
         ret_val->SetData(static_cast<RnIntNative>(obj->ToString().length()));
-    } else if (obj->GetType() == RnType::RN_ARRAY) {
+    } else if (obj->GetActiveType() == RnType::RN_ARRAY) {
         ret_val->SetData(static_cast<RnIntNative>(obj->ToArray().size()));
     } else {
         ret_val->SetData(static_cast<RnIntNative>(1));

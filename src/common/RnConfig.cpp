@@ -27,7 +27,8 @@
 *****************************************************************************/
 
 #include "RnConfig.h"
+#include "../util/RnOS.h"
 
 std::string RnConfig::GetLibraryPath() {
-    return "";
+    return RnOS::GetEnv("RN_LIBPATH");
 }

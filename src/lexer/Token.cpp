@@ -54,7 +54,7 @@ bool Token::IsLiteral() const {
 
 /*****************************************************************************/
 bool Token::IsBinaryOp() const {
-    return IsOneOf(
+    return token_type == TokenType::DBL_COLON || IsOneOf(
         {TokenType::PLUS,        TokenType::MINUS,       TokenType::STAR,
          TokenType::BAR,         TokenType::DBL_BAR,     TokenType::DBL_AMPER,
          TokenType::DBL_EQUAL,   TokenType::UP_ARROW,    TokenType::GEQ,

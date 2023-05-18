@@ -11,8 +11,11 @@
 
 #include <string>
 #include "AstNode.h"
+#include "Ast.h"
 #include "Module.h"
 #include "NodeType.h"
+
+class RnScope;
 
 class ImportStmt : public AstNode {
 public:
@@ -22,4 +25,5 @@ public:
     [[nodiscard]] std::string GetFullSourceFile() const;
 
     std::string source_file;
+    std::shared_ptr<Ast> ast;
 };

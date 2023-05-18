@@ -289,3 +289,16 @@ void RnAnyObject::CopyFrom(RnObject* obj) {
             break;
     }
 }
+
+/*****************************************************************************/
+RnObject* RnAnyObject::At(RnIntNative index) {
+    switch (_active_type) {
+        case RnType::RN_ARRAY:
+            return std::get<RnArrayObject>(_data).At(index);
+        case RnType::RN_STRING:
+            return std::get<RnStringObject>(_data).At(index);
+        default:
+            throw std::runtime_error(RnType::TypeToString(GetType()) +
+                                     " type does not indices");
+    }
+}

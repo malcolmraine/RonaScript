@@ -451,7 +451,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 func_scope->SetParent(instance->GetScope());
                 BindThis(func_scope, instance);
                 func->SetScope(func_scope);
-                GetStack().push_back(constructor_obj);
+//                GetStack().push_back(constructor_obj);
                 func_obj = constructor_obj;
             } else {
                 func_obj = stack_val;
@@ -488,7 +488,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 }
 
                 _call_stack.pop_back();
-                _scopes.pop_back();
+                if (_scopes.size() > 1)
+                    _scopes.pop_back();
 
                 for (int i = 0; i < scope->GetLinkedScopeCount(); i++) {
                     _scopes.pop_back();
