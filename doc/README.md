@@ -1,4 +1,8 @@
 ***
+## Environment Variables
+| Type         |              Description               |
+|:-------------|:--------------------------------------:|
+| `RN_LIBPATH` | Path to the RonaScript standard libary |
 
 ## Types
 

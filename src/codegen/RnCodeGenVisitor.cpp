@@ -236,9 +236,17 @@ InstructionBlock RnCodeGenVisitor::Visit(Loop* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ImportStmt* node) {
-    if (node && node->ast)
-        return GeneralVisit(node->ast->root);
-    return {};
+    InstructionBlock instructions;
+    if (node && node->ast) {
+        for (auto& m : node->ast->modules) {
+            InstructionBlock module_instructions = GeneralVisit(m.second);
+            instructions.insert(instructions.end(), module_instructions.begin(),
+                                module_instructions.end());
+        }
+        auto root_scope = GeneralVisit(node->ast->root);
+        instructions.insert(instructions.end(), root_scope.begin(), root_scope.end());
+    }
+    return instructions;
 }
 
 /*****************************************************************************/

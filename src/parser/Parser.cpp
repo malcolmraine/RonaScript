@@ -172,7 +172,7 @@ std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
 
     if (is_stdlib) {
         module_file =
-            std::filesystem::path(RnConfig::GetLibraryPath()) / node->source_file;
+            std::filesystem::path(RnConfig::GetLibraryPath()) / (node->source_file + ".rn");
     } else {
         module_file = working_dir + "/" + node->source_file;
     }
