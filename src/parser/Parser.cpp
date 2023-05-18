@@ -29,11 +29,12 @@
 #include "Parser.h"
 #include <memory>
 #include <utility>
+#include "../common/RnConfig.h"
 #include "../common/RnInternment.h"
 #include "../lexer/Lexer.h"
-#include "../lexer/Token.h"
 #include "../util/LoopCounter.h"
 #include "../util/RnStack.h"
+#include "../util/String.h"
 #include "../util/log.h"
 #include "ast/AliasDecl.h"
 #include "ast/ArgDecl.h"
@@ -153,6 +154,7 @@ std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
     Expect({TokenType::NAME, TokenType::STRING_LITERAL});
     AdvanceBuffer(1);
     node->source_file = Current()->lexeme;
+    bool is_stdlib = Current()->token_type == TokenType::NAME;
     Expect(TokenType::SEMICOLON);
     AdvanceBuffer(1);
 
@@ -166,7 +168,14 @@ std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
 
     // Parse the module and create a new subtree from it
     Lexer lexer;
-    std::filesystem::path module_file = working_dir + "/" + node->source_file;
+    std::filesystem::path module_file;
+
+    if (is_stdlib) {
+        module_file =
+            std::filesystem::path(RnConfig::GetLibraryPath()) / node->source_file;
+    } else {
+        module_file = working_dir + "/" + node->source_file;
+    }
 
     if (std::filesystem::absolute(module_file) == std::filesystem::absolute(file)) {
         throw std::runtime_error("Circular dependency error: " + module_file.string());
@@ -175,13 +184,12 @@ std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
     lexer.LoadFile(module_file);
     lexer.ProcessTokens();
     Parser parser;
+    parser.parsed_files = parsed_files;
     parser.working_dir = module_file.parent_path();
     parser.SetFromPtr(lexer.tokens.data(), lexer.tokens.size());
+    parser.AdvanceBuffer(2);
     parser.Parse();
-
-    for (auto& [key, m] : parser.ast->modules) {
-        ast->modules[key] = m;
-    }
+    node->ast = parser.ast;
     AdvanceBuffer(1);
 
     return node;
@@ -1030,9 +1038,14 @@ void Parser::Parse() {
                 case TokenType::INLINE_COMMENT:
                     AdvanceBuffer(1);
                     break;
-                case TokenType::IMPORT:
-                    _current_scope->AddSubTree(ParseImportStmt(), true);
+                case TokenType::IMPORT: {
+                    auto node = ParseImportStmt();
+                    if (node)
+                        // Any import parsing should have thrown so a simple existence
+                        // check is fine here
+                        _current_scope->AddSubTree(node, true);
                     break;
+                }
                 case TokenType::MODULE: {
                     auto node = ParseModule();
                     ast->modules[node->name->value] = node;

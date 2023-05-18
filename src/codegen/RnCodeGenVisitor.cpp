@@ -233,26 +233,11 @@ InstructionBlock RnCodeGenVisitor::Visit(Loop* node) {
     _continue_instructions.pop_back();
     return instructions;
 }
-//
-///*****************************************************************************/
-//InstructionBlock RnCodeGenVisitor::Visit(WhileLoop* node) {
-//    InstructionBlock instructions;
-//    InstructionBlock scope = GeneralVisit(node->scope);
-//    scope.insert(scope.begin(), new RnInstruction(OP_CREATE_CONTEXT));
-//    scope.push_back(new RnInstruction(OP_RESET_CONTEXT));
-//    InstructionBlock test = GeneralVisit(node->test);
-//    instructions.reserve(scope.size() + test.size());
-//    instructions.insert(instructions.end(), test.begin(), test.end());
-//    instructions.emplace_back(new RnInstruction(OP_JUMPF_IF, scope.size() + 1));
-//    instructions.insert(instructions.end(), scope.begin(), scope.end());
-//    instructions.emplace_back(
-//        new RnInstruction(OP_JUMPB, scope.size() + test.size() + 1));
-//
-//    return instructions;
-//}
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ImportStmt* node) {
+    if (node && node->ast)
+        return GeneralVisit(node->ast->root);
     return {};
 }
 
