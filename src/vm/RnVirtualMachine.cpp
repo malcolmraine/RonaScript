@@ -137,9 +137,7 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
         }
 
         _call_stack.pop_back();
-
-        if (_scopes.size() > 1)
-            _scopes.pop_back();
+        PopScope();
 
         if (func->GetName() == "construct") {
             GetStack().push_back(func->GetScope()->GetObject(_object_this_key));
@@ -490,12 +488,10 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 }
 
                 _call_stack.pop_back();
-                if (_scopes.size() > 1)
-                    _scopes.pop_back();
+                PopScope();
 
                 for (int i = 0; i < scope->GetLinkedScopeCount(); i++) {
-                    if (_scopes.size() > 1)
-                        _scopes.pop_back();
+                    PopScope();
                 }
 
                 if (has_returned) {
@@ -554,8 +550,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 ExecuteInstruction(break_scope, index);
             }
             index--;
-            if (_scopes.size() > 1)
-                _scopes.pop_back();
+            PopScope();
             break;
         }
         case OP_MAKE_CLASS: {
@@ -576,8 +571,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 ExecuteInstruction(break_scope, index);
             }
             index--;
-            if (_scopes.size() > 1)
-                _scopes.pop_back();
+            PopScope();
             break;
         }
         case OP_MAKE_FUNC: {
@@ -619,8 +613,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_DESTROY_CONTEXT: {
             PREDICTION_TARGET(OP_DESTROY_CONTEXT)
             auto scope = _scopes.back();
-            if (_scopes.size() > 1)
-                _scopes.pop_back();
+            PopScope();
             _memory_manager->DestroyScope(scope);
 
             if (!_call_stack.empty()) {

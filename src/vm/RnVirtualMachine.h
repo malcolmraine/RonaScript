@@ -31,6 +31,11 @@ public:
         return _scopes.back();
     }
 
+    inline void PopScope() {
+        if (_scopes.size() > 1)
+            _scopes.pop_back();
+    }
+
     [[nodiscard]] inline RnArrayNative& GetStack() {
         return _scopes.back()->GetStack();
     }
