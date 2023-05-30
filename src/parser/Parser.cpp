@@ -724,6 +724,8 @@ std::shared_ptr<ConditionalStmt> Parser::ParseIfStmt() {
     AdvanceBuffer(1);
     node->test = ParseExpr(TokenType::COLON);
     node->consequent = ParseScope();
+    if (!Current())
+        return node;
 
     if (Current()->token_type == TokenType::ELIF) {
         node->alternative = ParseElifStmt();
@@ -732,8 +734,9 @@ std::shared_ptr<ConditionalStmt> Parser::ParseIfStmt() {
     } else {
         node->alternative = nullptr;
     }
-    ConditionalBufAdvance(TokenType::SEMICOLON);
 
+    if (Current())
+        ConditionalBufAdvance(TokenType::SEMICOLON);\
     return node;
 }
 
@@ -745,7 +748,8 @@ std::shared_ptr<ConditionalStmt> Parser::ParseElifStmt() {
     AdvanceBuffer(1);
     node->test = ParseExpr(TokenType::COLON);
     node->consequent = ParseScope();
-    //    ConditionalBufAdvance(TokenType::END);
+    if (!Current())
+        return node;
 
     if (Current()->token_type == TokenType::ELIF) {
         node->alternative = ParseElifStmt();
@@ -755,8 +759,8 @@ std::shared_ptr<ConditionalStmt> Parser::ParseElifStmt() {
         node->alternative = nullptr;
     }
 
-    ConditionalBufAdvance(TokenType::SEMICOLON);
-
+    if (Current())
+        ConditionalBufAdvance(TokenType::SEMICOLON);
     return node;
 }
 
