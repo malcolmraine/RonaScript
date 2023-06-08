@@ -160,7 +160,7 @@ RnOpCode GetOpCodeFromOperator(const std::string& op) {
         return OP_BINARY_DIV;
     } else if (op == "*") {
         return OP_BINARY_MUL;
-    } else if (op == "^") {
+    } else if (op == "^" || op == "xor") {
         return OP_BINARY_XOR;
     } else if (op == "~") {
         return OP_UNARY_INVERT;

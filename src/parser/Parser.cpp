@@ -796,9 +796,7 @@ std::shared_ptr<ScopeNode> Parser::ParseScope() {
         return node;
     }
 
-    if (Current()->token_type == TokenType::END ||
-        Current()->token_type == TokenType::ELSE ||
-        Current()->token_type == TokenType::ELIF) {
+    if (Current()->token_type == TokenType::END) {
         RevertScope();
         ConditionalBufAdvance(TokenType::END);
     }
