@@ -72,6 +72,9 @@
     TOKEN_DEF(DBL_BAR, "||")              \
     TOKEN_DEF(DBL_COLON, "::")            \
     RESERVED_WORD(FLOAT, "float")         \
+    RESERVED_WORD(AND, "and")             \
+    RESERVED_WORD(OR, "or")               \
+    RESERVED_WORD(XOR, "xor")             \
     RESERVED_WORD(INT, "int")             \
     RESERVED_WORD(STRING, "string")       \
     RESERVED_WORD(ARRAY, "array")         \
@@ -108,7 +111,7 @@
     TOKEN_DEF(TILDE, "~")                 \
     RESERVED_WORD(CONSTRUCT, "construct") \
     RESERVED_WORD(DESTRUCT, "destruct")   \
-    TOKEN_DEF(R_ARROW, "->")               \
+    TOKEN_DEF(R_ARROW, "->")              \
     TOKEN_DEF(DOUBLE_COLON, "::")         \
     RESERVED_WORD(IF, "if")               \
     RESERVED_WORD(ELIF, "elif")           \

@@ -137,7 +137,7 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
         }
 
         _call_stack.pop_back();
-        _scopes.pop_back();
+        PopScope();
 
         if (func->GetName() == "construct") {
             GetStack().push_back(func->GetScope()->GetObject(_object_this_key));
@@ -362,7 +362,15 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_UNARY_NEGATION: {
             auto obj = StackPop();
-            auto result = RnObject::Create(-obj->ToFloat());
+            RnObject* result = nullptr;
+            if (obj->GetActiveType() == RnType::RN_FLOAT) {
+                result = RnObject::Create(-obj->ToFloat());
+            } else if (obj->GetActiveType() == RnType::RN_INT) {
+                result = RnObject::Create(-obj->ToInt());
+            } else {
+                throw std::runtime_error(
+                    "Cannot apply unary negation to non-numeric type");
+            }
             GetScope()->GetMemoryGroup()->AddObject(result);
             GetStack().push_back(result);
 
@@ -451,7 +459,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 func_scope->SetParent(instance->GetScope());
                 BindThis(func_scope, instance);
                 func->SetScope(func_scope);
-//                GetStack().push_back(constructor_obj);
+                //                GetStack().push_back(constructor_obj);
                 func_obj = constructor_obj;
             } else {
                 func_obj = stack_val;
@@ -488,11 +496,10 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 }
 
                 _call_stack.pop_back();
-                if (_scopes.size() > 1)
-                    _scopes.pop_back();
+                PopScope();
 
                 for (int i = 0; i < scope->GetLinkedScopeCount(); i++) {
-                    _scopes.pop_back();
+                    PopScope();
                 }
 
                 if (has_returned) {
@@ -551,7 +558,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 ExecuteInstruction(break_scope, index);
             }
             index--;
-            _scopes.pop_back();
+            PopScope();
             break;
         }
         case OP_MAKE_CLASS: {
@@ -572,7 +579,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 ExecuteInstruction(break_scope, index);
             }
             index--;
-            _scopes.pop_back();
+            PopScope();
             break;
         }
         case OP_MAKE_FUNC: {
@@ -614,7 +621,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_DESTROY_CONTEXT: {
             PREDICTION_TARGET(OP_DESTROY_CONTEXT)
             auto scope = _scopes.back();
-            _scopes.pop_back();
+            PopScope();
             _memory_manager->DestroyScope(scope);
 
             if (!_call_stack.empty()) {

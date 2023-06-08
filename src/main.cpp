@@ -33,8 +33,9 @@ void Compile(const std::filesystem::path& infile, RnCodeGenerator& code_generato
     }
 
     if (arg_parser.IsSet("-t")) {
-        for (auto& token : lexer.tokens) {
-            Log::INFO(token->ToString());
+        for (size_t i = 0; i < lexer.tokens.size(); i++) {
+            Log::INFO(String::Pad(std::to_string(i), 6, ' ') +
+                      lexer.tokens[i]->ToString());
         }
     }
 
