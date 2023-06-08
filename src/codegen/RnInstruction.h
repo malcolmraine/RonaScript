@@ -37,15 +37,10 @@ public:
     explicit RnInstruction(RnOpCode opcode = OP_NOP, uint32_t arg1 = 0,
                            uint32_t arg2 = 0, uint32_t arg3 = 0);
     ~RnInstruction();
-    [[nodiscard]] char* GetAsBytes() const;
     std::string ToString();
 
     [[nodiscard]] inline RnOpCode GetOpcode() const {
         return _opcode;
-    }
-
-    void inline SetOpcode(RnOpCode opcode) {
-        _opcode = opcode;
     }
 
     [[nodiscard]] inline uint32_t GetArg1() const {

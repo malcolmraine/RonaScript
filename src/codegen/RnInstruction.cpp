@@ -47,26 +47,6 @@ RnInstruction::RnInstruction(RnOpCode opcode, uint32_t arg1, uint32_t arg2,
 RnInstruction::~RnInstruction() = default;
 
 /*****************************************************************************/
-char* RnInstruction::GetAsBytes() const {
-    auto* bytes = new char[OPCODE_BYTES_CNT + ARG_BYTES_CNT * 2];
-    int i = 1;
-    bytes[0] = static_cast<char>(_opcode);
-    argdata argdata{};
-
-    argdata.data = _arg1;
-    for (char const byte : argdata.bytes) {
-        bytes[i++] = byte;
-    }
-
-    argdata.data = _arg2;
-    for (char byte : argdata.bytes) {
-        bytes[i++] = byte;
-    }
-
-    return bytes;
-}
-
-/*****************************************************************************/
 auto RnInstruction::ToString() -> std::string {
     std::string s = GetOpCodeAsString(_opcode);
     s = String::Pad(s, 20);
