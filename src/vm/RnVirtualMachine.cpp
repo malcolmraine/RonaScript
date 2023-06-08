@@ -362,7 +362,15 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_UNARY_NEGATION: {
             auto obj = StackPop();
-            auto result = RnObject::Create(-obj->ToFloat());
+            RnObject* result = nullptr;
+            if (obj->GetActiveType() == RnType::RN_FLOAT) {
+                result = RnObject::Create(-obj->ToFloat());
+            } else if (obj->GetActiveType() == RnType::RN_INT) {
+                result = RnObject::Create(-obj->ToInt());
+            } else {
+                throw std::runtime_error(
+                    "Cannot apply unary negation to non-numeric type");
+            }
             GetScope()->GetMemoryGroup()->AddObject(result);
             GetStack().push_back(result);
 
@@ -451,7 +459,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 func_scope->SetParent(instance->GetScope());
                 BindThis(func_scope, instance);
                 func->SetScope(func_scope);
-//                GetStack().push_back(constructor_obj);
+                //                GetStack().push_back(constructor_obj);
                 func_obj = constructor_obj;
             } else {
                 func_obj = stack_val;
