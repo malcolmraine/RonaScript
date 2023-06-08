@@ -14,6 +14,8 @@
 
 #undef RN_BUILTIN_TYPE_REGISTRATIONS
 #define RN_BUILTIN_TYPE_REGISTRATIONS                                    \
+    RN_BUILTIN_FUNC(RnBuiltins_Type, stoi, RnType::RN_INT, 1)            \
+    RN_BUILTIN_FUNC(RnBuiltins_Type, stof, RnType::RN_FLOAT, 1)          \
     RN_BUILTIN_FUNC(RnBuiltins_Type, to_int, RnType::RN_INT, 1)          \
     RN_BUILTIN_FUNC(RnBuiltins_Type, to_float, RnType::RN_FLOAT, 1)      \
     RN_BUILTIN_FUNC(RnBuiltins_Type, to_string, RnType::RN_STRING, 1)    \
