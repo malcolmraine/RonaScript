@@ -32,6 +32,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include "../common/RnCompilerPhase.h"
 #include "../util/FileInfo.h"
 #include "../util/RnSequencer.h"
 #include "Token.h"
@@ -49,7 +50,8 @@
 
 class Token;
 
-class Lexer : public RnSequencer<char, char> {
+class Lexer : public RnSequencer<char, char>,
+              RnCompilerPhase<char, std::vector<Token*>> {
 public:
     Lexer();
     ~Lexer();
@@ -77,7 +79,11 @@ public:
     void RunAdvanceBufferSideEffects() override;
     static bool IsWhiteSpace(char c);              // TODO: Unit test
     std::string ItemToString(char item) override;  // TODO: Unit test
-    void Reset();
+    void Reset() override;
+    void Run() override;
+    void SetInput(const char* data, size_t size) {
+        SetFromPtr(data, size);
+    }
 
     std::vector<Token*> tokens;
     std::string _lexeme;

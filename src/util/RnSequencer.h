@@ -107,14 +107,15 @@ public:
     }
 
     /*************************************************************************/
-    void SetFromPtr(const T* data, size_t size) {
+    virtual void SetFromPtr(const T* data, size_t size) {
         delete[] _data;
         _data_size = size;
         _data = new T[_data_size];
         std::memcpy(_data, data, _data_size * sizeof(T));
     }
 
-    T* GetData(bool release = false) {
+    /*************************************************************************/
+    virtual T* GetData(bool release = false) {
         auto data = _data;
         if (release)
             _data = nullptr;

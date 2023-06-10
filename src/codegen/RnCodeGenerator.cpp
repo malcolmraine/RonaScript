@@ -54,3 +54,8 @@ void RnCodeGenerator::Generate(Ast* ast) {
 
 /*****************************************************************************/
 void RnCodeGenerator::Optimize() {}
+
+/*****************************************************************************/
+void RnCodeGenerator::Run()  {
+    Generate(_input);
+}

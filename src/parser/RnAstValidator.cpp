@@ -487,3 +487,8 @@ bool RnAstValidator::Visit(IndexedExpr* node) {
 bool RnAstValidator::Visit(FlowControl* node) {
     return true;
 }
+
+/*****************************************************************************/
+void RnAstValidator::Run() {
+    GeneralVisit(_input->root);
+}

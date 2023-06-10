@@ -11,6 +11,7 @@
 
 #include <vector>
 #include "../common/RnType.h"
+#include "../common/RnCompilerPhase.h"
 #include "RnAstVisitor.h"
 
 class LiteralValue;
@@ -40,8 +41,9 @@ class DeleteStmt;
 class Module;
 class ExitStmt;
 class AttributeAccess;
+class Ast;
 
-class RnAstValidator : public RnAstVisitor<bool> {
+class RnAstValidator : public RnAstVisitor<bool>, RnCompilerPhase<Ast*, bool> {
 public:
     enum ASSIGNMENT_TYPE { RETURN_VALUE, ASSIGNMENT_VALUE };
     RnAstValidator() = default;
@@ -75,6 +77,7 @@ public:
     bool Visit(BinaryExpr* node) override;
     bool Visit(IndexedExpr* node) override;
     bool Visit(FlowControl* node) override;
+    void Run() override;
 
 private:
     void SymbolRedeclarationCheck(const std::string& symbol);

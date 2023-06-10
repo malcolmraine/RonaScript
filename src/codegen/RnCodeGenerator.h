@@ -12,19 +12,17 @@
 #include <memory>
 #include "../common/RnInternment.h"
 #include "RnCodeGenVisitor.h"
+#include "../common/RnCompilerPhase.h"
 
 class Ast;
 
-class RnCodeGenerator {
+class RnCodeGenerator : public RnCompilerPhase<Ast*, InstructionBlock>{
 public:
     RnCodeGenerator();
     ~RnCodeGenerator();
     void Generate(Ast* ast);
     void Optimize();
-
-    InstructionBlock GetInstructions() {
-        return instructions;
-    }
+    void Run() override;
 
 private:
     InstructionBlock instructions;
