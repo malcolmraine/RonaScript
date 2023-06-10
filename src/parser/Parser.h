@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include "../common/RnCompilerPhase.h"
 #include "../common/RnType.h"
 #include "../lexer/Token.h"
 #include "../util/RnSequencer.h"
@@ -60,7 +61,8 @@ enum ParserState {
     FUNC_DECL_CONTEXT,
 };
 
-class Parser : public RnSequencer<Token*, TokenType> {
+class Parser : public RnSequencer<Token*, TokenType>,
+               RnCompilerPhase<Token*, std::shared_ptr<Ast>> {
 public:
     Parser();
     ~Parser() override;
@@ -80,9 +82,7 @@ public:
     std::shared_ptr<ExitStmt> ParseExitStmt();
     std::shared_ptr<AstNode> ParseAssignmentStatement(
         const std::shared_ptr<AstNode>& rexpr = nullptr);
-    std::shared_ptr<ConditionalStmt> ParseIfStmt();
-    std::shared_ptr<ConditionalStmt> ParseElifStmt();
-    std::shared_ptr<ConditionalStmt> ParseElseStmt();
+    std::shared_ptr<ConditionalStmt> ParseConditionalStmt();
     std::shared_ptr<ScopeNode> ParseScope();
     std::shared_ptr<FuncCall> ParseFuncCall(
         const std::shared_ptr<AstNode>& expr = nullptr);
@@ -108,7 +108,11 @@ public:
     std::string ItemToString(Token* token) override;
     void HandleUnexpectedItem() override;
     std::shared_ptr<RnTypeComposite> ParseType();
-    void Reset();
+    void Reset() override;
+    void Run() override;
+    void SetInput(Token* const* input, size_t size) {
+        SetFromPtr(input, size);
+    }
 
 public:
     std::string working_dir = ".";
@@ -120,6 +124,7 @@ private:
     std::shared_ptr<AstNode> AddCurrentFileInfo(std::shared_ptr<AstNode> node);
 
 private:
+    size_t _scope_count = 0;  // Simple way to check if we are missing scope reversions
     std::shared_ptr<ScopeNode> _current_scope = nullptr;
     std::unordered_set<TokenType> unary_lookback_set = {
         TokenType::EQUAL, TokenType::R_PARAN, TokenType::COMMA};
@@ -131,5 +136,5 @@ private:
     std::unordered_map<std::string, std::shared_ptr<RnTypeComposite>>
         _user_defined_type_map;
     size_t _intern_count =
-        0;  // Used to track how much space we shoul reserve in the const internment later
+        0;  // Used to track how much space we should reserve in the const internment later
 };
