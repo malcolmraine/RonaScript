@@ -61,8 +61,8 @@ enum ParserState {
     FUNC_DECL_CONTEXT,
 };
 
-class Parser : public RnSequencer<Token*, TokenType>,
-               RnCompilerPhase<Token*, std::shared_ptr<Ast>> {
+class Parser : public RnCompilerPhase<Token*, std::shared_ptr<Ast>>,
+               RnSequencer<Token*, TokenType> {
 public:
     Parser();
     ~Parser() override;

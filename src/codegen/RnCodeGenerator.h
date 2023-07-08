@@ -19,12 +19,11 @@ class Ast;
 class RnCodeGenerator : public RnCompilerPhase<Ast*, InstructionBlock>{
 public:
     RnCodeGenerator();
-    ~RnCodeGenerator();
+    ~RnCodeGenerator() override;
     void Generate(Ast* ast);
     void Optimize();
     void Run() override;
 
 private:
-    InstructionBlock instructions;
     RnCodeGenVisitor visitor;
 };

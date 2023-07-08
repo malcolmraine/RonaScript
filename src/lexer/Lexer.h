@@ -50,11 +50,11 @@
 
 class Token;
 
-class Lexer : public RnSequencer<char, char>,
-              RnCompilerPhase<char, std::vector<Token*>> {
+class Lexer : public
+              RnCompilerPhase<char, std::vector<Token*>> , RnSequencer<char, char>{
 public:
     Lexer();
-    ~Lexer();
+    ~Lexer() override;
     Token* Emit(TokenType type = TokenType::UNDEFINED);
     Token* MakeToken(const std::string& s,
                      TokenType initial_type = TokenType::UNDEFINED) const;
