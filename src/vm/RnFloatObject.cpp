@@ -56,10 +56,10 @@ auto RnFloatObject::ToString() const -> RnStringNative {
     std::stringstream ss;
     ss.setf(std::ios_base::fixed, std::ios_base::floatfield);
     ss << std::setprecision(std::numeric_limits<float>::digits10) << _data.d_data;
-    std::string str = ss.str();
-    str.erase(str.find_last_not_of('0') + 1, std::string::npos);
+    RnStringNative str = ss.str();
+    str.erase(str.find_last_not_of('0') + 1, RnStringNative::npos);
     if (str.ends_with('.')) {
         str.append("0");
     }
-    return str;
+    return RnStringNative (str);
 }

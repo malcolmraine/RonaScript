@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <string>
+#include "../common/RnType.h"
 
 typedef enum : int {
     OP_ATTR_ACCESS,
@@ -71,5 +71,5 @@ typedef enum : int {
     OP_LOAD_VALUE
 } RnOpCode;
 
-std::string GetOpCodeAsString(RnOpCode opcode);
-RnOpCode GetOpCodeFromOperator(const std::string& op);
+RnStringNative GetOpCodeAsString(RnOpCode opcode);
+RnOpCode GetOpCodeFromOperator(const RnStringNative& op);

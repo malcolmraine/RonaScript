@@ -14,6 +14,7 @@
 #include <utility>
 #include <cassert>
 #include <vector>
+#include "../common/RnString.h"
 
 class RnObject;
 

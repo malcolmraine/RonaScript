@@ -32,7 +32,7 @@
 #include "RnScope.h"
 
 /*****************************************************************************/
-RnFunction::RnFunction(std::string name, long i_start, long i_cnt) {
+RnFunction::RnFunction(RnStringNative name, long i_start, long i_cnt) {
     _name = std::move(name);
     _i_start = i_start;
     _i_cnt = i_cnt;
@@ -43,12 +43,12 @@ RnFunction::RnFunction(std::string name, long i_start, long i_cnt) {
 RnFunction::~RnFunction() = default;
 
 /*****************************************************************************/
-std::string RnFunction::GetName() const {
+RnStringNative RnFunction::GetName() const {
     return _name;
 }
 
 /*****************************************************************************/
-void RnFunction::SetName(const std::string& name) {
+void RnFunction::SetName(const RnStringNative& name) {
     _name = name;
 }
 
@@ -114,7 +114,7 @@ void RnFunction::InitScope(RnScope* scope) {
 
 /*****************************************************************************/
 /*****************************************************************************/
-RnBuiltinFunction::RnBuiltinFunction(const std::string& name, BuiltinFunction func)
+RnBuiltinFunction::RnBuiltinFunction(const RnStringNative& name, BuiltinFunction func)
     : RnFunction(name, -1, -1), _function(func) {}
 
 /*****************************************************************************/

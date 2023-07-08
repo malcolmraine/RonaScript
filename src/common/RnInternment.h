@@ -79,7 +79,7 @@ protected:
 
 class RnConstStore {
 public:
-    static std::string GetInternedString(InternmentKey key);
+    static RnStringNative GetInternedString(InternmentKey key);
     static double GetInternedFloat(InternmentKey key);
     static long GetInternedInt(InternmentKey key);
     static RnObject* GetInternedObject(InternmentKey key);

@@ -18,11 +18,11 @@ public:
     ~RnClass() override;
     void CopySymbols(RnScope* target);
 
-    [[nodiscard]] std::string GetName() const {
+    [[nodiscard]] RnStringNative GetName() const {
         return _name;
     }
 
-    void SetName(const std::string& name) {
+    void SetName(const RnStringNative& name) {
         _name = name;
     }
 
@@ -35,6 +35,6 @@ public:
     }
 
 private:
-    std::string _name;
+    RnStringNative _name;
     bool _is_module = false;
 };

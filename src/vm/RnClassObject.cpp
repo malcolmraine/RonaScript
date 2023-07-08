@@ -48,7 +48,7 @@ RnClassObject::~RnClassObject() = default;
 auto RnClassObject::ToString() const -> RnStringNative {
     std::stringstream s;
     s << "{class object @ " << std::hex << _data << "}";
-    return s.str();
+    return RnStringNative(s.str().c_str());
 }
 
 /*****************************************************************************/

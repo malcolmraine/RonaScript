@@ -21,11 +21,11 @@ class RnObject;
 /*****************************************************************************/
 class RnFunction {
 public:
-    RnFunction(std::string name, long i_start, long i_cnt);
+    RnFunction(RnStringNative name, long i_start, long i_cnt);
     ~RnFunction();
     void Reset();
-    [[nodiscard]] std::string GetName() const;
-    void SetName(const std::string& name);
+    [[nodiscard]] RnStringNative GetName() const;
+    void SetName(const RnStringNative& name);
     [[nodiscard]] long GetIStart() const;
     [[nodiscard]] long GetICnt() const;
     [[nodiscard]] RnScope* GetScope();
@@ -47,7 +47,7 @@ public:
 
 private:
     std::unordered_map<size_t, RnIntNative> _argument_index_map;
-    std::string _name;
+    RnStringNative _name;
     long _i_start = -1;
     long _i_cnt = -1;
     RnScope* _scope = nullptr;
@@ -64,7 +64,7 @@ auto CastToBuiltin = [](auto f) {
 
 class RnBuiltinFunction : public RnFunction {
 public:
-    RnBuiltinFunction(const std::string& name, BuiltinFunction func);
+    RnBuiltinFunction(const RnStringNative& name, BuiltinFunction func);
     ~RnBuiltinFunction();
     [[nodiscard]] bool IsBuiltIn() const override;
     void Call(const RnArrayNative& args, RnObject* ret_val) override;

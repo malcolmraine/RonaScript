@@ -62,10 +62,10 @@ RnVirtualMachine::RnVirtualMachine() {
     _call_stack.reserve(50);
     _memory_manager = new RnMemoryManager();
 
-    _object_this_key = RnConstStore::InternValue(static_cast<std::string>("this"));
-    _object_cls_key = RnConstStore::InternValue(static_cast<std::string>("cls"));
+    _object_this_key = RnConstStore::InternValue(static_cast<RnStringNative>("this"));
+    _object_cls_key = RnConstStore::InternValue(static_cast<RnStringNative>("cls"));
     _object_construct_key =
-        RnConstStore::InternValue(static_cast<std::string>("construct"));
+        RnConstStore::InternValue(static_cast<RnStringNative>("construct"));
 }
 
 /*****************************************************************************/
@@ -836,7 +836,7 @@ RnScope* RnVirtualMachine::CreateScope() {
     {#name, CastToBuiltin(&ns::rn_builtin_##name), retval},
 
 void RnVirtualMachine::RegisterBuiltins() {
-    std::vector<std::tuple<std::string, BuiltinFunction, RnType::Type>> functions = {
+    std::vector<std::tuple<RnStringNative, BuiltinFunction, RnType::Type>> functions = {
         RN_BUILTIN_MATH_REGISTRATIONS RN_BUILTIN_IO_REGISTRATIONS
             RN_BUILTIN_TYPE_REGISTRATIONS RN_BUILTIN_STRING_REGISTRATIONS
                 RN_BUILTIN_ARRAY_REGISTRATIONS RN_BUILTIN_GENERAL_REGISTRATIONS};
