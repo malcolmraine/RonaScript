@@ -27,7 +27,6 @@
 ******************************************************************************/
 
 #include "RnCodeGenerator.h"
-#include "../parser/ast/Ast.h"
 #include "../parser/ast/Module.h"
 #include "RnCodeGenVisitor.h"
 
@@ -39,17 +38,17 @@ RnCodeGenerator::~RnCodeGenerator() = default;
 
 /*****************************************************************************/
 void RnCodeGenerator::Generate(Ast* ast) {
-    instructions.clear();
+    _result.clear();
     for (auto& module : ast->modules) {
         InstructionBlock module_instructions = visitor.GeneralVisit(module.second);
-        instructions.insert(instructions.end(), module_instructions.begin(),
+        instructions.insert(_result.end(), module_instructions.begin(),
                             module_instructions.end());
     }
 
     InstructionBlock root_instructions = visitor.GeneralVisit(ast->root);
-    instructions.insert(instructions.end(), root_instructions.begin(),
+    _result.insert(_result.end(), root_instructions.begin(),
                         root_instructions.end());
-    instructions.emplace_back(new RnInstruction(OP_EXIT, 0));
+    _result.emplace_back(new RnInstruction(OP_EXIT, 0));
 }
 
 /*****************************************************************************/
