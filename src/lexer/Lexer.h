@@ -50,8 +50,8 @@
 
 class Token;
 
-class Lexer : public
-              RnCompilerPhase<char, std::vector<Token*>> , RnSequencer<char, char>{
+class Lexer : public RnCompilerPhase<char, std::vector<Token*>>,
+              public RnSequencer<char, char> {
 public:
     Lexer();
     ~Lexer() override;
