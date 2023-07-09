@@ -48,7 +48,7 @@ RnInstruction::~RnInstruction() = default;
 
 /*****************************************************************************/
 auto RnInstruction::ToString() -> std::string {
-    std::string s = GetOpCodeAsString(_opcode);
+    RnStringNative s = GetOpCodeAsString(_opcode);
     s = String::Pad(s, 20);
     std::string arg1_str;
     std::string arg2_str;

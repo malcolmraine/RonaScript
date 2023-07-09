@@ -21,25 +21,33 @@ public:
     }
 
     RnString(const std::string& str) {
-        size_t len = str.length();
-        Resize(len + 1);
-        std::memcpy(_data, str.c_str(), len);
+        SetData(str.c_str(), str.length());
     }
 
     RnString(char* cstr, size_t cnt = std::string::npos) {
-        if (cnt > std::strlen(cstr)) {
-            throw std::runtime_error("Invalid substring length");
+        if (cnt == std::string::npos) {
+            SetData(cstr, strlen(cstr));
+        } else
+        {
+            if (cnt > std::strlen(cstr))
+            {
+                throw std::runtime_error("Invalid substring length");
+            }
+            SetData(cstr, cnt);
         }
-        Resize(cnt + 1);
-        std::memcpy(_data, cstr, cnt);
     }
 
     RnString(const char* cstr, size_t cnt = std::string::npos) {
-        if (cnt > std::strlen(cstr)) {
-            throw std::runtime_error("Invalid substring length");
+        if (cnt == std::string::npos) {
+            SetData(cstr, strlen(cstr));
+        } else
+        {
+            if (cnt > std::strlen(cstr))
+            {
+                throw std::runtime_error("Invalid substring length");
+            }
+            SetData(cstr, cnt);
         }
-        Resize(cnt + 1);
-        std::memcpy(_data, cstr, cnt);
     }
 
     RnString(size_t n, char c) {
@@ -57,6 +65,7 @@ public:
     void SetData(const char* cstr, size_t n) {
         Resize(n + 1);
         std::memcpy(_data, cstr, n);
+        _length = n;
     }
 
     RnString& append(const char* cstr) {
@@ -66,8 +75,29 @@ public:
         return *this;
     }
 
+    RnString& append(RnString str) {
+        return append(str.c_str());
+    }
+
+    RnString& append(std::string& str) {
+        return append(str.c_str());
+    }
+
     RnString operator+(RnString& str) const {
         return RnString(c_str()).append(str.c_str());
+    }
+
+    RnString operator+(const char* str) const {
+        return RnString(c_str()).append(str);
+    }
+
+    RnString operator+(std::string& str) const {
+        return RnString(c_str()).append(str.c_str());
+    }
+
+    RnString& operator+=(std::string& str) {
+        append(str.c_str());
+        return *this;
     }
 
     RnString& operator=(const RnString& str) {
@@ -77,12 +107,12 @@ public:
         return *this;
     }
 
-    size_t length() const {
+    [[nodiscard]] size_t length() const {
         return _length;
     }
 
-    RnString substr(size_t pos = 0, size_t len = std::string::npos) const;
-    size_t find(const RnString& str) const;
+    [[nodiscard]] RnString substr(size_t pos = 0, size_t len = std::string::npos) const;
+    [[nodiscard]] size_t find(const RnString& str) const;
 
 private:
     void Resize(size_t n, char c = 0) {
