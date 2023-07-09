@@ -27,6 +27,8 @@
 ******************************************************************************/
 
 #include "RnBuiltins_IO.h"
+#include <fcntl.h>
+#include <unistd.h>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -41,19 +43,17 @@
 #define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_IO, file_size, RnType::RN_INT, 1)    {
+RN_BUILTIN_FUNC(RnBuiltins_IO, file_size, RnType::RN_INT, 1) {
     BUILTIN_ASSERTS
     std::string path = args.front()->ToString();
     ret_val->SetData(static_cast<RnIntNative>(std::filesystem::file_size(path)));
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_IO, file_write, RnType::RN_INT, 2)   {
-    BUILTIN_ASSERTS
-}
+RN_BUILTIN_FUNC(RnBuiltins_IO, file_write, RnType::RN_INT, 2){BUILTIN_ASSERTS}
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_IO, print, RnType::RN_VOID, 1)        {
+RN_BUILTIN_FUNC(RnBuiltins_IO, print, RnType::RN_VOID, 1) {
     std::string s;
     for (auto arg : args) {
         assert(arg);
@@ -88,4 +88,51 @@ RN_BUILTIN_FUNC(RnBuiltins_IO, prompt, RnType::RN_STRING, 1) {
     std::cout << args.front()->ToString();
     std::cin >> input;
     ret_val->SetData(input);
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_IO, _file_open, RnType::RN_INT, 1) {
+    BUILTIN_ASSERTS
+    auto fd =
+        open(args.front()->ToString().c_str(), static_cast<int>(args[1]->ToInt()));
+    ret_val->SetData(static_cast<RnIntNative>(fd));
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_IO, _file_fd_close, RnType::RN_BOOLEAN, 1) {
+    BUILTIN_ASSERTS
+    if (close(static_cast<int>(args[0]->ToInt())) == 0) {
+        ret_val->SetData(true);
+    } else {
+        ret_val->SetData(false);
+    }
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_IO, _file_fd_write, RnType::RN_INT, 1) {
+    BUILTIN_ASSERTS
+    std::string content = args[1]->ToString();
+    ssize_t result =
+        write(static_cast<int>(args[0]->ToInt()), content.c_str(), content.length());
+    ret_val->SetData(static_cast<RnIntNative>(result));
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_IO, _file_fd_read, RnType::RN_STRING, 1) {
+    BUILTIN_ASSERTS
+
+    auto size = static_cast<ssize_t>(args[1]->ToInt());
+    if (size == 0) {
+        ret_val->SetData(static_cast<RnIntNative>(0));
+    } else {
+        int fd = static_cast<int>(args[0]->ToInt());
+        std::string content(size, 0);
+        read(fd, (void*)content.c_str(), size);
+        ret_val->SetData(content);
+    }
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC(RnBuiltins_IO, _file_fd_truncate, RnType::RN_BOOLEAN, 1) {
+    BUILTIN_ASSERTS
 }
