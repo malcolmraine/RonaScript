@@ -20,7 +20,7 @@ class RnObject;
 
 typedef int64_t RnIntNative;
 typedef double RnFloatNative;
-typedef RnString RnStringNative;
+typedef std::string RnStringNative;
 typedef bool RnBoolNative;
 typedef std::vector<RnObject*> RnArrayNative;
 

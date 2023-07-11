@@ -227,7 +227,7 @@ if __name__ == "__main__":
                              manifest.get("name"),
                              os.path.dirname(file),
                              expected_output_file=manifest.get("expected_output", "expected_output.txt"),
-                             args=[*manifest.get("args", []), "-r", "-c"],
+                             args=[*manifest.get("args", []), "-c"],
                              timeout=manifest.get("timeout", 5),
                              invoke_count=manifest.get("invoke_count", 1),
                              enabled=manifest.get("enabled", False),
