@@ -205,9 +205,9 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
 
 /*****************************************************************************/
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
-    if (_gc_count > GC_THRESHOLD) {
+    if (_gc_count > 1000) {
         _memory_manager->GCMark();
-        _memory_manager->GCSweep();
+//        _memory_manager->GCSweep();
         _gc_count = 0;
     }
 

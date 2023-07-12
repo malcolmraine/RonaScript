@@ -46,6 +46,10 @@ class RnLinearAllocator : public RnAllocator
 		return GetTotalMemorySize() - _bytes_in_use;
 	}
 
+    [[nodiscard]] MemoryBlock* FirstBlock() {
+        return _first_block;
+    }
+
 	/*************************************************************************/
 	[[nodiscard]] MemoryHeap* CurrentHeap() const override
 	{
@@ -76,16 +80,17 @@ class RnLinearAllocator : public RnAllocator
 		return _max_size;
 	}
 
+    /*************************************************************************/
+    [[nodiscard]] static inline MemoryBlock* GetBlockForAddr(void* addr)
+    {
+        return (MemoryBlock*)((char*)addr - sizeof(MemoryBlock));
+    }
+
  private:
 	[[nodiscard]] void* MallocInternal(size_t n, MemoryBlock* start);
 	static bool SplitBlock(MemoryBlock* block, size_t n);
 	MemoryBlock* GetMergedBlockUntil(MemoryBlock* block, size_t n);
 
-	/*************************************************************************/
-	[[nodiscard]] static inline MemoryBlock* GetBlockForAddr(void* addr)
-	{
-		return (MemoryBlock*)((char*)addr - sizeof(MemoryBlock));
-	}
 
  private:
 	MemoryBlock* _first_block = nullptr; 	// First block of the current heap

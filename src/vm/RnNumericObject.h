@@ -31,6 +31,7 @@
 
 class RnNumericObject : public RnObjectBase<RnNumericUnion> {
 public:
+    ~RnNumericObject() override = default;
     [[nodiscard]] RnIntNative ToInt() const override;
     [[nodiscard]] RnFloatNative ToFloat() const override;
     [[nodiscard]] RnBoolNative ToBool() const override;

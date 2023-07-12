@@ -79,7 +79,7 @@ void* RnLinearAllocator::Malloc(size_t n)
 		_first_block->size = _current_heap->size - sizeof(MemoryBlock);
 		_first_block->available = 1;
 		_current_block = _first_block;
-		result = Malloc(n);// Only attempt to malloc once here
+		result = RnLinearAllocator::Malloc(n);// Only attempt to malloc once here
 	}
 	return result;
 #endif

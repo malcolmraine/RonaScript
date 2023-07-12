@@ -40,16 +40,23 @@
 #include "RnNullObject.h"
 #include "RnStringObject.h"
 
+#include "../memory_mgmt/RnObjectAllocator.h"
+
+// Need to figure out the best settings for heap and max sizes
+RnObjectAllocator<RnBoolObject> bool_allocator(1000000, 1000000);
+RnObjectAllocator<RnArrayObject> array_allocator(10000, 1000000);
+RnObjectAllocator<RnClassObject> class_allocator(10000, 1000000);
+RnObjectAllocator<RnAnyObject> any_allocator(10000, 1000000);
+RnObjectAllocator<RnFloatObject> float_allocator(10000, 1000000);
+RnObjectAllocator<RnFunctionObject> func_allocator(10000, 1000000);
+RnObjectAllocator<RnIntObject> int_allocator(10000, 1000000);
+RnObjectAllocator<RnStringObject> string_allocator(10000, 1000000);
+RnObjectAllocator<RnNullObject> null_allocator(10000, 1000000);
+RnObjectAllocator<RnScope> scope_allocator(10000, 1000000);
+
+
 /*****************************************************************************/
 RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr)) {
-    _block_size =
-        std::max({sizeof(RnArrayObject), sizeof(RnIntObject), sizeof(RnFunctionObject),
-                  sizeof(RnFloatObject), sizeof(RnBoolObject), sizeof(RnStringObject),
-                  sizeof(RnClassObject), sizeof(RnAnyObject)});
-    _allocation_size = _block_size * OBJECT_ALLOCATION_COUNT;
-    GrowAllocation(_allocation_size);
-    _cached_bool_true_object = new RnBoolObject(true);
-    _cached_bool_false_object = new RnBoolObject(false);
 }
 
 /*****************************************************************************/
@@ -57,45 +64,28 @@ RnMemoryManager::~RnMemoryManager() = default;
 
 /*****************************************************************************/
 RnObject* RnMemoryManager::CreateObject(RnType::Type type) {
-    if (_available_addresses.empty()) {
-        GrowAllocation(_allocation_size);
-    }
-
-    auto address = _available_addresses.back();
-    _available_addresses.pop_back();
-    _used_addresses.push_back(address);
-
     switch (type) {
         case RnType::RN_BOOLEAN:
-            return std::construct_at<RnBoolObject>(
-                reinterpret_cast<RnBoolObject*>(address));
+            return bool_allocator.CreateObject();
         case RnType::RN_STRING:
-            return std::construct_at<RnStringObject>(
-                reinterpret_cast<RnStringObject*>(address));
+            return string_allocator.CreateObject();
         case RnType::RN_FLOAT:
-            return std::construct_at<RnFloatObject>(
-                reinterpret_cast<RnFloatObject*>(address));
+            return float_allocator.CreateObject();
         case RnType::RN_INT:
-            return std::construct_at<RnIntObject>(
-                reinterpret_cast<RnIntObject*>(address));
+            return int_allocator.CreateObject();
         case RnType::RN_ANY:
-            return std::construct_at<RnAnyObject>(
-                reinterpret_cast<RnAnyObject*>(address));
+            return any_allocator.CreateObject();
         case RnType::RN_ARRAY:
-            return std::construct_at<RnArrayObject>(
-                reinterpret_cast<RnArrayObject*>(address));
+            return array_allocator.CreateObject();
         case RnType::RN_FUNCTION:
         case RnType::RN_CALLABLE:
-            return std::construct_at<RnFunctionObject>(
-                reinterpret_cast<RnFunctionObject*>(address));
+            return func_allocator.CreateObject();
         case RnType::RN_CLASS_INSTANCE:
         case RnType::RN_OBJECT:
-            return std::construct_at<RnClassObject>(
-                reinterpret_cast<RnClassObject*>(address));
+            return class_allocator.CreateObject();
         case RnType::RN_NULL:
         case RnType::RN_VOID:
-            return std::construct_at<RnNullObject>(
-                reinterpret_cast<RnNullObject*>(address));
+            return null_allocator.CreateObject();
         case RnType::RN_UNKNOWN:
         default:
             assert(false);
@@ -112,11 +102,9 @@ RnObject* RnMemoryManager::Create(RnStringNative data) {
 
 /*****************************************************************************/
 RnObject* RnMemoryManager::Create(RnBoolNative data) {
-    if (data) {
-        return _cached_bool_true_object;
-    } else {
-        return _cached_bool_false_object;
-    }
+    auto obj = CreateObject(RnType::RN_BOOLEAN);
+    obj->SetData(data);
+    return obj;
 }
 
 /*****************************************************************************/
@@ -135,34 +123,12 @@ RnObject* RnMemoryManager::Create(RnFloatNative data) {
 
 /*****************************************************************************/
 RnScope* RnMemoryManager::CreateScope() {
-    if (_available_scope_addresses.empty()) {
-        auto* block = static_cast<char*>(malloc(10000));
-        if (block == nullptr) {
-            throw std::runtime_error("Out of memory.");
-        }
-        _scope_allocations.push_back(block);
-        _available_scope_addresses.reserve(_allocation_size / sizeof(RnScope));
-        _used_addresses.reserve(_allocation_size / sizeof(RnScope));
-        for (auto address = block; address < block + 10000;
-             address += sizeof(RnScope)) {
-            _available_scope_addresses.push_back((RnScope*)(address));
-        }
-    }
-
-    auto address = _available_scope_addresses.back();
-    _available_scope_addresses.pop_back();
-    _used_scope_addresses.push_back(address);
-
-    return std::construct_at<RnScope>(reinterpret_cast<RnScope*>(address), nullptr);
+    return scope_allocator.CreateObject(nullptr);
 }
 
 /*****************************************************************************/
 void RnMemoryManager::DestroyScope(RnScope* scope) {
-    //    _available_scope_addresses.push_back(scope);
-    //    _used_scope_addresses.erase(
-    //        std::find(_used_scope_addresses.begin(), _used_scope_addresses.end(), scope));
-    //
-    //    std::destroy_at<RnScope>(reinterpret_cast<RnScope*>(scope));
+    scope_allocator.FreeObject(scope);
 }
 
 /*****************************************************************************/
@@ -172,58 +138,37 @@ void RnMemoryManager::GCMark() {
 
 /*****************************************************************************/
 void RnMemoryManager::GCSweep() {
-    for (auto address : _heap) {
-        if (!address->IsMarked()) {
-            _available_addresses.push_back(address);
-            _used_addresses.erase(
-                std::find(_used_addresses.begin(), _used_addresses.end(), address));
+    bool_allocator.FreeIf([](auto object) {
+        return !object->IsMarked();
+    });
 
-            switch (address->GetType()) {
-                case RnType::RN_BOOLEAN:
-                    std::destroy_at<RnBoolObject>(
-                        reinterpret_cast<RnBoolObject*>(address));
-                    break;
-                case RnType::RN_STRING:
-                    std::destroy_at<RnStringObject>(
-                        reinterpret_cast<RnStringObject*>(address));
-                    break;
-                case RnType::RN_FLOAT:
-                    std::destroy_at<RnFloatObject>(
-                        reinterpret_cast<RnFloatObject*>(address));
-                    break;
-                case RnType::RN_INT:
-                    std::destroy_at<RnIntObject>(
-                        reinterpret_cast<RnIntObject*>(address));
-                    break;
-                case RnType::RN_ANY:
-                    std::destroy_at<RnAnyObject>(
-                        reinterpret_cast<RnAnyObject*>(address));
-                    break;
-                case RnType::RN_ARRAY:
-                    std::destroy_at<RnArrayObject>(
-                        reinterpret_cast<RnArrayObject*>(address));
-                    break;
-                case RnType::RN_FUNCTION:
-                case RnType::RN_CALLABLE:
-                    std::destroy_at<RnFunctionObject>(
-                        reinterpret_cast<RnFunctionObject*>(address));
-                    break;
-                case RnType::RN_CLASS_INSTANCE:
-                case RnType::RN_OBJECT:
-                    std::destroy_at<RnClassObject>(
-                        reinterpret_cast<RnClassObject*>(address));
-                    break;
-                case RnType::RN_NULL:
-                case RnType::RN_VOID:
-                case RnType::RN_UNKNOWN:
-                default:
-                    std::destroy_at<RnObject>(reinterpret_cast<RnObject*>(address));
-                    break;
-            }
-        } else {
-            address->Unmark();
-        }
-    }
+    int_allocator.FreeIf([](auto object) {
+        return !object->IsMarked();
+    });
+
+    float_allocator.FreeIf([](auto object) {
+        return !object->IsMarked();
+    });
+
+    string_allocator.FreeIf([](auto object) {
+        return !object->IsMarked();
+    });
+
+    class_allocator.FreeIf([](auto object) {
+        return !object->IsMarked();
+    });
+
+    func_allocator.FreeIf([](auto object) {
+        return !object->IsMarked();
+    });
+
+    null_allocator.FreeIf([](auto object) {
+        return !object->IsMarked();
+    });
+
+    any_allocator.FreeIf([](auto object) {
+        return !object->IsMarked();
+    });
 }
 
 /*****************************************************************************/
@@ -233,25 +178,15 @@ void RnMemoryManager::SetRootMemoryGroup(RnMemoryGroup* group) {
 
 /*****************************************************************************/
 void RnMemoryManager::GCMarkMemoryGroup(RnMemoryGroup* memory_group) {
+    if (!memory_group) {
+        return;
+    }
+
     for (auto& obj : memory_group->GetObjects()) {
         obj->Mark();
     }
 
     for (auto& group : memory_group->GetChildGroups()) {
         GCMarkMemoryGroup(group);
-    }
-}
-
-/*****************************************************************************/
-void RnMemoryManager::GrowAllocation(size_t size) {
-    auto* block = static_cast<char*>(malloc(size));
-    if (block == nullptr) {
-        throw std::runtime_error("Out of memory.");
-    }
-    _allocations.push_back(block);
-    _available_addresses.reserve(_allocation_size / _block_size);
-    _used_addresses.reserve(_allocation_size / _block_size);
-    for (auto address = block; address < block + size; address += _block_size) {
-        _available_addresses.push_back((RnObject*)(address));
     }
 }
