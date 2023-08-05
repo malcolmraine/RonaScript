@@ -10,6 +10,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include "RnSlabAllocator.h"
 
 template <class T>
@@ -26,6 +27,9 @@ public:
     template <typename... Args>
     T* CreateObject(Args... args) {
         auto addr = _allocator.Malloc(1);
+        if (!addr) {
+            throw std::runtime_error("Failed to allocate " + std::to_string(sizeof(T)) + " bytes for object");
+        }
         return std::construct_at<T>(reinterpret_cast<T*>(addr),
                                     std::forward<Args>(args)...);
     }

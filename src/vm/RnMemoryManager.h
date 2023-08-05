@@ -43,13 +43,13 @@ class RnMemoryManager {
 public:
     RnMemoryManager();
     ~RnMemoryManager();
-    RnObject* CreateObject(RnType::Type type);
-    RnObject* Create(RnStringNative data);
-    RnObject* Create(RnBoolNative data);
-    RnObject* Create(RnIntNative data);
-    RnObject* Create(RnFloatNative data);
-    RnScope* CreateScope();
-    void DestroyScope(RnScope* scope);
+    static RnObject* CreateObject(RnType::Type type);
+    static RnObject* Create(RnStringNative data);
+    static RnObject* Create(RnBoolNative data);
+    static RnObject* Create(RnIntNative data);
+    static RnObject* Create(RnFloatNative data);
+    static RnScope* CreateScope();
+    static void DestroyScope(RnScope* scope);
     void GCMark();
     void GCSweep();
     void SetRootMemoryGroup(RnMemoryGroup* group);

@@ -15,6 +15,7 @@
 struct MemoryBlock {
 	uint32_t size = 0;
 	uint8_t available = 1;
+    uint8_t available2 = 1;
 };
 
 #define MIN_BLOCK_SIZE 8
@@ -46,6 +47,7 @@ class RnLinearAllocator : public RnAllocator
 		return GetTotalMemorySize() - _bytes_in_use;
 	}
 
+    /*************************************************************************/
     [[nodiscard]] MemoryBlock* FirstBlock() {
         return _first_block;
     }

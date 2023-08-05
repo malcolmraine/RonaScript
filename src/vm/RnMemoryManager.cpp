@@ -43,7 +43,7 @@
 #include "../memory_mgmt/RnObjectAllocator.h"
 
 // Need to figure out the best settings for heap and max sizes
-RnObjectAllocator<RnBoolObject> bool_allocator(1000000, 1000000);
+RnObjectAllocator<RnBoolObject> bool_allocator(10000, 1000000);
 RnObjectAllocator<RnArrayObject> array_allocator(10000, 1000000);
 RnObjectAllocator<RnClassObject> class_allocator(10000, 1000000);
 RnObjectAllocator<RnAnyObject> any_allocator(10000, 1000000);

@@ -72,7 +72,7 @@ void* RnLinearAllocator::Malloc(size_t n)
 	// If the current heap isn't going to work, maybe we can get another heap
 	if (!result && (GetTotalMemorySize() < _max_size))
 	{
-		std::cout << "Adding a new heap...\n";
+//		std::cout << "Adding a new heap...\n";
 		_current_heap = AddNewHeap(_current_heap->size);
 		_last_heap = _current_heap;
 		_first_block = (MemoryBlock*)_current_heap->memory;
