@@ -28,7 +28,8 @@ public:
     T* CreateObject(Args... args) {
         auto addr = _allocator.Malloc(1);
         if (!addr) {
-            throw std::runtime_error("Failed to allocate " + std::to_string(sizeof(T)) + " bytes for object");
+            throw std::runtime_error("Failed to allocate " + std::to_string(sizeof(T)) +
+                                     " bytes for object");
         }
         return std::construct_at<T>(reinterpret_cast<T*>(addr),
                                     std::forward<Args>(args)...);
@@ -46,12 +47,11 @@ public:
     void FreeIf(FUNC fn) {
         auto current_heap = _allocator.FirstHeap();
         while (current_heap) {
-            auto current_block = RnSlabAllocator::GetBlockForAddr(current_heap->memory);
-            while (current_block) {
-                auto block_memory_addr =
-                    reinterpret_cast<T*>(BLOCK_MEMORY_ADDR(current_block));
-                if (fn(block_memory_addr)) {
-                    FreeObject(block_memory_addr);
+            auto current_block = reinterpret_cast<MemoryBlock*>(current_heap->memory);
+            while (current_block && !current_block->available) {
+                auto obj = reinterpret_cast<T*>(BLOCK_MEMORY_ADDR(current_block));
+                if (fn(obj)) {
+                    FreeObject(obj);
                 }
                 current_block = NEXT_BLOCK(current_block);
             }
