@@ -29,7 +29,7 @@
 #include "RnOpCode.h"
 
 /*****************************************************************************/
-std::string GetOpCodeAsString(RnOpCode opcode) {
+RnStringNative GetOpCodeAsString(RnOpCode opcode) {
     switch (opcode) {
         case OP_ATTR_ACCESS:
             return "OP_ATTR_ACCESS";
@@ -151,7 +151,7 @@ std::string GetOpCodeAsString(RnOpCode opcode) {
 }
 
 /*****************************************************************************/
-RnOpCode GetOpCodeFromOperator(const std::string& op) {
+RnOpCode GetOpCodeFromOperator(const RnStringNative& op) {
     if (op == "+") {
         return OP_BINARY_ADD;
     } else if (op == "-") {

@@ -445,6 +445,11 @@ void Lexer::Reset() {
 }
 
 /*****************************************************************************/
+void Lexer::Run() {
+    ProcessTokens();
+}
+
+/*****************************************************************************/
 void Lexer::HandleUnexpectedItem() {
     std::string msg = "Unexpected character '" + std::string(1, Current()) + "'" +
                       " in " + file_info.ToString() + "\nExpected one of [";

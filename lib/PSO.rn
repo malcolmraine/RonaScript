@@ -17,16 +17,16 @@ begin
     var c2: float = 0.0;
 
     /*************************************************************************/
-    routine construct(var dimension: int, var c1: float, var c2: float): void
+    routine construct(var dimension: int, var c1: float, var c2: float): object
     begin
         this->c1 = c1;
         this->c2 = c2;
 
-        for (var i: int = 0; i < dimension; i += 1)
-        begin
+        for (var i: int = 0; i < dimension; i++):
             array_push(this->x, random_float());
             array_push(this->v, random_float());
         end // loop
+        return this;
     end // routine construct
 
     /*************************************************************************/
@@ -35,8 +35,7 @@ begin
         var u1: float = 0.1;
         var u2: float = 0.1;
 
-        for (var j: int = 0; j < count(this->x); j += 1)
-        begin
+        for (var j: int = 0; j < count(this->x); j++):
             this->v[j] = w * this->v[j] +
                       (this->c1 * u1) * (this->pbest[j] - this->x[j]) +
                       (this->c2 * u2) * (gbest[j] - this->x[j]);
@@ -58,19 +57,18 @@ begin
     var topology: int<1..3> = TOPOLOGY_RING;
 
     /*************************************************************************/
-    routine construct(var n: int, var dimension: int, var c1: float, var c2: float): void
+    routine construct(var n: int, var dimension: int, var c1: float, var c2: float): object
     begin
-        for (var i: int = 0; i < n; i += 1)
-        begin
+        for (var i: int = 0; i < n; i++):
             array_push(this->x, Particle(dimension, this->c1, this->c2));
         end // loop
+        return this;
     end // routine construct
 
     /*************************************************************************/
     routine update_particles(): void
     begin
-        for (var i: int; i < count(this->particles); i += 1)
-        begin
+        for (var i: int; i < count(this->particles); i++):
             this->particles[i]->update(this->w, this->gbest);
         end // loop
     end // routine update_particles
@@ -85,3 +83,5 @@ begin
 end // class ParticleSwarmOptimizer
 
 end // module PSO
+
+var p: object = PSO::ParticleSwarmOptimizer(4, 4, 4, 4);

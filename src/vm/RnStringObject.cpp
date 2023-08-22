@@ -54,7 +54,7 @@ RnObject* RnStringObject::operator!=(RnObject* obj) {
 
 /*****************************************************************************/
 RnObject* RnStringObject::operator*(RnObject* obj) {
-    std::string result;
+    RnStringNative result;
     for (RnIntNative i = 0; i < obj->ToInt(); i++) {
         result += _data;
     }
@@ -108,10 +108,10 @@ size_t RnStringObject::GetBytes(char* buf) {
 
 /*************************************************************************/
 void RnStringObject::SetBytes(const char* buf, size_t n) {
-    _data = std::string(buf, n);
+    _data = RnStringNative(buf, n);
 }
 
 /*************************************************************************/
 RnObject* RnStringObject::At(RnIntNative index) {
-    return RnObject::Create(std::string(1, _data[index]));
+    return RnObject::Create(RnStringNative(1, _data[index]));
 }

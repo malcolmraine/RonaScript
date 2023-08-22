@@ -1,5 +1,5 @@
 /*****************************************************************************
-* File: RnBuiltins_String.h
+* File: RnAllocator.h
 * Description:
 * Author: Malcolm Hall
 * Date: 6/20/22
@@ -28,28 +28,46 @@
 
 #pragma once
 
-#include "../common/RnType.h"
-#include "RnBuiltins.h"
+#include <cstdlib>
 
-#undef RN_BUILTIN_STRING_REGISTRATIONS
-#define RN_BUILTIN_STRING_REGISTRATIONS                                 \
-    RN_BUILTIN_FUNC(RnBuiltins_String, str_titlecase, RnType::RN_STRING, 1)  \
-    RN_BUILTIN_FUNC(RnBuiltins_String, str_lower, RnType::RN_STRING, 1)      \
-    RN_BUILTIN_FUNC(RnBuiltins_String, str_upper, RnType::RN_STRING, 1)      \
-    RN_BUILTIN_FUNC(RnBuiltins_String, str_snakecase, RnType::RN_STRING, 1)  \
-    RN_BUILTIN_FUNC(RnBuiltins_String, str_split, RnType::RN_ARRAY, 1)      \
-    RN_BUILTIN_FUNC(RnBuiltins_String, str_substr, RnType::RN_STRING, 1)     \
-    RN_BUILTIN_FUNC(RnBuiltins_String, str_startswith, RnType::RN_BOOLEAN, 1) \
-    RN_BUILTIN_FUNC(RnBuiltins_String, str_endswith, RnType::RN_BOOLEAN, 1)   \
-    RN_BUILTIN_FUNC(RnBuiltins_String, str_join, RnType::RN_STRING, 1)
+// Switch to builtin malloc/calloc/realloc
+#define USE_STD_MALLOC 0
 
-class RnScope;
-class RnObject;
+enum HeapState : uint8_t {
+	EMPTY,
+	PARTIAL,
+	FULL
+};
 
-#undef RN_BUILTIN_FUNC
-#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DECLARE
+struct MemoryHeap {
+	~MemoryHeap() = default;
+	size_t size = 0;
+	HeapState state = HeapState::EMPTY;
+	char* memory = nullptr;
+	MemoryHeap* next = nullptr;
+	MemoryHeap* prev = nullptr;
+};
 
-class RnBuiltins_String {
-public:
-    RN_BUILTIN_STRING_REGISTRATIONS
+class RnAllocator {
+ public:
+	[[nodiscard]] virtual void* Malloc(size_t n) = 0;
+	[[nodiscard]] virtual void* Calloc(size_t n, int c) = 0;
+	[[nodiscard]] virtual void* Calloc(size_t n) {
+		return Calloc(n, 0);
+	}
+	[[nodiscard]] virtual void* Realloc(void* data, size_t n) = 0;
+	virtual void Free(void* addr) = 0;
+	[[nodiscard]] virtual size_t GetBytesInUse() const = 0;
+	[[nodiscard]] virtual size_t GetBytesFree() const = 0;
+	[[nodiscard]] virtual MemoryHeap* CurrentHeap() const = 0;
+	[[nodiscard]] virtual MemoryHeap* LastHeap() const = 0;
+	[[nodiscard]] virtual MemoryHeap* FirstHeap() const = 0;
+	void FreeAllHeaps() const;
+	[[nodiscard]] MemoryHeap* AddNewHeap(size_t n) const;
+	static bool IsAddressWithinHeap(void* addr, MemoryHeap* heap) ;
+	bool IsAddressWithinAllocator(void* addr) const;
+	MemoryHeap* GetHeapForAddress(void* addr) const;
+	[[nodiscard]] size_t GetTotalMemorySize() const;
+	virtual void SetMaxSize(size_t n) = 0;
+	virtual size_t GetMaxSize() const = 0;
 };

@@ -171,8 +171,8 @@ std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
     std::filesystem::path module_file;
 
     if (is_stdlib) {
-        module_file =
-            std::filesystem::path(RnConfig::GetLibraryPath()) / (node->source_file + ".rn");
+        module_file = std::filesystem::path(RnConfig::GetLibraryPath()) /
+                      (node->source_file + ".rn");
     } else {
         module_file = working_dir + "/" + node->source_file;
     }
@@ -321,8 +321,11 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
     }
 
     // Get the function's scope
+    auto previous_scope_count = _scope_count;
     node->scope = ParseScope();
+    assert(_scope_count == previous_scope_count);
     assert(node->scope);
+
     for (const auto& symbol : arg_symbols) {
         node->scope->symbol_table->AddSymbol(symbol.first, symbol.second, node);
     }
@@ -363,7 +366,9 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
 
     _previous_state = _current_state;
     _current_state = ParserState::CLASS_DECL_CONTEXT;
+    auto previous_scope_count = _scope_count;
     node->scope = ParseScope();
+    assert(_scope_count == previous_scope_count);
     _current_state = _previous_state;
 
     return node;
@@ -717,60 +722,42 @@ std::shared_ptr<AstNode> Parser::ParseAssignmentStatement(
 }
 
 /*****************************************************************************/
-std::shared_ptr<ConditionalStmt> Parser::ParseIfStmt() {
+std::shared_ptr<ConditionalStmt> Parser::ParseConditionalStmt() {
     auto node = std::make_shared<ConditionalStmt>();
-    node->node_type = AST_IF_STMT;
     AddCurrentFileInfo(node);
-    AdvanceBuffer(1);
-    node->test = ParseExpr(TokenType::COLON);
-    node->consequent = ParseScope();
-    if (!Current())
-        return node;
 
-    if (Current()->token_type == TokenType::ELIF) {
-        node->alternative = ParseElifStmt();
+    if (Current()->IsOneOf({TokenType::IF, TokenType::ELIF})) {
+        if (Current()->token_type == TokenType::IF) {
+            node->node_type = AST_IF_STMT;
+        } else {
+            node->node_type = AST_ELIF_STMT;
+        }
+        AdvanceBuffer(1);
+        node->test = ParseExpr(TokenType::COLON);
+        {
+            auto previous_scope_count = _scope_count;
+            node->consequent = ParseScope();
+            assert(_scope_count == previous_scope_count);
+        }
+        if (!Current())
+            return node;
+
+        if (Current()->IsOneOf({TokenType::ELIF, TokenType::ELSE})) {
+            auto previous_scope_count = _scope_count;
+            node->alternative = ParseConditionalStmt();
+            assert(_scope_count == previous_scope_count);
+        }
+
     } else if (Current()->token_type == TokenType::ELSE) {
-        node->alternative = ParseElseStmt();
+        node->node_type = AST_ELSE_STMT;
+        AdvanceBuffer(1);
+        auto previous_scope_count = _scope_count;
+        node->consequent = ParseScope();
+        assert(_scope_count == previous_scope_count);
     } else {
-        node->alternative = nullptr;
+        throw std::runtime_error("Invalid token '" + Current()->lexeme +
+                                 "' for conditional statement.");
     }
-
-    if (Current())
-        ConditionalBufAdvance(TokenType::SEMICOLON);\
-    return node;
-}
-
-/*****************************************************************************/
-std::shared_ptr<ConditionalStmt> Parser::ParseElifStmt() {
-    auto node = std::make_shared<ConditionalStmt>();
-    node->node_type = AST_ELIF_STMT;
-    AddCurrentFileInfo(node);
-    AdvanceBuffer(1);
-    node->test = ParseExpr(TokenType::COLON);
-    node->consequent = ParseScope();
-    if (!Current())
-        return node;
-
-    if (Current()->token_type == TokenType::ELIF) {
-        node->alternative = ParseElifStmt();
-    } else if (Current()->token_type == TokenType::ELSE) {
-        node->alternative = ParseElseStmt();
-    } else {
-        node->alternative = nullptr;
-    }
-
-    if (Current())
-        ConditionalBufAdvance(TokenType::SEMICOLON);
-    return node;
-}
-
-/*****************************************************************************/
-std::shared_ptr<ConditionalStmt> Parser::ParseElseStmt() {
-    auto node = std::make_shared<ConditionalStmt>();
-    node->node_type = AST_ELSE_STMT;
-    AddCurrentFileInfo(node);
-    AdvanceBuffer(1);
-    node->consequent = ParseScope();
 
     return node;
 }
@@ -789,7 +776,10 @@ std::shared_ptr<ScopeNode> Parser::ParseScope() {
     ConvertScope(node);
     ConditionalBufAdvance(TokenType::BEGIN);
     ConditionalBufAdvance(TokenType::COLON);
+    auto previous_scope_count = _scope_count;
     Parse();
+    RevertScope();
+//    assert(_scope_count == previous_scope_count);
 
     if (!Current() && _data_idx > _data_size) {
         Log::WARN("Out of bounds parser index");
@@ -797,7 +787,6 @@ std::shared_ptr<ScopeNode> Parser::ParseScope() {
     }
 
     if (Current()->token_type == TokenType::END) {
-        RevertScope();
         ConditionalBufAdvance(TokenType::END);
     }
 
@@ -847,7 +836,9 @@ std::shared_ptr<Loop> Parser::ParseWhileLoop() {
     AddCurrentFileInfo(node);
     ConditionalBufAdvance(TokenType::WHILE);
     node->test = ParseExpr(TokenType::COLON);
+    auto previous_scope_count = _scope_count;
     node->scope = ParseScope();
+    assert(_scope_count == previous_scope_count);
 
     return node;
 }
@@ -891,7 +882,9 @@ std::shared_ptr<Loop> Parser::ParseForLoop() {
     }
     ConditionalBufAdvance(TokenType::L_PARAN);
     ConditionalBufAdvance(TokenType::BEGIN);
+    auto previous_scope_count = _scope_count;
     node->scope = ParseScope();
+    assert(_scope_count == previous_scope_count);
 
     if (node->init->node_type == AST_VAR_DECL) {
         auto var_decl = std::dynamic_pointer_cast<VarDecl>(node->init);
@@ -966,7 +959,9 @@ std::shared_ptr<TryBlock> Parser::ParseTryBlock() {
     auto node = std::make_shared<TryBlock>();
     AddCurrentFileInfo(node);
     AdvanceBuffer(1);
+    auto previous_scope_count = _scope_count;
     node->scope = ParseScope();
+    assert(_scope_count == previous_scope_count);
     node->catch_block = ParseCatchBlock();
     node->exception_ids = node->catch_block->GetExceptionIds();
 
@@ -991,7 +986,9 @@ std::shared_ptr<CatchBlock> Parser::ParseCatchBlock() {
         AdvanceBuffer(1);
     }
 
+    auto previous_scope_count = _scope_count;
     node->SetScope(ParseScope());
+    assert(_scope_count == previous_scope_count);
 
     return node;
 }
@@ -1001,6 +998,7 @@ void Parser::RevertScope() {
     assert(_current_scope);
     if (_current_scope->parent) {
         _current_scope = _current_scope->parent;
+        _scope_count--;
     }
 }
 
@@ -1010,6 +1008,7 @@ void Parser::ConvertScope(const std::shared_ptr<ScopeNode>& scope) {
 
     scope->parent = _current_scope;
     _current_scope = scope;
+    _scope_count++;
 }
 
 /*****************************************************************************/
@@ -1053,9 +1052,12 @@ void Parser::Parse() {
                     ast->modules[node->name->value] = node;
                     break;
                 }
-                case TokenType::BEGIN:
+                case TokenType::BEGIN: {
+                    auto previous_scope_count = _scope_count;
                     _current_scope->AddSubTree(ParseScope());
+                    assert(_scope_count == previous_scope_count);
                     break;
+                }
                 case TokenType::END:
                 case TokenType::ELIF:
                 case TokenType::ELSE:
@@ -1144,7 +1146,7 @@ void Parser::Parse() {
                     break;
                 }
                 case TokenType::IF:
-                    _current_scope->AddSubTree(ParseIfStmt());
+                    _current_scope->AddSubTree(ParseConditionalStmt());
                     break;
                 case TokenType::WHILE:
                     _current_scope->AddSubTree(ParseWhileLoop());
@@ -1211,7 +1213,9 @@ std::shared_ptr<Module> Parser::ParseModule() {
     Expect(TokenType::IS);
     CheckExpected();
     AdvanceBuffer(1);
+    auto previous_scope_count = _scope_count;
     node->scope = ParseScope();
+    assert(_scope_count == previous_scope_count);
 
     return node;
 }
@@ -1279,6 +1283,12 @@ void Parser::Reset() {
     FillBuffer(nullptr);
     ast = std::make_shared<Ast>();
     _current_scope = ast->root;
+}
+
+/*****************************************************************************/
+void Parser::Run() {
+    AdvanceBuffer(2);
+    Parse();
 }
 
 /*****************************************************************************/

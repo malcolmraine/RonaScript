@@ -1,8 +1,8 @@
 /*****************************************************************************
-* File: Time.h
+* File: RnObjectAllocator.h
 * Description:
 * Author: Malcolm Hall
-* Date: 6/23/22
+* Date: 6/20/22
 * Version: 1
 *
 * MIT License
@@ -28,62 +28,61 @@
 
 #pragma once
 
-#include <chrono>
-#include <type_traits>
+#include <memory>
+#include <string>
+#include "RnSlabAllocator.h"
 
-#ifndef ASSERT_IS_TIME_TYPE
-#define ASSERT_IS_TIME_TYPE(T)                                        \
-    static_assert(std::is_same_v<T, std::chrono::hours> ||            \
-                      std::is_same_v<T, std::chrono::minutes> ||      \
-                      std::is_same_v<T, std::chrono::seconds> ||      \
-                      std::is_same_v<T, std::chrono::milliseconds> || \
-                      std::is_same_v<T, std::chrono::microseconds> || \
-                      std::is_same_v<T, std::chrono::nanoseconds>,    \
-                  "Type should be an std::chrono time type.");
-#endif
-
-#define NS_PER_MS (1000000)
-#define MS_PER_SECOND (1000)
-#define SECONDS_PER_MINUTE (60)
-#define MINUTES_PER_HOUR (60)
-
-#ifndef RN_TIME_CLOCK
-#define RN_TIME_CLOCK std::chrono::high_resolution_clock
-#endif
-
-/*****************************************************************************/
-class Time {
+template <class T>
+class RnObjectAllocator {
 public:
     /*************************************************************************/
-    template <class T = std::chrono::milliseconds>
-    static size_t Now() {
-        ASSERT_IS_TIME_TYPE(T)
-        auto duration = RN_TIME_CLOCK::now().time_since_epoch();
-        return std::chrono::duration_cast<T>(duration).count();
+    RnObjectAllocator(size_t heap_size, size_t max_size)
+        : _allocator(sizeof(T), heap_size, max_size) {}
+
+    /*************************************************************************/
+    ~RnObjectAllocator() = default;
+
+    /*************************************************************************/
+    template <typename... Args>
+    T* CreateObject(Args... args) {
+        auto addr = _allocator.Malloc(1);
+        if (!addr) {
+            throw std::runtime_error("Failed to allocate " + std::to_string(sizeof(T)) +
+                                     " bytes for object");
+        }
+        return std::construct_at<T>(reinterpret_cast<T*>(addr),
+                                    std::forward<Args>(args)...);
     }
 
     /*************************************************************************/
-    static size_t Seconds() {
-        return Now<std::chrono::seconds>();
+    void FreeObject(T* object) {
+        object->~T();
+        //    std::destroy_at<T>(object);
+        _allocator.Free(object);
     }
 
     /*************************************************************************/
-    static size_t Milliseconds() {
-        return Now<std::chrono::milliseconds>();
+    template <typename FUNC>
+    void FreeIf(FUNC fn) {
+        auto current_heap = _allocator.FirstHeap();
+        while (current_heap) {
+            auto current_block = reinterpret_cast<MemoryBlock*>(current_heap->memory);
+            while (current_block) {
+                if (!current_block->available) {
+                    auto obj = reinterpret_cast<T*>(BLOCK_MEMORY_ADDR(current_block));
+                    if (fn(obj)) {
+                        FreeObject(obj);
+                    }
+                }
+                current_block = NEXT_BLOCK(current_block);
+                if (!_allocator.IsAddressWithinAllocator(BLOCK_MEMORY_ADDR(current_block))) {
+                    break;
+                }
+            }
+            current_heap = current_heap->next;
+        }
     }
 
-    /*************************************************************************/
-    static size_t Microseconds() {
-        return Now<std::chrono::microseconds>();
-    }
-
-    /*************************************************************************/
-    static size_t Nanoseconds() {
-        return Now<std::chrono::nanoseconds>();
-    }
-
-    /*************************************************************************/
-    static std::string Stamp() {
-        return "";
-    }
+private:
+    RnSlabAllocator _allocator;
 };

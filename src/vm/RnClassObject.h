@@ -74,10 +74,10 @@ public:
         return RnType::RN_OBJECT;
     }
 
-    [[nodiscard]] std::string GetName() const {
+    [[nodiscard]] RnStringNative GetName() const {
         return _name;
     }
 
 private:
-    std::string _name;
+    RnStringNative _name;
 };

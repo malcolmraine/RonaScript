@@ -67,11 +67,12 @@ void Compile(const std::filesystem::path& infile, RnCodeGenerator& code_generato
     try {
         auto stopwatch = StopWatch();
         stopwatch.Start();
-        code_generator.Generate(parser.ast.get());
+        code_generator.SetInput(parser.ast.get());
+        code_generator.Run();
         stopwatch.Stop();
         if (arg_parser.IsSet("-p")) {
             size_t index = 0;
-            for (auto& instruction : code_generator.GetInstructions()) {
+            for (auto& instruction : code_generator.GetResult()) {
                 Log::INFO(String::Pad(std::to_string(index++), 6) +
                           instruction->ToString());
             }
@@ -149,14 +150,13 @@ void Repl() {
             try {
                 lexer.SetFromPtr(line.c_str(), line.length());
                 lexer.AdvanceBuffer(2);
-                lexer.ProcessTokens();
+                lexer.Run();
 
-                parser.SetFromPtr(lexer.tokens.data(), lexer.tokens.size());
-                parser.AdvanceBuffer(2);
-                parser.Parse();
+                parser.SetInput(lexer.tokens.data(), lexer.tokens.size());
+                parser.Run();
 
                 code_generator.Generate(parser.ast.get());
-                vm->LoadInstructions(code_generator.GetInstructions());
+                vm->LoadInstructions(code_generator.GetResult());
                 vm->Run();
                 parser.Reset();
                 lexer.Reset();
@@ -223,10 +223,10 @@ void RonaScriptMain(int argc, char* argv[]) {
         RnCodeGenerator code_generator;
         if (arg_parser.IsSet("-c")) {
             Compile(file, code_generator);
-            instructions = code_generator.GetInstructions();
+            instructions = code_generator.GetResult();
             Write(std::filesystem::path(file.string() + "c"), instructions);
         }
-        if (arg_parser.IsSet("-r")) {
+        if (!arg_parser.IsSet("-r")) {
             Run(instructions);
         }
         //        PrintInstructions(instructions);

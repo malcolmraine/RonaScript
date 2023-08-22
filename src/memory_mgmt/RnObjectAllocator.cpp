@@ -1,7 +1,8 @@
-/******************************************************************************
-* File:
+/*****************************************************************************
+* File: RnObjectAllocator.cpp
 * Description:
 * Author: Malcolm Hall
+* Date: 6/20/22
 * Version: 1
 *
 * MIT License
@@ -23,22 +24,6 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
-*******************************************************************************/
+******************************************************************************/
 
-#pragma once
-
-#include "RnObjectBase.h"
-
-class RnNumericObject : public RnObjectBase<RnNumericUnion> {
-public:
-    ~RnNumericObject() override = default;
-    [[nodiscard]] RnIntNative ToInt() const override;
-    [[nodiscard]] RnFloatNative ToFloat() const override;
-    [[nodiscard]] RnBoolNative ToBool() const override;
-    void SetData(RnIntNative data) override;
-    void SetData(RnFloatNative data) override;
-    void SetData(RnBoolNative data) override;
-    [[nodiscard]] size_t GetByteSize() const override;
-    size_t GetBytes(char* buf) override;
-    void SetBytes(const char* buf, size_t n) override;
-};
+#include "RnObjectAllocator.h"

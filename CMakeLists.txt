@@ -20,5 +20,6 @@ include(src/vm/CMakeLists.txt)
 include(src/builtins/CMakeLists.txt)
 include(src/util/CMakeLists.txt)
 include(src/codegen/CMakeLists.txt)
+include(src/memory_mgmt/CMakeLists.txt)
 
 add_executable(RonaScript src/main.cpp ${RonaScript_SOURCES} src/RnBuildInfo.h)

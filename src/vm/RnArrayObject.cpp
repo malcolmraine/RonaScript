@@ -138,7 +138,7 @@ void RnArrayObject::SetData(RnObject* data) {
 
 /*****************************************************************************/
 RnStringNative RnArrayObject::ToString() const {
-    std::string s;
+    RnStringNative s;
     for (auto& item : GetData()) {
         s.append(item->ToString() + ", ");
     }

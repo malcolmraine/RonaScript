@@ -1,0 +1,64 @@
+
+/******************************************************************************/
+/******************************************************************************/
+module File is
+begin
+    const READONLY: int = 0;
+    const WRITEONLY: int = 1;
+    const READWRITE: int = 2;
+    const APPEND: int = 8;
+    const CREATE: int = 512;
+    const TRUNCATE: int = 1024;
+
+/******************************************************************************/
+class FileObject is
+begin
+    var fd: int = -1;
+    var path: string = "";
+
+    /**************************************************************************/
+    routine construct(var file_path: string): object
+    begin
+        this->path = file_path;
+        return this;
+    end // routine construct
+
+    /**************************************************************************/
+    routine open(var flags: int): bool
+    begin
+        this->fd = _file_open(this->path, flags);
+        print(this->fd);
+        if (this->fd == -1):
+            return false;
+        end
+        return true;
+    end // routine open
+
+    /**************************************************************************/
+    routine close(): void
+    begin
+        _file_fd_close(this->fd);
+    end // routine close
+
+    /**************************************************************************/
+    routine readall(): string
+    begin
+        return _file_fd_read(this->fd, file_size(this->path));
+    end // routine readall
+
+    /**************************************************************************/
+    routine read(var n: int): string
+    begin
+        return _file_fd_read(this->fd, n);
+    end // routine read
+end // class FileObject
+
+/******************************************************************************/
+routine open(var path: string, var flags: int): object
+begin
+    var file: object = FileObject(path);
+    file->open(flags);
+    return file;
+end
+
+end // module File

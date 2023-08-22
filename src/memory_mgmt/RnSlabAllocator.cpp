@@ -1,8 +1,8 @@
 /*****************************************************************************
-* File: RnOS.cpp
+* File: RnSlabAllocator.cpp
 * Description:
 * Author: Malcolm Hall
-* Date: 6/23/22
+* Date: 6/20/22
 * Version: 1
 *
 * MIT License
@@ -26,15 +26,37 @@
 * SOFTWARE.
 ******************************************************************************/
 
-#include "RnOS.h"
-#include <cstdlib>
+#include "RnSlabAllocator.h"
 
 /*****************************************************************************/
-std::string RnOS::GetEnv(const std::string& name) {
-    return std::getenv(name.c_str());
+RnSlabAllocator::RnSlabAllocator(size_t object_size, size_t heap_size, size_t max_size)
+	: RnLinearAllocator(heap_size, max_size), _object_size(object_size)
+{
 }
 
 /*****************************************************************************/
-void RnOS::SetEnv(const std::string& name, const std::string& value) {
-    setenv(name.c_str(), value.c_str(), true);
+RnSlabAllocator::~RnSlabAllocator() = default;
+
+/*****************************************************************************/
+void* RnSlabAllocator::Malloc(size_t n)
+{
+	return RnLinearAllocator::Malloc(n * _object_size);
+}
+
+/*****************************************************************************/
+void* RnSlabAllocator::Calloc(size_t n, int c)
+{
+	return RnLinearAllocator::Calloc(n * _object_size, c);
+}
+
+/*****************************************************************************/
+void* RnSlabAllocator::Realloc(void* data, size_t n)
+{
+	return RnLinearAllocator::Realloc(data, n * _object_size);
+}
+
+/*****************************************************************************/
+void RnSlabAllocator::Free(void* addr)
+{
+	RnLinearAllocator::Free(addr);
 }

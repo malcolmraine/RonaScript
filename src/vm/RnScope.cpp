@@ -42,7 +42,7 @@
 #include "RnStringObject.h"
 #include "RnSymbolTable.h"
 
-std::unordered_map<std::string, void*> RnScope::_handles;
+std::unordered_map<RnStringNative, void*> RnScope::_handles;
 
 /*****************************************************************************/
 RnScope::RnScope(RnScope* parent) : _memory_group(nullptr) {
@@ -107,7 +107,7 @@ RnMemoryGroup* RnScope::GetMemoryGroup() {
 }
 
 /*****************************************************************************/
-void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library,
+void RnScope::LoadLibraryIntoScope(RnScope* scope, const RnStringNative& library,
                                    bool add_data) {
     // This function should really be moved somewhere more appropriate and
     // should do something other than just load the names into the parent scope.
@@ -117,14 +117,14 @@ void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library,
 
     if (handle) {
         //		void (* ListExports)(
-        //			std::vector<std::tuple<std::string, RnType::Type>>&) = nullptr;
+        //			std::vector<std::tuple<RnStringNative, RnType::Type>>&) = nullptr;
         auto ListExports =
-            (void (*)(std::vector<std::tuple<std::string, RnType::Type>>&))dlsym(
+            (void (*)(std::vector<std::tuple<RnStringNative, RnType::Type>>&))dlsym(
                 handle, "LibraryFunctions");
 
         auto LibraryName = (const char* (*)())dlsym(handle, "LibraryName");
         auto LibraryVersion = (const char* (*)())dlsym(handle, "LibraryVersion");
-        std::vector<std::tuple<std::string, RnType::Type>> functions;
+        std::vector<std::tuple<RnStringNative, RnType::Type>> functions;
         ListExports(functions);
         RnArrayNative function_names;
         function_names.reserve(functions.size());
@@ -149,11 +149,11 @@ void RnScope::LoadLibraryIntoScope(RnScope* scope, const std::string& library,
             scope->StoreObject(RnConstStore::InternValue("__exports__"), name_list);
 
             auto name_obj = RnObject::Create(RnType::RN_STRING);
-            name_obj->SetData(static_cast<std::string>(LibraryName()));
+            name_obj->SetData(static_cast<RnStringNative>(LibraryName()));
             scope->StoreObject(RnConstStore::InternValue("__name__"), name_obj);
 
             auto version_obj = RnObject::Create(RnType::RN_STRING);
-            version_obj->SetData(static_cast<std::string>(LibraryVersion()));
+            version_obj->SetData(static_cast<RnStringNative>(LibraryVersion()));
             scope->StoreObject(RnConstStore::InternValue("__version__"), version_obj);
         }
     } else {

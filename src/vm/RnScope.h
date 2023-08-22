@@ -57,7 +57,7 @@ public:
     [[nodiscard]] RnScope* GetParent() const;
     [[nodiscard]] RnMemoryGroup* GetMemoryGroup();
 
-    static void LoadLibraryIntoScope(RnScope* scope, const std::string& library,
+    static void LoadLibraryIntoScope(RnScope* scope, const RnStringNative& library,
                                      bool add_data = false);
     RnObject* MakeLocal(RnType::Type type);
     void Reset();
@@ -86,6 +86,6 @@ protected:
 
 private:
     int _linked_scope_count = 0;
-    static std::unordered_map<std::string, void*> _handles;
+    static std::unordered_map<RnStringNative, void*> _handles;
     std::unordered_map<RnIntNative, RnClassObject*> _namespaces;
 };

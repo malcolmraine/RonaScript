@@ -1,10 +1,29 @@
 /*****************************************************************************
-* File:
+* File: Parser.h
 * Description:
 * Author: Malcolm Hall
-* Date:
+* Date: 6/23/22
 * Version: 1
 *
+* MIT License
+*
+* Copyright (c) 2021 Malcolm Hall
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
 ******************************************************************************/
 
 #pragma once
@@ -15,6 +34,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
+#include "../common/RnCompilerPhase.h"
 #include "../common/RnType.h"
 #include "../lexer/Token.h"
 #include "../util/RnSequencer.h"
@@ -60,7 +80,8 @@ enum ParserState {
     FUNC_DECL_CONTEXT,
 };
 
-class Parser : public RnSequencer<Token*, TokenType> {
+class Parser : public RnCompilerPhase<Token*, std::shared_ptr<Ast>>,
+               public RnSequencer<Token*, TokenType> {
 public:
     Parser();
     ~Parser() override;
@@ -80,9 +101,7 @@ public:
     std::shared_ptr<ExitStmt> ParseExitStmt();
     std::shared_ptr<AstNode> ParseAssignmentStatement(
         const std::shared_ptr<AstNode>& rexpr = nullptr);
-    std::shared_ptr<ConditionalStmt> ParseIfStmt();
-    std::shared_ptr<ConditionalStmt> ParseElifStmt();
-    std::shared_ptr<ConditionalStmt> ParseElseStmt();
+    std::shared_ptr<ConditionalStmt> ParseConditionalStmt();
     std::shared_ptr<ScopeNode> ParseScope();
     std::shared_ptr<FuncCall> ParseFuncCall(
         const std::shared_ptr<AstNode>& expr = nullptr);
@@ -108,7 +127,11 @@ public:
     std::string ItemToString(Token* token) override;
     void HandleUnexpectedItem() override;
     std::shared_ptr<RnTypeComposite> ParseType();
-    void Reset();
+    void Reset() override;
+    void Run() override;
+    void SetInput(Token* const* input, size_t size) {
+        SetFromPtr(input, size);
+    }
 
 public:
     std::string working_dir = ".";
@@ -120,6 +143,7 @@ private:
     std::shared_ptr<AstNode> AddCurrentFileInfo(std::shared_ptr<AstNode> node);
 
 private:
+    size_t _scope_count = 0;  // Simple way to check if we are missing scope reversions
     std::shared_ptr<ScopeNode> _current_scope = nullptr;
     std::unordered_set<TokenType> unary_lookback_set = {
         TokenType::EQUAL, TokenType::R_PARAN, TokenType::COMMA};
@@ -131,5 +155,5 @@ private:
     std::unordered_map<std::string, std::shared_ptr<RnTypeComposite>>
         _user_defined_type_map;
     size_t _intern_count =
-        0;  // Used to track how much space we shoul reserve in the const internment later
+        0;  // Used to track how much space we should reserve in the const internment later
 };

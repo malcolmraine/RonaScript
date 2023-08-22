@@ -1,7 +1,8 @@
-/******************************************************************************
-* File:
+/*****************************************************************************
+* File: RnSlabAllocator.h
 * Description:
 * Author: Malcolm Hall
+* Date: 6/20/22
 * Version: 1
 *
 * MIT License
@@ -23,22 +24,21 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
-*******************************************************************************/
+******************************************************************************/
 
 #pragma once
 
-#include "RnObjectBase.h"
+#include "RnLinearAllocator.h"
 
-class RnNumericObject : public RnObjectBase<RnNumericUnion> {
-public:
-    ~RnNumericObject() override = default;
-    [[nodiscard]] RnIntNative ToInt() const override;
-    [[nodiscard]] RnFloatNative ToFloat() const override;
-    [[nodiscard]] RnBoolNative ToBool() const override;
-    void SetData(RnIntNative data) override;
-    void SetData(RnFloatNative data) override;
-    void SetData(RnBoolNative data) override;
-    [[nodiscard]] size_t GetByteSize() const override;
-    size_t GetBytes(char* buf) override;
-    void SetBytes(const char* buf, size_t n) override;
+class RnSlabAllocator : public RnLinearAllocator {
+ public:
+	explicit RnSlabAllocator(size_t object_size, size_t heap_size, size_t max_size);
+	~RnSlabAllocator();
+	[[nodiscard]] void* Malloc(size_t n) override;
+	[[nodiscard]] void* Calloc(size_t n, int c) override;
+	[[nodiscard]] void* Realloc(void* data, size_t n) override;
+	void Free(void* addr) override;
+
+protected:
+	size_t _object_size = 0;
 };

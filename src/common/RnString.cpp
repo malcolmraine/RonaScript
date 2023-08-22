@@ -1,7 +1,8 @@
-/******************************************************************************
-* File:
+/*****************************************************************************
+* File: RnString.cpp
 * Description:
 * Author: Malcolm Hall
+* Date: 6/23/22
 * Version: 1
 *
 * MIT License
@@ -23,22 +24,21 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
-*******************************************************************************/
+******************************************************************************/
 
-#pragma once
+#include "RnString.h"
 
-#include "RnObjectBase.h"
+/*****************************************************************************/
+RnString RnString::substr(size_t pos, size_t len) const {
+	if (pos + len > _length) {
+		throw std::runtime_error("Out of bounds substring");
+	}
+	return {_data + pos, len};
+}
 
-class RnNumericObject : public RnObjectBase<RnNumericUnion> {
-public:
-    ~RnNumericObject() override = default;
-    [[nodiscard]] RnIntNative ToInt() const override;
-    [[nodiscard]] RnFloatNative ToFloat() const override;
-    [[nodiscard]] RnBoolNative ToBool() const override;
-    void SetData(RnIntNative data) override;
-    void SetData(RnFloatNative data) override;
-    void SetData(RnBoolNative data) override;
-    [[nodiscard]] size_t GetByteSize() const override;
-    size_t GetBytes(char* buf) override;
-    void SetBytes(const char* buf, size_t n) override;
-};
+/*****************************************************************************/
+size_t RnString::find(const RnString& str) const {
+	// Simple hack to get this working while a full implementation is done
+	std::string s(_data);
+	return s.find(str.c_str());
+}
