@@ -67,12 +67,17 @@ public:
         auto current_heap = _allocator.FirstHeap();
         while (current_heap) {
             auto current_block = reinterpret_cast<MemoryBlock*>(current_heap->memory);
-            while (current_block && !current_block->available) {
-                auto obj = reinterpret_cast<T*>(BLOCK_MEMORY_ADDR(current_block));
-                if (fn(obj)) {
-                    FreeObject(obj);
+            while (current_block) {
+                if (!current_block->available) {
+                    auto obj = reinterpret_cast<T*>(BLOCK_MEMORY_ADDR(current_block));
+                    if (fn(obj)) {
+                        FreeObject(obj);
+                    }
                 }
                 current_block = NEXT_BLOCK(current_block);
+                if (!_allocator.IsAddressWithinAllocator(BLOCK_MEMORY_ADDR(current_block))) {
+                    break;
+                }
             }
             current_heap = current_heap->next;
         }
