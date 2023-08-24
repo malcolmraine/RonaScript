@@ -178,3 +178,11 @@ bool RnArrayObject::ContentsEqual(const RnArrayNative& data) {
 RnObject* RnArrayObject::At(RnIntNative index) {
     return _data.at(index);
 }
+
+/*****************************************************************************/
+void RnArrayObject::Mark() {
+    RnObject::Mark();
+    for (auto obj : _data) {
+        obj->Mark();
+    }
+}

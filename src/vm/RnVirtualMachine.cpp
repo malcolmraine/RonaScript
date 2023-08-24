@@ -447,7 +447,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 }
 
                 auto instance = dynamic_cast<RnClassObject*>(
-                    _memory_manager->CreateObject(RnType::RN_CLASS_INSTANCE));
+                    RnMemoryManager::CreateObject(RnType::RN_CLASS_INSTANCE));
                 GetScope()->GetMemoryGroup()->AddObject(instance);
                 instance->ToObject()->SetParent(class_obj->ToObject());
                 class_obj->CopySymbols(instance->GetScope());
