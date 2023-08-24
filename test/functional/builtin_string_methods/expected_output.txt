@@ -1,4 +1,3 @@
-
 --------------------------------------------------------
 str_lower
 ABCDEFGHIJKLMNOPQRSTUVQXYZ  ->  abcdefghijklmnopqrstuvqxyz
@@ -25,12 +24,12 @@ str_snakecase
 
 --------------------------------------------------------
 str_split
-1,2,3,4,5  ->  [1, 2, 3, 4, 5]
-1-2-3-4-5  ->  [1, 2, 3, 4, 5]
-1-2-3-4-5  ->  [1-2-3-4-5]
-This is a test  ->  [This, is, a, test]
-splitallchars -> [s, p, l, i, t, a, l, l, c, h, a, r, s]
-splitallchars -> [s, p, l, i, t, a, l, l, c, h, a, r, s]
+1,2,3,4,5  ->  ['1', '2', '3', '4', '5']
+1-2-3-4-5  ->  ['1', '2', '3', '4', '5']
+1-2-3-4-5  ->  ['1-2-3-4-5']
+This is a test  ->  ['This', 'is', 'a', 'test']
+splitallchars -> ['s', 'p', 'l', 'i', 't', 'a', 'l', 'l', 'c', 'h', 'a', 'r', 's']
+splitallchars -> ['s', 'p', 'l', 'i', 't', 'a', 'l', 'l', 'c', 'h', 'a', 'r', 's']
 
 --------------------------------------------------------
 str_substr
@@ -54,5 +53,5 @@ onetwothree -> (two) false
 --------------------------------------------------------
 str_join
 [1, 2, 3, 4, 5] -> 12345
-[this, is, a, test] -> thisisatest
-[] -> 
+['this', 'is', 'a', 'test'] -> thisisatest
+[] ->
