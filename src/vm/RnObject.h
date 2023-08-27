@@ -96,6 +96,11 @@ public:
     }
 
     /*************************************************************************/
+    virtual inline void UnMark() {
+        _is_marked = false;
+    }
+
+    /*************************************************************************/
     [[nodiscard]] inline bool IsMarked() const {
         return _is_marked;
     }

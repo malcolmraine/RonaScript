@@ -62,16 +62,19 @@ public:
     }
 
     /*************************************************************************/
-    template <typename FUNC>
-    void FreeIf(FUNC fn) {
+    template <typename FUNC1, typename FUNC2>
+    void FreeIf(FUNC1 fn1, FUNC2 fn2) {
+        // If free object if fn1 returns true, otherwise run fn2
         auto current_heap = _allocator.FirstHeap();
         while (current_heap) {
             auto current_block = reinterpret_cast<MemoryBlock*>(current_heap->memory);
             while (current_block) {
                 if (!current_block->available) {
                     auto obj = reinterpret_cast<T*>(BLOCK_MEMORY_ADDR(current_block));
-                    if (fn(obj)) {
+                    if (fn1(obj)) {
                         FreeObject(obj);
+                    } else {
+                        fn2(obj);
                     }
                 }
                 current_block = NEXT_BLOCK(current_block);

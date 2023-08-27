@@ -138,37 +138,22 @@ void RnMemoryManager::GCMark() {
 
 /*****************************************************************************/
 void RnMemoryManager::GCSweep() {
-    bool_allocator.FreeIf([](auto object) {
+    auto checkIfMarked = [](RnObject* object) {
         return !object->IsMarked();
-    });
+    };
 
-    int_allocator.FreeIf([](auto object) {
-        return !object->IsMarked();
-    });
+    auto unmarkObject = [](RnObject* object) {
+        object->UnMark();
+    };
 
-    float_allocator.FreeIf([](auto object) {
-        return !object->IsMarked();
-    });
-
-    string_allocator.FreeIf([](auto object) {
-        return !object->IsMarked();
-    });
-
-    class_allocator.FreeIf([](auto object) {
-        return !object->IsMarked();
-    });
-
-    func_allocator.FreeIf([](auto object) {
-        return !object->IsMarked();
-    });
-
-    null_allocator.FreeIf([](auto object) {
-        return !object->IsMarked();
-    });
-
-    any_allocator.FreeIf([](auto object) {
-        return !object->IsMarked();
-    });
+    int_allocator.FreeIf(checkIfMarked, unmarkObject);
+    float_allocator.FreeIf(checkIfMarked, unmarkObject);
+    string_allocator.FreeIf(checkIfMarked, unmarkObject);
+    class_allocator.FreeIf(checkIfMarked, unmarkObject);
+    func_allocator.FreeIf(checkIfMarked, unmarkObject);
+    null_allocator.FreeIf(checkIfMarked, unmarkObject);
+    null_allocator.FreeIf(checkIfMarked, unmarkObject);
+    any_allocator.FreeIf(checkIfMarked, unmarkObject);
 }
 
 /*****************************************************************************/
@@ -182,11 +167,11 @@ void RnMemoryManager::GCMarkMemoryGroup(RnMemoryGroup* memory_group) {
         return;
     }
 
-    for (auto& obj : memory_group->GetObjects()) {
+    for (auto obj : memory_group->GetObjects()) {
         obj->Mark();
     }
 
-    for (auto& group : memory_group->GetChildGroups()) {
+    for (auto group : memory_group->GetChildGroups()) {
         GCMarkMemoryGroup(group);
     }
 }
