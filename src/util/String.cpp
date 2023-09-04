@@ -31,7 +31,7 @@
 #include <unordered_set>
 
 /*****************************************************************************/
-std::string String::Join(const std::string& s, const std::vector<std::string>& v) {
+std::string String::Join(const std::vector<std::string>& v, const std::string& s) {
     if (v.size() == 1) {
         return v[0];
     } else {
@@ -324,7 +324,7 @@ std::string String::SimpleTitleCase(const std::string& s)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-std::string String::AdvancedTitleCase(const std::string& s, bool useExemptions = true)
+std::string String::AdvancedTitleCase(const std::string& s, bool useExemptions)
 {
     // More advanced title case conversion that takes short words and
     // hyphens into account
