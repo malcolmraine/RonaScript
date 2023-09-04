@@ -24,18 +24,7 @@ include(src/memory_mgmt/CMakeLists.txt)
 
 SET( TARGET_RONASCRIPT_MAIN RonaScript )
 
-add_executable(${TARGET_RONASCRIPT_MAIN}
-        src/main.cpp
-        ${RonaScript_INCLUDES_UTIL}
-        ${RonaScript_INCLUDES_VM}
-        ${RonaScript_INCLUDES_PARSER}
-        ${RonaScript_INCLUDES_AST}
-        ${RonaScript_INCLUDES_MEMORY_MGMT}
-        ${RonaScript_INCLUDES_LEXER}
-        ${RonaScript_INCLUDES_COMMON}
-        ${RonaScript_INCLUDES_CODEGEN}
-        ${RonaScript_INCLUDES_BUILTINS}
-        ${RonaScript_INCLUDES_UTIL})
+add_executable(${TARGET_RONASCRIPT_MAIN} src/main.cpp)
 target_link_libraries(
         ${TARGET_RONASCRIPT_MAIN}
         RonaScript_ALIB_VM
