@@ -7,5 +7,9 @@
 #
 ###############################################################################
 
-file(GLOB files ${CMAKE_CURRENT_LIST_DIR}/*.cpp ${CMAKE_CURRENT_LIST_DIR}/*.h)
-list(APPEND RonaScript_SOURCES_MEMORY_MGMT ${files})
+file(GLOB source_files ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
+file(GLOB include_files ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
+list(APPEND RonaScript_SOURCES_MEMORY_MGMT ${source_files})
+list(APPEND RonaScript_INCLUDES_MEMORY_MGMT ${include_files})
+
+ADD_LIBRARY(RonaScript_ALIB_MEMORY_MGMT STATIC ${RonaScript_SOURCES_MEMORY_MGMT})

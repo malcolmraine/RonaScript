@@ -22,21 +22,37 @@ include(src/util/CMakeLists.txt)
 include(src/codegen/CMakeLists.txt)
 include(src/memory_mgmt/CMakeLists.txt)
 
-add_executable(RonaScript
+SET( TARGET_RONASCRIPT_MAIN RonaScript )
+
+add_executable(${TARGET_RONASCRIPT_MAIN}
         src/main.cpp
-        ${RonaScript_SOURCES_UTIL}
-        ${RonaScript_SOURCES_VM}
-        ${RonaScript_SOURCES_PARSER}
-        ${RonaScript_SOURCES_AST}
-        ${RonaScript_SOURCES_MEMORY_MGMT}
-        ${RonaScript_SOURCES_LEXER}
-        ${RonaScript_SOURCES_COMMON}
-        ${RonaScript_SOURCES_CODEGEN}
-        ${RonaScript_SOURCES_BUILTINS})
-target_compile_options(RonaScript PUBLIC -Werror)
+        ${RonaScript_INCLUDES_UTIL}
+        ${RonaScript_INCLUDES_VM}
+        ${RonaScript_INCLUDES_PARSER}
+        ${RonaScript_INCLUDES_AST}
+        ${RonaScript_INCLUDES_MEMORY_MGMT}
+        ${RonaScript_INCLUDES_LEXER}
+        ${RonaScript_INCLUDES_COMMON}
+        ${RonaScript_INCLUDES_CODEGEN}
+        ${RonaScript_INCLUDES_BUILTINS}
+        ${RonaScript_INCLUDES_UTIL})
+target_link_libraries(
+        ${TARGET_RONASCRIPT_MAIN}
+        RonaScript_ALIB_VM
+        RonaScript_ALIB_PARSER
+        RonaScript_ALIB_AST
+        RonaScript_ALIB_MEMORY_MGMT
+        RonaScript_ALIB_LEXER
+        RonaScript_ALIB_COMMON
+        RonaScript_ALIB_CODEGEN
+        RonaScript_ALIB_BUILTINS
+        RonaScript_ALIB_UTIL)
+target_compile_options(${TARGET_RONASCRIPT_MAIN} PUBLIC -Werror)
 
 ###############################################################################
 ###############################################################################
+SET( TARGET_RONASCRIPT_TEST RonaScript_Tests )
+
 Include(FetchContent)
 
 FetchContent_Declare(
@@ -47,9 +63,9 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(RonaScript_Tests
+add_executable(${TARGET_RONASCRIPT_TEST}
         test/unit/RnTestRunner.cpp
         src/util/test/Test_String.cpp
-        ${RonaScript_SOURCE_UTIL})
-target_link_libraries(RonaScript_Tests PRIVATE Catch2::Catch2WithMain)
-target_compile_options(RonaScript_Tests PUBLIC -Werror)
+        ${RonaScript_INCLUDE_UTIL})
+target_link_libraries(${TARGET_RONASCRIPT_TEST} PRIVATE Catch2::Catch2WithMain RonaScript_ALIB_UTIL)
+target_compile_options(${TARGET_RONASCRIPT_TEST} PUBLIC -Werror)
