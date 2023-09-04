@@ -8,10 +8,10 @@
 ###############################################################################
 cmake_minimum_required(VERSION 3.20)
 project(RonaScript)
-
 set(CMAKE_CXX_STANDARD 20)
-add_compile_options(-Werror)
 
+###############################################################################
+###############################################################################
 include(src/common/CMakeLists.txt)
 include(src/lexer/CMakeLists.txt)
 include(src/parser/CMakeLists.txt)
@@ -22,4 +22,39 @@ include(src/util/CMakeLists.txt)
 include(src/codegen/CMakeLists.txt)
 include(src/memory_mgmt/CMakeLists.txt)
 
-add_executable(RonaScript src/main.cpp ${RonaScript_SOURCES} src/RnBuildInfo.h)
+SET( TARGET_RONASCRIPT_MAIN RonaScript )
+
+add_executable(${TARGET_RONASCRIPT_MAIN} src/main.cpp)
+target_link_libraries(
+        ${TARGET_RONASCRIPT_MAIN}
+        RN_ALIB_VM
+        RN_ALIB_PARSER
+        RN_ALIB_AST
+        RN_ALIB_MEMORY_MGMT
+        RN_ALIB_LEXER
+        RN_ALIB_COMMON
+        RN_ALIB_CODEGEN
+        RN_ALIB_BUILTINS
+        RN_ALIB_UTIL)
+target_compile_options(${TARGET_RONASCRIPT_MAIN} PUBLIC -Werror)
+
+###############################################################################
+###############################################################################
+SET( TARGET_RONASCRIPT_TEST RonaScript_Tests )
+
+Include(FetchContent)
+
+FetchContent_Declare(
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG        v3.4.0
+)
+
+FetchContent_MakeAvailable(Catch2)
+
+add_executable(${TARGET_RONASCRIPT_TEST}
+        test/unit/RnTestRunner.cpp
+        src/util/test/Test_String.cpp
+        ${RN_INCLUDES_UTIL})
+target_link_libraries(${TARGET_RONASCRIPT_TEST} PRIVATE Catch2::Catch2WithMain RN_ALIB_UTIL)
+target_compile_options(${TARGET_RONASCRIPT_TEST} PUBLIC -Werror)

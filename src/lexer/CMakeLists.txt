@@ -7,5 +7,9 @@
 #
 ###############################################################################
 
-file(GLOB files ${CMAKE_CURRENT_LIST_DIR}/*.cpp ${CMAKE_CURRENT_LIST_DIR}/*.h)
-list(APPEND RonaScript_SOURCES ${files})
+file(GLOB source_files ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
+file(GLOB include_files ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
+list(APPEND RN_SOURCES_LEXER ${source_files})
+list(APPEND RN_INCLUDES_LEXER ${include_files})
+
+ADD_LIBRARY(RN_ALIB_LEXER STATIC ${RN_SOURCES_LEXER})

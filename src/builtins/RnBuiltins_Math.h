@@ -31,12 +31,12 @@
 #include "RnBuiltins.h"
 
 #undef RN_BUILTIN_MATH_REGISTRATIONS
-#define RN_BUILTIN_MATH_REGISTRATIONS \
-    RN_BUILTIN_FUNC(RnBuiltins_Math, sum, RnType::RN_FLOAT, 1) \
-    RN_BUILTIN_FUNC(RnBuiltins_Math, pow, RnType::RN_FLOAT, 2) \
-    RN_BUILTIN_FUNC(RnBuiltins_Math, mod, RnType::RN_INT, 2) \
-    RN_BUILTIN_FUNC(RnBuiltins_Math, sqrt, RnType::RN_FLOAT, 2)     \
-    RN_BUILTIN_FUNC(RnBuiltins_Math, cbrt, RnType::RN_FLOAT, 2) \
+#define RN_BUILTIN_MATH_REGISTRATIONS                            \
+    RN_BUILTIN_FUNC(RnBuiltins_Math, sum, RnType::RN_FLOAT, 1)   \
+    RN_BUILTIN_FUNC(RnBuiltins_Math, pow, RnType::RN_FLOAT, 2)   \
+    RN_BUILTIN_FUNC(RnBuiltins_Math, mod, RnType::RN_INT, 2)     \
+    RN_BUILTIN_FUNC(RnBuiltins_Math, sqrt, RnType::RN_FLOAT, 2)  \
+    RN_BUILTIN_FUNC(RnBuiltins_Math, cbrt, RnType::RN_FLOAT, 2)  \
     RN_BUILTIN_FUNC(RnBuiltins_Math, randf, RnType::RN_FLOAT, 2) \
     RN_BUILTIN_FUNC(RnBuiltins_Math, randint, RnType::RN_INT, 2) \
     RN_BUILTIN_FUNC(RnBuiltins_Math, normal, RnType::RN_ARRAY, 1)

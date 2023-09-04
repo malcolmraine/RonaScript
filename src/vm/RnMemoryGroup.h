@@ -44,11 +44,11 @@ public:
     [[nodiscard]] RnMemoryGroup* GetParent() const;
     void SetParent(RnMemoryGroup* parent);
 
-    [[nodiscard]] RnArrayNative& GetObjects() {
+    [[nodiscard]] RnArrayNative GetObjects() {
         return _objects;
     }
 
-    [[nodiscard]] std::vector<RnMemoryGroup*>& GetChildGroups() {
+    [[nodiscard]] std::vector<RnMemoryGroup*> GetChildGroups() {
         return _child_groups;
     }
 

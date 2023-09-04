@@ -10,8 +10,8 @@
 #pragma once
 
 #include <string>
-#include "AstNode.h"
 #include "Ast.h"
+#include "AstNode.h"
 #include "Module.h"
 #include "NodeType.h"
 

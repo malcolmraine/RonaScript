@@ -51,7 +51,7 @@ public:
     static RnScope* CreateScope();
     static void DestroyScope(RnScope* scope);
     void GCMark();
-    void GCSweep();
+    static void GCSweep();
     void SetRootMemoryGroup(RnMemoryGroup* group);
 
 private:

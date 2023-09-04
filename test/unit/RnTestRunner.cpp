@@ -1,13 +1,13 @@
 /*****************************************************************************
-* File: RnCodeGenerator.cpp
+* File: RnTestRunner.cpp
 * Description:
 * Author: Malcolm Hall
-* Date: 6/23/22
+* Date: 9/4/23
 * Version: 1
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,25 +24,7 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
-******************************************************************************/
+*****************************************************************************/
 
-#pragma once
+#include <catch2/catch_test_macros.hpp>
 
-#include <memory>
-#include "../common/RnCompilerPhase.h"
-#include "../common/RnInternment.h"
-#include "RnCodeGenVisitor.h"
-
-class Ast;
-
-class RnCodeGenerator : public RnCompilerPhase<Ast*, InstructionBlock> {
-public:
-    RnCodeGenerator();
-    ~RnCodeGenerator() override;
-    void Generate(Ast* ast);
-    void Optimize();
-    void Run() override;
-
-private:
-    RnCodeGenVisitor visitor;
-};

@@ -779,7 +779,7 @@ std::shared_ptr<ScopeNode> Parser::ParseScope() {
     auto previous_scope_count = _scope_count;
     Parse();
     RevertScope();
-//    assert(_scope_count == previous_scope_count);
+    //    assert(_scope_count == previous_scope_count);
 
     if (!Current() && _data_idx > _data_size) {
         Log::WARN("Out of bounds parser index");

@@ -31,16 +31,16 @@
 #include "RnBuiltins.h"
 
 #undef RN_BUILTIN_ARRAY_REGISTRATIONS
-#define RN_BUILTIN_ARRAY_REGISTRATIONS \
-    RN_BUILTIN_FUNC(RnBuiltins_Array, filter, RnType::RN_ARRAY, 1) \
-    RN_BUILTIN_FUNC(RnBuiltins_Array, union, RnType::RN_ARRAY, 1) \
-    RN_BUILTIN_FUNC(RnBuiltins_Array, intersect, RnType::RN_ARRAY, 1) \
-    RN_BUILTIN_FUNC(RnBuiltins_Array, count, RnType::RN_INT, 1)     \
+#define RN_BUILTIN_ARRAY_REGISTRATIONS                                  \
+    RN_BUILTIN_FUNC(RnBuiltins_Array, filter, RnType::RN_ARRAY, 1)      \
+    RN_BUILTIN_FUNC(RnBuiltins_Array, union, RnType::RN_ARRAY, 1)       \
+    RN_BUILTIN_FUNC(RnBuiltins_Array, intersect, RnType::RN_ARRAY, 1)   \
+    RN_BUILTIN_FUNC(RnBuiltins_Array, count, RnType::RN_INT, 1)         \
     RN_BUILTIN_FUNC(RnBuiltins_Array, array_merge, RnType::RN_ARRAY, 1) \
-    RN_BUILTIN_FUNC(RnBuiltins_Array, array_push, RnType::RN_VOID, 1) \
-    RN_BUILTIN_FUNC(RnBuiltins_Array, array_pop, RnType::RN_ANY, 1) \
-    RN_BUILTIN_FUNC(RnBuiltins_Array, array_zeros, RnType::RN_ARRAY, 1)     \
-    RN_BUILTIN_FUNC(RnBuiltins_Array, array_fill, RnType::RN_ARRAY, 1) \
+    RN_BUILTIN_FUNC(RnBuiltins_Array, array_push, RnType::RN_VOID, 1)   \
+    RN_BUILTIN_FUNC(RnBuiltins_Array, array_pop, RnType::RN_ANY, 1)     \
+    RN_BUILTIN_FUNC(RnBuiltins_Array, array_zeros, RnType::RN_ARRAY, 1) \
+    RN_BUILTIN_FUNC(RnBuiltins_Array, array_fill, RnType::RN_ARRAY, 1)  \
     RN_BUILTIN_FUNC(RnBuiltins_Array, sequence, RnType::RN_ARRAY, 1)
 
 class RnScope;

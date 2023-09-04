@@ -28,8 +28,8 @@
 
 #pragma once
 
-#include "RnNumericObject.h"
 #include <cmath>
+#include "RnNumericObject.h"
 
 class RnIntObject : public RnNumericObject {
 public:

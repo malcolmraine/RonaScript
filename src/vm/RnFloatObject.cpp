@@ -61,5 +61,5 @@ auto RnFloatObject::ToString() const -> RnStringNative {
     if (str.ends_with('.')) {
         str.append("0");
     }
-    return RnStringNative (str);
+    return RnStringNative(str);
 }

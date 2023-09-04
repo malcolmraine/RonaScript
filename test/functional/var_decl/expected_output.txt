@@ -1,11 +1,11 @@
 1.099
 199842
 Test String
-[1.099, 199842, Another string]
+[1.099, 199842, 'Another string']
 1.099
 199842
 Another string
-[219626.358, 439252.716, Another string]
+[219626.358, 439252.716, 'Another string']
 This is a test
 true
 false

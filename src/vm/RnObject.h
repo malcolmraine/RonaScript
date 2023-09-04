@@ -91,12 +91,12 @@ public:
     virtual void SetBytes(const char* buf, size_t n) = 0;
 
     /*************************************************************************/
-    inline void Mark() {
+    virtual inline void Mark() {
         _is_marked = true;
     }
 
     /*************************************************************************/
-    inline void Unmark() {
+    virtual inline void UnMark() {
         _is_marked = false;
     }
 

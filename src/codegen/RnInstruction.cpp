@@ -66,7 +66,8 @@ auto RnInstruction::ToString() -> std::string {
 
     switch (_opcode) {
         case OP_LOAD_LITERAL:
-            arg1_str = std::string(RnConstStore::GetInternedObject(_arg1)->ToString().c_str());
+            arg1_str =
+                std::string(RnConstStore::GetInternedObject(_arg1)->ToString().c_str());
             break;
         case OP_ATTR_ACCESS:
             arg1_str = RnConstStore::GetInternedString(_arg1);

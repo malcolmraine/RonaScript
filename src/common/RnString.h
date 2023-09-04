@@ -46,10 +46,8 @@ public:
     RnString(char* cstr, size_t cnt = std::string::npos) {
         if (cnt == std::string::npos) {
             SetData(cstr, strlen(cstr));
-        } else
-        {
-            if (cnt > std::strlen(cstr))
-            {
+        } else {
+            if (cnt > std::strlen(cstr)) {
                 throw std::runtime_error("Invalid substring length");
             }
             SetData(cstr, cnt);
@@ -59,10 +57,8 @@ public:
     RnString(const char* cstr, size_t cnt = std::string::npos) {
         if (cnt == std::string::npos) {
             SetData(cstr, strlen(cstr));
-        } else
-        {
-            if (cnt > std::strlen(cstr))
-            {
+        } else {
+            if (cnt > std::strlen(cstr)) {
                 throw std::runtime_error("Invalid substring length");
             }
             SetData(cstr, cnt);

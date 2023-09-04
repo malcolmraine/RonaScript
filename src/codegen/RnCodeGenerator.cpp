@@ -42,12 +42,11 @@ void RnCodeGenerator::Generate(Ast* ast) {
     for (auto& module : ast->modules) {
         InstructionBlock module_instructions = visitor.GeneralVisit(module.second);
         _result.insert(_result.end(), module_instructions.begin(),
-                            module_instructions.end());
+                       module_instructions.end());
     }
 
     InstructionBlock root_instructions = visitor.GeneralVisit(ast->root);
-    _result.insert(_result.end(), root_instructions.begin(),
-                        root_instructions.end());
+    _result.insert(_result.end(), root_instructions.begin(), root_instructions.end());
     _result.emplace_back(new RnInstruction(OP_EXIT, 0));
 }
 
@@ -55,6 +54,6 @@ void RnCodeGenerator::Generate(Ast* ast) {
 void RnCodeGenerator::Optimize() {}
 
 /*****************************************************************************/
-void RnCodeGenerator::Run()  {
+void RnCodeGenerator::Run() {
     Generate(_input);
 }

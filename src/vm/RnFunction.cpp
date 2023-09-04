@@ -83,6 +83,7 @@ void RnFunction::Call(const RnArrayNative& args, RnObject* ret_val) {}
 /*****************************************************************************/
 void RnFunction::CreateArgument(RnIntNative key, RnType::Type type, size_t index) {
     auto obj = RnObject::Create(type);
+    obj->Mark();
     _argument_scope->StoreObject(key, obj);
     _argument_index_map[index] = key;
 }

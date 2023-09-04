@@ -1,8 +1,8 @@
 /*****************************************************************************
-* File: RnCodeGenerator.cpp
+* File: RnVirtualMachine.cpp
 * Description:
 * Author: Malcolm Hall
-* Date: 6/23/22
+* Date: 6/19/22
 * Version: 1
 *
 * MIT License
@@ -24,25 +24,14 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
-******************************************************************************/
+*****************************************************************************/
 
-#pragma once
+#include <catch2/catch_test_macros.hpp>
+#include "../String.h"
 
-#include <memory>
-#include "../common/RnCompilerPhase.h"
-#include "../common/RnInternment.h"
-#include "RnCodeGenVisitor.h"
-
-class Ast;
-
-class RnCodeGenerator : public RnCompilerPhase<Ast*, InstructionBlock> {
-public:
-    RnCodeGenerator();
-    ~RnCodeGenerator() override;
-    void Generate(Ast* ast);
-    void Optimize();
-    void Run() override;
-
-private:
-    RnCodeGenVisitor visitor;
-};
+TEST_CASE("String::Join") {
+    REQUIRE(String::Join({"1", "2", "3"}) == std::string("123"));
+    REQUIRE(String::Join({"1", "2", "3"}, ", ") == std::string("1, 2, 3"));
+    REQUIRE(String::Join({"", "", ""}, ", ") == std::string(", , "));
+    REQUIRE(String::Join({"", "", ""}, "") == std::string(""));
+}
