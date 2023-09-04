@@ -49,7 +49,7 @@
 #include "RnOpCode.h"
 
 // @formatter:off
-#include "../RnBuildInfo.h"
+#include "../common/RnBuildInfo.h"
 
 RnVirtualMachine* RnVirtualMachine::_instance = nullptr;
 RnIntNative RnVirtualMachine::_object_this_key = -1;

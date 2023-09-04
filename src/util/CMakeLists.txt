@@ -8,4 +8,4 @@
 ###############################################################################
 
 file(GLOB files ${CMAKE_CURRENT_LIST_DIR}/*.cpp ${CMAKE_CURRENT_LIST_DIR}/*.h)
-list(APPEND RonaScript_util ${files})
+list(APPEND RonaScript_SOURCES_UTIL ${files})
