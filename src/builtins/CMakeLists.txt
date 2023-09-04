@@ -9,7 +9,7 @@
 
 file(GLOB source_files ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 file(GLOB include_files ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
-list(APPEND RonaScript_SOURCES_BUILTINS ${source_files})
-list(APPEND RonaScript_INCLUDES_BUILTINS ${include_files})
+list(APPEND RN_SOURCES_BUILTINS ${source_files})
+list(APPEND RN_INCLUDES_BUILTINS ${include_files})
 
-ADD_LIBRARY(RonaScript_ALIB_BUILTINS STATIC ${RonaScript_SOURCES_BUILTINS})
+ADD_LIBRARY(RN_ALIB_BUILTINS STATIC ${RN_SOURCES_BUILTINS})

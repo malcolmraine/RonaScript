@@ -27,15 +27,15 @@ SET( TARGET_RONASCRIPT_MAIN RonaScript )
 add_executable(${TARGET_RONASCRIPT_MAIN} src/main.cpp)
 target_link_libraries(
         ${TARGET_RONASCRIPT_MAIN}
-        RonaScript_ALIB_VM
-        RonaScript_ALIB_PARSER
-        RonaScript_ALIB_AST
-        RonaScript_ALIB_MEMORY_MGMT
-        RonaScript_ALIB_LEXER
-        RonaScript_ALIB_COMMON
-        RonaScript_ALIB_CODEGEN
-        RonaScript_ALIB_BUILTINS
-        RonaScript_ALIB_UTIL)
+        RN_ALIB_VM
+        RN_ALIB_PARSER
+        RN_ALIB_AST
+        RN_ALIB_MEMORY_MGMT
+        RN_ALIB_LEXER
+        RN_ALIB_COMMON
+        RN_ALIB_CODEGEN
+        RN_ALIB_BUILTINS
+        RN_ALIB_UTIL)
 target_compile_options(${TARGET_RONASCRIPT_MAIN} PUBLIC -Werror)
 
 ###############################################################################
@@ -55,6 +55,6 @@ FetchContent_MakeAvailable(Catch2)
 add_executable(${TARGET_RONASCRIPT_TEST}
         test/unit/RnTestRunner.cpp
         src/util/test/Test_String.cpp
-        ${RonaScript_INCLUDE_UTIL})
-target_link_libraries(${TARGET_RONASCRIPT_TEST} PRIVATE Catch2::Catch2WithMain RonaScript_ALIB_UTIL)
+        ${RN_INCLUDES_UTIL})
+target_link_libraries(${TARGET_RONASCRIPT_TEST} PRIVATE Catch2::Catch2WithMain RN_ALIB_UTIL)
 target_compile_options(${TARGET_RONASCRIPT_TEST} PUBLIC -Werror)
