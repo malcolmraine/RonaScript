@@ -29,13 +29,13 @@
 #pragma once
 
 #include <memory>
+#include "../common/RnCompilerPhase.h"
 #include "../common/RnInternment.h"
 #include "RnCodeGenVisitor.h"
-#include "../common/RnCompilerPhase.h"
 
 class Ast;
 
-class RnCodeGenerator : public RnCompilerPhase<Ast*, InstructionBlock>{
+class RnCodeGenerator : public RnCompilerPhase<Ast*, InstructionBlock> {
 public:
     RnCodeGenerator();
     ~RnCodeGenerator() override;

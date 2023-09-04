@@ -32,8 +32,7 @@ add_executable(RonaScript
         ${RonaScript_SOURCES_LEXER}
         ${RonaScript_SOURCES_COMMON}
         ${RonaScript_SOURCES_CODEGEN}
-        ${RonaScript_SOURCES_BUILTINS}
-        src/common/RnBuildInfo.h)
+        ${RonaScript_SOURCES_BUILTINS})
 target_compile_options(RonaScript PUBLIC -Werror)
 
 ###############################################################################

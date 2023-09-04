@@ -34,18 +34,14 @@
 #undef RESERVED_WORD
 #define TOKEN_DEF(token, lexeme) {lexeme, TokenType::token},
 #define RESERVED_WORD TOKEN_DEF
-std::unordered_map<std::string, TokenType> Lexer::_token_map = {
-    RN_TOKEN_LIST
-};
+std::unordered_map<std::string, TokenType> Lexer::_token_map = {RN_TOKEN_LIST};
 
 #undef TOKEN_DEF
 #undef RESERVED_WORD
 #define TOKEN_DEF(token, lexeme)
 #define RESERVED_WORD(token, lexeme) lexeme,
 
-const std::unordered_set<std::string> Lexer::_reserved_words = {
-    RN_TOKEN_LIST
-};
+const std::unordered_set<std::string> Lexer::_reserved_words = {RN_TOKEN_LIST};
 
 const std::unordered_set<std::string> Lexer::_compounds = {
     "++", "+=", "--", "-=", "&&", "%=", "||", "**", "&=", "|=", "/=", "*=",

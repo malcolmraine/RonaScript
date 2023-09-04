@@ -35,7 +35,6 @@ public:
     virtual void Reset() = 0;
 };
 
-
 template <typename T, typename V>
 class RnCompilerPhase : public RnAbstractCompilerPhase {
 public:
@@ -50,13 +49,11 @@ public:
         return _result;
     }
 
-    [[nodiscard]] virtual char * SerializeResult() override {
+    [[nodiscard]] virtual char* SerializeResult() override {
         return nullptr;
     }
 
-    void Reset() override {
-
-    }
+    void Reset() override {}
 
 protected:
     T _input;

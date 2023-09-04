@@ -78,7 +78,8 @@ public:
                     }
                 }
                 current_block = NEXT_BLOCK(current_block);
-                if (!_allocator.IsAddressWithinAllocator(BLOCK_MEMORY_ADDR(current_block))) {
+                if (!_allocator.IsAddressWithinAllocator(
+                        BLOCK_MEMORY_ADDR(current_block))) {
                     break;
                 }
             }

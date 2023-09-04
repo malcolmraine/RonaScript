@@ -28,12 +28,11 @@
 
 #pragma once
 
-#include "../common/RnType.h"
 #include <cassert>
+#include "../common/RnType.h"
 
 class RnScope;
 class RnObject;
-
 
 #define RN_BUILTIN_REGISTRATIONS     \
     RN_BUILTIN_GENERAL_REGISTRATIONS \
@@ -51,7 +50,7 @@ class RnObject;
 #define RN_BUILTIN_TYPE_REGISTRATIONS
 #define RN_BUILTIN_ARRAY_REGISTRATIONS
 
-#define RN_BUILTIN_GENERAL_REGISTRATIONS            \
+#define RN_BUILTIN_GENERAL_REGISTRATIONS                        \
     RN_BUILTIN_FUNC(RnBuiltins, unpack, RnType::RN_VOID, 1)     \
     RN_BUILTIN_FUNC(RnBuiltins, system, RnType::RN_ANY, 1)      \
     RN_BUILTIN_FUNC(RnBuiltins, call, RnType::RN_ANY, 2)        \
@@ -67,18 +66,17 @@ class RnObject;
     RN_BUILTIN_FUNC(RnBuiltins, setattr, RnType::RN_VOID, 3)    \
     RN_BUILTIN_FUNC(RnBuiltins, delattr, RnType::RN_VOID, 2)
 
-
 #define BUILTIN_ASSERTS \
     assert(ret_val);    \
     assert(scope);
 
-#define RN_BUILTIN_FUNC_DECLARE(ns, name, retval, argcnt)                                \
+#define RN_BUILTIN_FUNC_DECLARE(ns, name, retval, argcnt)                    \
     static void rn_builtin_##name(RnScope* scope, const RnArrayNative& args, \
                                   RnObject* ret_val);
 
-#define RN_BUILTIN_FUNC_DEFINE(ns, name, retval, argcnt)                                   \
+#define RN_BUILTIN_FUNC_DEFINE(ns, name, retval, argcnt)                             \
     void BUILTIN_CLASS::rn_builtin_##name(RnScope* scope, const RnArrayNative& args, \
-                                       RnObject* ret_val)
+                                          RnObject* ret_val)
 
 #define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DECLARE
 

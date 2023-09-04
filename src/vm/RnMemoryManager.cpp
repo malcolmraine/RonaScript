@@ -54,10 +54,8 @@ RnObjectAllocator<RnStringObject> string_allocator(10000, 1000000);
 RnObjectAllocator<RnNullObject> null_allocator(10000, 1000000);
 RnObjectAllocator<RnScope> scope_allocator(10000, 1000000);
 
-
 /*****************************************************************************/
-RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr)) {
-}
+RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr)) {}
 
 /*****************************************************************************/
 RnMemoryManager::~RnMemoryManager() = default;

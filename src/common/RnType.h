@@ -28,10 +28,10 @@
 
 #pragma once
 
+#include <cassert>
 #include <limits>
 #include <string>
 #include <utility>
-#include <cassert>
 #include <vector>
 #include "../common/RnString.h"
 

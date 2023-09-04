@@ -303,33 +303,35 @@ std::string String::Pad(const std::string& s, size_t len, char pad_char) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-std::string String::SimpleTitleCase(const std::string& s)
-{
-    if (s.empty()) { return ""; }
+std::string String::SimpleTitleCase(const std::string& s) {
+    if (s.empty()) {
+        return "";
+    }
 
     std::string result = s;
     bool needsUpper = true;
-    for (size_t i = 0; i < s.length(); i++)
-    {
+    for (size_t i = 0; i < s.length(); i++) {
         char c = s[i];
-        if (!std::isalpha(c) && c != '\'') { needsUpper = true; }
-        else if (needsUpper)
-        {
+        if (!std::isalpha(c) && c != '\'') {
+            needsUpper = true;
+        } else if (needsUpper) {
             result[i] = static_cast<char>(std::toupper(c));
             needsUpper = false;
+        } else {
+            result[i] = static_cast<char>(std::tolower(c));
         }
-        else { result[i] = static_cast<char>(std::tolower(c)); }
     }
     return result;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-std::string String::AdvancedTitleCase(const std::string& s, bool useExemptions)
-{
+std::string String::AdvancedTitleCase(const std::string& s, bool useExemptions) {
     // More advanced title case conversion that takes short words and
     // hyphens into account
 
-    if (s.empty()) { return ""; }
+    if (s.empty()) {
+        return "";
+    }
 
     // Prepositions and other short words that don't get capitalized
     static const std::unordered_set<std::string> exemptions = {
@@ -339,31 +341,26 @@ std::string String::AdvancedTitleCase(const std::string& s, bool useExemptions)
     std::string result = s;
     size_t currentWordStart = 0;
     bool needsUpper = true;
-    for (size_t i = 0; i < s.length(); i++)
-    {
+    for (size_t i = 0; i < s.length(); i++) {
         char c = s[i];
-        if ((i == 0 || !std::isalpha(s[i - 1]))&& c != '\'')
-        {
+        if ((i == 0 || !std::isalpha(s[i - 1])) && c != '\'') {
             result[i] = static_cast<char>(std::toupper(s[i]));
             needsUpper = false;
             continue;
         }
 
-        if (!std::isalpha(c) && c != '\'' && i < s.length() - 1)
-        {
+        if (!std::isalpha(c) && c != '\'' && i < s.length() - 1) {
             needsUpper = true;
-            if (currentWordStart == i) { continue; }
-            else if (!useExemptions
-                     || exemptions.find(s.substr(currentWordStart, i - currentWordStart))
-                            == exemptions.end())
-            {
+            if (currentWordStart == i) {
+                continue;
+            } else if (!useExemptions || exemptions.find(s.substr(
+                                             currentWordStart, i - currentWordStart)) ==
+                                             exemptions.end()) {
                 result[currentWordStart] =
                     static_cast<char>(std::toupper(s[currentWordStart]));
             }
             currentWordStart = i + 1;
-        }
-        else
-        {
+        } else {
             result[i] = static_cast<char>(std::tolower(c));
         }
         //		else { currentWord += static_cast<char>(std::tolower(c)); }
@@ -375,8 +372,7 @@ std::string String::AdvancedTitleCase(const std::string& s, bool useExemptions)
     //		currentWord[0] = static_cast<char>(std::toupper(currentWord[0]));
     //		result += currentWord;
     //	}
-    if (currentWordStart < s.length() - 1)
-    {
+    if (currentWordStart < s.length() - 1) {
         result[currentWordStart] = static_cast<char>(std::toupper(s[currentWordStart]));
     }
 

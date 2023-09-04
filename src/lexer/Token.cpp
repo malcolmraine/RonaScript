@@ -33,9 +33,7 @@
 #undef RESERVED_WORD
 #define TOKEN_DEF(token, lexeme) {TokenType::token, #token},
 #define RESERVED_WORD TOKEN_DEF
-std::unordered_map<TokenType, std::string> Token::token_name_map{
-    RN_TOKEN_LIST
-};
+std::unordered_map<TokenType, std::string> Token::token_name_map{RN_TOKEN_LIST};
 
 /*****************************************************************************/
 Token::Token(std::string s, TokenType token, int line_num, int char_num) {
@@ -54,15 +52,17 @@ bool Token::IsLiteral() const {
 
 /*****************************************************************************/
 bool Token::IsBinaryOp() const {
-    return token_type == TokenType::DBL_COLON || IsOneOf(
-        {TokenType::PLUS,        TokenType::MINUS,       TokenType::STAR,
-         TokenType::BAR,         TokenType::DBL_BAR,     TokenType::DBL_AMPER,
-         TokenType::DBL_EQUAL,   TokenType::UP_ARROW,    TokenType::GEQ,
-         TokenType::LEQ,         TokenType::R_CARAT,     TokenType::L_CARAT,
-         TokenType::SLASH,       TokenType::AMPER,       TokenType::NOT_EQUAL,
-         TokenType::PERCENT,     TokenType::UP_ARROW,    TokenType::DOUBLE_COLON,
-         TokenType::DBL_L_CARAT, TokenType::DBL_R_CARAT, TokenType::R_ARROW,
-         TokenType::DBL_STAR, TokenType::OR, TokenType::AND, TokenType::XOR});
+    return token_type == TokenType::DBL_COLON ||
+           IsOneOf(
+               {TokenType::PLUS,        TokenType::MINUS,       TokenType::STAR,
+                TokenType::BAR,         TokenType::DBL_BAR,     TokenType::DBL_AMPER,
+                TokenType::DBL_EQUAL,   TokenType::UP_ARROW,    TokenType::GEQ,
+                TokenType::LEQ,         TokenType::R_CARAT,     TokenType::L_CARAT,
+                TokenType::SLASH,       TokenType::AMPER,       TokenType::NOT_EQUAL,
+                TokenType::PERCENT,     TokenType::UP_ARROW,    TokenType::DOUBLE_COLON,
+                TokenType::DBL_L_CARAT, TokenType::DBL_R_CARAT, TokenType::R_ARROW,
+                TokenType::DBL_STAR,    TokenType::OR,          TokenType::AND,
+                TokenType::XOR});
 }
 
 /*****************************************************************************/
@@ -93,6 +93,5 @@ bool Token::IsType() const {
 
 /*****************************************************************************/
 std::string Token::ToString() const {
-    return "Token('" + lexeme + "', " + Token::token_name_map[token_type] +
-           ")";
+    return "Token('" + lexeme + "', " + Token::token_name_map[token_type] + ")";
 }

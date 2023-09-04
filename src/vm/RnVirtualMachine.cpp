@@ -206,7 +206,7 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
 /*****************************************************************************/
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
     if (_gc_count > 20) {
-//        std::cout << "Garbage collecting...\n";
+        //        std::cout << "Garbage collecting...\n";
         _memory_manager->GCMark();
         _memory_manager->GCSweep();
         _gc_count = 0;
@@ -775,7 +775,7 @@ RnIntNative RnVirtualMachine::Run() {
         i_idx++;
     }
     stopwatch.Stop();
-//        Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
+    //        Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
     return GetStack().back()->ToInt();
 }
 

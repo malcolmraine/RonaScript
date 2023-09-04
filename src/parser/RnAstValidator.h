@@ -29,8 +29,8 @@
 #pragma once
 
 #include <vector>
-#include "../common/RnType.h"
 #include "../common/RnCompilerPhase.h"
+#include "../common/RnType.h"
 #include "RnAstVisitor.h"
 
 class LiteralValue;
