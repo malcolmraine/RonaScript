@@ -14,6 +14,11 @@
 
 class String {
 public:
+    enum TITLECASE_MODE {
+        SIMPLE_TITLECASE,
+        ADVANCED_TITLECASE,
+    };
+
     static std::string Join(const std::string& s,
                             const std::vector<std::string>& v);  // TODO: Unit test
     static std::vector<std::string> Split(
@@ -35,7 +40,7 @@ public:
     static std::string Lower(const std::string& s);           // TODO: Unit test
     static std::string SnakeCase(const std::string& s);       // TODO: Unit test
     static std::string CamelCase(const std::string& s);       // TODO: Unit test
-    static std::string TitleCase(const std::string& s);       // TODO: Unit test
+    static std::string TitleCase(const std::string& s, TITLECASE_MODE mode = SIMPLE_TITLECASE);       // TODO: Unit test
     static size_t Count(const std::string& s,
                         const std::string& key);  // TODO: Unit test
     static std::string Wrap(const std::string& s, const std::string& lh,
@@ -61,6 +66,8 @@ public:
     }
 
 private:
+    static std::string SimpleTitleCase(const std::string& s);
+    static std::string AdvancedTitleCase(const std::string& s, bool useExemptions = true);
     String() = default;
     ~String() = default;
 };
