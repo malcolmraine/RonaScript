@@ -50,6 +50,17 @@ std::string String::Join(const std::vector<std::string>& v, const std::string& s
 /*****************************************************************************/
 std::vector<std::string> String::Split(const std::string& subject,
                                        const std::string& search) {
+   if (subject.empty()) {
+        return {};
+   }
+   if (search.empty()) {
+        std::vector<std::string> result;
+        result.reserve(subject.size());
+        for (auto c : subject) {
+            result.emplace_back(1, c);
+        }
+        return result;
+   }
     unsigned long index = subject.find(search);
     unsigned long base_index = 0;
 

@@ -52,9 +52,11 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(Catch2)
 
+include(src/util/test/CMakeLists.txt)
+include(test/unit/CMakeLists.txt)
+
 add_executable(${TARGET_RONASCRIPT_TEST}
-        ${RN_SOURCES_UNIT_TESTS}
-        ${RN_SOURCES_TEST_UTIL_STRING}
-        ${RN_INCLUDES_UTIL})
+        test/unit/RnTestRunner.cpp
+        ${RN_SOURCES_TEST_UTIL_STRING})
 target_link_libraries(${TARGET_RONASCRIPT_TEST} PRIVATE Catch2::Catch2WithMain RN_ALIB_UTIL)
 target_compile_options(${TARGET_RONASCRIPT_TEST} PUBLIC -Werror)
