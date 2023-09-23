@@ -33,20 +33,20 @@
 #undef BUILTIN_CLASS
 #define BUILTIN_CLASS RnBuiltins_Array
 
-#undef RN_BUILTIN_FUNC
-#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE
+//#undef RN_BUILTIN_FUNC
+//#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, filter, RnType::RN_ARRAY, 1){BUILTIN_ASSERTS}
+RN_BUILTIN_FUNC_DEFINE(filter, RnType::RN_ARRAY, 1){BUILTIN_ASSERTS}
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, union, RnType::RN_ARRAY, 1){BUILTIN_ASSERTS}
+RN_BUILTIN_FUNC_DEFINE(union, RnType::RN_ARRAY, 1){BUILTIN_ASSERTS}
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, intersect, RnType::RN_ARRAY, 1){BUILTIN_ASSERTS}
+RN_BUILTIN_FUNC_DEFINE(intersect, RnType::RN_ARRAY, 1){BUILTIN_ASSERTS}
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, count, RnType::RN_INT, 1) {
+RN_BUILTIN_FUNC_DEFINE(count, RnType::RN_INT, 1) {
     BUILTIN_ASSERTS
 
     auto obj = args.front();
@@ -60,7 +60,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, count, RnType::RN_INT, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, array_merge, RnType::RN_ARRAY, 1) {
+RN_BUILTIN_FUNC_DEFINE(array_merge, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
 
     RnArrayNative data;
@@ -73,7 +73,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, array_merge, RnType::RN_ARRAY, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, array_push, RnType::RN_VOID, 1) {
+RN_BUILTIN_FUNC_DEFINE(array_push, RnType::RN_VOID, 1) {
     BUILTIN_ASSERTS
 
     auto array_obj = dynamic_cast<RnArrayObject*>(args.front());
@@ -83,7 +83,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, array_push, RnType::RN_VOID, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, array_pop, RnType::RN_ANY, 1) {
+RN_BUILTIN_FUNC_DEFINE(array_pop, RnType::RN_ANY, 1) {
     BUILTIN_ASSERTS
     auto data = args.front()->ToArray();
     ret_val->SetData(data.back());
@@ -91,7 +91,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, array_pop, RnType::RN_ANY, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, array_zeros, RnType::RN_ARRAY, 1) {
+RN_BUILTIN_FUNC_DEFINE(array_zeros, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
 
     assert(args.size() == 1);
@@ -104,13 +104,13 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, array_zeros, RnType::RN_ARRAY, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, array_fill, RnType::RN_ARRAY, 1) {
+RN_BUILTIN_FUNC_DEFINE(array_fill, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
     assert(args.size() == 2);
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, sequence, RnType::RN_ARRAY, 1) {
+RN_BUILTIN_FUNC_DEFINE(sequence, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
     assert(args.size() > 2 && args.size() < 4);
     /**

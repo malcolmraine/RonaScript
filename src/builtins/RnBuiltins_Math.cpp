@@ -38,7 +38,7 @@
 #define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_Math, sum, RnType::RN_FLOAT, 1) {
+RN_BUILTIN_FUNC_DEFINE(sum, RnType::RN_FLOAT, 1) {
     assert(ret_val);
     assert(scope);
 
@@ -52,7 +52,7 @@ RN_BUILTIN_FUNC(RnBuiltins_Math, sum, RnType::RN_FLOAT, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_Math, pow, RnType::RN_FLOAT, 2) {
+RN_BUILTIN_FUNC_DEFINE(pow, RnType::RN_FLOAT, 2) {
     assert(ret_val);
     assert(scope);
 
@@ -60,13 +60,13 @@ RN_BUILTIN_FUNC(RnBuiltins_Math, pow, RnType::RN_FLOAT, 2) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_Math, mod, RnType::RN_INT, 2) {
+RN_BUILTIN_FUNC_DEFINE(mod, RnType::RN_INT, 2) {
     assert(ret_val);
     assert(scope);
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_Math, sqrt, RnType::RN_FLOAT, 2) {
+RN_BUILTIN_FUNC_DEFINE(sqrt, RnType::RN_FLOAT, 2) {
     assert(ret_val);
     assert(scope);
 
@@ -74,7 +74,7 @@ RN_BUILTIN_FUNC(RnBuiltins_Math, sqrt, RnType::RN_FLOAT, 2) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_Math, cbrt, RnType::RN_FLOAT, 2) {
+RN_BUILTIN_FUNC_DEFINE(cbrt, RnType::RN_FLOAT, 2) {
     assert(ret_val);
     assert(scope);
 
@@ -82,19 +82,19 @@ RN_BUILTIN_FUNC(RnBuiltins_Math, cbrt, RnType::RN_FLOAT, 2) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_Math, randf, RnType::RN_FLOAT, 2) {
+RN_BUILTIN_FUNC_DEFINE(randf, RnType::RN_FLOAT, 2) {
     assert(ret_val);
     assert(scope);
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_Math, randint, RnType::RN_INT, 2) {
+RN_BUILTIN_FUNC_DEFINE(randint, RnType::RN_INT, 2) {
     assert(ret_val);
     assert(scope);
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_Math, normal, RnType::RN_ARRAY, 1) {
+RN_BUILTIN_FUNC_DEFINE(normal, RnType::RN_ARRAY, 1) {
     assert(ret_val);
     assert(scope);
 }
