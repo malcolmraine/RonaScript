@@ -3,9 +3,7 @@
 #include <set>
 #include "codegen/RnBinary.h"
 #include "codegen/RnCodeGenerator.h"
-#include "common/RnInternment.h"
 #include "lexer/Lexer.h"
-#include "lexer/Token.h"
 #include "parser/Parser.h"
 #include "parser/RnAstValidator.h"
 #include "util/ArgParser.h"
@@ -18,7 +16,7 @@
 #include "vm/RnVirtualMachine.h"
 
 // @formatter:off
-#include "RnBuildInfo.h"
+#include "common/RnBuildInfo.h"
 
 ArgParser arg_parser;
 
@@ -221,9 +219,9 @@ void RonaScriptMain(int argc, char* argv[]) {
         return;
     } else {
         RnCodeGenerator code_generator;
+        Compile(file, code_generator);
+        instructions = code_generator.GetResult();
         if (arg_parser.IsSet("-c")) {
-            Compile(file, code_generator);
-            instructions = code_generator.GetResult();
             Write(std::filesystem::path(file.string() + "c"), instructions);
         }
         if (!arg_parser.IsSet("-r")) {
@@ -233,9 +231,10 @@ void RonaScriptMain(int argc, char* argv[]) {
     }
 }
 
+#include "vm/RnBoolObject.h"
+#include "vm/RnMemoryManager.h"
 /*****************************************************************************/
 int main(int argc, char* argv[]) {
     RonaScriptMain(argc, argv);
-
     return 0;
 }

@@ -42,7 +42,7 @@
 #define BUILTIN_CLASS RnBuiltins
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, unpack, RnType::RN_VOID, 1) {
+RN_BUILTIN_FUNC_DEFINE(unpack, RnType::RN_VOID, 1) {
     BUILTIN_ASSERTS
 
     auto parent_scope = scope->GetParent();
@@ -57,7 +57,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, unpack, RnType::RN_VOID, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, system, RnType::RN_ANY, 1) {
+RN_BUILTIN_FUNC_DEFINE(system, RnType::RN_ANY, 1) {
     BUILTIN_ASSERTS
 
     std::array<char, 128> buffer{};
@@ -76,7 +76,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, system, RnType::RN_ANY, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, call, RnType::RN_ANY, 2) {
+RN_BUILTIN_FUNC_DEFINE(call, RnType::RN_ANY, 2) {
     BUILTIN_ASSERTS
 
     auto obj = scope->GetObject(RnConstStore::InternValue(args.front()->ToString()));
@@ -90,7 +90,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, call, RnType::RN_ANY, 2) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, lload, RnType::RN_OBJECT, 1) {
+RN_BUILTIN_FUNC_DEFINE(lload, RnType::RN_OBJECT, 1) {
     BUILTIN_ASSERTS
 
     // TODO: Add file existence check for library
@@ -101,7 +101,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, lload, RnType::RN_OBJECT, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, bind, RnType::RN_VOID, 2) {
+RN_BUILTIN_FUNC_DEFINE(bind, RnType::RN_VOID, 2) {
     BUILTIN_ASSERTS
     // arg 1: object to bind to
     // arg 2: function object
@@ -119,7 +119,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, bind, RnType::RN_VOID, 2) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, setenv, RnType::RN_VOID, 2) {
+RN_BUILTIN_FUNC_DEFINE(setenv, RnType::RN_VOID, 2) {
     BUILTIN_ASSERTS
 
     ret_val->SetData(static_cast<RnIntNative>(
@@ -127,21 +127,21 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, setenv, RnType::RN_VOID, 2) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, getenv, RnType::RN_ANY, 1) {
+RN_BUILTIN_FUNC_DEFINE(getenv, RnType::RN_ANY, 1) {
     BUILTIN_ASSERTS
 
     ret_val->SetData(getenv(args[0]->ToString().c_str()));
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, unsetenv, RnType::RN_VOID, 1) {
+RN_BUILTIN_FUNC_DEFINE(unsetenv, RnType::RN_VOID, 1) {
     BUILTIN_ASSERTS
 
     ret_val->SetData(static_cast<RnIntNative>(unsetenv(args[0]->ToString().c_str())));
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, listattr, RnType::RN_ARRAY, 1) {
+RN_BUILTIN_FUNC_DEFINE(listattr, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
 
     RnArrayNative attrs;
@@ -152,7 +152,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, listattr, RnType::RN_ARRAY, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, attrpairs, RnType::RN_ARRAY, 1) {
+RN_BUILTIN_FUNC_DEFINE(attrpairs, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
 
     if (args.front()->GetType() != RnType::RN_OBJECT) {
@@ -173,7 +173,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, attrpairs, RnType::RN_ARRAY, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, hasattr, RnType::RN_VOID, 2) {
+RN_BUILTIN_FUNC_DEFINE(hasattr, RnType::RN_VOID, 2) {
     BUILTIN_ASSERTS
 
     auto obj = args[0]->ToObject();
@@ -182,7 +182,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, hasattr, RnType::RN_VOID, 2) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, getattr, RnType::RN_VOID, 2) {
+RN_BUILTIN_FUNC_DEFINE(getattr, RnType::RN_VOID, 2) {
     BUILTIN_ASSERTS
 
     auto obj = args[0]->ToObject();
@@ -197,7 +197,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, getattr, RnType::RN_VOID, 2) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, setattr, RnType::RN_VOID, 3) {
+RN_BUILTIN_FUNC_DEFINE(setattr, RnType::RN_VOID, 3) {
     BUILTIN_ASSERTS
 
     auto obj = args[0]->ToObject();
@@ -214,7 +214,7 @@ RN_BUILTIN_FUNC(BUILTIN_CLASS, setattr, RnType::RN_VOID, 3) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(BUILTIN_CLASS, delattr, RnType::RN_VOID, 2) {
+RN_BUILTIN_FUNC_DEFINE(delattr, RnType::RN_VOID, 2) {
     BUILTIN_ASSERTS
 
     auto obj = args[0]->ToObject();

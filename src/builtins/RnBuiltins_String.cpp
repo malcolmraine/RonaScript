@@ -38,31 +38,31 @@
 #define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_String, str_titlecase, RnType::RN_STRING, 1) {
+RN_BUILTIN_FUNC_DEFINE(str_titlecase, RnType::RN_STRING, 1) {
     BUILTIN_ASSERTS
     ret_val->SetData(String::TitleCase(args.front()->ToString()));
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_String, str_lower, RnType::RN_STRING, 1) {
+RN_BUILTIN_FUNC_DEFINE(str_lower, RnType::RN_STRING, 1) {
     BUILTIN_ASSERTS
     ret_val->SetData(String::Lower(args.front()->ToString()));
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_String, str_upper, RnType::RN_STRING, 1) {
+RN_BUILTIN_FUNC_DEFINE(str_upper, RnType::RN_STRING, 1) {
     BUILTIN_ASSERTS
     ret_val->SetData(String::Upper(args.front()->ToString()));
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_String, str_snakecase, RnType::RN_STRING, 1) {
+RN_BUILTIN_FUNC_DEFINE(str_snakecase, RnType::RN_STRING, 1) {
     BUILTIN_ASSERTS
     ret_val->SetData(String::SnakeCase(args.front()->ToString()));
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_String, str_split, RnType::RN_ARRAY, 1) {
+RN_BUILTIN_FUNC_DEFINE(str_split, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
 
     RnArrayNative result;
@@ -84,7 +84,7 @@ RN_BUILTIN_FUNC(RnBuiltins_String, str_split, RnType::RN_ARRAY, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_String, str_substr, RnType::RN_STRING, 1) {
+RN_BUILTIN_FUNC_DEFINE(str_substr, RnType::RN_STRING, 1) {
     BUILTIN_ASSERTS
 
     assert(args.size() == 2 || args.size() == 3);
@@ -98,7 +98,7 @@ RN_BUILTIN_FUNC(RnBuiltins_String, str_substr, RnType::RN_STRING, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_String, str_startswith, RnType::RN_BOOLEAN, 1) {
+RN_BUILTIN_FUNC_DEFINE(str_startswith, RnType::RN_BOOLEAN, 1) {
     BUILTIN_ASSERTS
 
     assert(args.size() == 2);
@@ -109,7 +109,7 @@ RN_BUILTIN_FUNC(RnBuiltins_String, str_startswith, RnType::RN_BOOLEAN, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_String, str_endswith, RnType::RN_BOOLEAN, 1) {
+RN_BUILTIN_FUNC_DEFINE(str_endswith, RnType::RN_BOOLEAN, 1) {
     BUILTIN_ASSERTS
 
     assert(args.size() == 2);
@@ -120,7 +120,7 @@ RN_BUILTIN_FUNC(RnBuiltins_String, str_endswith, RnType::RN_BOOLEAN, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC(RnBuiltins_String, str_join, RnType::RN_STRING, 1) {
+RN_BUILTIN_FUNC_DEFINE(str_join, RnType::RN_STRING, 1) {
     BUILTIN_ASSERTS
 
     assert(args.size() == 1 || args.size() == 2 || args.size() == 3);
