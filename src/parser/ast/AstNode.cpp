@@ -28,7 +28,6 @@
 
 #include "AstNode.h"
 #include "../../codegen/RnCodeGenVisitor.h"
-#include "../../codegen/RnInstruction.h"
 
 #define TAB_CHAR "  "
 

@@ -32,7 +32,6 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <sstream>
 #include "../vm/RnObject.h"
 #include "../vm/RnScope.h"
 

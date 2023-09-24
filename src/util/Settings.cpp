@@ -31,7 +31,7 @@
 Settings* Settings::_instance = nullptr;
 
 /*****************************************************************************/
-Settings::Settings() {}
+Settings::Settings() = default;
 
 /*****************************************************************************/
 Settings::~Settings() {

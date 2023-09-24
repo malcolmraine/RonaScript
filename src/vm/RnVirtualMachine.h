@@ -66,7 +66,7 @@ public:
         return item;
     }
 
-    void StackPush(RnObject* object) {
+    inline void StackPush(RnObject* object) {
         _scopes.back()->GetStack().push_back(object);
     }
 
@@ -80,14 +80,6 @@ public:
     RnObject* CreateObject(RnIntNative data);
     RnObject* CreateObject(RnFloatNative data);
     RnScope* CreateScope();
-
-    [[nodiscard]] size_t GetIndex() const {
-        return i_idx;
-    }
-
-    RnInstruction* GetCurrentInstruction() {
-        return _instructions[i_idx];
-    }
 
 private:
     inline void ExecuteInstruction(bool& break_scope, size_t& index);

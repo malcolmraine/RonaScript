@@ -49,7 +49,7 @@ public:
         return _result;
     }
 
-    [[nodiscard]] virtual char* SerializeResult() override {
+    [[nodiscard]] char* SerializeResult() override {
         return nullptr;
     }
 

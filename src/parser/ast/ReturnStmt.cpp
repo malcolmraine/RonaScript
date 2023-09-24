@@ -36,7 +36,7 @@ ReturnStmt::ReturnStmt() {
 }
 
 /*****************************************************************************/
-ReturnStmt::~ReturnStmt() {}
+ReturnStmt::~ReturnStmt() = default;
 
 /*****************************************************************************/
 std::string ReturnStmt::ToString(bool nl) {

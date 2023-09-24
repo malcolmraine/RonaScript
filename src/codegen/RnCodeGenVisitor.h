@@ -34,7 +34,6 @@
 #include "../parser/ast/Ast.h"
 #include "RnInstruction.h"
 
-class StringLiteral;
 class ScopeNode;
 class ImportStmt;
 class ArgDecl;
@@ -42,7 +41,6 @@ class AstNode;
 class AliasDecl;
 class Expr;
 class VarDecl;
-class FloatLiteral;
 class UnaryExpr;
 class ReturnStmt;
 class FuncCall;
@@ -55,11 +53,9 @@ class FuncDecl;
 class BinaryExpr;
 class AssignmentStmt;
 class ArrayLiteral;
-class IntLiteral;
 class Name;
 class TryBlock;
 class CatchBlock;
-class BoolLiteral;
 class DeleteStmt;
 class ExitStmt;
 class AttributeAccess;
@@ -97,10 +93,6 @@ public:
     InstructionBlock Visit(BinaryExpr* node) override;
     InstructionBlock Visit(IndexedExpr* node) override;
     InstructionBlock Visit(FlowControl* node) override;
-
-    InstructionBlock GetInstructions() {
-        return _instructions;
-    }
 
 private:
     static void WrapContext(InstructionBlock& block);
