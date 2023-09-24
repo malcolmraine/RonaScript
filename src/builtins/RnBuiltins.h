@@ -74,7 +74,7 @@ class RnObject;
     static void rn_builtin_##name(RnScope* scope, const RnArrayNative& args, \
                                   RnObject* ret_val);
 
-#define RN_BUILTIN_FUNC_DEFINE(name, retval, argcnt)                             \
+#define RN_BUILTIN_FUNC_DEFINE(name, retval, argcnt)                                 \
     void BUILTIN_CLASS::rn_builtin_##name(RnScope* scope, const RnArrayNative& args, \
                                           RnObject* ret_val)
 
