@@ -39,7 +39,6 @@
 #include "../builtins/RnBuiltins_String.h"
 #include "../builtins/RnBuiltins_Type.h"
 #include "../util/StopWatch.h"
-#include "../util/log.h"
 #include "RnAnyObject.h"
 #include "RnArrayObject.h"
 #include "RnClassObject.h"
@@ -111,12 +110,12 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
     for (uint32_t i = 0; i < arg_cnt; i++) {
         args.insert(args.begin(), StackPop());
     }
-    RnObject* ret_val = _memory_manager->CreateObject(func->GetReturnType());
+    RnObject* ret_val = RnMemoryManager::CreateObject(func->GetReturnType());
 
     if (func->IsBuiltIn()) {
         func->Call(args, ret_val);
         if (func->GetReturnType() != RnType::RN_VOID) {
-            GetStack().push_back(ret_val);
+            StackPush(ret_val);
         }
     } else {
         auto scope = CreateScope();
@@ -140,7 +139,7 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
         PopScope();
 
         if (func->GetName() == "construct") {
-            GetStack().push_back(func->GetScope()->GetObject(_object_this_key));
+            StackPush(func->GetScope()->GetObject(_object_this_key));
         }
     }
 }
@@ -150,7 +149,7 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
     auto a = StackPop();                             \
     auto result = *a op b;                           \
     GetScope()->GetMemoryGroup()->AddObject(result); \
-    GetStack().push_back(result);                    \
+    StackPush(result);                               \
     PREDICT_OPCODE2(OP_LOAD_VALUE, OP_LOAD_LITERAL)
 
 // This is exactly how cpython handles opcode prediction, so all credit to the
@@ -207,8 +206,8 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
     if (_gc_count > 20) {
         //        std::cout << "Garbage collecting...\n";
-        _memory_manager->GCMark();
-        _memory_manager->GCSweep();
+        //        _memory_manager->GCMark();
+        //        _memory_manager->GCSweep();
         _gc_count = 0;
     }
 
@@ -282,7 +281,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             }
             assert(result);
             GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            StackPush(result);
             PREDICT_OPCODE2(OP_LOAD_VALUE, OP_LOAD_LITERAL)
             break;
         }
@@ -330,7 +329,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto obj = StackPop();
             auto result = RnObject::Create(!obj->ToBool());
             GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            StackPush(result);
             break;
         }
         case OP_BREAK: {
@@ -346,7 +345,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto obj = StackPop();
             auto result = RnObject::Create(~obj->ToInt());
             GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            StackPush(result);
             break;
         }
         case OP_UNARY_DECREMENT: {
@@ -373,7 +372,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                     "Cannot apply unary negation to non-numeric type");
             }
             GetScope()->GetMemoryGroup()->AddObject(result);
-            GetStack().push_back(result);
+            StackPush(result);
 
             break;
         }
@@ -392,7 +391,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_LOAD_LITERAL: {
             PREDICTION_TARGET(OP_LOAD_LITERAL)
             auto obj = RnConstStore::GetInternedObject(instruction->GetArg1());
-            GetStack().push_back(obj);
+            StackPush(obj);
             PREDICT_OPCODE2(OP_LOAD_VALUE, OP_LOAD_LITERAL)
             break;
         }
@@ -406,7 +405,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                     _instructions[index + 1]->GetOpcode() == OP_CALL) {
                     auto class_obj = dynamic_cast<RnClassObject*>(object);
                     auto instance = dynamic_cast<RnClassObject*>(
-                        _memory_manager->CreateObject(RnType::RN_CLASS_INSTANCE));
+                        RnMemoryManager::CreateObject(RnType::RN_CLASS_INSTANCE));
                     GetScope()->GetMemoryGroup()->AddObject(instance);
                     instance->ToObject()->SetParent(class_obj->ToObject());
                     class_obj->CopySymbols(instance->GetScope());
@@ -419,9 +418,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                     func_scope->SetParent(instance->GetScope());
                     BindThis(func_scope, instance);
                     func->SetScope(func_scope);
-                    GetStack().push_back(func_obj);
+                    StackPush(func_obj);
                 } else {
-                    GetStack().push_back(object);
+                    StackPush(object);
                 }
             } else {
                 throw std::runtime_error("Symbol does not exist: " +
@@ -432,7 +431,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_LOAD_NULL: {
-            GetStack().push_back(_memory_manager->CreateObject(RnType::RN_NULL));
+            StackPush(RnMemoryManager::CreateObject(RnType::RN_NULL));
             break;
         }
         case OP_CALL: {
@@ -460,7 +459,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 func_scope->SetParent(instance->GetScope());
                 BindThis(func_scope, instance);
                 func->SetScope(func_scope);
-                //                GetStack().push_back(constructor_obj);
+                //                StackPush(constructor_obj);
                 func_obj = constructor_obj;
             } else {
                 func_obj = stack_val;
@@ -474,10 +473,10 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
 
             if (func->IsBuiltIn()) {
                 RnObject* ret_val =
-                    _memory_manager->CreateObject(func->GetReturnType());
+                    RnMemoryManager::CreateObject(func->GetReturnType());
                 GetScope()->GetMemoryGroup()->AddObject(ret_val);
                 func->Call(args, ret_val);
-                GetStack().push_back(ret_val);
+                StackPush(ret_val);
             } else {
                 auto scope = _memory_manager->CreateScope();
                 scope->SetParent(func->GetScope());
@@ -504,13 +503,13 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 }
 
                 if (has_returned) {
-                    GetStack().push_back(scope->GetStack().back());
+                    StackPush(scope->GetStack().back());
                 } else {
-                    GetStack().push_back(RnObject::Create(RnType::RN_NULL));
+                    StackPush(RnObject::Create(RnType::RN_NULL));
                 }
 
                 if (func->GetName() == "construct") {
-                    GetStack().push_back(func->GetScope()->GetObject(_object_this_key));
+                    StackPush(func->GetScope()->GetObject(_object_this_key));
                 }
             }
             PREDICT_OPCODE(OP_POP)
@@ -518,7 +517,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_MAKE_CONST: {
             auto type = static_cast<RnType::Type>(instruction->GetArg1());
-            auto obj = _memory_manager->CreateObject(type);
+            auto obj = RnMemoryManager::CreateObject(type);
             obj->SetConstFlag(true);
             GetScope()->GetMemoryGroup()->AddObject(obj);
             GetScope()->StoreObject(instruction->GetArg2(), obj);
@@ -532,14 +531,14 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_MAKE_VAR: {
             auto type = static_cast<RnType::Type>(instruction->GetArg1());
-            auto obj = _memory_manager->CreateObject(type);
+            auto obj = RnMemoryManager::CreateObject(type);
             GetScope()->GetMemoryGroup()->AddObject(obj);
             GetScope()->StoreObject(instruction->GetArg2(), obj);
             break;
         }
         case OP_MAKE_GLOBAL: {
             auto type = static_cast<RnType::Type>(instruction->GetArg1());
-            auto obj = _memory_manager->CreateObject(type);
+            auto obj = RnMemoryManager::CreateObject(type);
             _scopes.front()->GetMemoryGroup()->AddObject(obj);
             _scopes.front()->StoreObject(instruction->GetArg2(), obj);
             break;
@@ -585,7 +584,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_MAKE_FUNC: {
             auto obj = dynamic_cast<RnFunctionObject*>(
-                _memory_manager->CreateObject(RnType::RN_FUNCTION));
+                RnMemoryManager::CreateObject(RnType::RN_FUNCTION));
             GetScope()->GetMemoryGroup()->AddObject(obj);
             auto name = RnConstStore::GetInternedString(instruction->GetArg1());
             auto type = static_cast<RnType::Type>(instruction->GetArg2());
@@ -670,10 +669,10 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_EXIT: {
             break_scope = true;
-            auto obj = _memory_manager->CreateObject(RnType::RN_INT);
+            auto obj = RnMemoryManager::CreateObject(RnType::RN_INT);
             GetScope()->GetMemoryGroup()->AddObject(obj);
             obj->SetData(static_cast<RnIntNative>(instruction->GetArg1()));
-            GetStack().push_back(obj);
+            StackPush(obj);
             break;
         }
         case OP_INDEX_ACCESS: {
@@ -685,7 +684,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             // costly.
             try {
                 auto result = obj->At(idx_value);
-                GetStack().push_back(result);
+                StackPush(result);
             } catch (const std::exception& e) {
                 if (idx_value >= obj->ToArray().size() || idx_value < 0) {
                     throw std::runtime_error("Invalid index [" +
@@ -717,7 +716,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 GetScope()->GetMemoryGroup()->AddObject(copy);
                 obj->Append(copy);
             }
-            GetStack().push_back(obj);
+            StackPush(obj);
             break;
         }
         case OP_ATTR_ACCESS: {
@@ -726,12 +725,12 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             RnObject* result = nullptr;
             if (scope->GetSymbolTable()->SymbolExists(instruction->GetArg1(), false)) {
                 result = scope->GetObject(instruction->GetArg1());
-                GetStack().push_back(result);
+                StackPush(result);
             } else if (scope->GetParent() &&
                        scope->GetParent()->GetSymbolTable()->SymbolExists(
                            instruction->GetArg1(), false)) {
                 result = scope->GetParent()->GetObject(instruction->GetArg1());
-                GetStack().push_back(result);
+                StackPush(result);
             } else {
                 throw std::runtime_error(
                     "Object has no attribute '" +
@@ -754,7 +753,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 BindCls(object->ToFunction()->GetScope(), nspace);
                 BindThis(object->ToFunction()->GetScope(), nspace);
             }
-            GetStack().push_back(object);
+            StackPush(object);
             break;
         }
     }
@@ -798,7 +797,7 @@ RnVirtualMachine* RnVirtualMachine::GetInstance() {
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnType::Type type) {
     _gc_count++;
-    return _memory_manager->CreateObject(type);
+    return RnMemoryManager::CreateObject(type);
 }
 
 /*****************************************************************************/
@@ -847,7 +846,7 @@ void RnVirtualMachine::RegisterBuiltins() {
         func->SetScope(GetScope());
         func->SetReturnType(std::get<2>(parts));
         auto obj = dynamic_cast<RnFunctionObject*>(
-            _memory_manager->CreateObject(RnType::RN_FUNCTION));
+            RnMemoryManager::CreateObject(RnType::RN_FUNCTION));
         GetScope()->GetMemoryGroup()->AddObject(obj);
         obj->SetData(func);
         GetScope()->StoreObject(RnConstStore::InternValue(std::get<0>(parts)), obj);
