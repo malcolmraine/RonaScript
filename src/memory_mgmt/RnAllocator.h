@@ -29,9 +29,7 @@
 #pragma once
 
 #include <cstdlib>
-
-// Switch to builtin malloc/calloc/realloc
-#define USE_STD_MALLOC 0
+#include "../common/RnBuildInfo.h"
 
 enum HeapState : uint8_t { EMPTY, PARTIAL, FULL };
 
