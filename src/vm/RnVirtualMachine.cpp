@@ -332,12 +332,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             StackPush(result);
             break;
         }
-        case OP_BREAK: {
-            break;
-        }
-        case OP_CONTINUE: {
-            break;
-        }
         case OP_TRY_CONTEXT: {
             break;
         }
