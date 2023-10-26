@@ -478,7 +478,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 func->Call(args, ret_val);
                 StackPush(ret_val);
             } else {
-                auto scope = _memory_manager->CreateScope();
+                auto scope = RnMemoryManager::CreateScope();
                 scope->SetParent(func->GetScope());
                 func->InitScope(scope);
                 _scopes.push_back(scope);
@@ -607,7 +607,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_CREATE_CONTEXT: {
-            auto scope = _memory_manager->CreateScope();
+            auto scope = RnMemoryManager::CreateScope();
             if (!_scopes.empty()) {
                 scope->SetParent(GetScope());
             }
@@ -622,7 +622,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             PREDICTION_TARGET(OP_DESTROY_CONTEXT)
             auto scope = _scopes.back();
             PopScope();
-            _memory_manager->DestroyScope(scope);
+            RnMemoryManager::DestroyScope(scope);
 
             if (!_call_stack.empty()) {
                 _call_stack.back()->DecrLinkedScopeCount();
@@ -803,31 +803,31 @@ RnObject* RnVirtualMachine::CreateObject(RnType::Type type) {
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnStringNative data) {
     _gc_count++;
-    return _memory_manager->Create(std::move(data));
+    return RnMemoryManager::Create(std::move(data));
 }
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnBoolNative data) {
     _gc_count++;
-    return _memory_manager->Create(data);
+    return RnMemoryManager::Create(data);
 }
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnIntNative data) {
     _gc_count++;
-    return _memory_manager->Create(data);
+    return RnMemoryManager::Create(data);
 }
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnFloatNative data) {
     _gc_count++;
-    return _memory_manager->Create(data);
+    return RnMemoryManager::Create(data);
 }
 
 /*****************************************************************************/
 RnScope* RnVirtualMachine::CreateScope() {
     _gc_count++;
-    return _memory_manager->CreateScope();
+    return RnMemoryManager::CreateScope();
 }
 
 /*****************************************************************************/
