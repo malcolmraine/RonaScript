@@ -37,10 +37,13 @@ TEST_CASE("String::Join") {
 }
 
 TEST_CASE("String::Split") {
-    REQUIRE(String::Split("1-2-3-4", "-") == std::vector<std::string>{"1", "2", "3", "4"});
-    REQUIRE(String::Split("1 2 3 4", " ") == std::vector<std::string>{"1", "2", "3", "4"});
+    REQUIRE(String::Split("1-2-3-4", "-") ==
+            std::vector<std::string>{"1", "2", "3", "4"});
+    REQUIRE(String::Split("1 2 3 4", " ") ==
+            std::vector<std::string>{"1", "2", "3", "4"});
     REQUIRE(String::Split("", "") == std::vector<std::string>{});
-    REQUIRE(String::Split("12345", "") == std::vector<std::string>{"1", "2", "3", "4", "5"});
+    REQUIRE(String::Split("12345", "") ==
+            std::vector<std::string>{"1", "2", "3", "4", "5"});
     REQUIRE(String::Split("", "--") == std::vector<std::string>{});
 }
 

@@ -55,8 +55,6 @@ typedef enum : int {
     OP_STORE,      // op1: name     op2:
     OP_POP,        // op1:          op2:
     OP_UNARY_NOT,  // op1: name     op2:
-    OP_BREAK,      // op1: rel_idx  op2:
-    OP_CONTINUE,   // op1: rel_idx  op2:
     OP_TRY_CONTEXT,
     OP_UNARY_INVERT,     // op1: name     op2:
     OP_UNARY_DECREMENT,  // op1: name     op2:

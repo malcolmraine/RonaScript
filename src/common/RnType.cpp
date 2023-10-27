@@ -31,7 +31,7 @@
 /*****************************************************************************/
 RnTypeComposite::RnTypeComposite(const std::string& type) {
     _type = RnType::StringToType(type);
-    _bounds.lower = std::numeric_limits<double>::infinity();
+    _bounds.lower = -std::numeric_limits<double>::infinity();
     _bounds.upper = std::numeric_limits<double>::infinity();
 }
 

@@ -29,13 +29,12 @@
 #include "RnClass.h"
 #include "RnObject.h"
 #include "RnScope.h"
-#include "RnSymbolTable.h"
 
 /*****************************************************************************/
 RnClass::RnClass(RnScope* parent) : RnScope(parent) {}
 
 /*****************************************************************************/
-RnClass::~RnClass() {}
+RnClass::~RnClass() = default;
 
 /*****************************************************************************/
 void RnClass::CopySymbols(RnScope* target) {

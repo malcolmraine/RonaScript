@@ -77,10 +77,6 @@ RnStringNative GetOpCodeAsString(RnOpCode opcode) {
             return "OP_STORE";
         case OP_POP:
             return "OP_POP";
-        case OP_BREAK:
-            return "OP_BREAK";
-        case OP_CONTINUE:
-            return "OP_CONTINUE";
         case OP_TRY_CONTEXT:
             return "OP_TRY_CONTEXT";
         case OP_UNARY_INVERT:

@@ -1,16 +1,25 @@
 #!/bin/bash
 
-PROC_COUNT=9
+PROC_COUNT=12
 TARGET="invalid"
 BUILD_DIR="./build"
-BUILD_TYPE="Release"
+BUILD_TYPE=Release
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
 function build_project() {
     mkdir "$BUILD_DIR"
-    cmake -S. -B "$BUILD_DIR" -D CMAKE_BUILD_TYPE=Release
-    cmake --build "$BUILD_DIR" "-j $PROC_COUNT"
+    SETUP_CMD="cmake -S. -B $BUILD_DIR -D CMAKE_BUILD_TYPE=$BUILD_TYPE"
+    echo "$SETUP_CMD"
+    eval "$SETUP_CMD"
+
+    BUILD_CMD="cmake --build $BUILD_DIR -j$PROC_COUNT"
+    echo "$BUILD_CMD"
+    eval "$BUILD_CMD"
+
+    BUILD_CMD="cmake --build $BUILD_DIR -j1"
+    echo "$BUILD_CMD"
+    eval "$BUILD_CMD"
 
     if [[ ! -f "$BUILD_DIR/RonaScript" ]];
     then

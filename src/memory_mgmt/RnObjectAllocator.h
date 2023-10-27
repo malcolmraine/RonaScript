@@ -45,7 +45,11 @@ public:
     /*************************************************************************/
     template <typename... Args>
     T* CreateObject(Args... args) {
+#ifdef USE_STD_MALLOC
+        auto addr = std::malloc(sizeof(T));
+#else
         auto addr = _allocator.Malloc(1);
+#endif
         if (!addr) {
             throw std::runtime_error("Failed to allocate " + std::to_string(sizeof(T)) +
                                      " bytes for object");
@@ -56,9 +60,13 @@ public:
 
     /*************************************************************************/
     void FreeObject(T* object) {
+#ifdef USE_STD_MALLOC
+        std::free(object);
+#else
         object->~T();
         //    std::destroy_at<T>(object);
         _allocator.Free(object);
+#endif
     }
 
     /*************************************************************************/
