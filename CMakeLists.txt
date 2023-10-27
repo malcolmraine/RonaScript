@@ -36,27 +36,34 @@ target_link_libraries(
         RN_ALIB_CODEGEN
         RN_ALIB_BUILTINS
         RN_ALIB_UTIL)
-target_compile_options(${TARGET_RONASCRIPT_MAIN} PUBLIC -Werror)
+
+if (CMAKE_BUILD_TARGET EQUAL "Release" OR CMAKE_BUILD_TARGET EQUAL "Test")
+    target_compile_options(${TARGET_RONASCRIPT_MAIN} PUBLIC -Werror -o3)
+elseif(CMAKE_BUILD_TARGET EQUAL "Debug")
+    target_compile_options(${TARGET_RONASCRIPT_MAIN} PUBLIC -Werror -o1)
+endif()
 
 ###############################################################################
 ###############################################################################
-SET( TARGET_RONASCRIPT_TEST RonaScript_Tests )
+if (CMAKE_BUILD_TYPE EQUAL "Test")
+    SET( TARGET_RONASCRIPT_TEST RonaScript_Tests )
 
-Include(FetchContent)
+    Include(FetchContent)
 
-FetchContent_Declare(
-        Catch2
-        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG        v3.4.0
-)
+    FetchContent_Declare(
+            Catch2
+            GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+            GIT_TAG        v3.4.0
+    )
 
-FetchContent_MakeAvailable(Catch2)
+    FetchContent_MakeAvailable(Catch2)
 
-include(src/util/test/CMakeLists.txt)
-include(test/unit/CMakeLists.txt)
+    include(src/util/test/CMakeLists.txt)
+    include(test/unit/CMakeLists.txt)
 
-add_executable(${TARGET_RONASCRIPT_TEST}
-        test/unit/RnTestRunner.cpp
-        ${RN_SOURCES_TEST_UTIL_STRING})
-target_link_libraries(${TARGET_RONASCRIPT_TEST} PRIVATE Catch2::Catch2WithMain RN_ALIB_UTIL)
-target_compile_options(${TARGET_RONASCRIPT_TEST} PUBLIC -Werror)
+    add_executable(${TARGET_RONASCRIPT_TEST}
+            test/unit/RnTestRunner.cpp
+            ${RN_SOURCES_TEST_UTIL_STRING})
+    target_link_libraries(${TARGET_RONASCRIPT_TEST} PRIVATE Catch2::Catch2WithMain RN_ALIB_UTIL)
+    target_compile_options(${TARGET_RONASCRIPT_TEST} PUBLIC -Werror)
+endif()
