@@ -415,7 +415,6 @@ InstructionBlock RnCodeGenVisitor::Visit(ConditionalStmt* node) {
         instructions.emplace_back(new RnInstruction(OP_JUMPF, alternative.size()));
         instructions.insert(instructions.end(), alternative.begin(), alternative.end());
     }
-    instructions.push_back(new RnInstruction(OP_DESTROY_CONTEXT));
 
     return instructions;
 }
