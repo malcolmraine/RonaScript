@@ -103,32 +103,25 @@ RnVirtualMachine::~RnVirtualMachine() {
 }
 
 /*****************************************************************************/
-void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
-    RnArrayNative args;
-    auto func = obj->GetData();
-    args.reserve(arg_cnt);
-    for (uint32_t i = 0; i < arg_cnt; i++) {
-        args.insert(args.begin(), StackPop());
-    }
-    RnObject* ret_val = RnMemoryManager::CreateObject(func->GetReturnType());
-
+RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
     if (func->IsBuiltIn()) {
+        RnObject* ret_val =
+            RnMemoryManager::CreateObject(func->GetReturnType());
+        GetScope()->GetMemoryGroup()->AddObject(ret_val);
         func->Call(args, ret_val);
-        if (func->GetReturnType() != RnType::RN_VOID) {
-            StackPush(ret_val);
-        }
+        return ret_val;
     } else {
-        auto scope = CreateScope();
-        scope->SetParent(GetScope());
+        auto scope = RnMemoryManager::CreateScope();
+        scope->SetParent(func->GetScope());
         func->InitScope(scope);
-        _call_stack.push_back(scope);
         _scopes.push_back(scope);
-
+        _call_stack.push_back(scope);
         func->PassArguments(args, scope);
+
         bool has_returned = false;
         size_t func_index = func->GetIStart();
         size_t end_index = func->GetIStart() + func->GetICnt();
-        for (; func_index < end_index; func_index++) {
+        for (; func_index <= end_index; func_index++) {
             ExecuteInstruction(has_returned, func_index);
             if (has_returned) {
                 break;
@@ -138,8 +131,16 @@ void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
         _call_stack.pop_back();
         PopScope();
 
-        if (func->GetName() == "construct") {
-            StackPush(func->GetScope()->GetObject(_object_this_key));
+        for (int i = 0; i < scope->GetLinkedScopeCount(); i++) {
+            PopScope();
+        }
+
+        if (has_returned) {
+            return scope->GetStack().back();
+        } else if (func->GetName() == "construct") {
+            return func->GetScope()->GetObject(_object_this_key);
+        } else {
+            return RnObject::Create(RnType::RN_NULL);
         }
     }
 }
@@ -458,6 +459,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             } else {
                 func_obj = stack_val;
             }
+
             RnArrayNative args;
             auto func = func_obj->ToFunction();
             args.reserve(instruction->GetArg1());
@@ -466,47 +468,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             }
             std::reverse(args.begin(), args.end());
 
-            if (func->IsBuiltIn()) {
-                RnObject* ret_val =
-                    RnMemoryManager::CreateObject(func->GetReturnType());
-                GetScope()->GetMemoryGroup()->AddObject(ret_val);
-                func->Call(args, ret_val);
-                StackPush(ret_val);
-            } else {
-                auto scope = RnMemoryManager::CreateScope();
-                scope->SetParent(func->GetScope());
-                func->InitScope(scope);
-                _scopes.push_back(scope);
-                _call_stack.push_back(scope);
-                func->PassArguments(args, scope);
-
-                bool has_returned = false;
-                size_t func_index = func->GetIStart();
-                size_t end_index = func->GetIStart() + func->GetICnt();
-                for (; func_index <= end_index; func_index++) {
-                    ExecuteInstruction(has_returned, func_index);
-                    if (has_returned) {
-                        break;
-                    }
-                }
-
-                _call_stack.pop_back();
-                PopScope();
-
-                for (int i = 0; i < scope->GetLinkedScopeCount(); i++) {
-                    PopScope();
-                }
-
-                if (has_returned) {
-                    StackPush(scope->GetStack().back());
-                } else {
-                    StackPush(RnObject::Create(RnType::RN_NULL));
-                }
-
-                if (func->GetName() == "construct") {
-                    StackPush(func->GetScope()->GetObject(_object_this_key));
-                }
-            }
+            auto ret_val = CallFunction(func_obj->ToFunction(), args);
+            StackPush(ret_val);
             PREDICT_OPCODE(OP_POP)
             break;
         }
