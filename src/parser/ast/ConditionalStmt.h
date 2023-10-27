@@ -37,5 +37,5 @@ public:
     std::string ToString(bool nl) override;
     std::shared_ptr<AstNode> test;
     std::shared_ptr<AstNode> consequent;
-    std::shared_ptr<AstNode> alternative;
+    std::shared_ptr<ConditionalStmt> alternative;
 };

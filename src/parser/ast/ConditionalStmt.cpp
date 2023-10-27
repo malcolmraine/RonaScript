@@ -51,15 +51,17 @@ std::string ConditionalStmt::ToString(bool nl) {
         output += test->ToString(true);
     }
 
-    output += MakeTabStr() + "\tConsequent( )" + newline;
+    nest_lvl++;
+    output += MakeTabStr() + "Consequent( )" + newline;
     consequent->nest_lvl = nest_lvl + 1;
     output += consequent->ToString(true);
 
     if (alternative) {
-        output += MakeTabStr() + "\tAlternative( )" + newline;
+        output += MakeTabStr() + "Alternative( )" + newline;
         alternative->nest_lvl = nest_lvl + 1;
         output += alternative->ToString(true);
     }
+    nest_lvl--;
 
     return output;
 }
