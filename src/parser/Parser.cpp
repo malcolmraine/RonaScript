@@ -734,26 +734,28 @@ std::shared_ptr<ConditionalStmt> Parser::ParseConditionalStmt() {
         }
         AdvanceBuffer(1);
         node->test = ParseExpr(TokenType::COLON);
-        {
-            auto previous_scope_count = _scope_count;
-            node->consequent = ParseScope();
-            assert(_scope_count == previous_scope_count);
-        }
-        if (!Current())
-            return node;
-
-        if (Current()->IsOneOf({TokenType::ELIF, TokenType::ELSE})) {
-            auto previous_scope_count = _scope_count;
-            node->alternative = ParseConditionalStmt();
-            assert(_scope_count == previous_scope_count);
-        }
-
-    } else if (Current()->token_type == TokenType::ELSE) {
-        node->node_type = AST_ELSE_STMT;
-        AdvanceBuffer(1);
-        auto previous_scope_count = _scope_count;
         node->consequent = ParseScope();
-        assert(_scope_count == previous_scope_count);
+
+        // Keep parsing conditionals until no more are found
+        std::shared_ptr<ConditionalStmt> parent_node = node;
+        while (Current() && Current()->IsOneOf({TokenType::ELIF, TokenType::ELSE})) {
+            parent_node->alternative = std::make_shared<ConditionalStmt>();
+            AddCurrentFileInfo(parent_node->alternative);
+
+            if (Current()->token_type == TokenType::ELIF) {
+                parent_node->alternative->node_type = AST_ELIF_STMT;
+                AdvanceBuffer(1);
+                parent_node->alternative->test = ParseExpr(TokenType::COLON);
+                parent_node->alternative->consequent = ParseScope();
+            } else {
+                parent_node->alternative->node_type = AST_ELSE_STMT;
+                Expect(TokenType::COLON);
+                AdvanceBuffer(2);
+                parent_node->alternative->consequent = ParseScope();
+            }
+
+            parent_node = parent_node->alternative;
+        }
     } else {
         throw std::runtime_error("Invalid token '" + Current()->lexeme +
                                  "' for conditional statement.");
@@ -773,13 +775,15 @@ std::shared_ptr<ScopeNode> Parser::ParseScope() {
     for (const auto& entry : _current_scope->pragma_table) {
         node->pragma_table[entry.first] = entry.second;
     }
-    ConvertScope(node);
+
     ConditionalBufAdvance(TokenType::BEGIN);
     ConditionalBufAdvance(TokenType::COLON);
+
     auto previous_scope_count = _scope_count;
+    ConvertScope(node);
     Parse();
     RevertScope();
-    //    assert(_scope_count == previous_scope_count);
+    assert(_scope_count == previous_scope_count);
 
     if (!Current() && _data_idx > _data_size) {
         Log::WARN("Out of bounds parser index");
