@@ -462,8 +462,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto func = func_obj->ToFunction();
             args.reserve(instruction->GetArg1());
             for (uint32_t i = 0; i < instruction->GetArg1(); i++) {
-                args.insert(args.begin(), StackPop());
+                args.push_back(StackPop());
             }
+            std::reverse(args.begin(), args.end());
 
             if (func->IsBuiltIn()) {
                 RnObject* ret_val =
