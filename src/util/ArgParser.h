@@ -67,6 +67,7 @@ public:
     void ShowHelp();
     void Parse(int argc, char* argv[]);
     [[nodiscard]] std::string GetInputFile() const;
+    std::vector<std::string> GetProgramArguments();
 
 private:
     std::map<std::string, Argument*> _arguments{};
@@ -75,4 +76,5 @@ private:
     std::unordered_set<std::string> _help_exclusions{};
     std::vector<std::string> _ordered_args{};
     size_t _longest_key_length = 0;
+    std::vector<std::string> _program_arguments;
 };

@@ -37,7 +37,9 @@
 #include "../builtins/RnBuiltins_IO.h"
 #include "../builtins/RnBuiltins_Math.h"
 #include "../builtins/RnBuiltins_String.h"
+#include "../builtins/RnBuiltins_System.h"
 #include "../builtins/RnBuiltins_Type.h"
+#include "../common/RnConfig.h"
 #include "../util/StopWatch.h"
 #include "RnAnyObject.h"
 #include "RnArrayObject.h"
@@ -58,7 +60,7 @@ RnIntNative RnVirtualMachine::_object_construct_key = -1;
 /*****************************************************************************/
 RnVirtualMachine::RnVirtualMachine() {
     _scopes.reserve(16);
-    _call_stack.reserve(50);
+    _call_stack.reserve(RnConfig::GetCallStackMaxDepth());
     _memory_manager = new RnMemoryManager();
 
     _object_this_key = RnConstStore::InternValue(static_cast<RnStringNative>("this"));
@@ -103,43 +105,54 @@ RnVirtualMachine::~RnVirtualMachine() {
 }
 
 /*****************************************************************************/
-void RnVirtualMachine::CallFunction(RnFunctionObject* obj, uint32_t arg_cnt) {
-    RnArrayNative args;
-    auto func = obj->GetData();
-    args.reserve(arg_cnt);
-    for (uint32_t i = 0; i < arg_cnt; i++) {
-        args.insert(args.begin(), StackPop());
+void RnVirtualMachine::CallStackPush(RnScope* scope) {
+    if (_call_stack.size() >= RnConfig::GetCallStackMaxDepth()) {
+        throw std::runtime_error("Exceeded maximum call stack size.");
     }
-    RnObject* ret_val = RnMemoryManager::CreateObject(func->GetReturnType());
+    _call_stack.push_back(scope);
+}
 
+/*****************************************************************************/
+void RnVirtualMachine::CallStackPop() {}
+
+/*****************************************************************************/
+RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
     if (func->IsBuiltIn()) {
+        RnObject* ret_val = RnMemoryManager::CreateObject(func->GetReturnType());
+        GetScope()->GetMemoryGroup()->AddObject(ret_val);
         func->Call(args, ret_val);
-        if (func->GetReturnType() != RnType::RN_VOID) {
-            StackPush(ret_val);
-        }
+        return ret_val;
     } else {
-        auto scope = CreateScope();
-        scope->SetParent(GetScope());
+        auto scope = RnMemoryManager::CreateScope();
+        scope->SetParent(func->GetScope());
         func->InitScope(scope);
-        _call_stack.push_back(scope);
         _scopes.push_back(scope);
-
+        CallStackPush(scope);
         func->PassArguments(args, scope);
+
         bool has_returned = false;
         size_t func_index = func->GetIStart();
         size_t end_index = func->GetIStart() + func->GetICnt();
-        for (; func_index < end_index; func_index++) {
+        for (; func_index <= end_index; func_index++) {
             ExecuteInstruction(has_returned, func_index);
             if (has_returned) {
                 break;
             }
         }
 
-        _call_stack.pop_back();
+        CallStackPop();
         PopScope();
 
-        if (func->GetName() == "construct") {
-            StackPush(func->GetScope()->GetObject(_object_this_key));
+        for (int i = 0; i < scope->GetLinkedScopeCount(); i++) {
+            PopScope();
+        }
+
+        if (has_returned) {
+            return scope->GetStack().back();
+        } else if (func->GetName() == "construct") {
+            return func->GetScope()->GetObject(_object_this_key);
+        } else {
+            return RnObject::Create(RnType::RN_NULL);
         }
     }
 }
@@ -458,6 +471,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             } else {
                 func_obj = stack_val;
             }
+
             RnArrayNative args;
             auto func = func_obj->ToFunction();
             args.reserve(instruction->GetArg1());
@@ -466,47 +480,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             }
             std::reverse(args.begin(), args.end());
 
-            if (func->IsBuiltIn()) {
-                RnObject* ret_val =
-                    RnMemoryManager::CreateObject(func->GetReturnType());
-                GetScope()->GetMemoryGroup()->AddObject(ret_val);
-                func->Call(args, ret_val);
-                StackPush(ret_val);
-            } else {
-                auto scope = RnMemoryManager::CreateScope();
-                scope->SetParent(func->GetScope());
-                func->InitScope(scope);
-                _scopes.push_back(scope);
-                _call_stack.push_back(scope);
-                func->PassArguments(args, scope);
-
-                bool has_returned = false;
-                size_t func_index = func->GetIStart();
-                size_t end_index = func->GetIStart() + func->GetICnt();
-                for (; func_index <= end_index; func_index++) {
-                    ExecuteInstruction(has_returned, func_index);
-                    if (has_returned) {
-                        break;
-                    }
-                }
-
-                _call_stack.pop_back();
-                PopScope();
-
-                for (int i = 0; i < scope->GetLinkedScopeCount(); i++) {
-                    PopScope();
-                }
-
-                if (has_returned) {
-                    StackPush(scope->GetStack().back());
-                } else {
-                    StackPush(RnObject::Create(RnType::RN_NULL));
-                }
-
-                if (func->GetName() == "construct") {
-                    StackPush(func->GetScope()->GetObject(_object_this_key));
-                }
-            }
+            auto ret_val = CallFunction(func_obj->ToFunction(), args);
+            StackPush(ret_val);
             PREDICT_OPCODE(OP_POP)
             break;
         }
@@ -832,9 +807,7 @@ RnScope* RnVirtualMachine::CreateScope() {
 
 void RnVirtualMachine::RegisterBuiltins() {
     std::vector<std::tuple<RnStringNative, BuiltinFunction, RnType::Type>> functions = {
-        RN_BUILTIN_MATH_REGISTRATIONS RN_BUILTIN_IO_REGISTRATIONS
-            RN_BUILTIN_TYPE_REGISTRATIONS RN_BUILTIN_STRING_REGISTRATIONS
-                RN_BUILTIN_ARRAY_REGISTRATIONS RN_BUILTIN_GENERAL_REGISTRATIONS};
+        RN_BUILTIN_REGISTRATIONS};
 
     for (auto parts : functions) {
         auto func = new RnBuiltinFunction(std::get<0>(parts), std::get<1>(parts));

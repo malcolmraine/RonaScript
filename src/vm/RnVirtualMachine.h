@@ -39,6 +39,7 @@
 
 class RnObject;
 class RnFunctionObject;
+class RnFunction;
 class RnClassObject;
 class RnMemoryManager;
 
@@ -70,7 +71,9 @@ public:
         _scopes.back()->GetStack().push_back(object);
     }
 
-    void CallFunction(RnFunctionObject* obj, uint32_t arg_cnt);
+    void CallStackPush(RnScope* scope);
+    void CallStackPop();
+    RnObject* CallFunction(RnFunction* func, RnArrayNative args);
     RnIntNative Run();
     void LoadInstructions(std::vector<RnInstruction*> instructions);
     static RnVirtualMachine* GetInstance();
