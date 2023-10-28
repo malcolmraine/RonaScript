@@ -41,7 +41,8 @@ class RnObject;
     RN_BUILTIN_IO_REGISTRATIONS      \
     RN_BUILTIN_STRING_REGISTRATIONS  \
     RN_BUILTIN_TYPE_REGISTRATIONS    \
-    RN_BUILTIN_ARRAY_REGISTRATIONS
+    RN_BUILTIN_ARRAY_REGISTRATIONS   \
+    RN_BUILTIN_SYSTEM_REGISTRATIONS
 
 #define RN_BUILTIN_TIME_REGISTRATIONS
 #define RN_BUILTIN_MATH_REGISTRATIONS
@@ -49,6 +50,7 @@ class RnObject;
 #define RN_BUILTIN_STRING_REGISTRATIONS
 #define RN_BUILTIN_TYPE_REGISTRATIONS
 #define RN_BUILTIN_ARRAY_REGISTRATIONS
+#define RN_BUILTIN_SYSTEM_REGISTRATIONS
 
 #define RN_BUILTIN_GENERAL_REGISTRATIONS                        \
     RN_BUILTIN_FUNC(RnBuiltins, unpack, RnType::RN_VOID, 1)     \
@@ -69,6 +71,11 @@ class RnObject;
 #define BUILTIN_ASSERTS \
     assert(ret_val);    \
     assert(scope);
+
+#define FUNCTION_ARG_COUNT_CHECK(n) \
+    if (args.size() != n) {         \
+        throw std::runtime_error("Expected "  + std::to_string(n) + " arguments but received " + std::to_string(args.size()));                                \
+    }
 
 #define RN_BUILTIN_FUNC_DECLARE(ns, name, retval, argcnt)                    \
     static void rn_builtin_##name(RnScope* scope, const RnArrayNative& args, \

@@ -36,6 +36,7 @@
 #include "../vm/RnFunction.h"
 #include "../vm/RnFunctionObject.h"
 #include "../vm/RnScope.h"
+#include "../vm/RnVirtualMachine.h"
 
 #undef RN_BUILTIN_FUNC
 #define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE
@@ -82,11 +83,7 @@ RN_BUILTIN_FUNC_DEFINE(call, RnType::RN_ANY, 2) {
     auto obj = scope->GetObject(RnConstStore::InternValue(args.front()->ToString()));
     auto func_obj = dynamic_cast<RnFunctionObject*>(obj);
     auto func = func_obj->GetData();
-    RnArrayNative callArgs(args.begin() + 1, args.end());
-    RnObject* call_ret_val = RnObject::Create(func->GetReturnType());
-    func->Call(callArgs, call_ret_val);
-    RnArrayNative ret_vals = {call_ret_val};
-    ret_val->SetData(ret_vals);
+    ret_val->CopyDataFromObject(RnVirtualMachine::GetInstance()->CallFunction(func, args));
 }
 
 /*****************************************************************************/

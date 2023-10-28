@@ -38,7 +38,9 @@
 #include "../builtins/RnBuiltins_Math.h"
 #include "../builtins/RnBuiltins_String.h"
 #include "../builtins/RnBuiltins_Type.h"
+#include "../builtins/RnBuiltins_System.h"
 #include "../util/StopWatch.h"
+#include "../common/RnConfig.h"
 #include "RnAnyObject.h"
 #include "RnArrayObject.h"
 #include "RnClassObject.h"
@@ -58,7 +60,7 @@ RnIntNative RnVirtualMachine::_object_construct_key = -1;
 /*****************************************************************************/
 RnVirtualMachine::RnVirtualMachine() {
     _scopes.reserve(16);
-    _call_stack.reserve(50);
+    _call_stack.reserve(RnConfig::GetCallStackMaxDepth());
     _memory_manager = new RnMemoryManager();
 
     _object_this_key = RnConstStore::InternValue(static_cast<RnStringNative>("this"));
@@ -103,6 +105,17 @@ RnVirtualMachine::~RnVirtualMachine() {
 }
 
 /*****************************************************************************/
+void RnVirtualMachine::CallStackPush(RnScope* scope) {
+    if (_call_stack.size() >= RnConfig::GetCallStackMaxDepth()) {
+        throw std::runtime_error("Exceeded maximum call stack size.");
+    }
+    _call_stack.push_back(scope);
+}
+
+/*****************************************************************************/
+void RnVirtualMachine::CallStackPop() {}
+
+/*****************************************************************************/
 RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
     if (func->IsBuiltIn()) {
         RnObject* ret_val =
@@ -115,7 +128,7 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
         scope->SetParent(func->GetScope());
         func->InitScope(scope);
         _scopes.push_back(scope);
-        _call_stack.push_back(scope);
+        CallStackPush(scope);
         func->PassArguments(args, scope);
 
         bool has_returned = false;
@@ -128,7 +141,7 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
             }
         }
 
-        _call_stack.pop_back();
+        CallStackPop();
         PopScope();
 
         for (int i = 0; i < scope->GetLinkedScopeCount(); i++) {
@@ -795,9 +808,7 @@ RnScope* RnVirtualMachine::CreateScope() {
 
 void RnVirtualMachine::RegisterBuiltins() {
     std::vector<std::tuple<RnStringNative, BuiltinFunction, RnType::Type>> functions = {
-        RN_BUILTIN_MATH_REGISTRATIONS RN_BUILTIN_IO_REGISTRATIONS
-            RN_BUILTIN_TYPE_REGISTRATIONS RN_BUILTIN_STRING_REGISTRATIONS
-                RN_BUILTIN_ARRAY_REGISTRATIONS RN_BUILTIN_GENERAL_REGISTRATIONS};
+        RN_BUILTIN_REGISTRATIONS};
 
     for (auto parts : functions) {
         auto func = new RnBuiltinFunction(std::get<0>(parts), std::get<1>(parts));

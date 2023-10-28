@@ -1,8 +1,8 @@
 /*****************************************************************************
-* File: RnConfig.cpp
+* File: RnBuiltins_IO.cpp
 * Description:
 * Author: Malcolm Hall
-* Date: 3/24/23
+* Date: 2/1/22
 * Version: 1
 *
 * MIT License
@@ -24,24 +24,29 @@
 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
-*****************************************************************************/
+******************************************************************************/
 
-#include "RnConfig.h"
-#include "../util/RnOS.h"
+#include "RnBuiltins_System.h"
+#include "../vm/RnObject.h"
+#include "../vm/RnScope.h"
+#include "../common/RnConfig.h"
 
-size_t RnConfig::_call_stack_max_depth = 1000;
+#undef BUILTIN_CLASS
+#define BUILTIN_CLASS RnBuiltins_System
+
+#undef RN_BUILTIN_FUNC
+#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE
 
 /*****************************************************************************/
-std::string RnConfig::GetLibraryPath() {
-    return RnOS::GetEnv("RN_LIBPATH");
+RN_BUILTIN_FUNC_DEFINE(__set_recursion_limit, RnType::RN_INT, 1) {
+    BUILTIN_ASSERTS
+    FUNCTION_ARG_COUNT_CHECK(1)
+
+    RnConfig::SetCallStackMaxDepth(args.at(0)->ToInt());
+    ret_val->SetData(static_cast<RnIntNative>(RnConfig::GetCallStackMaxDepth()));
 }
 
 /*****************************************************************************/
-void RnConfig::SetCallStackMaxDepth(size_t n) {
-    _call_stack_max_depth = n;
+RN_BUILTIN_FUNC_DEFINE(__argv, RnType::RN_ARRAY, 0) {
 }
 
-/*****************************************************************************/
-size_t RnConfig::GetCallStackMaxDepth() {
-    return _call_stack_max_depth;
-}

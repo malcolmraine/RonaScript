@@ -71,6 +71,8 @@ public:
         _scopes.back()->GetStack().push_back(object);
     }
 
+    void CallStackPush(RnScope* scope);
+    void CallStackPop();
     RnObject* CallFunction(RnFunction* func, RnArrayNative args);
     RnIntNative Run();
     void LoadInstructions(std::vector<RnInstruction*> instructions);

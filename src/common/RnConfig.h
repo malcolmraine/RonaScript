@@ -33,4 +33,9 @@
 class RnConfig {
 public:
     static std::string GetLibraryPath();
+    static void SetCallStackMaxDepth(size_t n);
+    static size_t GetCallStackMaxDepth();
+
+private:
+    static size_t _call_stack_max_depth;
 };
