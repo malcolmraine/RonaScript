@@ -72,9 +72,11 @@ class RnObject;
     assert(ret_val);    \
     assert(scope);
 
-#define FUNCTION_ARG_COUNT_CHECK(name, n) \
-    if (args.size() != n) {         \
-        throw std::runtime_error("Function '" + std::string(#name) + "' expects "  + std::to_string(n) + " arguments but received " + std::to_string(args.size()));                                \
+#define FIXED_ARG_COUNT_CHECK(name, n)                                              \
+    if (args.size() != n) {                                                         \
+        throw std::runtime_error("Function '" + std::string(#name) + "' expects " + \
+                                 std::to_string(n) + " arguments but received " +   \
+                                 std::to_string(args.size()));                      \
     }
 
 #define RN_BUILTIN_FUNC_DECLARE(ns, name, retval, argcnt)                    \

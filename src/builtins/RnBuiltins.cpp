@@ -83,7 +83,8 @@ RN_BUILTIN_FUNC_DEFINE(call, RnType::RN_ANY, 2) {
     auto obj = scope->GetObject(RnConstStore::InternValue(args.front()->ToString()));
     auto func_obj = dynamic_cast<RnFunctionObject*>(obj);
     auto func = func_obj->GetData();
-    ret_val->CopyDataFromObject(RnVirtualMachine::GetInstance()->CallFunction(func, args));
+    ret_val->CopyDataFromObject(
+        RnVirtualMachine::GetInstance()->CallFunction(func, args));
 }
 
 /*****************************************************************************/

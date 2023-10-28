@@ -27,9 +27,9 @@
 ******************************************************************************/
 
 #include "RnBuiltins_System.h"
+#include "../common/RnConfig.h"
 #include "../vm/RnObject.h"
 #include "../vm/RnScope.h"
-#include "../common/RnConfig.h"
 
 #undef BUILTIN_CLASS
 #define BUILTIN_CLASS RnBuiltins_System
@@ -40,7 +40,7 @@
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(__set_recursion_limit, RnType::RN_INT, 1) {
     BUILTIN_ASSERTS
-    FUNCTION_ARG_COUNT_CHECK(__set_recursion_limit, 1)
+    FIXED_ARG_COUNT_CHECK(__set_recursion_limit, 1)
 
     RnConfig::SetCallStackMaxDepth(args.at(0)->ToInt());
     ret_val->SetData(static_cast<RnIntNative>(RnConfig::GetCallStackMaxDepth()));
@@ -48,7 +48,6 @@ RN_BUILTIN_FUNC_DEFINE(__set_recursion_limit, RnType::RN_INT, 1) {
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(__argv, RnType::RN_ARRAY, 0) {
-    FUNCTION_ARG_COUNT_CHECK(__argv, 0)
+    FIXED_ARG_COUNT_CHECK(__argv, 0)
     ret_val->SetData(RnConfig::GetArgv());
 }
-

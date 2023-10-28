@@ -54,5 +54,5 @@ RnArrayNative RnConfig::GetArgv() {
 
 /*****************************************************************************/
 void RnConfig::SetArgv(RnArrayNative argv) {
-     _argv = argv;
+    _argv = argv;
 }
