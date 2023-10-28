@@ -37,10 +37,10 @@
 #include "../builtins/RnBuiltins_IO.h"
 #include "../builtins/RnBuiltins_Math.h"
 #include "../builtins/RnBuiltins_String.h"
-#include "../builtins/RnBuiltins_Type.h"
 #include "../builtins/RnBuiltins_System.h"
-#include "../util/StopWatch.h"
+#include "../builtins/RnBuiltins_Type.h"
 #include "../common/RnConfig.h"
+#include "../util/StopWatch.h"
 #include "RnAnyObject.h"
 #include "RnArrayObject.h"
 #include "RnClassObject.h"
@@ -118,8 +118,7 @@ void RnVirtualMachine::CallStackPop() {}
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
     if (func->IsBuiltIn()) {
-        RnObject* ret_val =
-            RnMemoryManager::CreateObject(func->GetReturnType());
+        RnObject* ret_val = RnMemoryManager::CreateObject(func->GetReturnType());
         GetScope()->GetMemoryGroup()->AddObject(ret_val);
         func->Call(args, ret_val);
         return ret_val;

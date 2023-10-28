@@ -34,8 +34,8 @@ class RnScope;
 class RnObject;
 
 #undef RN_BUILTIN_SYSTEM_REGISTRATIONS
-#define RN_BUILTIN_SYSTEM_REGISTRATIONS                                   \
-    RN_BUILTIN_FUNC(RnBuiltins_System, __set_recursion_limit, RnType::RN_INT, 1)          \
+#define RN_BUILTIN_SYSTEM_REGISTRATIONS                                          \
+    RN_BUILTIN_FUNC(RnBuiltins_System, __set_recursion_limit, RnType::RN_INT, 1) \
     RN_BUILTIN_FUNC(RnBuiltins_System, __argv, RnType::RN_ARRAY, 0)
 
 #undef RN_BUILTIN_FUNC
