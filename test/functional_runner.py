@@ -150,7 +150,7 @@ class Test(object):
 
         def target():
             self.process = subprocess.Popen(
-                [rn_executable, self.source_file, *self.fixed_args, *self.args],
+                [rn_executable, *self.fixed_args, *self.args, self.source_file],
                 stderr=subprocess.PIPE,
                 stdout=subprocess.PIPE)
             self.process.communicate()

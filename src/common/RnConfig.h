@@ -29,13 +29,17 @@
 #pragma once
 
 #include <string>
+#include "RnType.h"
 
 class RnConfig {
 public:
     static std::string GetLibraryPath();
     static void SetCallStackMaxDepth(size_t n);
     static size_t GetCallStackMaxDepth();
+    static RnArrayNative GetArgv();
+    static void SetArgv(RnArrayNative argv);
 
 private:
     static size_t _call_stack_max_depth;
+    static RnArrayNative _argv;
 };

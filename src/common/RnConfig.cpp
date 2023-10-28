@@ -30,6 +30,7 @@
 #include "../util/RnOS.h"
 
 size_t RnConfig::_call_stack_max_depth = 1000;
+RnArrayNative RnConfig::_argv;
 
 /*****************************************************************************/
 std::string RnConfig::GetLibraryPath() {
@@ -44,4 +45,14 @@ void RnConfig::SetCallStackMaxDepth(size_t n) {
 /*****************************************************************************/
 size_t RnConfig::GetCallStackMaxDepth() {
     return _call_stack_max_depth;
+}
+
+/*****************************************************************************/
+RnArrayNative RnConfig::GetArgv() {
+    return _argv;
+}
+
+/*****************************************************************************/
+void RnConfig::SetArgv(RnArrayNative argv) {
+     _argv = argv;
 }

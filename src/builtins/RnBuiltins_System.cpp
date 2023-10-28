@@ -40,7 +40,7 @@
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(__set_recursion_limit, RnType::RN_INT, 1) {
     BUILTIN_ASSERTS
-    FUNCTION_ARG_COUNT_CHECK(1)
+    FUNCTION_ARG_COUNT_CHECK(__set_recursion_limit, 1)
 
     RnConfig::SetCallStackMaxDepth(args.at(0)->ToInt());
     ret_val->SetData(static_cast<RnIntNative>(RnConfig::GetCallStackMaxDepth()));
@@ -48,5 +48,7 @@ RN_BUILTIN_FUNC_DEFINE(__set_recursion_limit, RnType::RN_INT, 1) {
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(__argv, RnType::RN_ARRAY, 0) {
+    FUNCTION_ARG_COUNT_CHECK(__argv, 0)
+    ret_val->SetData(RnConfig::GetArgv());
 }
 

@@ -14,6 +14,8 @@
 #include "vm/RnMemoryManager.h"
 #include "vm/RnObject.h"
 #include "vm/RnVirtualMachine.h"
+#include "common/RnConfig.h"
+#include <algorithm>
 
 // @formatter:off
 #include "common/RnBuildInfo.h"
@@ -90,6 +92,15 @@ void Run(const InstructionBlock& instructions) {
     auto vm = RnVirtualMachine::GetInstance();
     try {
         vm->LoadInstructions(instructions);
+        RnArrayNative argv;
+        auto argv_strings = arg_parser.GetProgramArguments();
+        argv.reserve(argv_strings.size());
+        std::transform(argv_strings.begin(), argv_strings.end(),
+                       std::back_inserter(argv),
+                       [](const std::string& argument) {
+                           return RnObject::Create(argument);
+                       });
+        RnConfig::SetArgv(argv);
         RnIntNative exit_code = vm->Run();
     } catch (const std::exception& e) {
         Log::ERROR("Runtime Error: " + std::string(e.what()));
@@ -171,7 +182,7 @@ void Repl() {
 /*****************************************************************************/
 void RonaScriptMain(int argc, char* argv[]) {
 
-    arg_parser.SetMainDescription("Usage: RonaScript <file> [options...]");
+    arg_parser.SetMainDescription("Usage: RonaScript [options...] <file> [arguments...]");
     arg_parser.AddArgument("<file>", {}, "Input file (*.rn | *.rnc)");
     arg_parser.AddArgument("-c", {}, "Compile to *.rnc file");
     arg_parser.AddArgument("--repl", {}, "REPL");
