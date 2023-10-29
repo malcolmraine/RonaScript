@@ -494,6 +494,10 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
             }
         }
 
+        if (!Current()) {
+            throw std::runtime_error("Failed to parse expression");
+        }
+
         if (Current()->token_type == TokenType::R_BRACK) {
             parse_bracketed_node();
         }
