@@ -91,6 +91,11 @@ public:
     virtual void SetBytes(const char* buf, size_t n) = 0;
 
     /*************************************************************************/
+    virtual std::string GetTypeName() const {
+        return RnType::TypeToString(GetType());
+    }
+
+    /*************************************************************************/
     virtual inline void Mark() {
         _is_marked = true;
     }

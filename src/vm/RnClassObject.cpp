@@ -29,7 +29,6 @@
 #include "RnClassObject.h"
 #include <iomanip>
 #include <sstream>
-#include "../common/RnInternment.h"
 #include "../vm/RnFunction.h"
 #include "RnVirtualMachine.h"
 
@@ -43,6 +42,42 @@ RnIntNative RnClassObject::MAGIC_METHOD_KEY_ARRAY =
     RnConstStore::InternValue(std::string("__array"));
 RnIntNative RnClassObject::MAGIC_METHOD_KEY_BOOL =
     RnConstStore::InternValue(std::string("__bool"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_PLUS =
+    RnConstStore::InternValue(std::string("__plus"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_MINUS =
+    RnConstStore::InternValue(std::string("__minus"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_MOD =
+    RnConstStore::InternValue(std::string("__mod"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_EQ =
+    RnConstStore::InternValue(std::string("__eq"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_NEQ =
+    RnConstStore::InternValue(std::string("__neq"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_DIV =
+    RnConstStore::InternValue(std::string("__div"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_OR =
+    RnConstStore::InternValue(std::string("__or"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_AND =
+    RnConstStore::InternValue(std::string("__and"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_XOR =
+    RnConstStore::InternValue(std::string("__xor"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_GT =
+    RnConstStore::InternValue(std::string("__gt"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_LT =
+    RnConstStore::InternValue(std::string("__lt"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_GEQ =
+    RnConstStore::InternValue(std::string("__geq"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_LEQ =
+    RnConstStore::InternValue(std::string("__leq"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_RSHIFT =
+    RnConstStore::InternValue(std::string("__rshift"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_LSHIFT =
+    RnConstStore::InternValue(std::string("__lshift"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_MUL =
+    RnConstStore::InternValue(std::string("__mul"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_BINAND =
+    RnConstStore::InternValue(std::string("__binand"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_BINOR =
+    RnConstStore::InternValue(std::string("__binor"));
 
 /*****************************************************************************/
 RnClassObject::RnClassObject() {
@@ -78,7 +113,7 @@ void RnClassObject::CopySymbols(RnScope* target) {
 }
 
 /*****************************************************************************/
-RnObject* RnClassObject::CallFunction(RnIntNative key, RnArrayNative args) {
+RnObject* RnClassObject::CallFunction(RnIntNative key, const RnArrayNative& args) {
     auto func_obj = _data->GetObject(key);
     if (func_obj) {
         auto func = func_obj->ToFunction();
@@ -96,11 +131,179 @@ RnBoolNative RnClassObject::HasSymbol(RnIntNative key) {
 }
 
 /*****************************************************************************/
-bool RnClassObject::TryMagicMethod(RnIntNative key, RnArrayNative args, RnObject* ret_val) {
+bool RnClassObject::TryMagicMethod(RnIntNative key, const RnArrayNative& args,
+                                   RnObject* ret_val) {
     if (HasSymbol(key)) {
         auto func_ret_val = CallFunction(key, {});
         ret_val->CopyDataFromObject(func_ret_val);
         return true;
     }
     return false;
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator*(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_MUL)) {
+        return CallFunction(MAGIC_METHOD_KEY_MUL, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator*(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator^(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_XOR)) {
+        return CallFunction(MAGIC_METHOD_KEY_XOR, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator^(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator%(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_MOD)) {
+        return CallFunction(MAGIC_METHOD_KEY_MOD, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator%(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator+(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_PLUS)) {
+        return CallFunction(MAGIC_METHOD_KEY_PLUS, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator*(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator-(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_MINUS)) {
+        return CallFunction(MAGIC_METHOD_KEY_MINUS, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator-(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator==(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_EQ)) {
+        return CallFunction(MAGIC_METHOD_KEY_EQ, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator==(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator!=(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_NEQ)) {
+        return CallFunction(MAGIC_METHOD_KEY_NEQ, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator!=(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator/(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_DIV)) {
+        return CallFunction(MAGIC_METHOD_KEY_DIV, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator/(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator|(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_BINOR)) {
+        return CallFunction(MAGIC_METHOD_KEY_BINOR, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator|(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator||(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_OR)) {
+        return CallFunction(MAGIC_METHOD_KEY_OR, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator||(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator&&(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_AND)) {
+        return CallFunction(MAGIC_METHOD_KEY_AND, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator&&(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator&(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_BINAND)) {
+        return CallFunction(MAGIC_METHOD_KEY_BINAND, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator*(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator>(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_GT)) {
+        return CallFunction(MAGIC_METHOD_KEY_GT, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator>(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator<(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_LT)) {
+        return CallFunction(MAGIC_METHOD_KEY_LT, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator<(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator>=(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_GEQ)) {
+        return CallFunction(MAGIC_METHOD_KEY_GEQ, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator>=(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator<=(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_LEQ)) {
+        return CallFunction(MAGIC_METHOD_KEY_LEQ, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator<=(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator>>(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_RSHIFT)) {
+        return CallFunction(MAGIC_METHOD_KEY_RSHIFT, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator>>(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::operator<<(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_LSHIFT)) {
+        return CallFunction(MAGIC_METHOD_KEY_LSHIFT, {obj});
+    } else {
+        return RnObjectBase<RnScope*>::operator<<(obj);
+    }
+}
+
+/*****************************************************************************/
+std::string RnClassObject::GetTypeName() const {
+    return GetName();
 }

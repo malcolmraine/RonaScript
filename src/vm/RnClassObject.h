@@ -57,9 +57,32 @@ public:
     ~RnClassObject() override;
     [[nodiscard]] RnStringNative ToString() const override;
     void CopySymbols(RnScope* target);
-    RnObject* CallFunction(RnIntNative key, RnArrayNative args);
+    RnObject* CallFunction(RnIntNative key, const RnArrayNative& args);
     RnBoolNative HasSymbol(RnIntNative key);
-    bool TryMagicMethod(RnIntNative key, RnArrayNative args, RnObject* ret_val);
+    bool TryMagicMethod(RnIntNative key, const RnArrayNative& args, RnObject* ret_val);
+    RnObject* operator*(RnObject* obj) override;
+    RnObject* operator^(RnObject* obj) override;
+    RnObject* operator%(RnObject* obj) override;
+    RnObject* operator+(RnObject* obj) override;
+    RnObject* operator-(RnObject* obj) override;
+    RnObject* operator==(RnObject* obj) override;
+    RnObject* operator!=(RnObject* obj) override;
+    RnObject* operator/(RnObject* obj) override;
+    RnObject* operator|(RnObject* obj) override;
+    RnObject* operator||(RnObject* obj) override;
+    RnObject* operator&&(RnObject* obj) override;
+    RnObject* operator&(RnObject* obj) override;
+    RnObject* operator>(RnObject* obj) override;
+    RnObject* operator<(RnObject* obj) override;
+    RnObject* operator>=(RnObject* obj) override;
+    RnObject* operator<=(RnObject* obj) override;
+    RnObject* operator>>(RnObject* obj) override;
+    RnObject* operator<<(RnObject* obj) override;
+    std::string GetTypeName() const override;
+
+    void SetParentClass(RnClass* parent_class) {
+        _parent_class = parent_class;
+    }
 
     [[nodiscard]] RnScope* GetScope() const {
         return GetData();
@@ -86,6 +109,25 @@ public:
     static RnIntNative MAGIC_METHOD_KEY_FLOAT;
     static RnIntNative MAGIC_METHOD_KEY_ARRAY;
     static RnIntNative MAGIC_METHOD_KEY_BOOL;
+    static RnIntNative MAGIC_METHOD_KEY_PLUS;
+    static RnIntNative MAGIC_METHOD_KEY_MINUS;
+    static RnIntNative MAGIC_METHOD_KEY_MOD;
+    static RnIntNative MAGIC_METHOD_KEY_EQ;
+    static RnIntNative MAGIC_METHOD_KEY_NEQ;
+    static RnIntNative MAGIC_METHOD_KEY_DIV;
+    static RnIntNative MAGIC_METHOD_KEY_OR;
+    static RnIntNative MAGIC_METHOD_KEY_AND;
+    static RnIntNative MAGIC_METHOD_KEY_XOR;
+    static RnIntNative MAGIC_METHOD_KEY_GT;
+    static RnIntNative MAGIC_METHOD_KEY_LT;
+    static RnIntNative MAGIC_METHOD_KEY_GEQ;
+    static RnIntNative MAGIC_METHOD_KEY_LEQ;
+    static RnIntNative MAGIC_METHOD_KEY_RSHIFT;
+    static RnIntNative MAGIC_METHOD_KEY_LSHIFT;
+    static RnIntNative MAGIC_METHOD_KEY_MUL;
+    static RnIntNative MAGIC_METHOD_KEY_BINAND;
+    static RnIntNative MAGIC_METHOD_KEY_BINOR;
 private:
+    RnClass* _parent_class = nullptr;
     RnStringNative _name;
 };
