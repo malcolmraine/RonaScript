@@ -10,7 +10,7 @@ begin
     var __cached_parent_dir: string = "";
 
     /******************************************************/
-    routine construct(var p: any)
+    routine construct(var p: any): object
     begin
         if is_array(p):
             this->__initial_value = array_join("/", p);
@@ -19,13 +19,15 @@ begin
         else:
             throw(InvalidInputException());
         end
+
+        return this;
     end // routine construct
 
     /******************************************************/
     routine absolute(): string
     begin
         if this->__cached_abs:
-            return this->__cached_parent_dir;
+            return this->__cached_abs;
         else:
             return "";
         end;
@@ -35,7 +37,7 @@ begin
     routine relative(): string
     begin
         if this->__cached_rel:
-            return this->__cached_parent_dir;
+            return this->__cached_rel;
         else:
             return "";
         end;

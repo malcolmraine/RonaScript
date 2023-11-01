@@ -2,6 +2,15 @@ module System is
 begin
 
 
+const argv: array = __argv();
+
+
+routine set_recursion_limit(var depth: int): bool
+begin
+    return depth == __set_recursion_limit(depth);
+end
+
+
 routine exec(): any
 begin
 
