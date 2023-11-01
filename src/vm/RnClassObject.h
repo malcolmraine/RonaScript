@@ -57,6 +57,9 @@ public:
     ~RnClassObject() override;
     [[nodiscard]] RnStringNative ToString() const override;
     void CopySymbols(RnScope* target);
+    RnObject* CallFunction(RnIntNative key, RnArrayNative args);
+    RnBoolNative HasSymbol(RnIntNative key);
+    bool TryMagicMethod(RnIntNative key, RnArrayNative args, RnObject* ret_val);
 
     [[nodiscard]] RnScope* GetScope() const {
         return GetData();
@@ -71,13 +74,18 @@ public:
     }
 
     [[nodiscard]] RnType::Type GetType() const override {
-        return RnType::RN_OBJECT;
+        return RnType::RN_CLASS_INSTANCE;
     }
 
     [[nodiscard]] RnStringNative GetName() const {
         return _name;
     }
 
+    static RnIntNative MAGIC_METHOD_KEY_STR;
+    static RnIntNative MAGIC_METHOD_KEY_INT;
+    static RnIntNative MAGIC_METHOD_KEY_FLOAT;
+    static RnIntNative MAGIC_METHOD_KEY_ARRAY;
+    static RnIntNative MAGIC_METHOD_KEY_BOOL;
 private:
     RnStringNative _name;
 };

@@ -83,13 +83,13 @@ public:
     RnObject* CreateObject(RnIntNative data);
     RnObject* CreateObject(RnFloatNative data);
     RnScope* CreateScope();
+    static void BindCls(RnScope* scope, RnObject* binding);
+    static void BindThis(RnScope* scope, RnObject* binding);
 
 private:
     inline void ExecuteInstruction(bool& break_scope, size_t& index);
     void RegisterBuiltins();
     RnVirtualMachine();
-    static void BindCls(RnScope* scope, RnObject* binding);
-    static void BindThis(RnScope* scope, RnObject* binding);
 
 private:
     static RnVirtualMachine* _instance;

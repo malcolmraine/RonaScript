@@ -29,7 +29,20 @@
 #include "RnClassObject.h"
 #include <iomanip>
 #include <sstream>
+#include "../common/RnInternment.h"
+#include "../vm/RnFunction.h"
 #include "RnVirtualMachine.h"
+
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_STR =
+    RnConstStore::InternValue(std::string("__str"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_INT =
+    RnConstStore::InternValue(std::string("__int"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_FLOAT =
+    RnConstStore::InternValue(std::string("__float"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_ARRAY =
+    RnConstStore::InternValue(std::string("__array"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_BOOL =
+    RnConstStore::InternValue(std::string("__bool"));
 
 /*****************************************************************************/
 RnClassObject::RnClassObject() {
@@ -62,4 +75,32 @@ void RnClassObject::CopySymbols(RnScope* target) {
         newObj->CopyDataFromObject(obj);
         target_symbol_table->SetSymbol(symbol, newObj);
     }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::CallFunction(RnIntNative key, RnArrayNative args) {
+    auto func_obj = _data->GetObject(key);
+    if (func_obj) {
+        auto func = func_obj->ToFunction();
+        RnVirtualMachine::BindThis(func->GetScope(), this);
+        return RnVirtualMachine::GetInstance()->CallFunction(func, args);
+    }
+    throw std::runtime_error("Calling non-existent function '" +
+                             RnConstStore::GetInternedString(key) +
+                             "' on instance of class " + GetName());
+}
+
+/*****************************************************************************/
+RnBoolNative RnClassObject::HasSymbol(RnIntNative key) {
+    return _data->GetObject(key) != nullptr;
+}
+
+/*****************************************************************************/
+bool RnClassObject::TryMagicMethod(RnIntNative key, RnArrayNative args, RnObject* ret_val) {
+    if (HasSymbol(key)) {
+        auto func_ret_val = CallFunction(key, {});
+        ret_val->CopyDataFromObject(func_ret_val);
+        return true;
+    }
+    return false;
 }
