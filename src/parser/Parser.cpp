@@ -1076,7 +1076,9 @@ void Parser::Parse() {
                 case TokenType::LOCAL:
                 case TokenType::VAR:
                     _current_scope->AddVarDecl(ParseVarDecl(qualifiers));
-                    ConditionalBufAdvance(TokenType::SEMICOLON);
+                    if (Current()) {
+                        ConditionalBufAdvance(TokenType::SEMICOLON);
+                    }
                     qualifiers.clear();
                     break;
                 case TokenType::TYPE:
