@@ -53,3 +53,8 @@ std::string AstNode::MakeTabStr() {
 
     return outp_str;
 }
+
+/*****************************************************************************/
+void AstNode::AddChild(std::shared_ptr<AstNode> child) {
+    _children.push_back(child);
+}

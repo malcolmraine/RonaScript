@@ -159,12 +159,13 @@ InstructionBlock RnCodeGenVisitor::Visit(LiteralValue* node) {
 InstructionBlock RnCodeGenVisitor::Visit(ArrayLiteral* node) {
     InstructionBlock instructions;
 
-    for (auto& item : node->items) {
+    auto items = node->GetChildren();
+    for (auto& item : items) {
         auto instruction_block = GeneralVisit(item);
         instructions.insert(instructions.begin(), instruction_block.begin(),
                             instruction_block.end());
     }
-    instructions.push_back(new RnInstruction(OP_MAKE_ARRAY, node->items.size()));
+    instructions.push_back(new RnInstruction(OP_MAKE_ARRAY, items.size()));
     return instructions;
 }
 
@@ -459,14 +460,14 @@ InstructionBlock RnCodeGenVisitor::Visit(Expr* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(AliasDecl* node) {
     return {new RnInstruction(OP_MAKE_ALIAS,
-                              RnConstStore::InternValue(node->base_name->value),
-                              RnConstStore::InternValue(node->alias_name->value))};
+                              RnConstStore::InternValue(node->GetChild<Name>(1)->value),
+                              RnConstStore::InternValue(node->GetChild<Name>(0)->value))};
 }
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ArgDecl* node) {
     return {new RnInstruction(OP_MAKE_ARG, node->GetType()->GetType(),
-                              RnConstStore::InternValue(node->GetId()->value))};
+                              RnConstStore::InternValue(node->GetChild<Name>(0)->value))};
 }
 
 /*****************************************************************************/

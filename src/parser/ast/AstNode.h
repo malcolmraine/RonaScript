@@ -41,10 +41,22 @@ public:
     virtual ~AstNode() = default;
     [[nodiscard]] bool IsLiteral() const;
     virtual std::string ToString(bool nl);
+    void AddChild(std::shared_ptr<AstNode> child);
+
+    std::vector<std::shared_ptr<AstNode>> GetChildren() const {
+        return _children;
+    }
+
+    template <class T = AstNode>
+    std::shared_ptr<T> GetChild(size_t index) {
+        return std::dynamic_pointer_cast<T>(_children.at(index));
+    }
+
     NodeType_t node_type = AST_DEFAULT;
     int nest_lvl = 0;  // For adding \t characters to string output
     FileInfo file_info;
 
 protected:
     std::string MakeTabStr();
+    std::vector<std::shared_ptr<AstNode>> _children;
 };

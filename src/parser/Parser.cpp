@@ -274,11 +274,11 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
         AdvanceBuffer(1);
 
         if (Current()->token_type == TokenType::NAME) {
-            arg->SetId(ParseName());
+            arg->AddChild(ParseName());
 
-            if (arg_symbols.find(arg->GetId()->value) != arg_symbols.end()) {
+            if (arg_symbols.find(arg->GetChild<Name>(0)->value) != arg_symbols.end()) {
                 throw std::runtime_error("Redeclaration of argument '" +
-                                         arg->GetId()->value + "' in routine '" +
+                                         arg->GetChild<Name>(0)->value + "' in routine '" +
                                          node->id + "'");
             }
         }
@@ -289,13 +289,13 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
             AdvanceBuffer(1);
         } else {
             throw std::runtime_error("Invalid type '" + Current()->lexeme +
-                                     "' for parameter '" + arg->GetId()->value +
+                                     "' for parameter '" + arg->GetChild<Name>(0)->value +
                                      "' while declaring routine '" + node->id + "'");
         }
 
         ConditionalBufAdvance(TokenType::COMMA);
         node->args.emplace_back(arg);
-        arg_symbols[arg->GetId()->value] = arg->GetType();
+        arg_symbols[arg->GetChild<Name>(0)->value] = arg->GetType();
 
         if (Current()->token_type != TokenType::VAR) {
             ConditionalBufAdvance(TokenType::COMMA);
@@ -830,7 +830,7 @@ std::shared_ptr<ArrayLiteral> Parser::ParseArrayLiteral() {
     ConditionalBufAdvance(TokenType::R_BRACK);
 
     while (!Current()->IsOneOf({TokenType::L_BRACK, TokenType::SEMICOLON})) {
-        node->items.emplace_back(ParseExpr(TokenType::COMMA));
+        node->AddChild(ParseExpr(TokenType::COMMA));
     }
     AdvanceBuffer(1);
 
@@ -909,14 +909,14 @@ std::shared_ptr<AliasDecl> Parser::ParseAliasDecl() {
 
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
-    node->alias_name = ParseName();
+    node->AddChild(ParseName());
 
     node->alias_type = Peek()->token_type == TokenType::TYPE ? TYPE_ALIAS : NAME_ALIAS;
 
     if (node->alias_type == NAME_ALIAS) {
         Expect(TokenType::NAME);
         AdvanceBuffer(1);
-        node->base_name = ParseName();
+        node->AddChild(ParseName());
         AdvanceBuffer(1);
     } else {
         Expect({TokenType::OBJECT, TokenType::STRING, TokenType::INT, TokenType::FLOAT,
@@ -924,7 +924,7 @@ std::shared_ptr<AliasDecl> Parser::ParseAliasDecl() {
         AdvanceBuffer(1);
         node->base_type = ParseType();
         AdvanceBuffer(1);
-        _user_defined_type_map[node->alias_name->value] = node->base_type;
+        _user_defined_type_map[node->GetChild<Name>(1)->value] = node->base_type;
     }
     return node;
 }

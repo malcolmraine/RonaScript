@@ -40,9 +40,9 @@ AliasDecl::~AliasDecl() = default;
 
 /*****************************************************************************/
 std::string AliasDecl::ToString(bool nl) {
-    std::string s = MakeTabStr() + "AliasDecl( " + alias_name->value + " -> ";
+    std::string s = MakeTabStr() + "AliasDecl( " + GetChild<Name>(0)->value + " -> ";
     if (alias_type == NAME_ALIAS) {
-        s += base_name->value + " )";
+        s += GetChild<Name>(1)->value + " )";
     } else {
         s += base_type->ToString() + " )";
     }

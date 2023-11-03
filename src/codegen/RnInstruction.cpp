@@ -85,6 +85,9 @@ auto RnInstruction::ToString() -> std::string {
             arg2_str = RnConstStore::GetInternedString(_arg2);
             break;
         case OP_MAKE_ALIAS:
+            arg1_str = RnConstStore::GetInternedString(_arg1);
+            arg2_str = RnConstStore::GetInternedString(_arg2);
+            break;
         case OP_RESOLVE_NAMESPACE:
         case OP_MAKE_MODULE:
         case OP_MAKE_CLASS:

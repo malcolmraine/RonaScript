@@ -415,6 +415,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                         RnMemoryManager::CreateObject(RnType::RN_CLASS_INSTANCE));
                     GetScope()->GetMemoryGroup()->AddObject(instance);
                     instance->ToObject()->SetParent(class_obj->ToObject());
+                    instance->SetDefinition(class_obj);
                     class_obj->CopySymbols(instance->GetScope());
                     BindThis(instance->GetScope(), instance);
                     BindCls(instance->GetScope(), class_obj);
@@ -537,6 +538,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto obj = dynamic_cast<RnClassObject*>(
                 RnObject::Create(RnType::RN_CLASS_INSTANCE));
             obj->SetIsClass(true);
+            obj->SetName(name_obj->ToString());
             obj->GetScope()->StoreObject(RnConstStore::InternValue("__class"),
                                          name_obj);
             GetScope()->StoreObject(instruction->GetArg1(), obj);
