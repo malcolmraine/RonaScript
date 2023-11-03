@@ -1,4 +1,4 @@
-Usage: RonaScript <file> [options...]
+Usage: RonaScript [options...] <file> [arguments...]
   <file>                   Input file (*.rn | *.rnc)
   -c                       Compile to *.rnc file
   --repl                   REPL
