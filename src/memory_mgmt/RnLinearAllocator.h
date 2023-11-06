@@ -39,8 +39,8 @@ struct MemoryBlock {
 #define MIN_BLOCK_SIZE 8
 #define NEXT_BLOCK(x)                \
     (reinterpret_cast<MemoryBlock*>( \
-        (reinterpret_cast<char*>(x) + sizeof(MemoryBlock) + x->size)))
-#define TOTAL_BLOCK_SIZE(block) (block->size + sizeof(MemoryBlock))
+        (reinterpret_cast<char*>(x) + sizeof(MemoryBlock) + (x)->size)))
+#define TOTAL_BLOCK_SIZE(block) ((block)->size + sizeof(MemoryBlock))
 #define BLOCK_MEMORY_ADDR(block) \
     (reinterpret_cast<void*>(reinterpret_cast<char*>(block) + sizeof(MemoryBlock)))
 

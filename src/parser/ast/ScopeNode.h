@@ -41,7 +41,7 @@ class VarDecl;
 class ScopeNode : public AstNode {
 public:
     ScopeNode();
-    ~ScopeNode();
+    ~ScopeNode() override;
     std::string ToString(bool nl) override;
     void AddSubTree(const std::shared_ptr<AstNode>& subtree, bool hoist = false);
     void AddClassDecl(const std::shared_ptr<ClassDecl>& class_decl);

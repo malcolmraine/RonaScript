@@ -63,5 +63,5 @@ public:
     MemoryHeap* GetHeapForAddress(void* addr) const;
     [[nodiscard]] size_t GetTotalMemorySize() const;
     virtual void SetMaxSize(size_t n) = 0;
-    virtual size_t GetMaxSize() const = 0;
+    [[nodiscard]] virtual size_t GetMaxSize() const = 0;
 };

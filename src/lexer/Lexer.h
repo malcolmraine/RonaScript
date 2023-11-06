@@ -64,7 +64,7 @@ public:
     static bool IsBoolLiteral(const std::string& s);  // TODO: Unit test
     static bool IsStrLiteral(const std::string& s);   // TODO: Unit test
     bool IsCompound() const;
-    bool IsReservedWord(const std::string& s) const;
+    static bool IsReservedWord(const std::string& s);
     std::string GetCompoundCandidate(int n = 2) const;
     Token* ProcessReservedWord();
     Token* ProcessDefault();

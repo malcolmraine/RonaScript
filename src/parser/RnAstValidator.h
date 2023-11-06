@@ -66,7 +66,7 @@ class RnAstValidator : public RnAstVisitor<bool>, RnCompilerPhase<Ast*, bool> {
 public:
     enum ASSIGNMENT_TYPE { RETURN_VALUE, ASSIGNMENT_VALUE };
     RnAstValidator() = default;
-    ~RnAstValidator() = default;
+    ~RnAstValidator() override = default;
 
     bool GeneralVisit(AstNode* node) override;
     bool GeneralVisit(const std::shared_ptr<AstNode>& node) override;

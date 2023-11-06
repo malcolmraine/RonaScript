@@ -26,7 +26,6 @@
 *******************************************************************************/
 #include "Lexer.h"
 #include <algorithm>
-#include <iostream>
 #include <utility>
 #include "Token.h"
 
@@ -221,7 +220,7 @@ bool Lexer::IsCompound() const {
 }
 
 /*****************************************************************************/
-bool Lexer::IsReservedWord(const std::string& s) const {
+bool Lexer::IsReservedWord(const std::string& s) {
     return _reserved_words.find(s) != _reserved_words.end();
 }
 

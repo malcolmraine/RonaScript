@@ -56,7 +56,7 @@ public:
         _scope = scope;
     }
 
-    void AddExceptionId(std::shared_ptr<Name> id) {
+    void AddExceptionId(const std::shared_ptr<Name>& id) {
         _exception_ids.push_back(id);
     }
 

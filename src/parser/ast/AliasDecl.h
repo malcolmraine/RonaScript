@@ -43,5 +43,5 @@ public:
     std::string ToString(bool nl) override;
 
     std::shared_ptr<RnTypeComposite> base_type;
-    AliasType alias_type;
+    AliasType alias_type = NAME_ALIAS;
 };

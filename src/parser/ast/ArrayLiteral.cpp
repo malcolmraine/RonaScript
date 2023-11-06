@@ -27,8 +27,6 @@
 ******************************************************************************/
 
 #include "ArrayLiteral.h"
-#include <iostream>
-#include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
 ArrayLiteral::ArrayLiteral() {

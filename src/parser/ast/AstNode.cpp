@@ -43,7 +43,7 @@ std::string AstNode::ToString(bool nl) {
 }
 
 /*****************************************************************************/
-std::string AstNode::MakeTabStr() {
+std::string AstNode::MakeTabStr() const {
     std::string outp_str;
 
     for (int i = 0; i < nest_lvl; ++i) {
@@ -55,6 +55,6 @@ std::string AstNode::MakeTabStr() {
 }
 
 /*****************************************************************************/
-void AstNode::AddChild(std::shared_ptr<AstNode> child) {
+void AstNode::AddChild(const std::shared_ptr<AstNode>& child) {
     _children.push_back(child);
 }
