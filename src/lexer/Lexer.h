@@ -6,7 +6,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +64,7 @@ public:
     static bool IsBoolLiteral(const std::string& s);  // TODO: Unit test
     static bool IsStrLiteral(const std::string& s);   // TODO: Unit test
     bool IsCompound() const;
-    bool IsReservedWord(const std::string& s) const;
+    static bool IsReservedWord(const std::string& s);
     std::string GetCompoundCandidate(int n = 2) const;
     Token* ProcessReservedWord();
     Token* ProcessDefault();

@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@
 class AssignmentStmt : public AstNode {
 public:
     AssignmentStmt();
-    ~AssignmentStmt();
+    ~AssignmentStmt() override;
     std::string ToString(bool nl) override;
 
     [[nodiscard]] const std::shared_ptr<AstNode>& GetRexpr() const {
@@ -53,25 +53,8 @@ public:
         _lexpr = lexpr;
     }
 
-    [[nodiscard]] const std::shared_ptr<AstNode>& GetOffset() const {
-        return _offset;
-    }
-
-    void SetOffset(const std::shared_ptr<AstNode>& offset) {
-        _offset = offset;
-    }
-
-    [[nodiscard]] const std::shared_ptr<AstNode>& GetIdx() const {
-        return _idx;
-    }
-
-    void SetIdx(const std::shared_ptr<AstNode>& idx) {
-        _idx = idx;
-    }
-
 private:
     std::shared_ptr<AstNode> _rexpr{};
     std::shared_ptr<AstNode> _lexpr = nullptr;
     std::shared_ptr<AstNode> _offset = nullptr;
-    std::shared_ptr<AstNode> _idx = nullptr;
 };

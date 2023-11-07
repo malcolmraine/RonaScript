@@ -1,13 +1,13 @@
 /*****************************************************************************
-* File:
+* File: RnCallFrame.h
 * Description:
 * Author: Malcolm Hall
-* Date:
+* Date: 11/6/23
 * Version: 1
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,16 +26,27 @@
 * SOFTWARE.
 ******************************************************************************/
 
-#include "FlowStmt.h"
-#include "../../codegen/RnCodeGenVisitor.h"
+#pragma once
 
-/*****************************************************************************/
-FlowStmt::FlowStmt() {}
+class RnScope;
+class RnObject;
+class RnFunction;
 
-/*****************************************************************************/
-FlowStmt::~FlowStmt() {}
+class RnCallFrame {
+public:
+    RnCallFrame();
+    ~RnCallFrame();
 
-/*****************************************************************************/
-std::string FlowStmt::ToString(bool nl) {
-    return AstNode::ToString(nl);
-}
+    RnFunction* GetFunction();
+    void SetFunction(RnFunction* func);
+    RnScope* GetScope() const;
+    void SetScope(RnScope* scope);
+    RnObject* GetReturnValue() const;
+    void SetReturnValue(RnObject* value);
+
+private:
+    RnFunction* _func = nullptr;
+    int _linked_scope_count = 0;
+    RnScope* _scope = nullptr;
+    RnObject* _ret_val = nullptr;
+};

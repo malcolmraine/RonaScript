@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -89,6 +89,11 @@ public:
     [[nodiscard]] virtual size_t GetByteSize() const = 0;
     virtual size_t GetBytes(char* buf) = 0;
     virtual void SetBytes(const char* buf, size_t n) = 0;
+
+    /*************************************************************************/
+    virtual std::string GetTypeName() const {
+        return RnType::TypeToString(GetType());
+    }
 
     /*************************************************************************/
     virtual inline void Mark() {

@@ -15,24 +15,22 @@
 #define UNDEFINED_OPERATOR(op)                                                      \
     auto operator op(RnObject* obj)->RnObject* override {                           \
         throw std::runtime_error("Operator '" + RnStringNative(#op) +               \
-                                 "' is not defined for types '" +                   \
-                                 RnType::TypeToString(GetType()) + "' and '" +      \
+                                 "' is not defined for types '" + GetTypeName() +   \
+                                 "' and '" +                                        \
                                  RnType::TypeToString(obj->GetActiveType()) + "'"); \
     }
 
-#define UNDEFINED_CAST(ret, handle, replacement)                                 \
-    [[nodiscard]] ret handle const override {                                    \
-        throw std::runtime_error("Cannot convert type " +                        \
-                                 RnType::TypeToString(GetType()) + " to type " + \
-                                 replacement);                                   \
+#define UNDEFINED_CAST(ret, handle, replacement)                          \
+    [[nodiscard]] ret handle const override {                             \
+        throw std::runtime_error("Cannot convert type " + GetTypeName() + \
+                                 " to type " + (replacement));              \
     }
 
 #define UNDEFINED_ASSIGNMENT(type, rntype, strval)                                 \
     auto SetData(type data)->void override {                                       \
         throw std::runtime_error("Cannot assign value " + RnStringNative(strval) + \
                                  " of type '" + RnType::TypeToString(rntype) +     \
-                                 "' to symbol of type '" +                         \
-                                 RnType::TypeToString(GetType()) + "'");           \
+                                 "' to symbol of type '" + GetTypeName() + "'");   \
     }
 
 class RnScope;

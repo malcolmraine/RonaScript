@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -56,7 +56,7 @@ public:
         _scope = scope;
     }
 
-    void AddExceptionId(std::shared_ptr<Name> id) {
+    void AddExceptionId(const std::shared_ptr<Name>& id) {
         _exception_ids.push_back(id);
     }
 

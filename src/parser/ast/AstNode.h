@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -41,10 +41,22 @@ public:
     virtual ~AstNode() = default;
     [[nodiscard]] bool IsLiteral() const;
     virtual std::string ToString(bool nl);
+    void AddChild(const std::shared_ptr<AstNode>& child);
+
+    std::vector<std::shared_ptr<AstNode>> GetChildren() const {
+        return _children;
+    }
+
+    template <class T = AstNode>
+    std::shared_ptr<T> GetChild(size_t index) const {
+        return std::dynamic_pointer_cast<T>(_children.at(index));
+    }
+
     NodeType_t node_type = AST_DEFAULT;
     int nest_lvl = 0;  // For adding \t characters to string output
     FileInfo file_info;
 
 protected:
-    std::string MakeTabStr();
+    std::string MakeTabStr() const;
+    std::vector<std::shared_ptr<AstNode>> _children;
 };

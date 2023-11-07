@@ -15,9 +15,6 @@
 class ArrayLiteral : public AstNode {
 public:
     ArrayLiteral();
-    ~ArrayLiteral();
+    ~ArrayLiteral() override;
     std::string ToString(bool nl) override;
-
-public:
-    std::vector<std::shared_ptr<AstNode>> items;
 };

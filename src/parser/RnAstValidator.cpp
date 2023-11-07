@@ -176,7 +176,7 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
         case AST_LIST_LITERAL: {
             auto node = std::dynamic_pointer_cast<ArrayLiteral>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_ARRAY);
-            auto value = static_cast<RnIntNative>(node->items.size());
+            auto value = static_cast<RnIntNative>(node->GetChildren().size());
             type->SetBounds(value, value);
             return type;
         }
@@ -348,7 +348,7 @@ bool RnAstValidator::Visit(FuncDecl* node) {
     _current_scope->symbol_table->AddSymbol(node->id, node->type);
 
     for (auto arg : node->args) {
-        node->scope->symbol_table->AddSymbol(arg->GetId()->value, arg->GetType());
+        node->scope->symbol_table->AddSymbol(arg->GetChild<Name>(0)->value, arg->GetType());
     }
     _current_type_reference = node->type;
     GeneralVisit(node->scope);
@@ -450,10 +450,10 @@ bool RnAstValidator::Visit(Expr* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(AliasDecl* node) {
-    SymbolRedeclarationCheck(node->alias_name->value);
+    SymbolRedeclarationCheck(node->GetChild<Name>(1)->value);
     _current_scope->symbol_table->AddSymbol(
-        node->alias_name->value,
-        _current_scope->symbol_table->GetSymbolEntry(node->base_name->value)
+        node->GetChild<Name>(1)->value,
+        _current_scope->symbol_table->GetSymbolEntry(node->GetChild<Name>(0)->value)
             ->GetType());
     return true;
 }

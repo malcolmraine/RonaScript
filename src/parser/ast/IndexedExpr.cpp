@@ -35,9 +35,7 @@ IndexedExpr::IndexedExpr() {
 }
 
 /*****************************************************************************/
-IndexedExpr::~IndexedExpr() {
-    //delete idx;
-}
+IndexedExpr::~IndexedExpr() = default;
 
 /*****************************************************************************/
 std::string IndexedExpr::ToString(bool nl) {

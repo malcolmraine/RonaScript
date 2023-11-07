@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -41,14 +41,6 @@ public:
     ~ArgDecl() override;
     std::string ToString(bool nl) override;
 
-    [[nodiscard]] const std::shared_ptr<Name>& GetId() const {
-        return _id;
-    }
-
-    void SetId(const std::shared_ptr<Name>& id) {
-        _id = id;
-    }
-
     [[nodiscard]] const std::shared_ptr<RnTypeComposite>& GetType() const {
         return _type;
     }
@@ -58,6 +50,5 @@ public:
     }
 
 private:
-    std::shared_ptr<Name> _id{};
     std::shared_ptr<RnTypeComposite> _type;
 };

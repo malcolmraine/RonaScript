@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -39,6 +39,7 @@
     RN_BUILTIN_FUNC(RnBuiltins_Type, to_float, RnType::RN_FLOAT, 1)      \
     RN_BUILTIN_FUNC(RnBuiltins_Type, to_string, RnType::RN_STRING, 1)    \
     RN_BUILTIN_FUNC(RnBuiltins_Type, to_bool, RnType::RN_BOOLEAN, 1)     \
+    RN_BUILTIN_FUNC(RnBuiltins_Type, to_array, RnType::RN_BOOLEAN, 1)     \
     RN_BUILTIN_FUNC(RnBuiltins_Type, is_string, RnType::RN_BOOLEAN, 1)   \
     RN_BUILTIN_FUNC(RnBuiltins_Type, is_int, RnType::RN_BOOLEAN, 1)      \
     RN_BUILTIN_FUNC(RnBuiltins_Type, is_float, RnType::RN_BOOLEAN, 1)    \

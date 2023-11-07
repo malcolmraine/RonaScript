@@ -1,13 +1,13 @@
 /*****************************************************************************
-* File:
+* File: RnCallFrame.h
 * Description:
 * Author: Malcolm Hall
-* Date:
+* Date: 11/6/23
 * Version: 1
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,13 +26,37 @@
 * SOFTWARE.
 ******************************************************************************/
 
-#pragma once
+#include "RnCallFrame.h"
+#include "RnFunction.h"
+#include "RnScope.h"
+#include "RnObject.h"
 
-#include "AstNode.h"
+/*****************************************************************************/
+RnFunction* RnCallFrame::GetFunction(){
+    return _func;
+}
 
-class FlowStmt : public AstNode {
-public:
-    FlowStmt();
-    ~FlowStmt() override;
-    std::string ToString(bool nl) override;
-};
+/*****************************************************************************/
+void RnCallFrame::SetFunction(RnFunction* func) {
+    _func = func;
+}
+
+/*****************************************************************************/
+RnScope* RnCallFrame::GetScope() const{
+    return _scope;
+}
+
+/*****************************************************************************/
+void RnCallFrame::SetScope(RnScope* scope){
+    _scope = scope;
+}
+
+/*****************************************************************************/
+RnObject* RnCallFrame::GetReturnValue() const{
+    return _ret_val;
+}
+
+/*****************************************************************************/
+void RnCallFrame::SetReturnValue(RnObject* value){
+    _ret_val = value;
+}

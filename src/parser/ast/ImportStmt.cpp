@@ -28,7 +28,6 @@
 
 #include "ImportStmt.h"
 #include <algorithm>
-#include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
 ImportStmt::ImportStmt() {

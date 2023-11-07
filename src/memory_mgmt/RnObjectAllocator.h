@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -72,7 +72,7 @@ public:
     /*************************************************************************/
     template <typename FUNC1, typename FUNC2>
     void FreeIf(FUNC1 fn1, FUNC2 fn2) {
-        // If free object if fn1 returns true, otherwise run fn2
+        // Free object if fn1 returns true, otherwise run fn2
         auto current_heap = _allocator.FirstHeap();
         while (current_heap) {
             auto current_block = reinterpret_cast<MemoryBlock*>(current_heap->memory);

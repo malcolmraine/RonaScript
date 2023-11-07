@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -57,18 +57,20 @@ public:
     }
 
     [[nodiscard]] inline RnArrayNative& GetStack() {
-        return _scopes.back()->GetStack();
+        return _stack;
     }
 
     inline RnObject* StackPop() {
         auto item = GetStack().back();
         GetStack().pop_back();
         assert(item);
+        GetScope()->DecrementStackCount();
         return item;
     }
 
     inline void StackPush(RnObject* object) {
-        _scopes.back()->GetStack().push_back(object);
+        GetStack().push_back(object);
+        GetScope()->IncrementStackCount();
     }
 
     void CallStackPush(RnScope* scope);
@@ -83,19 +85,20 @@ public:
     RnObject* CreateObject(RnIntNative data);
     RnObject* CreateObject(RnFloatNative data);
     RnScope* CreateScope();
+    static void BindCls(RnScope* scope, RnObject* binding);
+    static void BindThis(RnScope* scope, RnObject* binding);
 
 private:
     inline void ExecuteInstruction(bool& break_scope, size_t& index);
     void RegisterBuiltins();
     RnVirtualMachine();
-    static void BindCls(RnScope* scope, RnObject* binding);
-    static void BindThis(RnScope* scope, RnObject* binding);
 
 private:
     static RnVirtualMachine* _instance;
     void Init();
 
 protected:
+    RnArrayNative _stack;
     std::vector<RnScope*> _scopes;
     std::vector<RnScope*> _call_stack;
     std::vector<RnInstruction*> _instructions;

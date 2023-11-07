@@ -26,7 +26,6 @@
 *******************************************************************************/
 #include "Lexer.h"
 #include <algorithm>
-#include <iostream>
 #include <utility>
 #include "Token.h"
 
@@ -221,7 +220,7 @@ bool Lexer::IsCompound() const {
 }
 
 /*****************************************************************************/
-bool Lexer::IsReservedWord(const std::string& s) const {
+bool Lexer::IsReservedWord(const std::string& s) {
     return _reserved_words.find(s) != _reserved_words.end();
 }
 
@@ -294,9 +293,28 @@ Token* Lexer::ProcessStringLiteral() {
             if (Current() == '\"' && Lookback() != '\\') {
                 AdvanceBuffer(1);
                 break;
+            } else if (Current() == '\\') {
+                switch (Peek()) {
+                    case 'n':
+                        _lexeme += '\n';
+                        AdvanceBuffer(1);
+                        break;
+                    case 't':
+                        _lexeme += '\t';
+                        AdvanceBuffer(1);
+                        break;
+                    case 'r':
+                        _lexeme += '\r';
+                        AdvanceBuffer(1);
+                        break;
+                    default:
+                        _lexeme += Current();
+                        break;
+                }
             }
-
-            _lexeme.append(std::string(1, Current()));
+            else {
+                _lexeme += Current();
+            }
             AdvanceBuffer(1);
         }
     }
@@ -368,7 +386,7 @@ Token* Lexer::Consume() {
         }
         default: {
             if (Current() != '\r' && Current() != '\t' && Current() != '\n')
-                _lexeme.append(std::string(1, Current()));
+                _lexeme += Current();
             AdvanceBuffer(1);
             break;
         }

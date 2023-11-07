@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@ class VarDecl;
 class ScopeNode : public AstNode {
 public:
     ScopeNode();
-    ~ScopeNode();
+    ~ScopeNode() override;
     std::string ToString(bool nl) override;
     void AddSubTree(const std::shared_ptr<AstNode>& subtree, bool hoist = false);
     void AddClassDecl(const std::shared_ptr<ClassDecl>& class_decl);

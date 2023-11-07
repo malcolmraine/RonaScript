@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -55,6 +55,14 @@ public:
     void PassArguments(const RnArrayNative& args, RnScope* scope);
     void InitScope(RnScope* scope);
     void Bind(RnIntNative this_key, RnObject* object);
+
+    void SetIStart(long n) {
+        _i_start = n;
+    }
+
+    void SetICnt(long n) {
+        _i_cnt = n;
+    }
 
     [[nodiscard]] RnType::Type GetReturnType() const {
         return _return_type;

@@ -27,8 +27,6 @@
 ******************************************************************************/
 
 #include "ArrayLiteral.h"
-#include <iostream>
-#include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
 ArrayLiteral::ArrayLiteral() {
@@ -36,9 +34,7 @@ ArrayLiteral::ArrayLiteral() {
 }
 
 /*****************************************************************************/
-ArrayLiteral::~ArrayLiteral() {
-    items.clear();
-}
+ArrayLiteral::~ArrayLiteral() = default;
 
 /*****************************************************************************/
 std::string ArrayLiteral::ToString(bool nl) {
@@ -47,7 +43,7 @@ std::string ArrayLiteral::ToString(bool nl) {
         s += "\n";
     }
 
-    for (auto& item : items) {
+    for (auto& item : _children) {
         item->nest_lvl = nest_lvl + 1;
         s += item->ToString(nl);
     }

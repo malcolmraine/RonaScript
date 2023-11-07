@@ -1,10 +1,10 @@
 module Statistics is
 begin
 
-/******************************************************/
+/*****************************************************************************/
 routine sum_squared_diff(var a: array, var b: array): float
 begin
-    var n: int = count(x);
+    var n: int = count(a);
     var s: float = 0;
 
     for (var i: int = 0; i < n; i++)
@@ -13,25 +13,25 @@ begin
     end
 
     return s;
-end // routine rss
+end // routine sum_squared_diff
 
-/******************************************************/
+/*****************************************************************************/
 routine rss(var y: array, var y_pred: array): float
 begin
     return sum_squared_diff(y, y_pred);
 end // routine rss
 
-/******************************************************/
+/*****************************************************************************/
 routine tss(var y: array, var y_mean: float): float
 begin
     return sum_squared_diff(y, make_array(y_mean));
-end // routine rss
+end // routine tss
 
-/******************************************************/
+/*****************************************************************************/
 routine ess(var y_pred: array, var y_mean: float): float
 begin
     return sum_squared_diff(y_pred, make_array(y_mean));
-end // routine rss
+end // routine ess
 
 routine std(): float
 begin

@@ -1,0 +1,27 @@
+module PrettyPrint is
+begin
+
+routine matrix(var m: array): string
+begin
+    var s: string = "";
+    var n: int  = count(m);
+
+    if n == 1:
+        return to_string(m);
+    end
+
+    for (var i: int = 0; i < n; i++):
+        if i == 0:
+            s += "[" + to_string(m[i]) + ",\n";
+        elif i < n - 1:
+            s += " " + to_string(m[i]) + ",\n";
+        else:
+            s += " " + to_string(m[i]);
+        end
+    end
+
+    s += "]";
+    return s;
+end // routine PrettyPrint::matrix
+
+end // module PrettyPrint

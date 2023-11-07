@@ -27,7 +27,6 @@
 ******************************************************************************/
 
 #include "BinaryExpr.h"
-#include <iostream>
 #include <utility>
 #include "../../codegen/RnCodeGenVisitor.h"
 

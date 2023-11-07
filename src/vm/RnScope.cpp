@@ -51,8 +51,6 @@ RnScope::RnScope(RnScope* parent) : _memory_group(nullptr) {
         _symbolTable.SetParent(parent->GetSymbolTable());
         _memory_group.SetParent(parent->GetMemoryGroup());
     }
-    _stack.reserve(10);
-    //    _stack.Resize(10);
 }
 
 /*****************************************************************************/
@@ -80,11 +78,6 @@ void RnScope::RemoveObject(RnIntNative key) {
 /*****************************************************************************/
 RnSymbolTable* RnScope::GetSymbolTable() {
     return &_symbolTable;
-}
-
-/*****************************************************************************/
-RnArrayNative& RnScope::GetStack() {
-    return _stack;
 }
 
 /*****************************************************************************/
@@ -202,6 +195,5 @@ RnObject* RnScope::MakeLocal(RnType::Type type) {
 /*****************************************************************************/
 void RnScope::Reset() {
     GetSymbolTable()->Clear();
-    _stack.clear();
     _locals.clear();
 }
