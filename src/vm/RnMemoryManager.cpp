@@ -53,6 +53,8 @@ RnObjectAllocator<RnIntObject> int_allocator(10000, 1000000);
 RnObjectAllocator<RnStringObject> string_allocator(10000, 1000000);
 RnObjectAllocator<RnNullObject> null_allocator(10000, 1000000);
 RnObjectAllocator<RnScope> scope_allocator(10000, 1000000);
+RnObject* RnMemoryManager::_true_boolean = nullptr;
+RnObject* RnMemoryManager::_false_boolean = nullptr;
 
 /*****************************************************************************/
 RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr)) {}
@@ -100,9 +102,19 @@ RnObject* RnMemoryManager::Create(RnStringNative data) {
 
 /*****************************************************************************/
 RnObject* RnMemoryManager::Create(RnBoolNative data) {
-    auto obj = CreateObject(RnType::RN_BOOLEAN);
-    obj->SetData(data);
-    return obj;
+    if (data) {
+        if (!_true_boolean) {
+            _true_boolean = bool_allocator.CreateObject();
+            _true_boolean->SetData(true);
+        }
+        return _true_boolean;
+    } else {
+        if (!_false_boolean) {
+            _false_boolean = bool_allocator.CreateObject();
+            _false_boolean->SetData(false);
+        }
+        return _false_boolean;
+    }
 }
 
 /*****************************************************************************/
