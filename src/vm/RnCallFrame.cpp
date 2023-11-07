@@ -1,13 +1,13 @@
 /*****************************************************************************
-* File: RnStringObject.h
+* File: RnCallFrame.h
 * Description:
 * Author: Malcolm Hall
-* Date: 6/20/22
+* Date: 11/6/23
 * Version: 1
 *
 * MIT License
 *
-* Copyright (c) 2020 - 2023 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,30 +26,37 @@
 * SOFTWARE.
 ******************************************************************************/
 
-#pragma once
+#include "RnCallFrame.h"
+#include "RnFunction.h"
+#include "RnScope.h"
+#include "RnObject.h"
 
-#include <string>
-#include "../common/RnString.h"
-#include "RnObjectBase.h"
+/*****************************************************************************/
+RnFunction* RnCallFrame::GetFunction(){
+    return _func;
+}
 
-class RnStringObject : public RnObjectBase<RnStringNative> {
-public:
-    explicit RnStringObject(const RnStringNative& data = "");
-    ~RnStringObject() override;
+/*****************************************************************************/
+void RnCallFrame::SetFunction(RnFunction* func) {
+    _func = func;
+}
 
-    RnObject* operator+(RnObject* obj) override;
-    RnObject* operator==(RnObject* obj) override;
-    RnObject* operator!=(RnObject* obj) override;
-    RnObject* operator*(RnObject* obj) override;
-    [[nodiscard]] RnStringNative ToString() const override;
-    [[nodiscard]] RnBoolNative ToBool() const override;
-    void SetData(RnStringNative data) override;
-    [[nodiscard]] size_t GetByteSize() const override;
-    size_t GetBytes(char* buf) override;
-    void SetBytes(const char* buf, size_t n) override;
-    RnObject* At(RnIntNative index) override;
+/*****************************************************************************/
+RnScope* RnCallFrame::GetScope() const{
+    return _scope;
+}
 
-    [[nodiscard]] RnType::Type GetType() const override {
-        return RnType::RN_STRING;
-    }
-};
+/*****************************************************************************/
+void RnCallFrame::SetScope(RnScope* scope){
+    _scope = scope;
+}
+
+/*****************************************************************************/
+RnObject* RnCallFrame::GetReturnValue() const{
+    return _ret_val;
+}
+
+/*****************************************************************************/
+void RnCallFrame::SetReturnValue(RnObject* value){
+    _ret_val = value;
+}

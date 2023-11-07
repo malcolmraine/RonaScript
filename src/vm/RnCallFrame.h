@@ -1,13 +1,13 @@
 /*****************************************************************************
-* File: RnStringObject.h
+* File: RnCallFrame.h
 * Description:
 * Author: Malcolm Hall
-* Date: 6/20/22
+* Date: 11/6/23
 * Version: 1
 *
 * MIT License
 *
-* Copyright (c) 2020 - 2023 Malcolm Hall
+* Copyright (c) 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,28 +28,25 @@
 
 #pragma once
 
-#include <string>
-#include "../common/RnString.h"
-#include "RnObjectBase.h"
+class RnScope;
+class RnObject;
+class RnFunction;
 
-class RnStringObject : public RnObjectBase<RnStringNative> {
+class RnCallFrame {
 public:
-    explicit RnStringObject(const RnStringNative& data = "");
-    ~RnStringObject() override;
+    RnCallFrame();
+    ~RnCallFrame();
 
-    RnObject* operator+(RnObject* obj) override;
-    RnObject* operator==(RnObject* obj) override;
-    RnObject* operator!=(RnObject* obj) override;
-    RnObject* operator*(RnObject* obj) override;
-    [[nodiscard]] RnStringNative ToString() const override;
-    [[nodiscard]] RnBoolNative ToBool() const override;
-    void SetData(RnStringNative data) override;
-    [[nodiscard]] size_t GetByteSize() const override;
-    size_t GetBytes(char* buf) override;
-    void SetBytes(const char* buf, size_t n) override;
-    RnObject* At(RnIntNative index) override;
+    RnFunction* GetFunction();
+    void SetFunction(RnFunction* func);
+    RnScope* GetScope() const;
+    void SetScope(RnScope* scope);
+    RnObject* GetReturnValue() const;
+    void SetReturnValue(RnObject* value);
 
-    [[nodiscard]] RnType::Type GetType() const override {
-        return RnType::RN_STRING;
-    }
+private:
+    RnFunction* _func = nullptr;
+    int _linked_scope_count = 0;
+    RnScope* _scope = nullptr;
+    RnObject* _ret_val = nullptr;
 };
