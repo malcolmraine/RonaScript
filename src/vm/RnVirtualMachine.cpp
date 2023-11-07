@@ -115,7 +115,9 @@ void RnVirtualMachine::CallStackPush(RnScope* scope) {
 }
 
 /*****************************************************************************/
-void RnVirtualMachine::CallStackPop() {}
+void RnVirtualMachine::CallStackPop() {
+    _call_stack.pop_back();
+}
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
