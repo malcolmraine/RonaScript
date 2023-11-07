@@ -57,18 +57,20 @@ public:
     }
 
     [[nodiscard]] inline RnArrayNative& GetStack() {
-        return _scopes.back()->GetStack();
+        return _stack;
     }
 
     inline RnObject* StackPop() {
         auto item = GetStack().back();
         GetStack().pop_back();
         assert(item);
+        GetScope()->DecrementStackCount();
         return item;
     }
 
     inline void StackPush(RnObject* object) {
-        _scopes.back()->GetStack().push_back(object);
+        GetStack().push_back(object);
+        GetScope()->IncrementStackCount();
     }
 
     void CallStackPush(RnScope* scope);
@@ -96,6 +98,7 @@ private:
     void Init();
 
 protected:
+    RnArrayNative _stack;
     std::vector<RnScope*> _scopes;
     std::vector<RnScope*> _call_stack;
     std::vector<RnInstruction*> _instructions;

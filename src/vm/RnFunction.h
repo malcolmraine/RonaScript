@@ -56,6 +56,14 @@ public:
     void InitScope(RnScope* scope);
     void Bind(RnIntNative this_key, RnObject* object);
 
+    void SetIStart(long n) {
+        _i_start = n;
+    }
+
+    void SetICnt(long n) {
+        _i_cnt = n;
+    }
+
     [[nodiscard]] RnType::Type GetReturnType() const {
         return _return_type;
     }

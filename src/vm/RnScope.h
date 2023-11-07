@@ -52,7 +52,6 @@ public:
     [[nodiscard]] RnObject* GetObject(RnIntNative key);
     void RemoveObject(RnIntNative key);
     [[nodiscard]] RnSymbolTable* GetSymbolTable();
-    [[nodiscard]] RnArrayNative& GetStack();
     void SetParent(RnScope* scope);
     [[nodiscard]] RnScope* GetParent() const;
     [[nodiscard]] RnMemoryGroup* GetMemoryGroup();
@@ -74,9 +73,23 @@ public:
         return _linked_scope_count;
     }
 
+    void IncrementStackCount() {
+        _stack_count++;
+    }
+
+    void DecrementStackCount() {
+        _stack_count--;
+    }
+
+    [[nodiscard]] size_t GetStackCount() const {
+        return _stack_count;
+    }
+
+    RnObject* ret_val = nullptr;
+
 protected:
+    size_t _stack_count = 0;
     RnScope* _parent = nullptr;
-    RnArrayNative _stack;
     RnSymbolTable _symbolTable;
     RnMemoryGroup _memory_group;
     std::vector<

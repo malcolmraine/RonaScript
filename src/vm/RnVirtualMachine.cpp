@@ -40,6 +40,7 @@
 #include "../builtins/RnBuiltins_System.h"
 #include "../builtins/RnBuiltins_Type.h"
 #include "../common/RnConfig.h"
+#include "../util/log.h"
 #include "../util/StopWatch.h"
 #include "RnAnyObject.h"
 #include "RnArrayObject.h"
@@ -61,6 +62,7 @@ RnIntNative RnVirtualMachine::_object_construct_key = -1;
 RnVirtualMachine::RnVirtualMachine() {
     _scopes.reserve(16);
     _call_stack.reserve(RnConfig::GetCallStackMaxDepth());
+    _stack.reserve(RnConfig::GetCallStackMaxDepth());
     _memory_manager = new RnMemoryManager();
 
     _object_this_key = RnConstStore::InternValue(static_cast<RnStringNative>("this"));
@@ -147,10 +149,12 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
             PopScope();
         }
 
+        for (size_t i = 0; i < scope->GetStackCount(); i++) {
+            StackPop();
+        }
+
         if (has_returned) {
-            return scope->GetStack().back();
-        } else if (func->GetName() == "construct") {
-            return func->GetScope()->GetObject(_object_this_key);
+            return scope->ret_val;
         } else {
             return RnObject::Create(RnType::RN_NULL);
         }
@@ -390,8 +394,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             }
             // Have to get the parent of the working scope, not the argument scope
             auto ret_scope = _scopes[_scopes.size() - 2];
-            function_scope->GetStack().push_back(GetStack().back());
-            GetStack().pop_back();
+            function_scope->ret_val = StackPop();
             break_scope = true;
             break;
         }
@@ -575,6 +578,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             }
 
             index += scope_size + i;
+//            func->SetIStart(func->GetIStart() + i);
+            func->SetICnt(scope_size + i);
             GetScope()->StoreObject(instruction->GetArg1(), obj);
             break;
         }
@@ -746,8 +751,8 @@ RnIntNative RnVirtualMachine::Run() {
         i_idx++;
     }
     stopwatch.Stop();
-    //        Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
-    return GetStack().back()->ToInt();
+//            Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
+    return StackPop()->ToInt();
 }
 
 /*****************************************************************************/

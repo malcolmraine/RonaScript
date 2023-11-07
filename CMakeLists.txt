@@ -38,7 +38,7 @@ target_link_libraries(
         RN_ALIB_UTIL)
 
 if (CMAKE_BUILD_TARGET EQUAL "Release" OR CMAKE_BUILD_TARGET EQUAL "Test")
-    target_compile_options(${TARGET_RONASCRIPT_MAIN} PUBLIC -Werror -o3)
+    target_compile_options(${TARGET_RONASCRIPT_MAIN} PUBLIC -Werror -o1)
 elseif(CMAKE_BUILD_TARGET EQUAL "Debug")
     target_compile_options(${TARGET_RONASCRIPT_MAIN} PUBLIC -Werror -o1)
 endif()

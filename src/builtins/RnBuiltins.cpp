@@ -53,7 +53,7 @@ RN_BUILTIN_FUNC_DEFINE(unpack, RnType::RN_VOID, 1) {
     }
 
     for (auto obj : args.front()->ToArray()) {
-        scope->GetStack().push_back(obj);
+        RnVirtualMachine::GetInstance()->GetStack().push_back(obj);
     }
 }
 
