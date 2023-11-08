@@ -83,5 +83,3 @@ begin
 end // class ParticleSwarmOptimizer
 
 end // module PSO
-
-var p: object = PSO::ParticleSwarmOptimizer(4, 4, 4, 4);

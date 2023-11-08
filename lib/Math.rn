@@ -1,14 +1,70 @@
 module Math is
 begin
 
-const M_PI  : float = 3.14159265358979323846;
-const M_TAU : float = 6.28318530718;
-const M_E   : float = 2.71828182845904523536;
-const M_LN2 : float = 0.69314718055994530941;
+literal PI  : float = 3.14159265358979323846;
+literal TAU : float = 6.28318530718;
+literal E   : float = 2.71828182845904523536;
+literal LN2 : float = 0.69314718055994530941;
+literal RADIANS_DEGREES_FACTOR : float = 57.2958;
 
-routine plus_one(var x: int): int
+/*****************************************************************************/
+routine degrees(var x: float): float
 begin
-    return x + 1;
-end // routine plus_one
+    return x * RADIANS_DEGREES_FACTOR;
+end // routine degrees
+
+/*****************************************************************************/
+routine radians(var x: float): float
+begin
+    return x / RADIANS_DEGREES_FACTOR;
+end // routine degrees
+
+/*****************************************************************************/
+routine sign(var x: float): float
+begin
+    if x < 0.0:
+        return -1;
+    else:
+        return 1;
+    end
+end // routine sign
+
+/*****************************************************************************/
+routine factorial(var n: int): int
+begin
+    var result: int = n;
+    for (var i: int = n - 1; i > 0; i--):
+        result *= i;
+    end
+    return result;
+end // routine factorial
+
+/*****************************************************************************/
+routine fibonacci(var n: int): int
+begin
+    if n <= 1:
+        return n;
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2);
+    end
+    return 4;
+end
+
+/*****************************************************************************/
+routine gcf(var x: int, var y: int): int
+begin
+    if (y == 0):
+        return x;
+    else:
+        return gcf(y, x % y);
+    end
+end
+
+/*****************************************************************************/
+routine copysign(var x: float, var y: float): float
+begin
+    return abs(x) * sign(y);
+end
 
 end // module Math
+
