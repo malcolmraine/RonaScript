@@ -154,38 +154,39 @@ std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
     Expect({TokenType::NAME, TokenType::STRING_LITERAL});
     AdvanceBuffer(1);
     node->source_file = Current()->lexeme;
-    bool is_stdlib = Current()->token_type == TokenType::NAME;
     Expect(TokenType::SEMICOLON);
     AdvanceBuffer(1);
 
+    // Parse the module and create a new subtree from it
+    std::filesystem::path module_path;
+    auto source_file = String::Replace(node->source_file, ".", "/") + ".rn";
+
+    module_path = std::filesystem::path(node->file_info.GetFilePath()).parent_path() / source_file;
+    if (!std::filesystem::exists(module_path)) {
+        module_path = std::filesystem::path(RnConfig::GetLibraryPath()) / source_file;
+        if (!std::filesystem::exists(module_path)) {
+            ThrowError("Could not open file " + module_path.string());
+        }
+    }
+
     // Check if the file has already been parsed
-    if (std::find(parsed_files.begin(), parsed_files.end(), node->source_file) !=
+    if (std::find(parsed_files.begin(), parsed_files.end(), module_path) !=
         parsed_files.end()) {
         return node;
     } else {
-        parsed_files.push_back(node->source_file);
+        parsed_files.push_back(module_path);
     }
 
-    // Parse the module and create a new subtree from it
+    if (std::filesystem::absolute(module_path) == std::filesystem::absolute(file)) {
+        ThrowError("Circular dependency error: " + module_path.string());
+    }
+
     Lexer lexer;
-    std::filesystem::path module_file;
-
-    if (is_stdlib) {
-        module_file = std::filesystem::path(RnConfig::GetLibraryPath()) /
-                      (node->source_file + ".rn");
-    } else {
-        module_file = working_dir + "/" + node->source_file;
-    }
-
-    if (std::filesystem::absolute(module_file) == std::filesystem::absolute(file)) {
-        ThrowError("Circular dependency error: " + module_file.string());
-    }
-
-    lexer.LoadFile(module_file);
+    lexer.LoadFile(module_path);
     lexer.ProcessTokens();
     Parser parser;
     parser.parsed_files = parsed_files;
-    parser.working_dir = module_file.parent_path();
+    parser.working_dir = module_path.parent_path();
     parser.SetFromPtr(lexer.tokens.data(), lexer.tokens.size());
     parser.AdvanceBuffer(2);
     parser.Parse();
