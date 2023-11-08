@@ -33,11 +33,138 @@ begin
     return sum_squared_diff(y_pred, make_array(y_mean));
 end // routine ess
 
-routine std(): float
+/*****************************************************************************/
+routine mean(var x: array): float
+begin
+    return sum(x) / count(x);
+end // routine mean
+
+/*****************************************************************************/
+routine mode(var x: array): float
 begin
 
-end
+end // routine mode
 
+/*****************************************************************************/
+routine median(var x: array): float
+begin
 
+end // routine median
+
+/*****************************************************************************/
+routine variance(var x: array): float
+begin
+    var n: int = count(x);
+    var x_bar: float = sum(x) / n;
+    var result: float = 0.0;
+
+    for (var i: int = 0; i < n; i++):
+        result += (x[i] - x_bar) ** 2;
+    end
+
+    return result / (n - 1);
+end // routine variance
+
+/*****************************************************************************/
+routine pvariance(var x: array): float
+begin
+    var n: int = count(x);
+    var x_bar: float = sum(x) / n;
+    var result: float = 0.0;
+
+    for (var i: int = 0; i < n; i++):
+        result += (x[i] - x_bar) ** 2;
+    end
+
+    return result / n;
+end // routine pvariance
+
+/*****************************************************************************/
+routine std(var x: array): float
+begin
+    // Calculate the population standard deviation
+    return sqrt(variance(x));
+end // routine std
+
+/*****************************************************************************/
+routine mad(var x: array): float
+begin
+    // Calculate the population mean absolute deviation
+    var n: int = count(x);
+    var x_bar: float = sum(x) / n;
+    var result: float = 0.0;
+
+    for (var i: int = 0; i < n; i++):
+        result += abs(x[i] - x_bar);
+    end
+
+    return result / n;
+end // routine mad
+
+/*****************************************************************************/
+routine percent_error(var a: float, var b: float): float
+begin
+    // Calculate the percent error between the experimental value (a) and the
+    // observed value (b)
+    // |(a - b) / b| * 100
+    return abs((a - b) / b) * 100.0;
+end // routine percent_error
+
+/*****************************************************************************/
+routine absolute_error(var a: float, var b: float): float
+begin
+    // Calculate the absolute error between the experimental value (a) and the
+    // observed value (b)
+    // |a - b|
+    return abs(a - b);
+end // routine absolute_error
+
+/*****************************************************************************/
+routine relative_error(var a: float, var b: float): float
+begin
+    // Calculate the relative error between the experimental value (a) and the
+    // observed value (b)
+    // |(a - b) / b|
+    return abs((a - b) / b);
+end // routine relative_error
+
+/*****************************************************************************/
+routine range(var x: array): float
+begin
+    return max(x) - min(x);
+end // routine range
+
+/*****************************************************************************/
+routine rms(var x: array): float
+begin
+    // Calculate the root mean square
+    var result: float = 0.0;
+    var n: int = count(x);
+
+    for (var i: int = 0; i < n; i++):
+        result += n ** 2;
+    end
+
+    return sqrt(result / n);
+end // routine rms
+
+/*****************************************************************************/
+routine sem(var x: array): float
+begin
+    // Calculate the standard error of the mean
+    return std(x / sqrt(count(x)));
+end // routine sem
+
+/*****************************************************************************/
+routine skewness(var x: array): float
+begin
+    // Calculate the sample skewness
+end // routine skewness
+
+/*****************************************************************************/
+routine pskewness(var x: array): float
+begin
+    // Calculate the population skewness
+end // routine pskewness
 
 end // module Statistics
