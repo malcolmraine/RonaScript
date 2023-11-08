@@ -107,6 +107,6 @@ protected:
     size_t _char_cnt = 0;
     bool _is_original = true;
     std::ifstream _file_obj;
-    std::string _line_prefix = "\033[1;31m>";
+    std::string _line_prefix = "\033[31m";
     std::string _line_suffix = "\033[0m";
 };
