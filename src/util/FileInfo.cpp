@@ -91,22 +91,22 @@ void FileInfo::IncrementCharNum() {
 
 /*****************************************************************************/
 std::string FileInfo::GetContextualBlock(bool formatted) {
-    std::string block = "\033[0m" + GetContextualBlockTabStr() +
+    std::string block = "\033[31m>>>" + GetContextualBlockTabStr() +
                         GetLineAt(_previous_line_start, true, false);
     std::string line;
 
     if (std::getline(_file_obj, line, '\n')) {
         if (formatted) {
-            block += GetFormattedLine(line);
+            block += "   " + GetFormattedLine(line);
         } else {
-            block += line + "\n";
+            block += "   " + line + "\n";
         }
 
         if (std::getline(_file_obj, line, '\n')) {
             if (formatted) {
-                block += GetContextualBlockTabStr();
+                block += "   " + GetContextualBlockTabStr();
             }
-            block += line + "\n";
+            block += "   " + line + "\n";
         }
     }
     return block;
@@ -128,7 +128,7 @@ std::string FileInfo::GetLineAt(size_t line_start, bool keep_open, bool formatte
     if (!_file_obj.is_open()) {
         _file_obj.open(GetFilePath(), std::ios::in);
     }
-    _file_obj.seekg(static_cast<std::streamoff>(line_start));
+    _file_obj.seekg(static_cast<std::streamoff>(line_start == 0 ? line_start : line_start - 1));
     std::string line;
     std::getline(_file_obj, line, '\n');
 

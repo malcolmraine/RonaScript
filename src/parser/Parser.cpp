@@ -178,7 +178,7 @@ std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
     }
 
     if (std::filesystem::absolute(module_file) == std::filesystem::absolute(file)) {
-        throw std::runtime_error("Circular dependency error: " + module_file.string());
+        ThrowError("Circular dependency error: " + module_file.string());
     }
 
     lexer.LoadFile(module_file);
@@ -241,7 +241,7 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
 
     if (node->is_literal) {
         if (!node->init_value || !node->init_value->IsLiteral())
-            throw std::runtime_error(
+            ThrowError(
                 "A single, literal value must be assigned to a literal declaration.");
         else
             _current_scope->AddLiteral(node->id, node->init_value);
@@ -277,7 +277,7 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
             arg->AddChild(ParseName());
 
             if (arg_symbols.find(arg->GetChild<Name>(0)->value) != arg_symbols.end()) {
-                throw std::runtime_error("Redeclaration of argument '" +
+                ThrowError("Redeclaration of argument '" +
                                          arg->GetChild<Name>(0)->value + "' in routine '" +
                                          node->id + "'");
             }
@@ -288,7 +288,7 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
             arg->SetType(ParseType());
             AdvanceBuffer(1);
         } else {
-            throw std::runtime_error("Invalid type '" + Current()->lexeme +
+            ThrowError("Invalid type '" + Current()->lexeme +
                                      "' for parameter '" + arg->GetChild<Name>(0)->value +
                                      "' while declaring routine '" + node->id + "'");
         }
@@ -312,7 +312,7 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
 
         if (node->type->GetType() != RnType::RN_OBJECT &&
             _current_state == CLASS_DECL_CONTEXT && node->id == "construct") {
-            throw std::runtime_error("Class constructor must return object type");
+            ThrowError("Class constructor must return object type");
         }
 
         AdvanceBuffer(1);
@@ -437,7 +437,7 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
     }
 
     if (!node) {
-        throw std::runtime_error("Failed to parse expression component");
+        ThrowError("Failed to parse expression component");
     }
     return AddCurrentFileInfo(node);
 }
@@ -495,7 +495,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         }
 
         if (!Current()) {
-            throw std::runtime_error("Failed to parse expression");
+            ThrowError("Failed to parse expression");
         }
 
         if (Current()->token_type == TokenType::R_BRACK) {
@@ -761,7 +761,7 @@ std::shared_ptr<ConditionalStmt> Parser::ParseConditionalStmt() {
             parent_node = parent_node->alternative;
         }
     } else {
-        throw std::runtime_error("Invalid token '" + Current()->lexeme +
+        ThrowError("Invalid token '" + Current()->lexeme +
                                  "' for conditional statement.");
     }
 
@@ -1126,7 +1126,7 @@ void Parser::Parse() {
                         Log::DEBUG("Pragma: " + key + ", " + value);
                     } else {
                         if (_current_scope->GetLiteral(Current()->lexeme)) {
-                            throw std::runtime_error("Misuse of literal replacement '" +
+                            ThrowError("Misuse of literal replacement '" +
                                                      Current()->lexeme + "'");
                         }
                         auto expr = ParseExpr(TokenType::EQUAL);
@@ -1247,10 +1247,14 @@ std::string Parser::ItemToString(Token* token) {
 
 /*****************************************************************************/
 void Parser::HandleUnexpectedItem() {
-    auto msg = "Unexpected token '" + Current()->lexeme + "'";
-    msg += +" in file " + Current()->file_info.ToString();
-    msg += "\n\n" + Current()->file_info.GetContextualBlock();
-    throw std::runtime_error(msg);
+    ThrowError("Unexpected token '" + Current()->lexeme + "'");
+}
+
+/*****************************************************************************/
+void Parser::ThrowError(const std::string& message) {
+    auto full_msg = message + " in file " + Current()->file_info.ToString();
+    full_msg += "\n\n" + Current()->file_info.GetContextualBlock();
+    throw std::runtime_error(full_msg);
 }
 
 /*****************************************************************************/
@@ -1268,7 +1272,7 @@ std::shared_ptr<RnTypeComposite> Parser::ParseType() {
     auto type = std::make_shared<RnTypeComposite>(basic_type);
     if (_current_scope->pragma_table["require"] == "bounds") {
         if (Peek()->token_type != TokenType::R_CARAT) {
-            throw std::runtime_error("Missing bounds on type " + Current()->lexeme);
+            ThrowError("Missing bounds on type " + Current()->lexeme);
         }
     }
     AdvanceBuffer(1);
