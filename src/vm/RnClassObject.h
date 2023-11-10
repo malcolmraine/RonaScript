@@ -80,6 +80,7 @@ public:
     RnObject* operator<<(RnObject* obj) override;
     RnObject* At(RnIntNative index) override;
     [[nodiscard]] std::string GetTypeName() const override;
+    [[nodiscard]] RnBoolNative Contains(RnObject* obj);
 
     void SetDefinition(RnClassObject* definition) {
         _definition = definition;
@@ -103,7 +104,11 @@ public:
 
     [[nodiscard]] RnStringNative GetName() const {
         if (_name.empty()) {
-            return _definition->GetName();
+            if (_definition) {
+                return _definition->GetName();
+            } else {
+                return RnObject::GetTypeName();
+            }
         }
         return _name;
     }
@@ -136,6 +141,7 @@ public:
     static RnIntNative MAGIC_METHOD_KEY_BINAND;
     static RnIntNative MAGIC_METHOD_KEY_BINOR;
     static RnIntNative MAGIC_METHOD_KEY_GET_INDEX;
+    static RnIntNative MAGIC_METHOD_KEY_MEMBERSHIP;
 private:
     RnClassObject* _definition = nullptr;
     RnStringNative _name;

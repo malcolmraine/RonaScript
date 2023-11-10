@@ -398,7 +398,14 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                     static_cast<RnBoolNative>(array_object->Contains(rhs_object)));
                 StackPush(result);
             } else {
-                RnObject::ThrowUndefinedOperatorError("in", StackPop(), lhs_object);
+                auto class_object = dynamic_cast<RnClassObject*>(lhs_object);
+                if (class_object) {
+                    RnObject* result = CreateObject(
+                        static_cast<RnBoolNative>(class_object->Contains(rhs_object)));
+                    StackPush(result);
+                } else {
+                    RnObject::ThrowUndefinedOperatorError("in", StackPop(), lhs_object);
+                }
             };
             break;
         }

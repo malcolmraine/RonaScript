@@ -38,6 +38,16 @@ begin
     end // routine construct
 
     /**************************************************************************/
+    routine _countStructure(var x: any): int
+    begin
+        if is_object(x):
+            return x->length();
+        else:
+            return count(x);
+        end
+    end
+
+    /**************************************************************************/
     routine data(): array
     begin
         return this->_data;
@@ -54,6 +64,12 @@ begin
     end // __routine at
 
     /**************************************************************************/
+    routine __in(var item: any): bool
+    begin
+        return item in this->_data;
+    end
+
+    /**************************************************************************/
     routine __plus(var other: any): object
     begin
         var result: object = this->clone();
@@ -65,23 +81,13 @@ begin
     /**************************************************************************/
     routine __div(var other: any): object
     begin
+        var n: int = this->_countStructure(other);
         var result: object = Collection([]);
-        var n: int = count(this->_data);
-        var r: int = 0;
-
-        if is_object(other):
-            r = other->length();
-        else:
-            r = count(other);
-        end
 
         for (var i: int = 0; i < n; i++):
-            var item: any = this->_data[i];
-
-            for (var j: int = 0; j < r; j++):
-                if item == other[j]:
-                    result->append(item);
-                end
+            var item: any = other[i];
+            if item in this->_data:
+                result->append(item);
             end
         end
 
@@ -130,18 +136,9 @@ begin
         for (var i: int = 0; i < n; i++):
             var item: any = this->_data[i];
 
-            var item_exists: bool = false;
-            for (var j: int = 0; j < result->length(); j++):
-                if item == result[j]:
-                    item_exists = true;
-                    break;
-                end
-            end
-
-            if !item_exists:
+            if !(item in result):
                 result->append(item);
             end
-            item_exists = false;
         end
         return result;
     end // routine unique

@@ -30,9 +30,9 @@
 #include <iomanip>
 #include <sstream>
 #include "../vm/RnFunction.h"
+#include "../vm/RnIntObject.h"
 #include "RnIntObject.h"
 #include "RnVirtualMachine.h"
-#include "../vm/RnIntObject.h"
 
 RnIntNative RnClassObject::MAGIC_METHOD_KEY_STR =
     RnConstStore::InternValue(std::string("__str"));
@@ -82,6 +82,8 @@ RnIntNative RnClassObject::MAGIC_METHOD_KEY_BINOR =
     RnConstStore::InternValue(std::string("__binor"));
 RnIntNative RnClassObject::MAGIC_METHOD_KEY_GET_INDEX =
     RnConstStore::InternValue(std::string("__getindex"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_MEMBERSHIP =
+    RnConstStore::InternValue(std::string("__in"));
 
 /*****************************************************************************/
 RnClassObject::RnClassObject() {
@@ -315,6 +317,15 @@ RnObject* RnClassObject::At(RnIntNative index) {
         return CallFunction(MAGIC_METHOD_KEY_GET_INDEX, {&indexObject});
     } else {
         return RnObjectBase<RnScope*>::At(index);
+    }
+}
+
+/*****************************************************************************/
+RnBoolNative RnClassObject::Contains(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_MEMBERSHIP)) {
+        return CallFunction(MAGIC_METHOD_KEY_MEMBERSHIP, {obj})->ToBool();
+    } else {
+        ThrowUndefinedOperatorError("in", this, obj);
     }
 }
 
