@@ -97,3 +97,30 @@ RN_BUILTIN_FUNC_DEFINE(normal, RnType::RN_ARRAY, 1) {
     assert(ret_val);
     assert(scope);
 }
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC_DEFINE(abs, RnType::RN_FLOAT, 1) {
+    assert(ret_val);
+    assert(scope);
+    FIXED_ARG_COUNT_CHECK(abs, 1)
+
+    ret_val->SetData(std::fabs(args[0]->ToFloat()));
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC_DEFINE(floor, RnType::RN_FLOAT, 1) {
+    assert(ret_val);
+    assert(scope);
+    FIXED_ARG_COUNT_CHECK(abs, 1)
+
+    ret_val->SetData(std::floor(args[0]->ToFloat()));
+}
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC_DEFINE(ceil, RnType::RN_FLOAT, 1) {
+    assert(ret_val);
+    assert(scope);
+    FIXED_ARG_COUNT_CHECK(abs, 1)
+
+    ret_val->SetData(std::ceil(args[0]->ToFloat()));
+}

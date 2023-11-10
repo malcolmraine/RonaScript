@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -78,10 +78,12 @@ public:
     RnObject* operator<=(RnObject* obj) override;
     RnObject* operator>>(RnObject* obj) override;
     RnObject* operator<<(RnObject* obj) override;
-    std::string GetTypeName() const override;
+    RnObject* At(RnIntNative index) override;
+    [[nodiscard]] std::string GetTypeName() const override;
+    [[nodiscard]] RnBoolNative Contains(RnObject* obj);
 
-    void SetParentClass(RnClass* parent_class) {
-        _parent_class = parent_class;
+    void SetDefinition(RnClassObject* definition) {
+        _definition = definition;
     }
 
     [[nodiscard]] RnScope* GetScope() const {
@@ -97,11 +99,22 @@ public:
     }
 
     [[nodiscard]] RnType::Type GetType() const override {
-        return RnType::RN_CLASS_INSTANCE;
+        return RnType::RN_OBJECT;
     }
 
     [[nodiscard]] RnStringNative GetName() const {
+        if (_name.empty()) {
+            if (_definition) {
+                return _definition->GetName();
+            } else {
+                return RnObject::GetTypeName();
+            }
+        }
         return _name;
+    }
+
+    void SetName(const RnStringNative& name) {
+        _name = name;
     }
 
     static RnIntNative MAGIC_METHOD_KEY_STR;
@@ -127,7 +140,9 @@ public:
     static RnIntNative MAGIC_METHOD_KEY_MUL;
     static RnIntNative MAGIC_METHOD_KEY_BINAND;
     static RnIntNative MAGIC_METHOD_KEY_BINOR;
+    static RnIntNative MAGIC_METHOD_KEY_GET_INDEX;
+    static RnIntNative MAGIC_METHOD_KEY_MEMBERSHIP;
 private:
-    RnClass* _parent_class = nullptr;
+    RnClassObject* _definition = nullptr;
     RnStringNative _name;
 };

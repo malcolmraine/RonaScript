@@ -1,0 +1,85 @@
+/*****************************************************************************
+* File: Matrix.rn
+* Description:
+* Author: Malcolm Hall
+* Date:
+* Version: 1
+*
+* MIT License
+*
+* Copyright (c) 2020 - 2023 Malcolm Hall
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+******************************************************************************/
+
+module Matrix is
+begin
+
+class Matrix is
+begin
+    var _rows: int = 0;
+    var _cols: int = 0;
+    var _data: array = [];
+
+    //**************************************************************************
+    routine construct(var rows: int, var cols: int): object
+    begin
+       this->_rows = rows;
+       this->_cols = cols;
+
+       for (var i: int = 0; i < rows; i++);
+           var row: array = [];
+           for (var j: int = 0; j < cols; j++);
+                array_push(row, 0);
+           end
+           array_push(this->_data, row);
+       end
+       return this;
+    end
+
+    //**************************************************************************
+    routine Rows(): int
+    begin
+        return this->_rows;
+    end
+
+    //**************************************************************************
+    routine Cols(): int
+    begin
+        return this->_cols;
+    end
+
+    //**************************************************************************
+    routine Rank(): int
+    begin
+
+    end
+
+    //**************************************************************************
+    routine Mul(var m: object): object
+    begin
+        var result: object = Matrix(this->_rows, m->cols());
+
+        for (var i: int = 0; i < this->_rows; i++);
+            for (var j: int = 0; j < this->_cols; j++);
+
+            end
+        end
+    end
+end // class Matrix
+
+end // module Matrix

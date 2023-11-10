@@ -85,7 +85,8 @@ typedef enum : int {
     OP_MAKE_ARG,      // op1: name       op2: type
     OP_MAKE_ALIAS,
     OP_MAKE_ARRAY,
-    OP_LOAD_VALUE
+    OP_LOAD_VALUE,
+    OP_CHECK_MEMBERSHIP
 } RnOpCode;
 
 RnStringNative GetOpCodeAsString(RnOpCode opcode);

@@ -1,0 +1,98 @@
+/*****************************************************************************
+* File: Math.rn
+* Description:
+* Author: Malcolm Hall
+* Date:
+* Version: 1
+*
+* MIT License
+*
+* Copyright (c) 2020 - 2023 Malcolm Hall
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+******************************************************************************/
+
+module Math is
+begin
+
+literal PI  : float = 3.14159265358979323846;
+literal TAU : float = 6.28318530718;
+literal E   : float = 2.71828182845904523536;
+literal LN2 : float = 0.69314718055994530941;
+literal RADIANS_DEGREES_FACTOR : float = 57.2958;
+
+/*****************************************************************************/
+routine degrees(var x: float): float
+begin
+    return x * RADIANS_DEGREES_FACTOR;
+end // routine degrees
+
+/*****************************************************************************/
+routine radians(var x: float): float
+begin
+    return x / RADIANS_DEGREES_FACTOR;
+end // routine degrees
+
+/*****************************************************************************/
+routine sign(var x: float): float
+begin
+    if x < 0.0:
+        return -1;
+    else:
+        return 1;
+    end
+end // routine sign
+
+/*****************************************************************************/
+routine factorial(var n: int): int
+begin
+    var result: int = n;
+    for (var i: int = n - 1; i > 0; i--):
+        result *= i;
+    end
+    return result;
+end // routine factorial
+
+/*****************************************************************************/
+routine fibonacci(var n: int): int
+begin
+    if n <= 1:
+        return n;
+    else:
+        return fibonacci(n - 1) + fibonacci(n - 2);
+    end
+    return 4;
+end
+
+/*****************************************************************************/
+routine gcf(var x: int, var y: int): int
+begin
+    if (y == 0):
+        return x;
+    else:
+        return gcf(y, x % y);
+    end
+end
+
+/*****************************************************************************/
+routine copysign(var x: float, var y: float): float
+begin
+    return abs(x) * sign(y);
+end
+
+end // module Math
+

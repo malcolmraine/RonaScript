@@ -91,22 +91,23 @@ void FileInfo::IncrementCharNum() {
 
 /*****************************************************************************/
 std::string FileInfo::GetContextualBlock(bool formatted) {
-    std::string block = "\033[0m" + GetContextualBlockTabStr() +
-                        GetLineAt(_previous_line_start, true, false);
+    std::string block = _line_prefix + ">" + GetContextualBlockTabStr() +
+                        GetLineAt(_previous_line_start, true, false) + "\n";
     std::string line;
 
-    if (std::getline(_file_obj, line, '\n')) {
+    if (std::getline(_file_obj, line, '\r')) {
         if (formatted) {
-            block += GetFormattedLine(line);
+            block += " " + GetFormattedLine(line) + "\n";
         } else {
-            block += line + "\n";
+            block += " " + line + "\n";
         }
 
-        if (std::getline(_file_obj, line, '\n')) {
+        if (std::getline(_file_obj, line, '\r')) {
             if (formatted) {
-                block += GetContextualBlockTabStr();
+                block += " " + GetFormattedLine(line) + '\n';
+            } else {
+                block += " " + line + "\n";
             }
-            block += line + "\n";
         }
     }
     return block;
@@ -128,18 +129,18 @@ std::string FileInfo::GetLineAt(size_t line_start, bool keep_open, bool formatte
     if (!_file_obj.is_open()) {
         _file_obj.open(GetFilePath(), std::ios::in);
     }
-    _file_obj.seekg(static_cast<std::streamoff>(line_start));
+    _file_obj.seekg(static_cast<std::streamoff>(line_start == 0 ? line_start : line_start - 1));
     std::string line;
-    std::getline(_file_obj, line, '\n');
+    std::getline(_file_obj, line, '\r');
 
     if (!keep_open) {
         _file_obj.close();
     }
 
     if (formatted) {
-        return GetFormattedLine(line) + "\n";
+        return GetFormattedLine(line);
     } else {
-        return line + "\n";
+        return line;
     }
 }
 
@@ -156,6 +157,5 @@ std::string FileInfo::GetContextualBlockTabStr() {
 
 /*****************************************************************************/
 std::string FileInfo::GetFormattedLine(const std::string& line) {
-    return _line_prefix + GetContextualBlockTabStr().substr(1) + line + _line_suffix +
-           "\n";
+    return _line_prefix + GetContextualBlockTabStr() + line + _line_suffix;
 }

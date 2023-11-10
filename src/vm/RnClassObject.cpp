@@ -30,6 +30,8 @@
 #include <iomanip>
 #include <sstream>
 #include "../vm/RnFunction.h"
+#include "../vm/RnIntObject.h"
+#include "RnIntObject.h"
 #include "RnVirtualMachine.h"
 
 RnIntNative RnClassObject::MAGIC_METHOD_KEY_STR =
@@ -78,6 +80,10 @@ RnIntNative RnClassObject::MAGIC_METHOD_KEY_BINAND =
     RnConstStore::InternValue(std::string("__binand"));
 RnIntNative RnClassObject::MAGIC_METHOD_KEY_BINOR =
     RnConstStore::InternValue(std::string("__binor"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_GET_INDEX =
+    RnConstStore::InternValue(std::string("__getindex"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_MEMBERSHIP =
+    RnConstStore::InternValue(std::string("__in"));
 
 /*****************************************************************************/
 RnClassObject::RnClassObject() {
@@ -173,7 +179,7 @@ RnObject* RnClassObject::operator+(RnObject* obj) {
     if (HasSymbol(MAGIC_METHOD_KEY_PLUS)) {
         return CallFunction(MAGIC_METHOD_KEY_PLUS, {obj});
     } else {
-        return RnObjectBase<RnScope*>::operator*(obj);
+        return RnObjectBase<RnScope*>::operator+(obj);
     }
 }
 
@@ -300,6 +306,26 @@ RnObject* RnClassObject::operator<<(RnObject* obj) {
         return CallFunction(MAGIC_METHOD_KEY_LSHIFT, {obj});
     } else {
         return RnObjectBase<RnScope*>::operator<<(obj);
+    }
+}
+
+/*****************************************************************************/
+RnObject* RnClassObject::At(RnIntNative index) {
+    if (HasSymbol(MAGIC_METHOD_KEY_GET_INDEX)) {
+        RnIntObject indexObject;
+        indexObject.SetData(index);
+        return CallFunction(MAGIC_METHOD_KEY_GET_INDEX, {&indexObject});
+    } else {
+        return RnObjectBase<RnScope*>::At(index);
+    }
+}
+
+/*****************************************************************************/
+RnBoolNative RnClassObject::Contains(RnObject* obj) {
+    if (HasSymbol(MAGIC_METHOD_KEY_MEMBERSHIP)) {
+        return CallFunction(MAGIC_METHOD_KEY_MEMBERSHIP, {obj})->ToBool();
+    } else {
+        ThrowUndefinedOperatorError("in", this, obj);
     }
 }
 

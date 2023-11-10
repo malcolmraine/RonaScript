@@ -161,6 +161,16 @@ RnBoolNative RnArrayObject::ToBool() const {
 }
 
 /*****************************************************************************/
+RnBoolNative RnArrayObject::Contains(RnObject* obj) const {
+    for (auto item : _data) {
+        if (ValueCompare(item, obj)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/*****************************************************************************/
 bool RnArrayObject::ContentsEqual(const RnArrayNative& data) {
     if (_data.size() != data.size()) {
         return false;

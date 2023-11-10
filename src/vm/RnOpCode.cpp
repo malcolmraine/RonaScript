@@ -141,6 +141,8 @@ RnStringNative GetOpCodeAsString(RnOpCode opcode) {
             return "OP_MAKE_ALIAS";
         case OP_MAKE_ARRAY:
             return "OP_MAKE_ARRAY";
+        case OP_CHECK_MEMBERSHIP:
+            return "OP_CHECK_MEMBERSHIP";
         default:
             return "UNKNOWN";
     }
@@ -192,6 +194,8 @@ RnOpCode GetOpCodeFromOperator(const RnStringNative& op) {
         return OP_ATTR_ACCESS;
     } else if (op == "%") {
         return OP_BINARY_MOD;
+    } else if (op == "in") {
+        return OP_CHECK_MEMBERSHIP;
     } else {
         return OP_NOP;
     }

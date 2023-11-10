@@ -69,7 +69,7 @@ RnAnyObject::RnAnyObject(RnFunction* data) {
 /*****************************************************************************/
 RnAnyObject::RnAnyObject(RnScope* data) {
     _data = RnClassObject(data);
-    _active_type = RnType::RN_CLASS_INSTANCE;
+    _active_type = RnType::RN_OBJECT;
 }
 
 /*****************************************************************************/
@@ -300,5 +300,51 @@ RnObject* RnAnyObject::At(RnIntNative index) {
         default:
             throw std::runtime_error(RnType::TypeToString(GetType()) +
                                      " type does not indices");
+    }
+}
+
+/*****************************************************************************/
+RnBoolNative RnAnyObject::IsActiveDataEqual(const RnObject* obj) const {
+    switch (_active_type) {
+        case RnType::RN_BOOLEAN: {
+            RnBoolObject data = std::get<RnBoolObject>(_data);
+            return RnObject::ValueCompare(&data, obj);
+        }
+        case RnType::RN_STRING: {
+            RnStringObject data = std::get<RnStringObject>(_data);
+            return RnObject::ValueCompare(&data, obj);
+        }
+        case RnType::RN_FLOAT: {
+            RnFloatObject data = std::get<RnFloatObject>(_data);
+            return RnObject::ValueCompare(&data, obj);
+        }
+        case RnType::RN_INT: {
+            RnIntObject data = std::get<RnIntObject>(_data);
+            return RnObject::ValueCompare(&data, obj);
+        }
+        case RnType::RN_ARRAY: {
+            RnArrayObject data = std::get<RnArrayObject>(_data);
+            return RnObject::ValueCompare(&data, obj);
+        }
+        case RnType::RN_FUNCTION:
+        case RnType::RN_CALLABLE: {
+            RnFunctionObject data = std::get<RnFunctionObject>(_data);
+            return RnObject::ValueCompare(&data, obj);
+        }
+        case RnType::RN_CLASS_INSTANCE:
+        case RnType::RN_OBJECT: {
+            RnClassObject data = std::get<RnClassObject>(_data);
+            return RnObject::ValueCompare(&data, obj);
+        }
+        case RnType::RN_NULL:
+        {
+            return obj->GetType() == RnType::RN_NULL;
+        }
+        case RnType::RN_UNKNOWN:
+        case RnType::RN_VOID:
+        case RnType::RN_ANY:
+        default:
+            assert(false);
+            break;
     }
 }

@@ -85,13 +85,15 @@ public:
     static RnObject* Create(RnType::Type type);
     static RnObject* Copy(RnObject* obj);
     virtual void SetConstFlag(bool flag) = 0;
-    static bool ValueCompare(RnObject* a, RnObject* b);
+    static bool ValueCompare(const RnObject* a, const RnObject* b);
     [[nodiscard]] virtual size_t GetByteSize() const = 0;
     virtual size_t GetBytes(char* buf) = 0;
     virtual void SetBytes(const char* buf, size_t n) = 0;
+    [[noreturn]] static void ThrowUndefinedOperatorError(const RnStringNative& op, RnObject* obj1,
+                                                  RnObject* obj2);
 
     /*************************************************************************/
-    virtual std::string GetTypeName() const {
+    [[nodiscard]] virtual std::string GetTypeName() const {
         return RnType::TypeToString(GetType());
     }
 

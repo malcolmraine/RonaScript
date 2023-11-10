@@ -126,6 +126,7 @@ public:
     size_t GetTokenCount();
     std::string ItemToString(Token* token) override;
     void HandleUnexpectedItem() override;
+    [[noreturn]] void ThrowError(const std::string& message);
     std::shared_ptr<RnTypeComposite> ParseType();
     void Reset() override;
     void Run() override;

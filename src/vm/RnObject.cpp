@@ -38,8 +38,8 @@
 #include "RnStringObject.h"
 #include "RnVirtualMachine.h"
 
-bool RnObject::ValueCompare(RnObject* a, RnObject* b) {
-    if (a->GetType() != b->GetType()) {
+bool RnObject::ValueCompare(const RnObject* a, const RnObject* b) {
+    if (a->GetActiveType() != b->GetActiveType()) {
         return false;
     }
     switch (a->GetType()) {
@@ -60,9 +60,12 @@ bool RnObject::ValueCompare(RnObject* a, RnObject* b) {
         case RnType::RN_OBJECT:
             return a->ToObject() == b->ToObject();
         case RnType::RN_NULL:
-            return true;
-        case RnType::RN_VOID:
+            return false;
         case RnType::RN_ANY:
+        {
+            return dynamic_cast<const RnAnyObject*>(a)->IsActiveDataEqual(b);
+        }
+        case RnType::RN_VOID:
         case RnType::RN_UNKNOWN:
             break;
     }
@@ -171,4 +174,12 @@ RnObject* RnObject::Copy(RnObject* obj) {
     }
 
     return result;
+}
+
+/*****************************************************************************/
+void RnObject::ThrowUndefinedOperatorError(const RnStringNative& op, RnObject* obj1,
+                                                     RnObject* obj2) {
+    throw std::runtime_error("Operator '" + op + "' is not defined for types '" +
+                             obj1->GetTypeName() + "' and '" + obj2->GetTypeName() +
+                             "'");
 }

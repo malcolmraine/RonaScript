@@ -64,7 +64,7 @@ RN_BUILTIN_FUNC_DEFINE(to_int, RnType::RN_INT, 1) {
     FIXED_ARG_COUNT_CHECK(to_int, 1)
 
     RnObject* obj = args[0];
-    if (obj->GetActiveType() == RnType::RN_CLASS_INSTANCE) {
+    if (obj->GetActiveType() == RnType::RN_OBJECT) {
         auto instance = dynamic_cast<RnClassObject*>(obj);
         if (!instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_INT, args,
                                       ret_val)) {
@@ -82,7 +82,7 @@ RN_BUILTIN_FUNC_DEFINE(to_float, RnType::RN_FLOAT, 1) {
     FIXED_ARG_COUNT_CHECK(to_float, 1)
 
     RnObject* obj = args[0];
-    if (obj->GetActiveType() == RnType::RN_CLASS_INSTANCE) {
+    if (obj->GetActiveType() == RnType::RN_OBJECT) {
         auto instance = dynamic_cast<RnClassObject*>(obj);
         if (!instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_FLOAT, args,
                                       ret_val)) {
@@ -100,7 +100,7 @@ RN_BUILTIN_FUNC_DEFINE(to_string, RnType::RN_STRING, 1) {
     FIXED_ARG_COUNT_CHECK(to_string, 1)
 
     RnObject* obj = args[0];
-    if (obj->GetActiveType() == RnType::RN_CLASS_INSTANCE) {
+    if (obj->GetActiveType() == RnType::RN_OBJECT) {
         auto instance = dynamic_cast<RnClassObject*>(obj);
         if (!instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_STR, args,
                                       ret_val)) {
@@ -118,7 +118,7 @@ RN_BUILTIN_FUNC_DEFINE(to_bool, RnType::RN_BOOLEAN, 1) {
     FIXED_ARG_COUNT_CHECK(to_bool, 1)
 
     RnObject* obj = args[0];
-    if (obj->GetActiveType() == RnType::RN_CLASS_INSTANCE) {
+    if (obj->GetActiveType() == RnType::RN_OBJECT) {
         auto instance = dynamic_cast<RnClassObject*>(obj);
         if (!instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_BOOL, args,
                                       ret_val)) {
@@ -136,7 +136,7 @@ RN_BUILTIN_FUNC_DEFINE(to_array, RnType::RN_ARRAY, 1) {
     FIXED_ARG_COUNT_CHECK(to_array, 1)
 
     RnObject* obj = args[0];
-    if (obj->GetActiveType() == RnType::RN_CLASS_INSTANCE) {
+    if (obj->GetActiveType() == RnType::RN_OBJECT) {
         auto instance = dynamic_cast<RnClassObject*>(obj);
         if (!instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_ARRAY, args,
                                       ret_val)) {

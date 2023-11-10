@@ -12,18 +12,16 @@
 #include <vector>
 #include "RnObject.h"
 
-#define UNDEFINED_OPERATOR(op)                                                      \
-    auto operator op(RnObject* obj)->RnObject* override {                           \
-        throw std::runtime_error("Operator '" + RnStringNative(#op) +               \
-                                 "' is not defined for types '" + GetTypeName() +   \
-                                 "' and '" +                                        \
-                                 RnType::TypeToString(obj->GetActiveType()) + "'"); \
+
+#define UNDEFINED_OPERATOR(op)                            \
+    auto operator op(RnObject* obj)->RnObject* override { \
+        ThrowUndefinedOperatorError(#op, this, obj);      \
     }
 
 #define UNDEFINED_CAST(ret, handle, replacement)                          \
     [[nodiscard]] ret handle const override {                             \
         throw std::runtime_error("Cannot convert type " + GetTypeName() + \
-                                 " to type " + (replacement));              \
+                                 " to type " + (replacement));            \
     }
 
 #define UNDEFINED_ASSIGNMENT(type, rntype, strval)                                 \
