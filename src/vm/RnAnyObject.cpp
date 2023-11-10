@@ -69,7 +69,7 @@ RnAnyObject::RnAnyObject(RnFunction* data) {
 /*****************************************************************************/
 RnAnyObject::RnAnyObject(RnScope* data) {
     _data = RnClassObject(data);
-    _active_type = RnType::RN_CLASS_INSTANCE;
+    _active_type = RnType::RN_OBJECT;
 }
 
 /*****************************************************************************/

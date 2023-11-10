@@ -417,7 +417,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                     _instructions[index + 1]->GetOpcode() == OP_CALL) {
                     auto class_obj = dynamic_cast<RnClassObject*>(object);
                     auto instance = dynamic_cast<RnClassObject*>(
-                        RnMemoryManager::CreateObject(RnType::RN_CLASS_INSTANCE));
+                        RnMemoryManager::CreateObject(RnType::RN_OBJECT));
                     GetScope()->GetMemoryGroup()->AddObject(instance);
                     instance->ToObject()->SetParent(class_obj->ToObject());
                     instance->SetDefinition(class_obj);
@@ -459,7 +459,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 }
 
                 auto instance = dynamic_cast<RnClassObject*>(
-                    RnMemoryManager::CreateObject(RnType::RN_CLASS_INSTANCE));
+                    RnMemoryManager::CreateObject(RnType::RN_OBJECT));
                 GetScope()->GetMemoryGroup()->AddObject(instance);
                 instance->ToObject()->SetParent(class_obj->ToObject());
                 class_obj->CopySymbols(instance->GetScope());
@@ -522,7 +522,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_MAKE_MODULE: {
             auto name = RnConstStore::GetInternedString(instruction->GetArg1());
             auto obj = dynamic_cast<RnClassObject*>(
-                RnObject::Create(RnType::RN_CLASS_INSTANCE));
+                RnObject::Create(RnType::RN_OBJECT));
             obj->SetIsModule(true);
             obj->GetScope()->SetParent(GetScope());
             GetScope()->StoreObject(instruction->GetArg1(), obj);
@@ -541,7 +541,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto name_obj = RnConstStore::GetInternedObject(instruction->GetArg1());
             name_obj->SetConstFlag(true);
             auto obj = dynamic_cast<RnClassObject*>(
-                RnObject::Create(RnType::RN_CLASS_INSTANCE));
+                RnObject::Create(RnType::RN_OBJECT));
             obj->SetIsClass(true);
             obj->SetName(name_obj->ToString());
             obj->GetScope()->StoreObject(RnConstStore::InternValue("__class"),

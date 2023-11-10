@@ -388,7 +388,7 @@ bool RnAstValidator::Visit(Name* node) {
 bool RnAstValidator::Visit(ClassDecl* node) {
     SymbolRedeclarationCheck(node->id);
     _current_scope->symbol_table->AddSymbol(
-        node->id, std::make_shared<RnTypeComposite>(RnType::RN_CLASS_INSTANCE));
+        node->id, std::make_shared<RnTypeComposite>(RnType::RN_OBJECT));
     GeneralVisit(node->scope);
     return true;
 }
