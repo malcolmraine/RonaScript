@@ -40,8 +40,8 @@
 #include "../builtins/RnBuiltins_System.h"
 #include "../builtins/RnBuiltins_Type.h"
 #include "../common/RnConfig.h"
-#include "../util/log.h"
 #include "../util/StopWatch.h"
+#include "../util/log.h"
 #include "RnAnyObject.h"
 #include "RnArrayObject.h"
 #include "RnClassObject.h"
@@ -389,6 +389,19 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
 
             break;
         }
+        case OP_CHECK_MEMBERSHIP: {
+            auto lhs_object = StackPop();
+            auto rhs_object = StackPop();
+            auto array_object = dynamic_cast<RnArrayObject*>(lhs_object);
+            if (array_object) {
+                RnObject* result = CreateObject(
+                    static_cast<RnBoolNative>(array_object->Contains(rhs_object)));
+                StackPush(result);
+            } else {
+                RnObject::ThrowUndefinedOperatorError("in", StackPop(), lhs_object);
+            };
+            break;
+        }
         case OP_RETURN: {
             auto function_scope = _call_stack.back();
             if (!function_scope) {
@@ -521,8 +534,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_MAKE_MODULE: {
             auto name = RnConstStore::GetInternedString(instruction->GetArg1());
-            auto obj = dynamic_cast<RnClassObject*>(
-                RnObject::Create(RnType::RN_OBJECT));
+            auto obj =
+                dynamic_cast<RnClassObject*>(RnObject::Create(RnType::RN_OBJECT));
             obj->SetIsModule(true);
             obj->GetScope()->SetParent(GetScope());
             GetScope()->StoreObject(instruction->GetArg1(), obj);
@@ -540,8 +553,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_MAKE_CLASS: {
             auto name_obj = RnConstStore::GetInternedObject(instruction->GetArg1());
             name_obj->SetConstFlag(true);
-            auto obj = dynamic_cast<RnClassObject*>(
-                RnObject::Create(RnType::RN_OBJECT));
+            auto obj =
+                dynamic_cast<RnClassObject*>(RnObject::Create(RnType::RN_OBJECT));
             obj->SetIsClass(true);
             obj->SetName(name_obj->ToString());
             obj->GetScope()->StoreObject(RnConstStore::InternValue("__class"),
@@ -580,7 +593,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             }
 
             index += scope_size + i;
-//            func->SetIStart(func->GetIStart() + i);
+            //            func->SetIStart(func->GetIStart() + i);
             func->SetICnt(scope_size + i);
             GetScope()->StoreObject(instruction->GetArg1(), obj);
             break;
@@ -753,7 +766,7 @@ RnIntNative RnVirtualMachine::Run() {
         i_idx++;
     }
     stopwatch.Stop();
-//            Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
+    //            Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
     return StackPop()->ToInt();
 }
 

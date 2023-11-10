@@ -53,6 +53,7 @@ public:
     [[nodiscard]] RnStringNative ToString() const override;
     [[nodiscard]] RnArrayNative ToArray() const override;
     [[nodiscard]] RnBoolNative ToBool() const override;
+    [[nodiscard]] RnBoolNative Contains(RnObject* obj) const;
 
     [[nodiscard]] RnType::Type GetType() const override {
         return RnType::RN_ARRAY;

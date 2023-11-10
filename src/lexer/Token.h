@@ -137,7 +137,8 @@
     RESERVED_WORD(EXTENDS, "extends")     \
     RESERVED_WORD(MODULE, "module")       \
     RESERVED_WORD(RANGE, "range")         \
-    RESERVED_WORD(ANY, "any")
+    RESERVED_WORD(ANY, "any")             \
+    RESERVED_WORD(IN, "in")
 
 #define RESERVED_WORD TOKEN_DEF
 #define TOKEN_DEF(token, lexeme) token,

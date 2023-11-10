@@ -45,6 +45,7 @@ const std::unordered_set<std::string> Lexer::_reserved_words = {RN_TOKEN_LIST};
 const std::unordered_set<std::string> Lexer::_compounds = {
     "++", "+=", "--", "-=", "&&", "%=", "||", "**", "&=", "|=", "/=", "*=",
     "~=", "^=", "!=", "->", "::", ">=", "<=", "==", ">>", "<<", "::", "??",
+    "in"
 };
 
 const std::unordered_set<std::string> Lexer::_binary_ops = {
@@ -66,7 +67,8 @@ const std::unordered_set<std::string> Lexer::_binary_ops = {
     "*"
     "??"
     "->"
-    "::"};
+    "::",
+    "in"};
 
 /*****************************************************************************/
 Lexer::Lexer() {
