@@ -16,8 +16,7 @@
     auto operator op(RnObject* obj)->RnObject* override {                           \
         throw std::runtime_error("Operator '" + RnStringNative(#op) +               \
                                  "' is not defined for types '" + GetTypeName() +   \
-                                 "' and '" +                                        \
-                                 RnType::TypeToString(obj->GetActiveType()) + "'"); \
+                                 "' and '" + obj->GetTypeName() + "'"); \
     }
 
 #define UNDEFINED_CAST(ret, handle, replacement)                          \

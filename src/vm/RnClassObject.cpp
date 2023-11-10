@@ -177,7 +177,7 @@ RnObject* RnClassObject::operator+(RnObject* obj) {
     if (HasSymbol(MAGIC_METHOD_KEY_PLUS)) {
         return CallFunction(MAGIC_METHOD_KEY_PLUS, {obj});
     } else {
-        return RnObjectBase<RnScope*>::operator*(obj);
+        return RnObjectBase<RnScope*>::operator+(obj);
     }
 }
 
