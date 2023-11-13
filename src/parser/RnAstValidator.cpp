@@ -144,7 +144,7 @@ bool RnAstValidator::CanAssignTypeTo(
 
 /*****************************************************************************/
 std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
-    const std::shared_ptr<AstNode>& subtree) {
+    const AstNodePtr<AstNode>& subtree) {
     switch (subtree->node_type) {
         case AST_BINARY_EXPR: {
             auto node = std::dynamic_pointer_cast<BinaryExpr>(subtree);
@@ -298,7 +298,7 @@ bool RnAstValidator::GeneralVisit(AstNode* node) {
 }
 
 /*****************************************************************************/
-bool RnAstValidator::GeneralVisit(const std::shared_ptr<AstNode>& node) {
+bool RnAstValidator::GeneralVisit(const AstNodePtr<AstNode>& node) {
     if (node) {
         return GeneralVisit(node.get());
     } else {

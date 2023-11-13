@@ -39,6 +39,6 @@ public:
     Module();
     ~Module() override;
     std::string ToString(bool nl) override;
-    std::shared_ptr<Name> name = nullptr;
-    std::shared_ptr<ScopeNode> scope = nullptr;
+    AstNodePtr<Name> name = nullptr;
+    AstNodePtr<ScopeNode> scope = nullptr;
 };

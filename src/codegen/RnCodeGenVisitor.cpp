@@ -123,7 +123,7 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
 }
 
 /*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::GeneralVisit(const std::shared_ptr<AstNode>& node) {
+InstructionBlock RnCodeGenVisitor::GeneralVisit(const AstNodePtr<AstNode>& node) {
     if (node) {
         return GeneralVisit(node.get());
     } else {

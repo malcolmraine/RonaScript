@@ -39,8 +39,8 @@ public:
     ~Loop() override;
     std::string ToString(bool nl) override;
 
-    std::shared_ptr<AstNode> init = nullptr;
-    std::shared_ptr<AstNode> test = nullptr;
-    std::shared_ptr<AstNode> update = nullptr;
-    std::shared_ptr<ScopeNode> scope = nullptr;
+    AstNodePtr<AstNode> init = nullptr;
+    AstNodePtr<AstNode> test = nullptr;
+    AstNodePtr<AstNode> update = nullptr;
+    AstNodePtr<ScopeNode> scope = nullptr;
 };

@@ -40,27 +40,27 @@ public:
     ~CatchBlock() override;
     std::string ToString(bool nl) override;
 
-    [[nodiscard]] const std::vector<std::shared_ptr<Name>>& GetExceptionIds() const {
+    [[nodiscard]] const std::vector<AstNodePtr<Name>>& GetExceptionIds() const {
         return _exception_ids;
     }
 
-    void SetExceptionIds(const std::vector<std::shared_ptr<Name>>& exceptionIds) {
+    void SetExceptionIds(const std::vector<AstNodePtr<Name>>& exceptionIds) {
         _exception_ids = exceptionIds;
     }
 
-    [[nodiscard]] const std::shared_ptr<ScopeNode>& GetScope() const {
+    [[nodiscard]] const AstNodePtr<ScopeNode>& GetScope() const {
         return _scope;
     }
 
-    void SetScope(const std::shared_ptr<ScopeNode>& scope) {
+    void SetScope(const AstNodePtr<ScopeNode>& scope) {
         _scope = scope;
     }
 
-    void AddExceptionId(const std::shared_ptr<Name>& id) {
+    void AddExceptionId(const AstNodePtr<Name>& id) {
         _exception_ids.push_back(id);
     }
 
 private:
-    std::vector<std::shared_ptr<Name>> _exception_ids;
-    std::shared_ptr<ScopeNode> _scope = nullptr;
+    std::vector<AstNodePtr<Name>> _exception_ids;
+    AstNodePtr<ScopeNode> _scope = nullptr;
 };

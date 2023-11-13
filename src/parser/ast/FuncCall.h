@@ -46,8 +46,8 @@ public:
         return _discard_return_value;
     }
 
-    std::shared_ptr<AstNode> expr = nullptr;
-    std::vector<std::shared_ptr<AstNode>> args;
+    AstNodePtr<AstNode> expr = nullptr;
+    std::vector<AstNodePtr<AstNode>> args;
 
 private:
     bool _discard_return_value = false;

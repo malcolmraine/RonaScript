@@ -21,5 +21,5 @@ public:
     ~ExitStmt() override;
     std::string ToString(bool nl) override;
 
-    std::shared_ptr<LiteralValue> exit_code = nullptr;
+    AstNodePtr<LiteralValue> exit_code = nullptr;
 };

@@ -55,6 +55,6 @@ std::string AstNode::MakeTabStr() const {
 }
 
 /*****************************************************************************/
-void AstNode::AddChild(const std::shared_ptr<AstNode>& child) {
+void AstNode::AddChild(const AstNodePtr<AstNode>& child) {
     _children.push_back(child);
 }

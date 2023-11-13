@@ -69,7 +69,7 @@ public:
     ~RnAstValidator() override = default;
 
     bool GeneralVisit(AstNode* node) override;
-    bool GeneralVisit(const std::shared_ptr<AstNode>& node) override;
+    bool GeneralVisit(const AstNodePtr<AstNode>& node) override;
     bool Visit(ArrayLiteral* node) override;
     bool Visit(ScopeNode* node) override;
     bool Visit(Loop* node) override;
@@ -102,7 +102,7 @@ private:
     void SymbolRedeclarationCheck(const std::string& symbol);
     void SymbolExistsCheck(const std::string& symbol);
     std::shared_ptr<RnTypeComposite> EvaluateSubtreeType(
-        const std::shared_ptr<AstNode>& subtree);
+        const AstNodePtr<AstNode>& subtree);
     static std::shared_ptr<RnTypeComposite> ResolveTypes(
         const std::shared_ptr<RnTypeComposite>& type1,
         const std::shared_ptr<RnTypeComposite>& type2);  // TODO: Unit test

@@ -36,7 +36,7 @@ BinaryExpr::BinaryExpr() {
 }
 
 /*****************************************************************************/
-BinaryExpr::BinaryExpr(std::shared_ptr<AstNode> left, std::shared_ptr<AstNode> right,
+BinaryExpr::BinaryExpr(AstNodePtr<AstNode> left, AstNodePtr<AstNode> right,
                        std::string op) {
     _left = std::move(left);
     _right = std::move(right);

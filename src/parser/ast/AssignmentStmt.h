@@ -37,24 +37,24 @@ public:
     ~AssignmentStmt() override;
     std::string ToString(bool nl) override;
 
-    [[nodiscard]] const std::shared_ptr<AstNode>& GetRexpr() const {
+    [[nodiscard]] const AstNodePtr<AstNode>& GetRexpr() const {
         return _rexpr;
     }
 
-    void SetRexpr(const std::shared_ptr<AstNode>& rexpr) {
+    void SetRexpr(const AstNodePtr<AstNode>& rexpr) {
         _rexpr = rexpr;
     }
 
-    [[nodiscard]] const std::shared_ptr<AstNode>& GetLexpr() const {
+    [[nodiscard]] const AstNodePtr<AstNode>& GetLexpr() const {
         return _lexpr;
     }
 
-    void SetLexpr(const std::shared_ptr<AstNode>& lexpr) {
+    void SetLexpr(const AstNodePtr<AstNode>& lexpr) {
         _lexpr = lexpr;
     }
 
 private:
-    std::shared_ptr<AstNode> _rexpr{};
-    std::shared_ptr<AstNode> _lexpr = nullptr;
-    std::shared_ptr<AstNode> _offset = nullptr;
+    AstNodePtr<AstNode> _rexpr{};
+    AstNodePtr<AstNode> _lexpr = nullptr;
+    AstNodePtr<AstNode> _offset = nullptr;
 };

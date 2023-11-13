@@ -46,7 +46,7 @@ public:
     std::string id;
     std::shared_ptr<RnTypeComposite> type;
     std::vector<Token*> qualifiers;
-    std::shared_ptr<AstNode> init_value = nullptr;
+    AstNodePtr<AstNode> init_value = nullptr;
     bool is_const = false;
     bool is_local = false;
     bool is_global = false;
