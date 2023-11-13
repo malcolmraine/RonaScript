@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -148,8 +148,8 @@ void Parser::ConditionalBufAdvance(TokenType t) {
 }
 
 /*****************************************************************************/
-std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
-    auto node = std::make_shared<ImportStmt>();
+AstNodePtr<ImportStmt> Parser::ParseImportStmt() {
+    auto node = AstNode::CreateNode<ImportStmt>();
     AddCurrentFileInfo(node);
     Expect({TokenType::NAME, TokenType::STRING_LITERAL});
     AdvanceBuffer(1);
@@ -197,8 +197,8 @@ std::shared_ptr<ImportStmt> Parser::ParseImportStmt() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
-    auto node = std::make_shared<VarDecl>();
+AstNodePtr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
+    auto node = AstNode::CreateNode<VarDecl>();
     AddCurrentFileInfo(node);
     Expect(TokenType::NAME);
 
@@ -252,8 +252,8 @@ std::shared_ptr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
 }
 
 /*****************************************************************************/
-std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
-    auto node = std::make_shared<FuncDecl>();
+AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
+    auto node = AstNode::CreateNode<FuncDecl>();
     AddCurrentFileInfo(node);
 
     if (!qualifiers.empty()) {
@@ -339,8 +339,8 @@ std::shared_ptr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) 
 }
 
 /*****************************************************************************/
-std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
-    auto node = std::make_shared<ClassDecl>();
+AstNodePtr<ClassDecl> Parser::ParseClassDecl() {
+    auto node = AstNode::CreateNode<ClassDecl>();
     AddCurrentFileInfo(node);
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
@@ -376,8 +376,8 @@ std::shared_ptr<ClassDecl> Parser::ParseClassDecl() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<AstNode> Parser::GetExprComponent() {
-    std::shared_ptr<AstNode> node = nullptr;
+AstNodePtr<AstNode> Parser::GetExprComponent() {
+    AstNodePtr<AstNode> node = nullptr;
 
     if ((Lookback() && Lookback()->IsOperator()) && Current()->IsUnaryOp()) {
         return ParseUnaryExpr();
@@ -397,39 +397,39 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
         AdvanceBuffer(1);
         switch (Lookback()->token_type) {
             case TokenType::INT_LITERAL: {
-                node = std::make_shared<LiteralValue>();
+                node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_INT_LITERAL;
-                std::dynamic_pointer_cast<LiteralValue>(node)->data =
+                AstNode::CastNode<LiteralValue>(node)->data =
                     static_cast<RnIntNative>(std::stol(Lookback()->lexeme));
                 _intern_count++;
                 break;
             }
             case TokenType::FLOAT_LITERAL: {
-                node = std::make_shared<LiteralValue>();
+                node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_FLOAT_LITERAL;
-                std::dynamic_pointer_cast<LiteralValue>(node)->data =
+                AstNode::CastNode<LiteralValue>(node)->data =
                     static_cast<RnFloatNative>(std::stod(Lookback()->lexeme));
                 _intern_count++;
                 break;
             }
             case TokenType::STRING_LITERAL: {
-                node = std::make_shared<LiteralValue>();
+                node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_STRING_LITERAL;
-                std::dynamic_pointer_cast<LiteralValue>(node)->data =
+                AstNode::CastNode<LiteralValue>(node)->data =
                     Lookback()->lexeme;
                 _intern_count++;
                 break;
             }
             case TokenType::BOOL_LITERAL: {
-                node = std::make_shared<LiteralValue>();
+                node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_BOOL_LITERAL;
-                std::dynamic_pointer_cast<LiteralValue>(node)->data =
+                AstNode::CastNode<LiteralValue>(node)->data =
                     Lookback()->lexeme == "true";
                 _intern_count++;
                 break;
             }
             case TokenType::NULL_LITERAL: {
-                node = std::make_shared<NullLiteral>();
+                node = AstNode::CreateNode<NullLiteral>();
                 break;
             }
             default:
@@ -444,13 +444,13 @@ std::shared_ptr<AstNode> Parser::GetExprComponent() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
+AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
     RnStack<Token*> op_stack;
-    RnStack<std::shared_ptr<AstNode>> result_stack;
+    RnStack<AstNodePtr<AstNode>> result_stack;
     result_stack.Push(nullptr);
 
     auto make_binary_expr = [this, &result_stack, &op_stack]() mutable {
-        auto node = std::make_shared<BinaryExpr>();
+        auto node = AstNode::CreateNode<BinaryExpr>();
         node->_right = result_stack.Pop();
         node->_left = result_stack.Pop();
         node->_op = op_stack.Pop()->lexeme;
@@ -469,7 +469,7 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
     // Grab any immediate unary operators and apply them to the closest
     // expression. This may need some fine-tuning.
     if (Current()->IsUnaryOp()) {
-        auto node = std::make_shared<UnaryExpr>();
+        auto node = AstNode::CreateNode<UnaryExpr>();
         node->op = Current()->lexeme;
         AdvanceBuffer(1);
         if (Current()->token_type == TokenType::R_PARAN) {
@@ -603,13 +603,13 @@ std::shared_ptr<AstNode> Parser::ParseExpr(TokenType stop_token) {
             return AddCurrentFileInfo(result_stack.back());
         }
     }
-    return std::make_shared<Expr>();
+    return AstNode::CreateNode<Expr>();
 }
 
 /*****************************************************************************/
-std::shared_ptr<UnaryExpr> Parser::ParseUnaryExpr(
-    const std::shared_ptr<AstNode>& expr) {
-    auto node = std::make_shared<UnaryExpr>();
+AstNodePtr<UnaryExpr> Parser::ParseUnaryExpr(
+    const AstNodePtr<AstNode>& expr) {
+    auto node = AstNode::CreateNode<UnaryExpr>();
     node->op = Current()->lexeme;
     AdvanceBuffer(1);
 
@@ -623,8 +623,8 @@ std::shared_ptr<UnaryExpr> Parser::ParseUnaryExpr(
 }
 
 /*****************************************************************************/
-std::shared_ptr<FlowControl> Parser::ParseFlowControlStmt() {
-    auto node = std::make_shared<FlowControl>();
+AstNodePtr<FlowControl> Parser::ParseFlowControlStmt() {
+    auto node = AstNode::CreateNode<FlowControl>();
     AddCurrentFileInfo(node);
     Expect(TokenType::SEMICOLON);
     if (Current()->token_type == TokenType::CONTINUE) {
@@ -638,8 +638,8 @@ std::shared_ptr<FlowControl> Parser::ParseFlowControlStmt() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<ReturnStmt> Parser::ParseReturnStmt() {
-    auto node = std::make_shared<ReturnStmt>();
+AstNodePtr<ReturnStmt> Parser::ParseReturnStmt() {
+    auto node = AstNode::CreateNode<ReturnStmt>();
     AddCurrentFileInfo(node);
     AdvanceBuffer(1);
 
@@ -653,8 +653,8 @@ std::shared_ptr<ReturnStmt> Parser::ParseReturnStmt() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<DeleteStmt> Parser::ParseDeleteStmt() {
-    auto node = std::make_shared<DeleteStmt>();
+AstNodePtr<DeleteStmt> Parser::ParseDeleteStmt() {
+    auto node = AstNode::CreateNode<DeleteStmt>();
     AddCurrentFileInfo(node);
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
@@ -669,20 +669,20 @@ std::shared_ptr<DeleteStmt> Parser::ParseDeleteStmt() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<ExitStmt> Parser::ParseExitStmt() {
-    auto node = std::make_shared<ExitStmt>();
+AstNodePtr<ExitStmt> Parser::ParseExitStmt() {
+    auto node = AstNode::CreateNode<ExitStmt>();
     AddCurrentFileInfo(node);
     Expect({TokenType::SEMICOLON, TokenType::INT_LITERAL});
     AdvanceBuffer(1);
 
     if (Current()->token_type == TokenType::SEMICOLON) {
-        node->exit_code = std::make_shared<LiteralValue>();
+        node->exit_code = AstNode::CreateNode<LiteralValue>();
         node->exit_code->node_type = AST_INT_LITERAL;
         node->exit_code->data = 0L;
         _intern_count++;
         AdvanceBuffer(1);
     } else {
-        node->exit_code = std::make_shared<LiteralValue>();
+        node->exit_code = AstNode::CreateNode<LiteralValue>();
         node->exit_code->node_type = AST_INT_LITERAL;
         node->exit_code->data = static_cast<RnIntNative>(std::stoi(Current()->lexeme));
         _intern_count++;
@@ -693,9 +693,9 @@ std::shared_ptr<ExitStmt> Parser::ParseExitStmt() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<AstNode> Parser::ParseAssignmentStatement(
-    const std::shared_ptr<AstNode>& rexpr) {
-    auto node = std::make_shared<AssignmentStmt>();
+AstNodePtr<AstNode> Parser::ParseAssignmentStatement(
+    const AstNodePtr<AstNode>& rexpr) {
+    auto node = AstNode::CreateNode<AssignmentStmt>();
     AddCurrentFileInfo(node);
     node->SetLexpr(rexpr ? rexpr : ParseExpr());
 
@@ -708,7 +708,7 @@ std::shared_ptr<AstNode> Parser::ParseAssignmentStatement(
     }
 
     if (!op.empty()) {
-        auto bin_expr = std::make_shared<BinaryExpr>();
+        auto bin_expr = AstNode::CreateNode<BinaryExpr>();
         bin_expr->_left = node->GetLexpr();
         bin_expr->_op = op;
         bin_expr->_right = ParseExpr();
@@ -727,8 +727,8 @@ std::shared_ptr<AstNode> Parser::ParseAssignmentStatement(
 }
 
 /*****************************************************************************/
-std::shared_ptr<ConditionalStmt> Parser::ParseConditionalStmt() {
-    auto node = std::make_shared<ConditionalStmt>();
+AstNodePtr<ConditionalStmt> Parser::ParseConditionalStmt() {
+    auto node = AstNode::CreateNode<ConditionalStmt>();
     AddCurrentFileInfo(node);
 
     if (Current()->IsOneOf({TokenType::IF, TokenType::ELIF})) {
@@ -742,9 +742,9 @@ std::shared_ptr<ConditionalStmt> Parser::ParseConditionalStmt() {
         node->consequent = ParseScope();
 
         // Keep parsing conditionals until no more are found
-        std::shared_ptr<ConditionalStmt> parent_node = node;
+        AstNodePtr<ConditionalStmt> parent_node = node;
         while (Current() && Current()->IsOneOf({TokenType::ELIF, TokenType::ELSE})) {
-            parent_node->alternative = std::make_shared<ConditionalStmt>();
+            parent_node->alternative = AstNode::CreateNode<ConditionalStmt>();
             AddCurrentFileInfo(parent_node->alternative);
 
             if (Current()->token_type == TokenType::ELIF) {
@@ -770,8 +770,8 @@ std::shared_ptr<ConditionalStmt> Parser::ParseConditionalStmt() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<ScopeNode> Parser::ParseScope() {
-    auto node = std::make_shared<ScopeNode>();
+AstNodePtr<ScopeNode> Parser::ParseScope() {
+    auto node = AstNode::CreateNode<ScopeNode>();
     AddCurrentFileInfo(node);
     node->parent = _current_scope;
     node->symbol_table->SetParent(_current_scope->symbol_table);
@@ -803,8 +803,8 @@ std::shared_ptr<ScopeNode> Parser::ParseScope() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<FuncCall> Parser::ParseFuncCall(const std::shared_ptr<AstNode>& expr) {
-    auto node = std::make_shared<FuncCall>();
+AstNodePtr<FuncCall> Parser::ParseFuncCall(const AstNodePtr<AstNode>& expr) {
+    auto node = AstNode::CreateNode<FuncCall>();
     AddCurrentFileInfo(node);
 
     if (expr == nullptr) {
@@ -825,8 +825,8 @@ std::shared_ptr<FuncCall> Parser::ParseFuncCall(const std::shared_ptr<AstNode>& 
 }
 
 /*****************************************************************************/
-std::shared_ptr<ArrayLiteral> Parser::ParseArrayLiteral() {
-    auto node = std::make_shared<ArrayLiteral>();
+AstNodePtr<ArrayLiteral> Parser::ParseArrayLiteral() {
+    auto node = AstNode::CreateNode<ArrayLiteral>();
     AddCurrentFileInfo(node);
     ConditionalBufAdvance(TokenType::R_BRACK);
 
@@ -839,8 +839,8 @@ std::shared_ptr<ArrayLiteral> Parser::ParseArrayLiteral() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<Loop> Parser::ParseWhileLoop() {
-    auto node = std::make_shared<Loop>();
+AstNodePtr<Loop> Parser::ParseWhileLoop() {
+    auto node = AstNode::CreateNode<Loop>();
     node->node_type = AST_WHILE_LOOP;
     AddCurrentFileInfo(node);
     ConditionalBufAdvance(TokenType::WHILE);
@@ -853,8 +853,8 @@ std::shared_ptr<Loop> Parser::ParseWhileLoop() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<Loop> Parser::ParseForLoop() {
-    auto node = std::make_shared<Loop>();
+AstNodePtr<Loop> Parser::ParseForLoop() {
+    auto node = AstNode::CreateNode<Loop>();
     node->node_type = AST_FOR_LOOP;
     AddCurrentFileInfo(node);
     Expect(TokenType::R_PARAN);
@@ -896,7 +896,7 @@ std::shared_ptr<Loop> Parser::ParseForLoop() {
     assert(_scope_count == previous_scope_count);
 
     if (node->init->node_type == AST_VAR_DECL) {
-        auto var_decl = std::dynamic_pointer_cast<VarDecl>(node->init);
+        auto var_decl = AstNode::CastNode<VarDecl>(node->init);
         node->scope->symbol_table->AddSymbol(var_decl->id, var_decl->type, var_decl);
     }
 
@@ -904,8 +904,8 @@ std::shared_ptr<Loop> Parser::ParseForLoop() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<AliasDecl> Parser::ParseAliasDecl() {
-    auto node = std::make_shared<AliasDecl>();
+AstNodePtr<AliasDecl> Parser::ParseAliasDecl() {
+    auto node = AstNode::CreateNode<AliasDecl>();
     AddCurrentFileInfo(node);
 
     Expect(TokenType::NAME);
@@ -931,9 +931,9 @@ std::shared_ptr<AliasDecl> Parser::ParseAliasDecl() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<AstNode> Parser::ParseIndexedExpr(
-    const std::shared_ptr<AstNode>& expr) {
-    auto node = std::make_shared<IndexedExpr>();
+AstNodePtr<AstNode> Parser::ParseIndexedExpr(
+    const AstNodePtr<AstNode>& expr) {
+    auto node = AstNode::CreateNode<IndexedExpr>();
     AddCurrentFileInfo(node);
     ConditionalBufAdvance(TokenType::R_BRACK);
     node->expr = expr ? expr : ParseExpr();
@@ -942,7 +942,7 @@ std::shared_ptr<AstNode> Parser::ParseIndexedExpr(
     // Since the first parent expression is passed, we only loop for
     // subsequent index accesses.
     if (Current()->token_type == TokenType::R_BRACK) {
-        std::shared_ptr<AstNode> multiDimNode = ParseIndexedExpr(node);
+        AstNodePtr<AstNode> multiDimNode = ParseIndexedExpr(node);
         while (Current()->token_type == TokenType::R_BRACK) {
             multiDimNode = ParseIndexedExpr(node);
         }
@@ -953,8 +953,8 @@ std::shared_ptr<AstNode> Parser::ParseIndexedExpr(
 }
 
 /*****************************************************************************/
-std::shared_ptr<Name> Parser::ParseName() {
-    auto node = std::make_shared<Name>();
+AstNodePtr<Name> Parser::ParseName() {
+    auto node = AstNode::CreateNode<Name>();
     AddCurrentFileInfo(node);
     node->value = Current()->lexeme;
     AdvanceBuffer(1);
@@ -964,8 +964,8 @@ std::shared_ptr<Name> Parser::ParseName() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<TryBlock> Parser::ParseTryBlock() {
-    auto node = std::make_shared<TryBlock>();
+AstNodePtr<TryBlock> Parser::ParseTryBlock() {
+    auto node = AstNode::CreateNode<TryBlock>();
     AddCurrentFileInfo(node);
     AdvanceBuffer(1);
     auto previous_scope_count = _scope_count;
@@ -978,8 +978,8 @@ std::shared_ptr<TryBlock> Parser::ParseTryBlock() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<CatchBlock> Parser::ParseCatchBlock() {
-    auto node = std::make_shared<CatchBlock>();
+AstNodePtr<CatchBlock> Parser::ParseCatchBlock() {
+    auto node = AstNode::CreateNode<CatchBlock>();
     AddCurrentFileInfo(node);
 
     // current token should now be CATCH: catch (Exception1, Exception2, ...) {}
@@ -1012,7 +1012,7 @@ void Parser::RevertScope() {
 }
 
 /*****************************************************************************/
-void Parser::ConvertScope(const std::shared_ptr<ScopeNode>& scope) {
+void Parser::ConvertScope(const AstNodePtr<ScopeNode>& scope) {
     assert(scope);
 
     scope->parent = _current_scope;
@@ -1149,7 +1149,7 @@ void Parser::Parse() {
                             }
                         } else {
                             if (expr->node_type == AST_FUNC_CALL)
-                                std::dynamic_pointer_cast<FuncCall>(expr)
+                                AstNode::CastNode<FuncCall>(expr)
                                     ->SetDiscardReturnValue(true);
                             _current_scope->AddSubTree(expr);
                         }
@@ -1188,21 +1188,21 @@ void Parser::Parse() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<AstNode> Parser::TransformBinaryExpr(
-    std::shared_ptr<BinaryExpr> binary_expr) {
+AstNodePtr<AstNode> Parser::TransformBinaryExpr(
+    AstNodePtr<BinaryExpr> binary_expr) {
     assert(binary_expr);
 
     if (binary_expr->_op == "->" || binary_expr->_op == "::") {
         if (binary_expr->_right->node_type == AST_INDEXED_EXPR) {
             auto right_tmp =
-                std::dynamic_pointer_cast<IndexedExpr>(binary_expr->_right);
+                AstNode::CastNode<IndexedExpr>(binary_expr->_right);
             right_tmp->file_info = binary_expr->file_info;
             binary_expr->_right = right_tmp->expr;
             right_tmp->expr = binary_expr;
 
             return right_tmp;
         } else if (binary_expr->_right->node_type == AST_FUNC_CALL) {
-            auto right_tmp = std::dynamic_pointer_cast<FuncCall>(binary_expr->_right);
+            auto right_tmp = AstNode::CastNode<FuncCall>(binary_expr->_right);
             right_tmp->file_info = binary_expr->file_info;
             binary_expr->_right = right_tmp->expr;
             right_tmp->expr = TransformBinaryExpr(binary_expr);
@@ -1215,10 +1215,10 @@ std::shared_ptr<AstNode> Parser::TransformBinaryExpr(
 }
 
 /*****************************************************************************/
-std::shared_ptr<Module> Parser::ParseModule() {
+AstNodePtr<Module> Parser::ParseModule() {
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
-    auto node = std::make_shared<Module>();
+    auto node = AstNode::CreateNode<Module>();
     AddCurrentFileInfo(node);
     node->name = ParseName();
     Expect(TokenType::IS);
@@ -1307,7 +1307,7 @@ void Parser::Run() {
 }
 
 /*****************************************************************************/
-std::shared_ptr<AstNode> Parser::AddCurrentFileInfo(std::shared_ptr<AstNode> node) {
+AstNodePtr<AstNode> Parser::AddCurrentFileInfo(AstNodePtr<AstNode> node) {
     if (Current()) {
         node->file_info = Current()->file_info;
     }

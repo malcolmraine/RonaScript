@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -123,7 +123,7 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
 }
 
 /*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::GeneralVisit(const std::shared_ptr<AstNode>& node) {
+InstructionBlock RnCodeGenVisitor::GeneralVisit(const AstNodePtr<AstNode>& node) {
     if (node) {
         return GeneralVisit(node.get());
     } else {

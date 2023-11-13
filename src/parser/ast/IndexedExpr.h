@@ -18,5 +18,5 @@ public:
     IndexedExpr();
     ~IndexedExpr() override;
     std::string ToString(bool nl) override;
-    std::shared_ptr<AstNode> idx = nullptr;
+    AstNodePtr<AstNode> idx = nullptr;
 };

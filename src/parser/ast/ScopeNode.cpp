@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -62,7 +62,7 @@ std::string ScopeNode::ToString(bool nl) {
 }
 
 /*****************************************************************************/
-void ScopeNode::AddSubTree(const std::shared_ptr<AstNode>& subtree, bool hoist) {
+void ScopeNode::AddSubTree(const AstNodePtr<AstNode>& subtree, bool hoist) {
     subtree->nest_lvl = nest_lvl + 1;
 
     if (hoist) {
@@ -73,31 +73,31 @@ void ScopeNode::AddSubTree(const std::shared_ptr<AstNode>& subtree, bool hoist) 
 }
 
 /*****************************************************************************/
-void ScopeNode::AddClassDecl(const std::shared_ptr<ClassDecl>& class_decl) {
+void ScopeNode::AddClassDecl(const AstNodePtr<ClassDecl>& class_decl) {
     class_decl->nest_lvl = nest_lvl + 1;
     children.emplace_back(class_decl);
 }
 
 /*****************************************************************************/
-void ScopeNode::AddVarDecl(const std::shared_ptr<VarDecl>& var_decl) {
+void ScopeNode::AddVarDecl(const AstNodePtr<VarDecl>& var_decl) {
     var_decl->nest_lvl = nest_lvl + 1;
     children.emplace_back(var_decl);
 }
 
 /*****************************************************************************/
-void ScopeNode::AddFuncDecl(const std::shared_ptr<FuncDecl>& func_decl) {
+void ScopeNode::AddFuncDecl(const AstNodePtr<FuncDecl>& func_decl) {
     func_decl->nest_lvl = nest_lvl + 1;
     children.emplace_back(func_decl);
 }
 
 /*****************************************************************************/
 void ScopeNode::AddLiteral(const std::string& name,
-                           const std::shared_ptr<AstNode>& node) {
+                           const AstNodePtr<AstNode>& node) {
     _literal_map[name] = node;
 }
 
 /*****************************************************************************/
-std::shared_ptr<AstNode> ScopeNode::GetLiteral(const std::string& name) {
+AstNodePtr<AstNode> ScopeNode::GetLiteral(const std::string& name) {
     auto iter = _literal_map.find(name);
     if (iter != _literal_map.end())
         return iter->second;

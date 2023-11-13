@@ -32,6 +32,11 @@
 #include <vector>
 #include "../../util/FileInfo.h"
 #include "NodeType.h"
+#include <memory>
+
+template <typename T>
+using AstNodePtr = std::shared_ptr<T>;
+
 
 class RnCodeGenVisitor;
 
@@ -41,15 +46,25 @@ public:
     virtual ~AstNode() = default;
     [[nodiscard]] bool IsLiteral() const;
     virtual std::string ToString(bool nl);
-    void AddChild(const std::shared_ptr<AstNode>& child);
+    void AddChild(const AstNodePtr<AstNode>& child);
 
-    std::vector<std::shared_ptr<AstNode>> GetChildren() const {
+    std::vector<AstNodePtr<AstNode>> GetChildren() const {
         return _children;
     }
 
     template <class T = AstNode>
     std::shared_ptr<T> GetChild(size_t index) const {
-        return std::dynamic_pointer_cast<T>(_children.at(index));
+        return AstNode::CastNode<T>(_children.at(index));
+    }
+
+    template<class T, typename... Args>
+    static AstNodePtr<T> CreateNode(Args... args) {
+        return std::make_shared<T>(std::forward<Args>(args)...);
+    }
+
+    template<class TO, class FROM>
+    static AstNodePtr<TO> CastNode(AstNodePtr<FROM> node) {
+        return std::dynamic_pointer_cast<TO>(node);
     }
 
     NodeType_t node_type = AST_DEFAULT;
@@ -58,5 +73,5 @@ public:
 
 protected:
     std::string MakeTabStr() const;
-    std::vector<std::shared_ptr<AstNode>> _children;
+    std::vector<AstNodePtr<AstNode>> _children;
 };

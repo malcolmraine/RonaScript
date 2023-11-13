@@ -47,5 +47,5 @@ public:
     std::vector<ArgDecl*> args;
     std::shared_ptr<RnTypeComposite> type;
     std::vector<Token*> qualifiers;
-    std::shared_ptr<ScopeNode> scope = nullptr;
+    AstNodePtr<ScopeNode> scope = nullptr;
 };

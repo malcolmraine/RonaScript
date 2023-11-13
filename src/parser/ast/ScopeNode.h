@@ -43,16 +43,16 @@ public:
     ScopeNode();
     ~ScopeNode() override;
     std::string ToString(bool nl) override;
-    void AddSubTree(const std::shared_ptr<AstNode>& subtree, bool hoist = false);
-    void AddClassDecl(const std::shared_ptr<ClassDecl>& class_decl);
-    void AddVarDecl(const std::shared_ptr<VarDecl>& var_decl);
-    void AddFuncDecl(const std::shared_ptr<FuncDecl>& func_decl);
-    void AddLiteral(const std::string& name, const std::shared_ptr<AstNode>& node);
-    std::shared_ptr<AstNode> GetLiteral(const std::string& name);
+    void AddSubTree(const AstNodePtr<AstNode>& subtree, bool hoist = false);
+    void AddClassDecl(const AstNodePtr<ClassDecl>& class_decl);
+    void AddVarDecl(const AstNodePtr<VarDecl>& var_decl);
+    void AddFuncDecl(const AstNodePtr<FuncDecl>& func_decl);
+    void AddLiteral(const std::string& name, const AstNodePtr<AstNode>& node);
+    AstNodePtr<AstNode> GetLiteral(const std::string& name);
 
-    std::vector<std::shared_ptr<AstNode>> children;  // All other scope children
-    std::shared_ptr<ScopeNode> parent = nullptr;
+    std::vector<AstNodePtr<AstNode>> children;  // All other scope children
+    AstNodePtr<ScopeNode> parent = nullptr;
     std::shared_ptr<RnAstSymbolTable> symbol_table = nullptr;
     std::unordered_map<std::string, std::string> pragma_table;
-    std::map<std::string, std::shared_ptr<AstNode>> _literal_map;
+    std::map<std::string, AstNodePtr<AstNode>> _literal_map;
 };

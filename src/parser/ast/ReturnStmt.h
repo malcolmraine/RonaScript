@@ -36,5 +36,5 @@ public:
     ReturnStmt();
     ~ReturnStmt() override;
     std::string ToString(bool nl) override;
-    std::shared_ptr<AstNode> expr = nullptr;
+    AstNodePtr<AstNode> expr = nullptr;
 };

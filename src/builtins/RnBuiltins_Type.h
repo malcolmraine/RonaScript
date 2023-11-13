@@ -47,7 +47,8 @@
     RN_BUILTIN_FUNC(RnBuiltins_Type, is_array, RnType::RN_BOOLEAN, 1)    \
     RN_BUILTIN_FUNC(RnBuiltins_Type, is_object, RnType::RN_BOOLEAN, 1)   \
     RN_BUILTIN_FUNC(RnBuiltins_Type, is_callable, RnType::RN_BOOLEAN, 1) \
-    RN_BUILTIN_FUNC(RnBuiltins_Type, is_any, RnType::RN_BOOLEAN, 1)
+    RN_BUILTIN_FUNC(RnBuiltins_Type, is_any, RnType::RN_BOOLEAN, 1) \
+    RN_BUILTIN_FUNC(RnBuiltins_Type, instanceof, RnType::RN_BOOLEAN, 2)
 
 class RnScope;
 class RnObject;

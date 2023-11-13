@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@ BinaryExpr::BinaryExpr() {
 }
 
 /*****************************************************************************/
-BinaryExpr::BinaryExpr(std::shared_ptr<AstNode> left, std::shared_ptr<AstNode> right,
+BinaryExpr::BinaryExpr(AstNodePtr<AstNode> left, AstNodePtr<AstNode> right,
                        std::string op) {
     _left = std::move(left);
     _right = std::move(right);

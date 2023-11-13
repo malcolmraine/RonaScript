@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -55,6 +55,6 @@ std::string AstNode::MakeTabStr() const {
 }
 
 /*****************************************************************************/
-void AstNode::AddChild(const std::shared_ptr<AstNode>& child) {
+void AstNode::AddChild(const AstNodePtr<AstNode>& child) {
     _children.push_back(child);
 }

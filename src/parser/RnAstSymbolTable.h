@@ -51,11 +51,11 @@ public:
         return _name;
     }
 
-    void SetTypeDeclNode(std::shared_ptr<AstNode> reference) {
+    void SetTypeDeclNode(AstNodePtr<AstNode> reference) {
         _reference = std::move(reference);
     }
 
-    [[nodiscard]] std::shared_ptr<AstNode> GetTypeDeclNode() {
+    [[nodiscard]] AstNodePtr<AstNode> GetTypeDeclNode() {
         return _reference;
     }
 
@@ -63,7 +63,7 @@ private:
     std::string _name;
     std::shared_ptr<RnTypeComposite> _type;
     std::string _string_type;
-    std::shared_ptr<AstNode> _reference;
+    AstNodePtr<AstNode> _reference;
 };
 
 class RnAstSymbolTable {
@@ -72,7 +72,7 @@ public:
     bool SymbolExists(const std::string& symbol);
     std::shared_ptr<SymbolTableEntry> AddSymbol(
         const std::string& symbol, const std::shared_ptr<RnTypeComposite>& type,
-        const std::shared_ptr<AstNode>& type_decl_node = nullptr);
+        const AstNodePtr<AstNode>& type_decl_node = nullptr);
     std::shared_ptr<SymbolTableEntry> GetSymbolEntry(const std::string& symbol);
 
     void SetParent(std::shared_ptr<RnAstSymbolTable> parent) {

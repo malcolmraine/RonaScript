@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,7 @@ bool RnAstSymbolTable::SymbolExists(const std::string& symbol) {
 /*****************************************************************************/
 std::shared_ptr<SymbolTableEntry> RnAstSymbolTable::AddSymbol(
     const std::string& symbol, const std::shared_ptr<RnTypeComposite>& type,
-    const std::shared_ptr<AstNode>& type_decl_node) {
+    const AstNodePtr<AstNode>& type_decl_node) {
     auto entry = std::make_shared<SymbolTableEntry>(symbol, type);
     entry->SetTypeDeclNode(type_decl_node);
     _table[symbol] = entry;

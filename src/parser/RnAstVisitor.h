@@ -28,6 +28,8 @@
 
 #pragma once
 
+#include "../parser/ast/AstNode.h"
+
 class LiteralValue;
 class ScopeNode;
 class ImportStmt;
@@ -60,7 +62,7 @@ class Module;
 template <typename T>
 class RnAstVisitor {
     virtual T GeneralVisit(AstNode* node) = 0;
-    virtual T GeneralVisit(const std::shared_ptr<AstNode>& node) = 0;
+    virtual T GeneralVisit(const AstNodePtr<AstNode>& node) = 0;
     virtual T Visit(ArrayLiteral* node) = 0;
     virtual T Visit(ScopeNode* node) = 0;
     virtual T Visit(Loop* node) = 0;

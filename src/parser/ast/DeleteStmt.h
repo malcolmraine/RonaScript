@@ -38,14 +38,14 @@ public:
     ~DeleteStmt() override;
     std::string ToString(bool nl) override;
 
-    [[nodiscard]] const std::shared_ptr<AstNode>& GetName() const {
+    [[nodiscard]] const AstNodePtr<AstNode>& GetName() const {
         return _name;
     }
 
-    void SetName(const std::shared_ptr<AstNode>& name) {
+    void SetName(const AstNodePtr<AstNode>& name) {
         _name = name;
     }
 
 private:
-    std::shared_ptr<AstNode> _name = nullptr;
+    AstNodePtr<AstNode> _name = nullptr;
 };

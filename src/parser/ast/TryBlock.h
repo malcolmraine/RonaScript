@@ -39,7 +39,7 @@ public:
     TryBlock();
     ~TryBlock() override;
     std::string ToString(bool nl) override;
-    std::vector<std::shared_ptr<Name>> exception_ids;
-    std::shared_ptr<ScopeNode> scope = nullptr;
-    std::shared_ptr<CatchBlock> catch_block = nullptr;
+    std::vector<AstNodePtr<Name>> exception_ids;
+    AstNodePtr<ScopeNode> scope = nullptr;
+    AstNodePtr<CatchBlock> catch_block = nullptr;
 };

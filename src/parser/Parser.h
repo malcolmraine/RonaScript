@@ -87,40 +87,40 @@ public:
     ~Parser() override;
 
     void ConditionalBufAdvance(TokenType t);
-    std::shared_ptr<ImportStmt> ParseImportStmt();
-    std::shared_ptr<VarDecl> ParseVarDecl(std::vector<Token*> qualifiers = {});
-    std::shared_ptr<FuncDecl> ParseFuncDecl(std::vector<Token*> qualifiers = {});
-    std::shared_ptr<ClassDecl> ParseClassDecl();
-    std::shared_ptr<AstNode> GetExprComponent();
-    std::shared_ptr<AstNode> ParseExpr(TokenType stop_token = TokenType::SEMICOLON);
-    std::shared_ptr<UnaryExpr> ParseUnaryExpr(
-        const std::shared_ptr<AstNode>& expr = nullptr);
-    std::shared_ptr<FlowControl> ParseFlowControlStmt();
-    std::shared_ptr<ReturnStmt> ParseReturnStmt();
-    std::shared_ptr<DeleteStmt> ParseDeleteStmt();
-    std::shared_ptr<ExitStmt> ParseExitStmt();
-    std::shared_ptr<AstNode> ParseAssignmentStatement(
-        const std::shared_ptr<AstNode>& rexpr = nullptr);
-    std::shared_ptr<ConditionalStmt> ParseConditionalStmt();
-    std::shared_ptr<ScopeNode> ParseScope();
-    std::shared_ptr<FuncCall> ParseFuncCall(
-        const std::shared_ptr<AstNode>& expr = nullptr);
-    std::shared_ptr<ArrayLiteral> ParseArrayLiteral();
-    std::shared_ptr<Loop> ParseWhileLoop();
-    std::shared_ptr<Loop> ParseForLoop();
-    std::shared_ptr<AliasDecl> ParseAliasDecl();
-    std::shared_ptr<AstNode> ParseIndexedExpr(
-        const std::shared_ptr<AstNode>& expr = nullptr);
-    std::shared_ptr<Name> ParseName();
-    std::shared_ptr<TryBlock> ParseTryBlock();
-    std::shared_ptr<CatchBlock> ParseCatchBlock();
-    std::shared_ptr<Module> ParseModule();
+    AstNodePtr<ImportStmt> ParseImportStmt();
+    AstNodePtr<VarDecl> ParseVarDecl(std::vector<Token*> qualifiers = {});
+    AstNodePtr<FuncDecl> ParseFuncDecl(std::vector<Token*> qualifiers = {});
+    AstNodePtr<ClassDecl> ParseClassDecl();
+    AstNodePtr<AstNode> GetExprComponent();
+    AstNodePtr<AstNode> ParseExpr(TokenType stop_token = TokenType::SEMICOLON);
+    AstNodePtr<UnaryExpr> ParseUnaryExpr(
+        const AstNodePtr<AstNode>& expr = nullptr);
+    AstNodePtr<FlowControl> ParseFlowControlStmt();
+    AstNodePtr<ReturnStmt> ParseReturnStmt();
+    AstNodePtr<DeleteStmt> ParseDeleteStmt();
+    AstNodePtr<ExitStmt> ParseExitStmt();
+    AstNodePtr<AstNode> ParseAssignmentStatement(
+        const AstNodePtr<AstNode>& rexpr = nullptr);
+    AstNodePtr<ConditionalStmt> ParseConditionalStmt();
+    AstNodePtr<ScopeNode> ParseScope();
+    AstNodePtr<FuncCall> ParseFuncCall(
+        const AstNodePtr<AstNode>& expr = nullptr);
+    AstNodePtr<ArrayLiteral> ParseArrayLiteral();
+    AstNodePtr<Loop> ParseWhileLoop();
+    AstNodePtr<Loop> ParseForLoop();
+    AstNodePtr<AliasDecl> ParseAliasDecl();
+    AstNodePtr<AstNode> ParseIndexedExpr(
+        const AstNodePtr<AstNode>& expr = nullptr);
+    AstNodePtr<Name> ParseName();
+    AstNodePtr<TryBlock> ParseTryBlock();
+    AstNodePtr<CatchBlock> ParseCatchBlock();
+    AstNodePtr<Module> ParseModule();
     void RevertScope();
-    void ConvertScope(const std::shared_ptr<ScopeNode>& scope);
+    void ConvertScope(const AstNodePtr<ScopeNode>& scope);
     [[nodiscard]] std::string DumpsAst() const;
     void Parse();
-    std::shared_ptr<AstNode> TransformBinaryExpr(
-        std::shared_ptr<BinaryExpr> binary_expr);
+    AstNodePtr<AstNode> TransformBinaryExpr(
+        AstNodePtr<BinaryExpr> binary_expr);
 
     TokenType GetCurrentAsExpectedType() override;
     size_t GetTokenCount();
@@ -141,11 +141,11 @@ public:
     static std::vector<std::string> parsed_files;
 
 private:
-    std::shared_ptr<AstNode> AddCurrentFileInfo(std::shared_ptr<AstNode> node);
+    AstNodePtr<AstNode> AddCurrentFileInfo(AstNodePtr<AstNode> node);
 
 private:
     size_t _scope_count = 0;  // Simple way to check if we are missing scope reversions
-    std::shared_ptr<ScopeNode> _current_scope = nullptr;
+    AstNodePtr<ScopeNode> _current_scope = nullptr;
     std::unordered_set<TokenType> unary_lookback_set = {
         TokenType::EQUAL, TokenType::R_PARAN, TokenType::COMMA};
     static std::unordered_map<TokenType, int> _prec_tbl;
