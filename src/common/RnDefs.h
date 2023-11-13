@@ -1,8 +1,8 @@
 /*****************************************************************************
-* File:
+* File: RnBuiltins_Type.cpp
 * Description:
 * Author: Malcolm Hall
-* Date:
+* Date: 11/11/23
 * Version: 1
 *
 * MIT License
@@ -26,28 +26,7 @@
 * SOFTWARE.
 ******************************************************************************/
 
-#include "Module.h"
-#include "../../codegen/RnCodeGenVisitor.h"
+#ifndef RONASCRIPT_SRC_COMMON_RNDEFS_H_
+#define RONASCRIPT_SRC_COMMON_RNDEFS_H_
 
-/*****************************************************************************/
-Module::Module() {
-    node_type = AST_MODULE;
-}
-
-/*****************************************************************************/
-Module::~Module() = default;
-
-/*****************************************************************************/
-std::string Module::ToString(bool nl) {
-    std::string s = MakeTabStr() + "Module( " + name->value + " )";
-    if (nl) {
-        s += "\n";
-    }
-
-    if (scope != nullptr) {
-        scope->nest_lvl = nest_lvl + 1;
-        s += scope->ToString(true);
-    }
-
-    return s;
-}
+#endif  //RONASCRIPT_SRC_COMMON_RNDEFS_H_

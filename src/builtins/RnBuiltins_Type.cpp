@@ -7,7 +7,7 @@
 *
 * MIT License
 *
-* Copyright (c) 2021 Malcolm Hall
+* Copyright (c) 2020 - 2023 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -218,3 +218,15 @@ RN_BUILTIN_FUNC_DEFINE(is_any, RnType::RN_BOOLEAN, 1) {
 
     ret_val->SetData(static_cast<bool>(args[0]->GetType() == RnType::RN_ANY));
 }
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC_DEFINE(instanceof, RnType::RN_BOOLEAN, 2) {
+    assert(ret_val);
+    assert(scope);
+    FIXED_ARG_COUNT_CHECK(instanceof, 2)
+
+    ret_val->SetData(static_cast<bool>(args[0]->GetTypeName() == args[1]->GetTypeName()));
+}
+
+
+
