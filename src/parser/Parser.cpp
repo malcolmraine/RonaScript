@@ -399,7 +399,7 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
             case TokenType::INT_LITERAL: {
                 node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_INT_LITERAL;
-                std::dynamic_pointer_cast<LiteralValue>(node)->data =
+                AstNode::CastNode<LiteralValue>(node)->data =
                     static_cast<RnIntNative>(std::stol(Lookback()->lexeme));
                 _intern_count++;
                 break;
@@ -407,7 +407,7 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
             case TokenType::FLOAT_LITERAL: {
                 node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_FLOAT_LITERAL;
-                std::dynamic_pointer_cast<LiteralValue>(node)->data =
+                AstNode::CastNode<LiteralValue>(node)->data =
                     static_cast<RnFloatNative>(std::stod(Lookback()->lexeme));
                 _intern_count++;
                 break;
@@ -415,7 +415,7 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
             case TokenType::STRING_LITERAL: {
                 node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_STRING_LITERAL;
-                std::dynamic_pointer_cast<LiteralValue>(node)->data =
+                AstNode::CastNode<LiteralValue>(node)->data =
                     Lookback()->lexeme;
                 _intern_count++;
                 break;
@@ -423,7 +423,7 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
             case TokenType::BOOL_LITERAL: {
                 node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_BOOL_LITERAL;
-                std::dynamic_pointer_cast<LiteralValue>(node)->data =
+                AstNode::CastNode<LiteralValue>(node)->data =
                     Lookback()->lexeme == "true";
                 _intern_count++;
                 break;
@@ -896,7 +896,7 @@ AstNodePtr<Loop> Parser::ParseForLoop() {
     assert(_scope_count == previous_scope_count);
 
     if (node->init->node_type == AST_VAR_DECL) {
-        auto var_decl = std::dynamic_pointer_cast<VarDecl>(node->init);
+        auto var_decl = AstNode::CastNode<VarDecl>(node->init);
         node->scope->symbol_table->AddSymbol(var_decl->id, var_decl->type, var_decl);
     }
 
@@ -1149,7 +1149,7 @@ void Parser::Parse() {
                             }
                         } else {
                             if (expr->node_type == AST_FUNC_CALL)
-                                std::dynamic_pointer_cast<FuncCall>(expr)
+                                AstNode::CastNode<FuncCall>(expr)
                                     ->SetDiscardReturnValue(true);
                             _current_scope->AddSubTree(expr);
                         }
@@ -1195,14 +1195,14 @@ AstNodePtr<AstNode> Parser::TransformBinaryExpr(
     if (binary_expr->_op == "->" || binary_expr->_op == "::") {
         if (binary_expr->_right->node_type == AST_INDEXED_EXPR) {
             auto right_tmp =
-                std::dynamic_pointer_cast<IndexedExpr>(binary_expr->_right);
+                AstNode::CastNode<IndexedExpr>(binary_expr->_right);
             right_tmp->file_info = binary_expr->file_info;
             binary_expr->_right = right_tmp->expr;
             right_tmp->expr = binary_expr;
 
             return right_tmp;
         } else if (binary_expr->_right->node_type == AST_FUNC_CALL) {
-            auto right_tmp = std::dynamic_pointer_cast<FuncCall>(binary_expr->_right);
+            auto right_tmp = AstNode::CastNode<FuncCall>(binary_expr->_right);
             right_tmp->file_info = binary_expr->file_info;
             binary_expr->_right = right_tmp->expr;
             right_tmp->expr = TransformBinaryExpr(binary_expr);

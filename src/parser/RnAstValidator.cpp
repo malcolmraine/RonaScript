@@ -147,12 +147,12 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
     const AstNodePtr<AstNode>& subtree) {
     switch (subtree->node_type) {
         case AST_BINARY_EXPR: {
-            auto node = std::dynamic_pointer_cast<BinaryExpr>(subtree);
+            auto node = AstNode::CastNode<BinaryExpr>(subtree);
             if (node->_op == "->") {
                 //                if (node->_left->node_type == AST_NAME) {
                 //                    auto previous_scope = _current_scope;
-                //                    auto name_node = std::dynamic_pointer_cast<Name>(node->_left);
-                //                    _current_scope = std::dynamic_pointer_cast<ClassDecl>(
+                //                    auto name_node = AstNode::CastNode<Name>(node->_left);
+                //                    _current_scope = AstNode::CastNode<ClassDecl>(
                 //                                         _current_scope->symbol_table
                 //                                             ->GetSymbolEntry(name_node->value)
                 //                                             ->GetTypeDeclNode())
@@ -170,18 +170,18 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
             // TODO: Evaluate type information for indexed expressions
             return std::make_shared<RnTypeComposite>(RnType::RN_NULL);
         case AST_FUNC_CALL: {
-            auto node = std::dynamic_pointer_cast<FuncCall>(subtree);
+            auto node = AstNode::CastNode<FuncCall>(subtree);
             return EvaluateSubtreeType(node->expr);
         }
         case AST_LIST_LITERAL: {
-            auto node = std::dynamic_pointer_cast<ArrayLiteral>(subtree);
+            auto node = AstNode::CastNode<ArrayLiteral>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_ARRAY);
             auto value = static_cast<RnIntNative>(node->GetChildren().size());
             type->SetBounds(value, value);
             return type;
         }
         case AST_STRING_LITERAL: {
-            auto node = std::dynamic_pointer_cast<LiteralValue>(subtree);
+            auto node = AstNode::CastNode<LiteralValue>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_STRING);
             auto value =
                 static_cast<RnIntNative>(std::get<RnStringNative>(node->data).length());
@@ -189,7 +189,7 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
             return type;
         }
         case AST_BOOL_LITERAL: {
-            auto node = std::dynamic_pointer_cast<LiteralValue>(subtree);
+            auto node = AstNode::CastNode<LiteralValue>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_BOOLEAN);
             auto value =
                 static_cast<RnIntNative>(std::get<RnBoolNative>(node->data) ? 1 : 0);
@@ -197,29 +197,29 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
             return type;
         }
         case AST_FLOAT_LITERAL: {
-            auto node = std::dynamic_pointer_cast<LiteralValue>(subtree);
+            auto node = AstNode::CastNode<LiteralValue>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_FLOAT);
             type->SetBounds(std::get<RnFloatNative>(node->data),
                             std::get<RnFloatNative>(node->data));
             return type;
         }
         case AST_INT_LITERAL: {
-            auto node = std::dynamic_pointer_cast<LiteralValue>(subtree);
+            auto node = AstNode::CastNode<LiteralValue>(subtree);
             auto type = std::make_shared<RnTypeComposite>(RnType::RN_INT);
             type->SetBounds(std::get<RnIntNative>(node->data),
                             std::get<RnIntNative>(node->data));
             return type;
         }
         case AST_RETURN_STMT: {
-            auto node = std::dynamic_pointer_cast<ReturnStmt>(subtree);
+            auto node = AstNode::CastNode<ReturnStmt>(subtree);
             return EvaluateSubtreeType(node->expr);
         }
         case AST_UNARY_EXPR: {
-            auto node = std::dynamic_pointer_cast<UnaryExpr>(subtree);
+            auto node = AstNode::CastNode<UnaryExpr>(subtree);
             return EvaluateSubtreeType(node->expr);
         }
         case AST_NAME: {
-            auto node = std::dynamic_pointer_cast<Name>(subtree);
+            auto node = AstNode::CastNode<Name>(subtree);
             return _current_scope->symbol_table->GetSymbolEntry(node->value)->GetType();
         }
         default:
@@ -359,7 +359,7 @@ bool RnAstValidator::Visit(FuncDecl* node) {
 /*****************************************************************************/
 bool RnAstValidator::Visit(FuncCall* node) {
     if (node->expr->node_type == AST_NAME) {
-        SymbolExistsCheck(std::dynamic_pointer_cast<Name>(node->expr)->value);
+        SymbolExistsCheck(AstNode::CastNode<Name>(node->expr)->value);
     }
     return true;
 }
@@ -407,7 +407,7 @@ bool RnAstValidator::Visit(ReturnStmt* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(AttributeAccess* node) {
-    SymbolExistsCheck(std::dynamic_pointer_cast<Name>(node->GetName())->value);
+    SymbolExistsCheck(AstNode::CastNode<Name>(node->GetName())->value);
     return true;
 }
 
@@ -433,7 +433,7 @@ bool RnAstValidator::Visit(ConditionalStmt* node) {
 /*****************************************************************************/
 bool RnAstValidator::Visit(DeleteStmt* node) {
     if (node->GetName()->node_type == AST_NAME) {
-        SymbolExistsCheck(std::dynamic_pointer_cast<Name>(node->GetName())->value);
+        SymbolExistsCheck(AstNode::CastNode<Name>(node->GetName())->value);
     }
     return true;
 }

@@ -37,6 +37,7 @@
 template <typename T>
 using AstNodePtr = std::shared_ptr<T>;
 
+
 class RnCodeGenVisitor;
 
 class AstNode {
@@ -53,12 +54,17 @@ public:
 
     template <class T = AstNode>
     std::shared_ptr<T> GetChild(size_t index) const {
-        return std::dynamic_pointer_cast<T>(_children.at(index));
+        return AstNode::CastNode<T>(_children.at(index));
     }
 
     template<class T, typename... Args>
     static AstNodePtr<T> CreateNode(Args... args) {
         return std::make_shared<T>(std::forward<Args>(args)...);
+    }
+
+    template<class TO, class FROM>
+    static AstNodePtr<TO> CastNode(AstNodePtr<FROM> node) {
+        return std::dynamic_pointer_cast<TO>(node);
     }
 
     NodeType_t node_type = AST_DEFAULT;
