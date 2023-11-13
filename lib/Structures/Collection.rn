@@ -115,12 +115,7 @@ begin
     /**************************************************************************/
     routine extend(var other: any): void
     begin
-        var n: int = 0;
-        if is_object(other):
-            n = other->length();
-        else:
-            n = count(other);
-        end
+        var n: int = _countStructure(other);
 
         for (var i: int = 0; i < n; i++):
             this->append(other[i]);

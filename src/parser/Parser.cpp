@@ -262,8 +262,14 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
 
     ConditionalBufAdvance(TokenType::ROUTINE);
 
-    node->id = Current()->lexeme;
-    AdvanceBuffer(2);
+    if (Current()->token_type == TokenType::R_PARAN) {
+        node->is_closure = true;
+    } else {
+        node->id = Current()->lexeme;
+        AdvanceBuffer(1);
+    }
+
+    AdvanceBuffer(1);
 
     // Get the function arguments
     std::map<std::string, std::shared_ptr<RnTypeComposite>> arg_symbols;
@@ -271,8 +277,11 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
     while (Current()->token_type != TokenType::L_PARAN) {
         INCR_LOOP_COUNTER
         auto arg = new ArgDecl();
-        Expect(TokenType::NAME);
-        AdvanceBuffer(1);
+
+        if (!Current()->IsType()) {
+            Expect(TokenType::NAME);
+            AdvanceBuffer(1);
+        }
 
         if (Current()->token_type == TokenType::NAME) {
             arg->AddChild(ParseName());
@@ -282,23 +291,29 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
                                          arg->GetChild<Name>(0)->value + "' in routine '" +
                                          node->id + "'");
             }
-        }
-        AdvanceBuffer(1);  // Advance past the ':' separating the name from the type
+            AdvanceBuffer(1);  // Advance past the ':' separating the name from the type
 
-        if (Current()->IsType()) {
+            if (Current()->IsType()) {
+                arg->SetType(ParseType());
+                AdvanceBuffer(1);
+            } else {
+                ThrowError("Invalid type '" + Current()->lexeme +
+                           "' for parameter '" + arg->GetChild<Name>(0)->value +
+                           "' while declaring routine '" + node->id + "'");
+            }
+
+        } else if (Current()->IsType()) {
+            auto arg_name = AstNode::CreateNode<Name>();
+            arg_name->value = "$" + std::to_string(arg_symbols.size() + 1);
+            arg->AddChild(arg_name);
             arg->SetType(ParseType());
-            AdvanceBuffer(1);
-        } else {
-            ThrowError("Invalid type '" + Current()->lexeme +
-                                     "' for parameter '" + arg->GetChild<Name>(0)->value +
-                                     "' while declaring routine '" + node->id + "'");
         }
 
         ConditionalBufAdvance(TokenType::COMMA);
         node->args.emplace_back(arg);
         arg_symbols[arg->GetChild<Name>(0)->value] = arg->GetType();
 
-        if (Current()->token_type != TokenType::VAR) {
+        if (Current()->token_type != TokenType::VAR && !Current()->IsType()) {
             ConditionalBufAdvance(TokenType::COMMA);
             break;
         }
@@ -348,7 +363,7 @@ AstNodePtr<ClassDecl> Parser::ParseClassDecl() {
     node->id = Current()->lexeme;
     _user_defined_type_map[node->id] =
         std::make_shared<RnTypeComposite>(RnType::RN_OBJECT);
-    Expect({TokenType::EXTENDS, TokenType::BEGIN, TokenType::IS});
+    Expect({TokenType::EXTENDS, TokenType::BEGIN, TokenType::R_BRACE, TokenType::IS});
     AdvanceBuffer(1);
 
     // Check for inherited classes and parse if necessary
@@ -381,6 +396,8 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
 
     if ((Lookback() && Lookback()->IsOperator()) && Current()->IsUnaryOp()) {
         return ParseUnaryExpr();
+    } else if (Current()->token_type == TokenType::ROUTINE) {
+        node = ParseFuncDecl();
     } else if (Current()->token_type == TokenType::R_BRACK) {
         node = ParseArrayLiteral();
     } else if (Current()->token_type == TokenType::NAME) {
@@ -504,7 +521,7 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         }
 
         if (Current()->IsOneOf(
-                {TokenType::BEGIN, TokenType::SEMICOLON, TokenType::L_BRACK}) ||
+                {TokenType::BEGIN, TokenType::R_BRACE, TokenType::SEMICOLON, TokenType::L_BRACK}) ||
             (Current()->token_type == TokenType::L_PARAN && op_stack.IsEmpty()) ||
             Current()->token_type == stop_token || Current()->IsCompoundOp()) {
             // We should only get here at the end of an expression and at
@@ -782,6 +799,7 @@ AstNodePtr<ScopeNode> Parser::ParseScope() {
     }
 
     ConditionalBufAdvance(TokenType::BEGIN);
+    ConditionalBufAdvance(TokenType::R_BRACE);
     ConditionalBufAdvance(TokenType::COLON);
 
     auto previous_scope_count = _scope_count;
@@ -891,6 +909,7 @@ AstNodePtr<Loop> Parser::ParseForLoop() {
     }
     ConditionalBufAdvance(TokenType::L_PARAN);
     ConditionalBufAdvance(TokenType::BEGIN);
+    ConditionalBufAdvance(TokenType::R_BRACE);
     auto previous_scope_count = _scope_count;
     node->scope = ParseScope();
     assert(_scope_count == previous_scope_count);
@@ -1061,6 +1080,7 @@ void Parser::Parse() {
                     ast->modules[node->name->value] = node;
                     break;
                 }
+                case TokenType::R_BRACE:
                 case TokenType::BEGIN: {
                     auto previous_scope_count = _scope_count;
                     _current_scope->AddSubTree(ParseScope());

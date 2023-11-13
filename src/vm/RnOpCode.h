@@ -86,7 +86,8 @@ typedef enum : int {
     OP_MAKE_ALIAS,
     OP_MAKE_ARRAY,
     OP_LOAD_VALUE,
-    OP_CHECK_MEMBERSHIP
+    OP_CHECK_MEMBERSHIP,
+    OP_MAKE_CLOSURE,
 } RnOpCode;
 
 RnStringNative GetOpCodeAsString(RnOpCode opcode);

@@ -265,9 +265,18 @@ InstructionBlock RnCodeGenVisitor::Visit(FuncDecl* node) {
     InstructionBlock instructions;
     InstructionBlock scope = GeneralVisit(node->scope);
     instructions.reserve(scope.size());
-    auto make_instruction = new RnInstruction(
-        OP_MAKE_FUNC, RnConstStore::InternValue(node->id),
-        static_cast<long>(node->type->GetType()), static_cast<long>(scope.size()));
+    RnInstruction* make_instruction = nullptr;
+
+    if (node->is_closure) {
+        make_instruction =
+            new RnInstruction(OP_MAKE_CLOSURE, static_cast<long>(node->type->GetType()),
+                              static_cast<long>(scope.size()));
+    } else {
+        make_instruction = new RnInstruction(
+            OP_MAKE_FUNC, RnConstStore::InternValue(node->id),
+            static_cast<long>(node->type->GetType()), static_cast<long>(scope.size()));
+    }
+
     instructions.emplace_back(make_instruction);
 
     for (auto& arg : node->args) {
@@ -459,15 +468,16 @@ InstructionBlock RnCodeGenVisitor::Visit(Expr* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(AliasDecl* node) {
-    return {new RnInstruction(OP_MAKE_ALIAS,
-                              RnConstStore::InternValue(node->GetChild<Name>(1)->value),
-                              RnConstStore::InternValue(node->GetChild<Name>(0)->value))};
+    return {new RnInstruction(
+        OP_MAKE_ALIAS, RnConstStore::InternValue(node->GetChild<Name>(1)->value),
+        RnConstStore::InternValue(node->GetChild<Name>(0)->value))};
 }
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ArgDecl* node) {
-    return {new RnInstruction(OP_MAKE_ARG, node->GetType()->GetType(),
-                              RnConstStore::InternValue(node->GetChild<Name>(0)->value))};
+    return {
+        new RnInstruction(OP_MAKE_ARG, node->GetType()->GetType(),
+                          RnConstStore::InternValue(node->GetChild<Name>(0)->value))};
 }
 
 /*****************************************************************************/

@@ -605,6 +605,30 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             GetScope()->StoreObject(instruction->GetArg1(), obj);
             break;
         }
+        case OP_MAKE_CLOSURE: {
+            auto obj = dynamic_cast<RnFunctionObject*>(
+                RnMemoryManager::CreateObject(RnType::RN_FUNCTION));
+            GetScope()->GetMemoryGroup()->AddObject(obj);
+            auto type = static_cast<RnType::Type>(instruction->GetArg2());
+            auto scope_size = instruction->GetArg3();
+            auto func = new RnFunction("closure", index + 1, scope_size);
+            func->SetReturnType(type);
+            func->SetScope(new RnScope(GetScope()));
+            obj->SetData(func);
+
+            uint32_t i = 0;  // Argument count
+            for (; _instructions[i + index + 1]->GetOpcode() == OP_MAKE_ARG; i++) {
+                auto arg_instruction = _instructions[i + index + 1];
+                func->CreateArgument(
+                    arg_instruction->GetArg2(),
+                    static_cast<RnType::Type>(arg_instruction->GetArg1()), i);
+            }
+
+            index += scope_size + i;
+            func->SetICnt(scope_size + i);
+            StackPush(obj);
+            break;
+        }
         case OP_CREATE_CONTEXT: {
             auto scope = RnMemoryManager::CreateScope();
             if (!_scopes.empty()) {

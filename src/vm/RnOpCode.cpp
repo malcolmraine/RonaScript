@@ -143,6 +143,8 @@ RnStringNative GetOpCodeAsString(RnOpCode opcode) {
             return "OP_MAKE_ARRAY";
         case OP_CHECK_MEMBERSHIP:
             return "OP_CHECK_MEMBERSHIP";
+        case OP_MAKE_CLOSURE:
+            return "OP_MAKE_CLOSURE";
         default:
             return "UNKNOWN";
     }

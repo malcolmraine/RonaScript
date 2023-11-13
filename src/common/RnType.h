@@ -94,6 +94,8 @@ public:
                 return "object";
             case RN_NULL:
                 return "null";
+            case RN_VOID:
+                return "void";
             case RN_UNKNOWN:
             default:
                 assert(false);

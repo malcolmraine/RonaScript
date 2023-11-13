@@ -48,4 +48,5 @@ public:
     std::shared_ptr<RnTypeComposite> type;
     std::vector<Token*> qualifiers;
     AstNodePtr<ScopeNode> scope = nullptr;
+    bool is_closure = false;
 };

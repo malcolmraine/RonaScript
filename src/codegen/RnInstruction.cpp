@@ -101,6 +101,9 @@ auto RnInstruction::ToString() -> std::string {
             arg1_str = RnType::TypeToString(static_cast<RnType::Type>(_arg1));
             arg2_str = RnConstStore::GetInternedString(_arg2);
             break;
+        case OP_MAKE_CLOSURE:
+            arg2_str = RnType::TypeToString(static_cast<RnType::Type>(_arg2));
+            break;
         case OP_TRY_CONTEXT:
         case OP_JUMPF:
         case OP_JUMPB:
