@@ -373,7 +373,10 @@ InstructionBlock RnCodeGenVisitor::Visit(ClassDecl* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ExitStmt* node) {
-    return {new RnInstruction(OP_EXIT, std::get<RnIntNative>(node->exit_code->data))};
+    InstructionBlock instructions = GeneralVisit(node->GetChild(0));
+    instructions.emplace_back(new RnInstruction(OP_EXIT));
+
+    return instructions;
 }
 
 /*****************************************************************************/

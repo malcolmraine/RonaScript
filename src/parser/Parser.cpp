@@ -161,7 +161,8 @@ AstNodePtr<ImportStmt> Parser::ParseImportStmt() {
     std::filesystem::path module_path;
     auto source_file = String::Replace(node->source_file, ".", "/") + ".rn";
 
-    module_path = std::filesystem::path(node->file_info.GetFilePath()).parent_path() / source_file;
+    module_path = std::filesystem::path(node->file_info.GetFilePath()).parent_path() /
+                  source_file;
     if (!std::filesystem::exists(module_path)) {
         module_path = std::filesystem::path(RnConfig::GetLibraryPath()) / source_file;
         if (!std::filesystem::exists(module_path)) {
@@ -288,8 +289,8 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
 
             if (arg_symbols.find(arg->GetChild<Name>(0)->value) != arg_symbols.end()) {
                 ThrowError("Redeclaration of argument '" +
-                                         arg->GetChild<Name>(0)->value + "' in routine '" +
-                                         node->id + "'");
+                           arg->GetChild<Name>(0)->value + "' in routine '" + node->id +
+                           "'");
             }
             AdvanceBuffer(1);  // Advance past the ':' separating the name from the type
 
@@ -297,8 +298,8 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
                 arg->SetType(ParseType());
                 AdvanceBuffer(1);
             } else {
-                ThrowError("Invalid type '" + Current()->lexeme +
-                           "' for parameter '" + arg->GetChild<Name>(0)->value +
+                ThrowError("Invalid type '" + Current()->lexeme + "' for parameter '" +
+                           arg->GetChild<Name>(0)->value +
                            "' while declaring routine '" + node->id + "'");
             }
 
@@ -432,8 +433,7 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
             case TokenType::STRING_LITERAL: {
                 node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_STRING_LITERAL;
-                AstNode::CastNode<LiteralValue>(node)->data =
-                    Lookback()->lexeme;
+                AstNode::CastNode<LiteralValue>(node)->data = Lookback()->lexeme;
                 _intern_count++;
                 break;
             }
@@ -520,8 +520,8 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
             parse_bracketed_node();
         }
 
-        if (Current()->IsOneOf(
-                {TokenType::BEGIN, TokenType::R_BRACE, TokenType::SEMICOLON, TokenType::L_BRACK}) ||
+        if (Current()->IsOneOf({TokenType::BEGIN, TokenType::R_BRACE,
+                                TokenType::SEMICOLON, TokenType::L_BRACK}) ||
             (Current()->token_type == TokenType::L_PARAN && op_stack.IsEmpty()) ||
             Current()->token_type == stop_token || Current()->IsCompoundOp()) {
             // We should only get here at the end of an expression and at
@@ -545,10 +545,12 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
                     }
 
                     result_stack.Push(make_binary_expr());
-                    if (Current()->token_type == TokenType::R_BRACK) {
-                        parse_bracketed_node();
-                    } else if (Current()->token_type == TokenType::R_PARAN) {
-                        result_stack.Push(ParseFuncCall(result_stack.Pop()));
+                    if (!EndOfSequence()) {
+                        if (Current()->token_type == TokenType::R_BRACK) {
+                            parse_bracketed_node();
+                        } else if (Current()->token_type == TokenType::R_PARAN) {
+                            result_stack.Push(ParseFuncCall(result_stack.Pop()));
+                        }
                     }
                 }
                 return AddCurrentFileInfo(result_stack.Pop());
@@ -624,8 +626,7 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
 }
 
 /*****************************************************************************/
-AstNodePtr<UnaryExpr> Parser::ParseUnaryExpr(
-    const AstNodePtr<AstNode>& expr) {
+AstNodePtr<UnaryExpr> Parser::ParseUnaryExpr(const AstNodePtr<AstNode>& expr) {
     auto node = AstNode::CreateNode<UnaryExpr>();
     node->op = Current()->lexeme;
     AdvanceBuffer(1);
@@ -689,29 +690,19 @@ AstNodePtr<DeleteStmt> Parser::ParseDeleteStmt() {
 AstNodePtr<ExitStmt> Parser::ParseExitStmt() {
     auto node = AstNode::CreateNode<ExitStmt>();
     AddCurrentFileInfo(node);
-    Expect({TokenType::SEMICOLON, TokenType::INT_LITERAL});
     AdvanceBuffer(1);
 
     if (Current()->token_type == TokenType::SEMICOLON) {
-        node->exit_code = AstNode::CreateNode<LiteralValue>();
-        node->exit_code->node_type = AST_INT_LITERAL;
-        node->exit_code->data = 0L;
-        _intern_count++;
         AdvanceBuffer(1);
     } else {
-        node->exit_code = AstNode::CreateNode<LiteralValue>();
-        node->exit_code->node_type = AST_INT_LITERAL;
-        node->exit_code->data = static_cast<RnIntNative>(std::stoi(Current()->lexeme));
-        _intern_count++;
-        AdvanceBuffer(2);
+        node->AddChild(ParseExpr());
     }
 
     return node;
 }
 
 /*****************************************************************************/
-AstNodePtr<AstNode> Parser::ParseAssignmentStatement(
-    const AstNodePtr<AstNode>& rexpr) {
+AstNodePtr<AstNode> Parser::ParseAssignmentStatement(const AstNodePtr<AstNode>& rexpr) {
     auto node = AstNode::CreateNode<AssignmentStmt>();
     AddCurrentFileInfo(node);
     node->SetLexpr(rexpr ? rexpr : ParseExpr());
@@ -780,7 +771,7 @@ AstNodePtr<ConditionalStmt> Parser::ParseConditionalStmt() {
         }
     } else {
         ThrowError("Invalid token '" + Current()->lexeme +
-                                 "' for conditional statement.");
+                   "' for conditional statement.");
     }
 
     return node;
@@ -950,8 +941,7 @@ AstNodePtr<AliasDecl> Parser::ParseAliasDecl() {
 }
 
 /*****************************************************************************/
-AstNodePtr<AstNode> Parser::ParseIndexedExpr(
-    const AstNodePtr<AstNode>& expr) {
+AstNodePtr<AstNode> Parser::ParseIndexedExpr(const AstNodePtr<AstNode>& expr) {
     auto node = AstNode::CreateNode<IndexedExpr>();
     AddCurrentFileInfo(node);
     ConditionalBufAdvance(TokenType::R_BRACK);
@@ -1149,7 +1139,7 @@ void Parser::Parse() {
                     } else {
                         if (_current_scope->GetLiteral(Current()->lexeme)) {
                             ThrowError("Misuse of literal replacement '" +
-                                                     Current()->lexeme + "'");
+                                       Current()->lexeme + "'");
                         }
                         auto expr = ParseExpr(TokenType::EQUAL);
 
@@ -1209,14 +1199,12 @@ void Parser::Parse() {
 }
 
 /*****************************************************************************/
-AstNodePtr<AstNode> Parser::TransformBinaryExpr(
-    AstNodePtr<BinaryExpr> binary_expr) {
+AstNodePtr<AstNode> Parser::TransformBinaryExpr(AstNodePtr<BinaryExpr> binary_expr) {
     assert(binary_expr);
 
     if (binary_expr->_op == "->" || binary_expr->_op == "::") {
         if (binary_expr->_right->node_type == AST_INDEXED_EXPR) {
-            auto right_tmp =
-                AstNode::CastNode<IndexedExpr>(binary_expr->_right);
+            auto right_tmp = AstNode::CastNode<IndexedExpr>(binary_expr->_right);
             right_tmp->file_info = binary_expr->file_info;
             binary_expr->_right = right_tmp->expr;
             right_tmp->expr = binary_expr;

@@ -692,10 +692,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_EXIT: {
             break_scope = true;
-            auto obj = RnMemoryManager::CreateObject(RnType::RN_INT);
-            GetScope()->GetMemoryGroup()->AddObject(obj);
-            obj->SetData(static_cast<RnIntNative>(instruction->GetArg1()));
-            StackPush(obj);
+            _should_exit = true;
             break;
         }
         case OP_INDEX_ACCESS: {
@@ -789,7 +786,7 @@ RnIntNative RnVirtualMachine::Run() {
     auto stopwatch = StopWatch();
 
     stopwatch.Start();
-    while (i_idx < _instructions.size()) {
+    while (i_idx < _instructions.size() && !_should_exit) {
         ExecuteInstruction(has_returned, i_idx);
         if (has_returned) {
             break;
