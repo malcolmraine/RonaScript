@@ -813,8 +813,8 @@ AstNodePtr<ScopeNode> Parser::ParseScope() {
         return node;
     }
 
-    if (Current()->token_type == TokenType::END) {
-        ConditionalBufAdvance(TokenType::END);
+    if (Current()->IsOneOf({TokenType::END, TokenType::L_BRACE})) {
+        AdvanceBuffer(1);
     }
 
     return node;
@@ -1088,6 +1088,7 @@ void Parser::Parse() {
                     break;
                 }
                 case TokenType::END:
+                case TokenType::L_BRACE:
                 case TokenType::ELIF:
                 case TokenType::ELSE:
                     return;

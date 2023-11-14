@@ -609,8 +609,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto obj = dynamic_cast<RnFunctionObject*>(
                 RnMemoryManager::CreateObject(RnType::RN_FUNCTION));
             GetScope()->GetMemoryGroup()->AddObject(obj);
-            auto type = static_cast<RnType::Type>(instruction->GetArg2());
-            auto scope_size = instruction->GetArg3();
+            auto type = static_cast<RnType::Type>(instruction->GetArg1());
+            auto scope_size = instruction->GetArg2();
             auto func = new RnFunction("closure", index + 1, scope_size);
             func->SetReturnType(type);
             func->SetScope(new RnScope(GetScope()));
