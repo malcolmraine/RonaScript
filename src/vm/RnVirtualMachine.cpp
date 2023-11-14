@@ -30,6 +30,7 @@
 
 #include <tuple>
 #include <utility>
+#include <memory>
 #include <vector>
 
 #include "../builtins/RnBuiltins.h"
@@ -69,6 +70,7 @@ RnVirtualMachine::RnVirtualMachine() {
     _object_cls_key = RnConstStore::InternValue(static_cast<RnStringNative>("cls"));
     _object_construct_key =
         RnConstStore::InternValue(static_cast<RnStringNative>("construct"));
+    RnLinearAllocator::SetInstance(new RnLinearAllocator(100000, 100000000));
 }
 
 /*****************************************************************************/
@@ -586,9 +588,12 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto name = RnConstStore::GetInternedString(instruction->GetArg1());
             auto type = static_cast<RnType::Type>(instruction->GetArg2());
             auto scope_size = instruction->GetArg3();
-            auto func = new RnFunction(name, index + 1, scope_size);
+            auto func_addr = RnLinearAllocator::Instance()->Malloc(sizeof(RnFunction));
+            auto func = std::construct_at<RnFunction>(reinterpret_cast<RnFunction*>(func_addr), name, index + 1, scope_size);
             func->SetReturnType(type);
-            func->SetScope(new RnScope(GetScope()));
+            auto func_scope = RnMemoryManager::CreateScope();
+            func_scope->SetParent(GetScope());
+            func->SetScope(func_scope);
             obj->SetData(func);
 
             uint32_t i = 0;  // Argument count
@@ -611,9 +616,12 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             GetScope()->GetMemoryGroup()->AddObject(obj);
             auto type = static_cast<RnType::Type>(instruction->GetArg1());
             auto scope_size = instruction->GetArg2();
-            auto func = new RnFunction("closure", index + 1, scope_size);
+            auto func_addr = RnLinearAllocator::Instance()->Malloc(sizeof(RnFunction));
+            auto func = std::construct_at<RnFunction>(reinterpret_cast<RnFunction*>(func_addr), "closure", index + 1, scope_size);
             func->SetReturnType(type);
-            func->SetScope(new RnScope(GetScope()));
+            auto func_scope = RnMemoryManager::CreateScope();
+            func_scope->SetParent(GetScope());
+            func->SetScope(func_scope);
             obj->SetData(func);
 
             uint32_t i = 0;  // Argument count
