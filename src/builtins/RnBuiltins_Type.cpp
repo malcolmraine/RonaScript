@@ -68,7 +68,7 @@ RN_BUILTIN_FUNC_DEFINE(to_int, RnType::RN_INT, 1) {
         auto instance = dynamic_cast<RnClassObject*>(obj);
         if (!instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_INT, args,
                                       ret_val)) {
-            ret_val->SetData(args[0]->ToArray());
+            ret_val->SetData(args[0]->ToInt());
         }
     } else {
         ret_val->SetData(args[0]->ToInt());
@@ -104,7 +104,7 @@ RN_BUILTIN_FUNC_DEFINE(to_string, RnType::RN_STRING, 1) {
         auto instance = dynamic_cast<RnClassObject*>(obj);
         if (!instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_STR, args,
                                       ret_val)) {
-            ret_val->SetData(args[0]->ToArray());
+            ret_val->SetData(args[0]->ToString());
         }
     } else {
         ret_val->SetData(args[0]->ToString());
@@ -122,7 +122,7 @@ RN_BUILTIN_FUNC_DEFINE(to_bool, RnType::RN_BOOLEAN, 1) {
         auto instance = dynamic_cast<RnClassObject*>(obj);
         if (!instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_BOOL, args,
                                       ret_val)) {
-            ret_val->SetData(args[0]->ToArray());
+            ret_val->SetData(args[0]->ToBool());
         }
     } else {
         ret_val->SetData(args[0]->ToBool());
