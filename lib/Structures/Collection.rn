@@ -206,5 +206,58 @@ begin
         end
     end // routine foreach
 
+    /**************************************************************************/
+    routine find_if(var fn: callable): int
+    begin
+        for (var i: int = 0; i < count(this->_data); i++):
+            if fn(this->_data[i]):
+                return i;
+            end
+        end
+
+        return -1;
+    end
+
+    /**************************************************************************/
+    routine find_last_of(var fn: callable): int
+    begin
+        var index: int = -1;
+        for (var i: int = 0; i < count(this->_data); i++):
+            if fn(this->_data[i]):
+                index = i;
+            end
+        end
+
+        return index;
+    end
+
+    /**************************************************************************/
+    routine any_of(var fn: callable): int
+    begin
+        return this->find_if(fn) > -1;
+    end
+
+    /**************************************************************************/
+    routine all_of(var fn: callable): int
+    begin
+        for (var i: int = 0; i < count(this->_data); i++):
+            if fn(this->_data[i]) == false:
+                return false;
+            end
+        end
+
+        return true;
+    end
+
+    /**************************************************************************/
+    routine transform(var fn: callable): object
+    begin
+        var result: object = Collection([]);
+        for (var i: int = 0; i < count(this->_data); i++):
+            result->append(fn(this->_data[i]));
+        end
+        return result;
+    end
+
 end // class Collection
 
