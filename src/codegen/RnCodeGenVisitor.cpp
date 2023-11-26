@@ -84,6 +84,7 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
         case AST_STRING_LITERAL:
         case AST_BOOL_LITERAL:
         case AST_FLOAT_LITERAL:
+        case AST_NULL_LITERAL:
             return Visit(dynamic_cast<LiteralValue*>(node));
         case AST_IMPORT:
             return Visit(dynamic_cast<ImportStmt*>(node));
@@ -150,6 +151,8 @@ InstructionBlock RnCodeGenVisitor::Visit(LiteralValue* node) {
             return {new RnInstruction(
                 OP_LOAD_LITERAL,
                 RnConstStore::InternValue(std::get<RnFloatNative>(node->data)))};
+        case AST_NULL_LITERAL:
+            return {new RnInstruction(OP_LOAD_LITERAL, UINT32_MAX)};
         default:
             throw std::runtime_error("Invalid literal type");
     }

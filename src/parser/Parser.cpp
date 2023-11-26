@@ -59,7 +59,6 @@
 #include "ast/Module.h"
 #include "ast/Name.h"
 #include "ast/NodeType.h"
-#include "ast/NullLiteral.h"
 #include "ast/ReturnStmt.h"
 #include "ast/ScopeNode.h"
 #include "ast/TryBlock.h"
@@ -447,7 +446,8 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
                 break;
             }
             case TokenType::NULL_LITERAL: {
-                node = AstNode::CreateNode<NullLiteral>();
+                node = AstNode::CreateNode<LiteralValue>();
+                node->node_type = AST_NULL_LITERAL;
                 break;
             }
             default:

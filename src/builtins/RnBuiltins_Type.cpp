@@ -240,3 +240,18 @@ RN_BUILTIN_FUNC_DEFINE(instanceof, RnType::RN_BOOLEAN, 2) {
                 "Function 'instanceof' expected either a string or a class name.");
     }
 }
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC_DEFINE(is_null, RnType::RN_BOOLEAN, 1) {
+    assert(ret_val);
+    assert(scope);
+    FIXED_ARG_COUNT_CHECK(is_null, 1)
+
+    auto obj = args[0];
+    if (obj->GetActiveType() == RnType::RN_OBJECT ||
+        obj->GetActiveType() == RnType::RN_CLASS_INSTANCE) {
+        ret_val->SetData(obj->ToObject() == nullptr);
+    } else {
+        ret_val->SetData(false);
+    }
+}

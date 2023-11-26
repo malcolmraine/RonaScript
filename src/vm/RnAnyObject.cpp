@@ -33,7 +33,6 @@
 #include "RnFloatObject.h"
 #include "RnFunctionObject.h"
 #include "RnIntObject.h"
-#include "RnNullObject.h"
 #include "RnStringObject.h"
 
 /*****************************************************************************/

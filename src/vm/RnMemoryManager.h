@@ -61,4 +61,5 @@ private:
     RnMemoryGroup* root_memory_group;
     static RnObject* _true_boolean;
     static RnObject* _false_boolean;
+    static RnObject* _null_object;
 };

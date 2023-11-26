@@ -34,10 +34,10 @@
 #include "RnFloatObject.h"
 #include "RnFunctionObject.h"
 #include "RnIntObject.h"
-#include "RnNullObject.h"
 #include "RnStringObject.h"
 #include "RnVirtualMachine.h"
 
+/*****************************************************************************/
 bool RnObject::ValueCompare(const RnObject* a, const RnObject* b) {
     if (a->GetActiveType() != b->GetActiveType()) {
         return false;
@@ -70,11 +70,6 @@ bool RnObject::ValueCompare(const RnObject* a, const RnObject* b) {
             break;
     }
     return false;
-}
-
-/*****************************************************************************/
-static RnObject* GetNullObject() {
-    return RnObject::null_object;
 }
 
 /*****************************************************************************/
@@ -135,7 +130,8 @@ RnObject* RnObject::Create(RnType::Type type) {
             return new RnClassObject();
         case RnType::RN_UNKNOWN:
         default:
-            return RnNullObject::Instance();
+            assert(false);
+            return nullptr;
     }
 }
 

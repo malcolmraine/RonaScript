@@ -60,10 +60,16 @@ RN_BUILTIN_FUNC_DEFINE(print, RnType::RN_VOID, 1) {
         assert(arg);
         if (arg->GetActiveType() == RnType::RN_OBJECT) {
             auto instance = dynamic_cast<RnClassObject*>(arg);
-            RnStringObject string_repr;
-            if (instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_STR, {arg},
-                                          &string_repr)) {
-                s.append(string_repr.ToString());
+            if (instance->ToObject() != nullptr) {
+                RnStringObject string_repr;
+                if (instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_STR, {arg},
+                                             &string_repr)) {
+                    s.append(string_repr.ToString());
+                } else {
+                    s.append(arg->ToString());
+                }
+            } else {
+                s.append(arg->ToString());
             }
         } else {
             s.append(arg->ToString());

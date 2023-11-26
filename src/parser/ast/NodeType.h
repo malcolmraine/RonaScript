@@ -44,6 +44,7 @@ enum NodeType_t {
     AST_BOOL_LITERAL,
     AST_FLOAT_LITERAL,
     AST_INT_LITERAL,
+    AST_NULL_LITERAL,
     AST_IMPORT,
     AST_IF_STMT,
     AST_ELIF_STMT,
@@ -62,5 +63,4 @@ enum NodeType_t {
     AST_DELETE_STMT,
     AST_TRY_BLOCK,
     AST_CATCH_BLOCK,
-
 };

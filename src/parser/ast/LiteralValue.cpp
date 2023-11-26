@@ -36,15 +36,26 @@ LiteralValue::~LiteralValue() = default;
 
 /*****************************************************************************/
 std::string LiteralValue::ToString(bool nl) {
-    std::string s = MakeTabStr();
-    if (node_type == AST_FLOAT_LITERAL) {
-        s += "FloatLiteral( " + std::to_string(std::get<RnFloatNative>(data)) + " )";
-    } else if (node_type == AST_INT_LITERAL) {
-        s += "IntLiteral( " + std::to_string(std::get<RnIntNative>(data)) + " )";
-    } else if (node_type == AST_BOOL_LITERAL) {
-        s += "BoolLiteral( " + std::to_string(std::get<RnBoolNative>(data)) + " )";
-    } else if (node_type == AST_STRING_LITERAL) {
-        s += "StringLiteral( " + std::get<RnStringNative>(data) + " )";
+    std::string s = MakeTabStr() + "LiteralValue( ";
+    switch (node_type) {
+        case AST_FLOAT_LITERAL:
+            s += "float, " + std::to_string(std::get<RnFloatNative>(data)) + " )";
+            break;
+        case AST_INT_LITERAL:
+            s += "int, " + std::to_string(std::get<RnIntNative>(data)) + " )";
+            break;
+        case AST_BOOL_LITERAL:
+            s += "bool, " +
+                 std::string((std::get<RnBoolNative>(data) ? "true" : "false")) + " )";
+            break;
+        case AST_STRING_LITERAL:
+            s += "string, " + std::get<RnStringNative>(data) + " )";
+            break;
+        case AST_NULL_LITERAL:
+            s += "null )";
+            break;
+        default:
+            assert(false);
     }
     if (nl) {
         s += "\n";

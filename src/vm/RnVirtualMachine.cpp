@@ -424,7 +424,14 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_LOAD_LITERAL: {
             PREDICTION_TARGET(OP_LOAD_LITERAL)
-            auto obj = RnConstStore::GetInternedObject(instruction->GetArg1());
+
+            RnObject* obj = nullptr;
+            auto key = instruction->GetArg1();
+            if (key == UINT32_MAX) {
+                obj = CreateObject(RnType::RN_NULL);
+            } else {
+                obj = RnConstStore::GetInternedObject(key);
+            }
             StackPush(obj);
             PREDICT_OPCODE2(OP_LOAD_VALUE, OP_LOAD_LITERAL)
             break;
@@ -432,8 +439,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_LOAD_VALUE: {
             PREDICTION_TARGET(OP_LOAD_VALUE)
             auto key = instruction->GetArg1();
-            auto object = GetScope()->GetObject(key);
 
+            auto object = GetScope()->GetObject(key);
             if (object) {
                 if (object->IsClass() &&
                     _instructions[index + 1]->GetOpcode() == OP_CALL) {
