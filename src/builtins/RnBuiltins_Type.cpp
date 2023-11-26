@@ -68,7 +68,7 @@ RN_BUILTIN_FUNC_DEFINE(to_int, RnType::RN_INT, 1) {
         auto instance = dynamic_cast<RnClassObject*>(obj);
         if (!instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_INT, args,
                                       ret_val)) {
-            ret_val->SetData(args[0]->ToArray());
+            ret_val->SetData(args[0]->ToInt());
         }
     } else {
         ret_val->SetData(args[0]->ToInt());
@@ -104,7 +104,7 @@ RN_BUILTIN_FUNC_DEFINE(to_string, RnType::RN_STRING, 1) {
         auto instance = dynamic_cast<RnClassObject*>(obj);
         if (!instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_STR, args,
                                       ret_val)) {
-            ret_val->SetData(args[0]->ToArray());
+            ret_val->SetData(args[0]->ToString());
         }
     } else {
         ret_val->SetData(args[0]->ToString());
@@ -122,7 +122,7 @@ RN_BUILTIN_FUNC_DEFINE(to_bool, RnType::RN_BOOLEAN, 1) {
         auto instance = dynamic_cast<RnClassObject*>(obj);
         if (!instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_BOOL, args,
                                       ret_val)) {
-            ret_val->SetData(args[0]->ToArray());
+            ret_val->SetData(args[0]->ToBool());
         }
     } else {
         ret_val->SetData(args[0]->ToBool());
@@ -225,8 +225,33 @@ RN_BUILTIN_FUNC_DEFINE(instanceof, RnType::RN_BOOLEAN, 2) {
     assert(scope);
     FIXED_ARG_COUNT_CHECK(instanceof, 2)
 
-    ret_val->SetData(static_cast<bool>(args[0]->GetTypeName() == args[1]->GetTypeName()));
+    switch (args[1]->GetActiveType()) {
+        case RnType::RN_STRING:
+            ret_val->SetData(
+                static_cast<bool>(args[0]->GetTypeName() == args[1]->ToString()));
+            break;
+        case RnType::RN_OBJECT:
+        case RnType::RN_CLASS_INSTANCE:
+            ret_val->SetData(
+                static_cast<bool>(args[0]->GetTypeName() == args[1]->GetTypeName()));
+            break;
+        default:
+            throw std::runtime_error(
+                "Function 'instanceof' expected either a string or a class name.");
+    }
 }
 
+/*****************************************************************************/
+RN_BUILTIN_FUNC_DEFINE(is_null, RnType::RN_BOOLEAN, 1) {
+    assert(ret_val);
+    assert(scope);
+    FIXED_ARG_COUNT_CHECK(is_null, 1)
 
-
+    auto obj = args[0];
+    if (obj->GetActiveType() == RnType::RN_OBJECT ||
+        obj->GetActiveType() == RnType::RN_CLASS_INSTANCE) {
+        ret_val->SetData(obj->ToObject() == nullptr);
+    } else {
+        ret_val->SetData(false);
+    }
+}

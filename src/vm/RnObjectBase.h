@@ -143,9 +143,10 @@ public:
                 SetData(obj->ToFunction());
                 break;
             case RnType::RN_OBJECT:
-            case RnType::RN_CLASS_INSTANCE:
+            case RnType::RN_CLASS_INSTANCE: {
                 SetData(obj->ToObject());
                 break;
+            }
             case RnType::RN_ANY:
             case RnType::RN_NULL:
             case RnType::RN_VOID:

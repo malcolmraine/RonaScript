@@ -67,6 +67,9 @@ void RnScope::StoreObject(RnIntNative key, RnObject* value) {
 
 /*****************************************************************************/
 RnObject* RnScope::GetObject(RnIntNative key) {
+    if (key == UINT32_MAX) {
+        return RnObject::Create(RnType::RN_NULL);
+    }
     return _symbolTable.GetObject(key);
 }
 

@@ -146,6 +146,8 @@ private:
 private:
     size_t _scope_count = 0;  // Simple way to check if we are missing scope reversions
     AstNodePtr<ScopeNode> _current_scope = nullptr;
+    AstNodePtr<ScopeNode> _global_scope = nullptr;
+
     std::unordered_set<TokenType> unary_lookback_set = {
         TokenType::EQUAL, TokenType::R_PARAN, TokenType::COMMA};
     static std::unordered_map<TokenType, int> _prec_tbl;

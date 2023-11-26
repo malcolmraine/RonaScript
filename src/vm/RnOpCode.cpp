@@ -31,8 +31,8 @@
 /*****************************************************************************/
 RnStringNative GetOpCodeAsString(RnOpCode opcode) {
     switch (opcode) {
-        case OP_ATTR_ACCESS:
-            return "OP_ATTR_ACCESS";
+        case OP_LOAD_ATTR:
+            return "OP_LOAD_ATTR";
         case OP_RESOLVE_NAMESPACE:
             return "OP_RESOLVE_NAMESPACE";
         case OP_BINARY_ADD:
@@ -143,6 +143,8 @@ RnStringNative GetOpCodeAsString(RnOpCode opcode) {
             return "OP_MAKE_ARRAY";
         case OP_CHECK_MEMBERSHIP:
             return "OP_CHECK_MEMBERSHIP";
+        case OP_MAKE_CLOSURE:
+            return "OP_MAKE_CLOSURE";
         default:
             return "UNKNOWN";
     }
@@ -191,7 +193,7 @@ RnOpCode GetOpCodeFromOperator(const RnStringNative& op) {
     } else if (op == "::") {
         return OP_RESOLVE_NAMESPACE;
     } else if (op == "->") {
-        return OP_ATTR_ACCESS;
+        return OP_LOAD_ATTR;
     } else if (op == "%") {
         return OP_BINARY_MOD;
     } else if (op == "in") {

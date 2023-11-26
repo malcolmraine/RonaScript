@@ -35,7 +35,6 @@
 #include "../vm/RnFloatObject.h"
 #include "../vm/RnFunctionObject.h"
 #include "../vm/RnIntObject.h"
-#include "../vm/RnNullObject.h"
 #include "../vm/RnObject.h"
 #include "../vm/RnStringObject.h"
 

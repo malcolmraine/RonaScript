@@ -66,12 +66,14 @@ auto RnInstruction::ToString() -> std::string {
 
     switch (_opcode) {
         case OP_LOAD_LITERAL:
-            arg1_str =
-                std::string(RnConstStore::GetInternedObject(_arg1)->ToString().c_str());
+            if (_arg1 == UINT32_MAX) {
+                arg1_str = "null";
+            } else {
+                arg1_str = std::string(
+                    RnConstStore::GetInternedObject(_arg1)->ToString());
+            }
             break;
-        case OP_ATTR_ACCESS:
-            arg1_str = RnConstStore::GetInternedString(_arg1);
-            break;
+        case OP_LOAD_ATTR:
         case OP_UNARY_INCREMENT:
         case OP_UNARY_DECREMENT:
         case OP_LOAD_VALUE:
@@ -100,6 +102,9 @@ auto RnInstruction::ToString() -> std::string {
         case OP_MAKE_ARG:
             arg1_str = RnType::TypeToString(static_cast<RnType::Type>(_arg1));
             arg2_str = RnConstStore::GetInternedString(_arg2);
+            break;
+        case OP_MAKE_CLOSURE:
+            arg2_str = RnType::TypeToString(static_cast<RnType::Type>(_arg2));
             break;
         case OP_TRY_CONTEXT:
         case OP_JUMPF:

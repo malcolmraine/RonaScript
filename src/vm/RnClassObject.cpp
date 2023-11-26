@@ -87,7 +87,7 @@ RnIntNative RnClassObject::MAGIC_METHOD_KEY_MEMBERSHIP =
 
 /*****************************************************************************/
 RnClassObject::RnClassObject() {
-    _data = RnVirtualMachine::GetInstance()->CreateScope();
+    _data = nullptr;
 }
 
 /*****************************************************************************/
@@ -100,9 +100,13 @@ RnClassObject::~RnClassObject() = default;
 
 /*****************************************************************************/
 auto RnClassObject::ToString() const -> RnStringNative {
-    std::stringstream s;
-    s << "{class object @ " << std::hex << _data << "}";
-    return {s.str()};
+    if (!_data) {
+        return "null";
+    } else {
+        std::stringstream s;
+        s << "{class object @ " << std::hex << _data << "}";
+        return s.str();
+    }
 }
 
 /*****************************************************************************/
@@ -327,6 +331,15 @@ RnBoolNative RnClassObject::Contains(RnObject* obj) {
     } else {
         ThrowUndefinedOperatorError("in", this, obj);
     }
+}
+
+/*****************************************************************************/
+void RnClassObject::CopyDataFromObject(RnObject* obj) {
+    if (obj->GetActiveType() == RnType::RN_CLASS_INSTANCE ||
+        obj->GetActiveType() == RnType::RN_OBJECT) {
+        SetDefinition(dynamic_cast<RnClassObject*>(obj)->GetDefinition());
+    }
+    RnObjectBase<RnScope*>::CopyDataFromObject(obj);
 }
 
 /*****************************************************************************/

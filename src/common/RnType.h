@@ -55,7 +55,7 @@ typedef union {
 
 class RnType {
 public:
-    enum Type : int {
+    enum Type : uint8_t {
         RN_BOOLEAN = 0,
         RN_STRING,
         RN_FLOAT,
@@ -94,6 +94,8 @@ public:
                 return "object";
             case RN_NULL:
                 return "null";
+            case RN_VOID:
+                return "void";
             case RN_UNKNOWN:
             default:
                 assert(false);

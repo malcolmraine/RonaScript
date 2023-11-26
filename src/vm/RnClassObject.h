@@ -81,9 +81,14 @@ public:
     RnObject* At(RnIntNative index) override;
     [[nodiscard]] std::string GetTypeName() const override;
     [[nodiscard]] RnBoolNative Contains(RnObject* obj);
+    void CopyDataFromObject(RnObject* obj) override;
 
     void SetDefinition(RnClassObject* definition) {
         _definition = definition;
+    }
+
+    RnClassObject* GetDefinition() {
+        return _definition;
     }
 
     [[nodiscard]] RnScope* GetScope() const {

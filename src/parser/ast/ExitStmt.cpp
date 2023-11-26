@@ -40,9 +40,13 @@ ExitStmt::~ExitStmt() = default;
 
 /*****************************************************************************/
 std::string ExitStmt::ToString(bool nl) {
-    std::string s = MakeTabStr() + "Exit( " + exit_code->ToString(false) + " )";
+    std::string s = MakeTabStr() + "Exit( )";
     if (nl) {
         s += "\n";
     }
+
+    auto expr = GetChild<AstNode>(0);
+    expr->nest_lvl = nest_lvl + 1;
+    s += expr->ToString(true);
     return s;
 }

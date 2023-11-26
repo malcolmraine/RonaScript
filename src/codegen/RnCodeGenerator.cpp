@@ -47,7 +47,12 @@ void RnCodeGenerator::Generate(Ast* ast) {
 
     InstructionBlock root_instructions = visitor.GeneralVisit(ast->root);
     _result.insert(_result.end(), root_instructions.begin(), root_instructions.end());
-    _result.emplace_back(new RnInstruction(OP_EXIT, 0));
+
+    if (_result.empty() || _result.back()->GetOpcode() != OP_EXIT) {
+        _result.emplace_back(new RnInstruction(
+            OP_LOAD_LITERAL, RnConstStore::InternValue(static_cast<RnIntNative>(0))));
+        _result.emplace_back(new RnInstruction(OP_EXIT, 0));
+    }
 }
 
 /*****************************************************************************/

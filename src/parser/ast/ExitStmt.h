@@ -20,6 +20,4 @@ public:
     ExitStmt();
     ~ExitStmt() override;
     std::string ToString(bool nl) override;
-
-    AstNodePtr<LiteralValue> exit_code = nullptr;
 };

@@ -36,8 +36,8 @@
 
 // token, lexeme
 #define RN_TOKEN_LIST                     \
-    TOKEN_DEF(L_BRACE, "{")               \
-    TOKEN_DEF(R_BRACE, "}")               \
+    TOKEN_DEF(R_BRACE, "{")               \
+    TOKEN_DEF(L_BRACE, "}")               \
     TOKEN_DEF(BEGIN, "begin")             \
     TOKEN_DEF(END, "end")                 \
     TOKEN_DEF(R_PARAN, "(")               \

@@ -84,6 +84,7 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
         case AST_STRING_LITERAL:
         case AST_BOOL_LITERAL:
         case AST_FLOAT_LITERAL:
+        case AST_NULL_LITERAL:
             return Visit(dynamic_cast<LiteralValue*>(node));
         case AST_IMPORT:
             return Visit(dynamic_cast<ImportStmt*>(node));
@@ -150,6 +151,8 @@ InstructionBlock RnCodeGenVisitor::Visit(LiteralValue* node) {
             return {new RnInstruction(
                 OP_LOAD_LITERAL,
                 RnConstStore::InternValue(std::get<RnFloatNative>(node->data)))};
+        case AST_NULL_LITERAL:
+            return {new RnInstruction(OP_LOAD_LITERAL, UINT32_MAX)};
         default:
             throw std::runtime_error("Invalid literal type");
     }
@@ -265,9 +268,18 @@ InstructionBlock RnCodeGenVisitor::Visit(FuncDecl* node) {
     InstructionBlock instructions;
     InstructionBlock scope = GeneralVisit(node->scope);
     instructions.reserve(scope.size());
-    auto make_instruction = new RnInstruction(
-        OP_MAKE_FUNC, RnConstStore::InternValue(node->id),
-        static_cast<long>(node->type->GetType()), static_cast<long>(scope.size()));
+    RnInstruction* make_instruction = nullptr;
+
+    if (node->is_closure) {
+        make_instruction =
+            new RnInstruction(OP_MAKE_CLOSURE, static_cast<long>(node->type->GetType()),
+                              static_cast<long>(scope.size()));
+    } else {
+        make_instruction = new RnInstruction(
+            OP_MAKE_FUNC, RnConstStore::InternValue(node->id),
+            static_cast<long>(node->type->GetType()), static_cast<long>(scope.size()));
+    }
+
     instructions.emplace_back(make_instruction);
 
     for (auto& arg : node->args) {
@@ -364,7 +376,10 @@ InstructionBlock RnCodeGenVisitor::Visit(ClassDecl* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ExitStmt* node) {
-    return {new RnInstruction(OP_EXIT, std::get<RnIntNative>(node->exit_code->data))};
+    InstructionBlock instructions = GeneralVisit(node->GetChild(0));
+    instructions.emplace_back(new RnInstruction(OP_EXIT));
+
+    return instructions;
 }
 
 /*****************************************************************************/
@@ -459,15 +474,16 @@ InstructionBlock RnCodeGenVisitor::Visit(Expr* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(AliasDecl* node) {
-    return {new RnInstruction(OP_MAKE_ALIAS,
-                              RnConstStore::InternValue(node->GetChild<Name>(1)->value),
-                              RnConstStore::InternValue(node->GetChild<Name>(0)->value))};
+    return {new RnInstruction(
+        OP_MAKE_ALIAS, RnConstStore::InternValue(node->GetChild<Name>(1)->value),
+        RnConstStore::InternValue(node->GetChild<Name>(0)->value))};
 }
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ArgDecl* node) {
-    return {new RnInstruction(OP_MAKE_ARG, node->GetType()->GetType(),
-                              RnConstStore::InternValue(node->GetChild<Name>(0)->value))};
+    return {
+        new RnInstruction(OP_MAKE_ARG, node->GetType()->GetType(),
+                          RnConstStore::InternValue(node->GetChild<Name>(0)->value))};
 }
 
 /*****************************************************************************/
@@ -491,7 +507,7 @@ InstructionBlock RnCodeGenVisitor::Visit(BinaryExpr* node) {
         instructions.emplace_back(new RnInstruction(
             opcode, RnConstStore::InternValue(
                         std::static_pointer_cast<Name>(node->_right)->value)));
-    } else if (opcode == OP_ATTR_ACCESS) {
+    } else if (opcode == OP_LOAD_ATTR) {
         instructions = GeneralVisit(node->_left);
         instructions.push_back(new RnInstruction(
             opcode, RnConstStore::InternValue(

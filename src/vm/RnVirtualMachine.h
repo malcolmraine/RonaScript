@@ -105,6 +105,7 @@ protected:
     RnMemoryManager* _memory_manager;
     size_t i_idx = 0;
     size_t _gc_count = 0;
+    bool _should_exit = false;
     static RnIntNative _object_this_key;
     static RnIntNative _object_cls_key;
     static RnIntNative _object_construct_key;

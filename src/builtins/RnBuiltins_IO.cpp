@@ -32,8 +32,10 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include "../vm/RnClassObject.h"
 #include "../vm/RnObject.h"
 #include "../vm/RnScope.h"
+#include "../vm/RnStringObject.h"
 
 #undef BUILTIN_CLASS
 #define BUILTIN_CLASS RnBuiltins_IO
@@ -56,7 +58,23 @@ RN_BUILTIN_FUNC_DEFINE(print, RnType::RN_VOID, 1) {
     std::string s;
     for (auto arg : args) {
         assert(arg);
-        s.append(arg->ToString());
+        if (arg->GetActiveType() == RnType::RN_OBJECT) {
+            auto instance = dynamic_cast<RnClassObject*>(arg);
+            if (instance->ToObject() != nullptr) {
+                RnStringObject string_repr;
+                if (instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_STR, {arg},
+                                             &string_repr)) {
+                    s.append(string_repr.ToString());
+                } else {
+                    s.append(arg->ToString());
+                }
+            } else {
+                s.append(arg->ToString());
+            }
+        } else {
+            s.append(arg->ToString());
+        }
+
         if (arg != args.back()) {
             s.append(" ");
         }

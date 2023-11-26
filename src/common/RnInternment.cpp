@@ -57,7 +57,6 @@ RnObject* RnConstStore::GetInternedObject(InternmentKey key) {
 
 /*****************************************************************************/
 RnIntNative RnConstStore::InternValue(RnFloatNative x) {
-
     return object_internment->InternItem(new RnFloatObject(x));
 }
 

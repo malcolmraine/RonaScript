@@ -27,7 +27,6 @@
 ******************************************************************************/
 
 #include "RnMemoryManager.h"
-#include <algorithm>
 #include <memory>
 #include <utility>
 #include "RnAnyObject.h"
@@ -37,7 +36,6 @@
 #include "RnFloatObject.h"
 #include "RnFunctionObject.h"
 #include "RnIntObject.h"
-#include "RnNullObject.h"
 #include "RnStringObject.h"
 
 #include "../memory_mgmt/RnObjectAllocator.h"
@@ -51,10 +49,10 @@ RnObjectAllocator<RnFloatObject> float_allocator(10000, 1000000);
 RnObjectAllocator<RnFunctionObject> func_allocator(10000, 1000000);
 RnObjectAllocator<RnIntObject> int_allocator(10000, 1000000);
 RnObjectAllocator<RnStringObject> string_allocator(10000, 1000000);
-RnObjectAllocator<RnNullObject> null_allocator(10000, 1000000);
 RnObjectAllocator<RnScope> scope_allocator(10000, 1000000);
 RnObject* RnMemoryManager::_true_boolean = nullptr;
 RnObject* RnMemoryManager::_false_boolean = nullptr;
+RnObject* RnMemoryManager::_null_object = nullptr;
 
 /*****************************************************************************/
 RnMemoryManager::RnMemoryManager() : root_memory_group(new RnMemoryGroup(nullptr)) {}
@@ -81,11 +79,20 @@ RnObject* RnMemoryManager::CreateObject(RnType::Type type) {
         case RnType::RN_CALLABLE:
             return func_allocator.CreateObject();
         case RnType::RN_CLASS_INSTANCE:
-        case RnType::RN_OBJECT:
-            return class_allocator.CreateObject();
+        case RnType::RN_OBJECT: {
+            auto obj = class_allocator.CreateObject();
+            obj->SetData(scope_allocator.CreateObject(nullptr));
+            return obj;
+        }
         case RnType::RN_NULL:
         case RnType::RN_VOID:
-            return null_allocator.CreateObject();
+        {
+            if (!_null_object) {
+                _null_object = class_allocator.CreateObject();
+                dynamic_cast<RnClassObject*>(_null_object)->SetName("null");
+            }
+            return _null_object;
+        }
         case RnType::RN_UNKNOWN:
         default:
             assert(false);
@@ -161,8 +168,6 @@ void RnMemoryManager::GCSweep() {
     string_allocator.FreeIf(checkIfMarked, unmarkObject);
     class_allocator.FreeIf(checkIfMarked, unmarkObject);
     func_allocator.FreeIf(checkIfMarked, unmarkObject);
-    null_allocator.FreeIf(checkIfMarked, unmarkObject);
-    null_allocator.FreeIf(checkIfMarked, unmarkObject);
     any_allocator.FreeIf(checkIfMarked, unmarkObject);
 }
 

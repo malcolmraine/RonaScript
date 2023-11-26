@@ -120,3 +120,29 @@ RN_BUILTIN_FUNC_DEFINE(sequence, RnType::RN_ARRAY, 1) {
 	 * arg4: step
 	 */
 }
+
+/*****************************************************************************/
+RN_BUILTIN_FUNC_DEFINE(slice, RnType::RN_ANY, 3) {
+    BUILTIN_ASSERTS
+    FIXED_ARG_COUNT_CHECK(slice, 3)
+    auto subject = args[0];
+    auto start_offset = args[1]->ToInt();
+    auto count = args[2]->ToInt();
+
+    if (subject->GetActiveType() == RnType::RN_STRING) {
+        RnStringNative data = subject->ToString();
+        ret_val->SetData(static_cast<RnStringNative>(
+            data.substr(start_offset, count)));
+    } else if (subject->GetActiveType() == RnType::RN_ARRAY) {
+        RnArrayNative data = subject->ToArray();
+        RnArrayNative slice_data;
+        slice_data.reserve(count - start_offset);
+        ret_val->SetData(RnArrayNative(data.begin() + start_offset,
+                                       data.begin() + start_offset + count));
+
+    } else {
+        throw std::runtime_error(
+            "Routine 'slice' expects a string or array but received a " +
+            RnType::TypeToString(subject->GetActiveType()));
+    }
+}
