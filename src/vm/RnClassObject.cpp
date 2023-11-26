@@ -330,6 +330,14 @@ RnBoolNative RnClassObject::Contains(RnObject* obj) {
 }
 
 /*****************************************************************************/
+void RnClassObject::CopyDataFromObject(RnObject* obj) {
+    if (obj->GetActiveType() == RnType::RN_CLASS_INSTANCE || RnType::RN_OBJECT) {
+        SetDefinition(dynamic_cast<RnClassObject*>(obj)->GetDefinition());
+    }
+    RnObjectBase<RnScope*>::CopyDataFromObject(obj);
+}
+
+/*****************************************************************************/
 std::string RnClassObject::GetTypeName() const {
     return GetName();
 }

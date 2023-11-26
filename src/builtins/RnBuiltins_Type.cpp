@@ -225,8 +225,18 @@ RN_BUILTIN_FUNC_DEFINE(instanceof, RnType::RN_BOOLEAN, 2) {
     assert(scope);
     FIXED_ARG_COUNT_CHECK(instanceof, 2)
 
-    ret_val->SetData(static_cast<bool>(args[0]->GetTypeName() == args[1]->GetTypeName()));
+    switch (args[1]->GetActiveType()) {
+        case RnType::RN_STRING:
+            ret_val->SetData(
+                static_cast<bool>(args[0]->GetTypeName() == args[1]->ToString()));
+            break;
+        case RnType::RN_OBJECT:
+        case RnType::RN_CLASS_INSTANCE:
+            ret_val->SetData(
+                static_cast<bool>(args[0]->GetTypeName() == args[1]->GetTypeName()));
+            break;
+        default:
+            throw std::runtime_error(
+                "Function 'instanceof' expected either a string or a class name.");
+    }
 }
-
-
-
