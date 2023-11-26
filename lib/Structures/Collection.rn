@@ -40,7 +40,7 @@ begin
     /**************************************************************************/
     routine _countStructure(var x: any): int
     begin
-        if is_object(x):
+        if instanceof(x, Collection):
             return x->length();
         else:
             return count(x);
