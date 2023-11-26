@@ -55,7 +55,7 @@ typedef union {
 
 class RnType {
 public:
-    enum Type : int {
+    enum Type : uint8_t {
         RN_BOOLEAN = 0,
         RN_STRING,
         RN_FLOAT,

@@ -30,7 +30,7 @@
 
 #include "../common/RnType.h"
 
-typedef enum : int {
+typedef enum : uint8_t {
     OP_RESOLVE_NAMESPACE,
     OP_BINARY_ADD,    
     OP_BINARY_SUB,    
