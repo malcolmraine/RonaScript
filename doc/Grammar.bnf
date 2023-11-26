@@ -1,103 +1,33 @@
-// Extended Backus-Naur (EBNF) form grammar for RonaScript
+<letter> ::= [a-z] | [A-Z]
+<digit> ::= [0-9]
+<symbol> ::= "|" | " " | "!" | "#" | "$" | "%" | "&" | "(" | ")" | "*" | "+" | "," | "_" |
+             "." | "/" | ":" | ";" | ">" | "=" | "<" | "?" | "@" | "[" | "\\" | "]" | "^" |
+             "`" | "{" | "}" | "~"
+<space> ::= " "
+<whitespace> ::= <space> | "\t" | "\n" | "\r"
 
-// This grammar is a variant of the traditional EBNF form.
-// It makes use of Kleene star notation instead of traditional {} notation and does not
-// use any terminating characters (';') on the right-hand side of a production rule.
+<name> ::= ( <letter> | "_" ) ( <letter> | <digit> | "-" | "_" )*
 
+<str_literal> ::= "\"" ( " " | <letter> | <digit> | <symbol> | <whitespace> )* "\""
 
+<int_literal> ::= ( "-" | "+" )? <digit>+
 
-///////////////////////////////////////////////////////////////////////////////
-// LEXICAL GRAMMAR
-///////////////////////////////////////////////////////////////////////////////
+<float_literal> ::= <int_literal>? "." <digit>+
 
-<letter> ::= 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M' |
-             'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z' |
-             'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm' |
-             'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z' ;
+<literal> ::= <str_literal> | <int_literal> | <float_literal>
 
-<digit> ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ;
+<type> ::= ("string" | "int" | "float" | "array" | "class" | "bool" | "callable" | "object")
+		   ( "<" <digit> ".." <digit> ">" )?
 
-<symbol> ::= '|' | ' ' | '!' | '#' | '$' | '%' | '&' | '(' | ')' | '*' | '+' | ',' | '_' |
-             '.' | '/' | ':' | ';' | '>' | '=' | '<' | '?' | '@' | '[' | '\\' | ']' | '^' |
-             '`' | '{' | '}' | '~' ;
+<binary_op> ::= "+" | "-" | "*" | "/" | "%" | "&" | "|" | "^" |
+				"||" | "&&" | "and" | "or" | "xor" | "<<" | ">>" |
+                ">" | "<" | "<=" | ">="
 
-str_literal ::= '"' (' ' | <letter> | <digit> | <symbol>)* '"' ;
+<unary_op> ::= "!" | "~" | "-" | "+" | "--" | "++" | "**"
 
-<int_literal> ::= <digit>+ ;
+<import_stmt> ::= "import" <space>* <name> ("." <name>)* <space>* ";"
 
-<float_literal> ::= <digit>+ '.' <digit>+ ;
+<expr> ::= " "
 
-<literal> ::= <str_literal> | <int_literal> | <float_literal> ;
-
-<id> ::= <letter>+ (<letter>+ | <digit>+ | '_' | (<letter> | <digit>) | <id>) ;
-
-<type_name> ::= 'string' | 'int' | 'float' | 'list' | 'class' | 'bool' | <id> ;
-
-<reserved_word> ::= 'func' | 'var' | 'class' | 'require' | 'return' | 'construct' |
-                    'destruct' | 'if' |'elif' | 'else' | 'null' | 'void' | 'float'
-                    'int' | 'string' | 'list' | 'bool' ;
-
-<binary_op> ::= '+' | '-' | '*' | '/' | '%' | '&' | '|' | '^' ;
-
-<unary_op> ::= '!' | '~' | '-' | '+' | '--' | '++' | '**' ;
-
-<compound_op> ::= <binary_op> '='
-
-<cmp_op> ::= ('!' | '=' | '<' | '>') '='
-
-
-///////////////////////////////////////////////////////////////////////////////
-// SYNTACTIC GRAMMAR
-///////////////////////////////////////////////////////////////////////////////
-
-<binary_expr> ::= (<value_returner> | <expr> | <literal>) (<binary_op> | <cmp_op>) (<value_returner> | <expr> | <literal>)
-
-<unary_expr> ::= <unary_op> <id>
-
-<expr> ::= ('(' (<unary_expr> | <binary_expr> | <value_returner> | <literal>) ((<binary_op> <expr>) | ')')) | <id> | <literal>
-
-<require> ::= 'require' '<' <id> '.rn' '>' ';'
-
-<arg_decl> ::= 'var' <value_returner> ':' <type_name> [',']
-
-<value_returner> ::= <scope_var_access> | <id> | <func_call>
-
-<break_stmt> ::= 'break'
-
-<flow_stmt> ::= <break_stmt>
-
-<return_stmt> ::= 'return' <expr> ';'
-
-<assignment_stmt> ::= <id> '=' <expr> ';'
-
-<if_stmt> ::= 'if' '(' <expr> ')' <scope>
-
-<elif_stmt> ::= 'elif' '(' <expr> ')' <scope>
-
-<else_stmt> ::= 'else' <scope>
-
-<conditional_block> ::= <if_stmt> <elif_stmt>* [<else_stmt>]
-
-<block> ::= (<conditional_block> | <expr> | <assignment_stmt> | <decl> | <flow_stmt> | <scope>)*
-
-<scope> ::= '{' <block> '}'
-
-<var_decl> ::= 'var' <id> ':' <type_name> ['=' <expr>] ';'
-
-<func_decl> ::= 'func' <id> '(' <arg_decl>* ')' ':' <type_name> <scope>
-
-<decl> ::= <var_decl> | <func_decl> | <class_decl>
-
-<class_decl> ::= 'class' <id> '=' <scope>
-
-<func_call> ::= <id> '(' (<value_returner> | <literal>)* ')'
-
-<scope_method_call> ::= <id> '->' <func_call>
-
-<scope_var_access> ::= <id> '->' <id>
-
-<while_loop> ::= 'while' <expr> <scope>
-
-<for_loop> ::= 'for' '(' <var_decl> ';' <id> <cmp_op> <expr> ';' <unary_expr> <scope>
-
-<alias_decl> ::= 'alias' <id> 'is' (<id> | <type_name>) ';'
+<var_decl> ::= "var" <name> <space>* <name> <space>* ":" <space>* <type>
+			   ( <space>* "=" <space>* <expr> )? ";"

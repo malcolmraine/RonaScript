@@ -112,6 +112,7 @@ Parser::Parser() {
     FillBuffer(nullptr);
     ast = std::make_shared<Ast>();
     _current_scope = ast->root;
+    _global_scope = ast->root;
 
     // TODO: Add rest of builtin functions
     _current_scope->symbol_table->AddSymbol(
@@ -1062,7 +1063,7 @@ void Parser::Parse() {
                     if (node)
                         // Any import parsing should have thrown so a simple existence
                         // check is fine here
-                        _current_scope->AddSubTree(node, true);
+                        _global_scope->AddSubTree(node, true);
                     break;
                 }
                 case TokenType::MODULE: {
@@ -1307,6 +1308,7 @@ void Parser::Reset() {
     FillBuffer(nullptr);
     ast = std::make_shared<Ast>();
     _current_scope = ast->root;
+    _global_scope = ast->root;
 }
 
 /*****************************************************************************/
