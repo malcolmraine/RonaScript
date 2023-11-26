@@ -26,95 +26,40 @@
 * SOFTWARE.
 ******************************************************************************/
 
-module Path is
-begin
-
 class Path is
 begin
-    var __initial_value: string = "";
-    var __cached_abs: string = "";
-    var __cached_rel: string = "";
-    var __cached_filename: string = "";
-    var __cached_parent_dir: string = "";
+    var _path: string = "";
 
-    /******************************************************/
-    routine construct(var p: any): object
+    routine construct(var path: string): object
     begin
-        if is_array(p):
-            this->__initial_value = array_join("/", p);
-        elif is_string(p):
-            this->__initial_value = p;
-        else:
-            throw(InvalidInputException());
-        end
-
+        this->_path = path;
         return this;
-    end // routine construct
-
-    /******************************************************/
-    routine absolute(): string
-    begin
-        if this->__cached_abs:
-            return this->__cached_abs;
-        else:
-            return "";
-        end;
     end
 
-    /******************************************************/
-    routine relative(): string
+    routine __str(): string
     begin
-        if this->__cached_rel:
-            return this->__cached_rel;
-        else:
-            return "";
-        end;
+        return this->_path;
     end
 
-    /******************************************************/
-    routine filename(): string
-    begin
-        if this->__cached_filename:
-            return this->__cached_filename;
-        else:
-            return "";
-        end;
-    end
+   routine __div(var other: any): object
+   begin
+       if is_string(other):
+            return Path(this->_path + "/" + other);
+       elif instanceof(other, Path):
+           return Path(this->_path + "/" + to_string(other));
+       end
+   end
 
-    /******************************************************/
-    routine parent_dir(): string
-    begin
-        if this->__cached_parent_dir:
-            return this->__cached_parent_dir;
-        else:
-            return "";
-        end
-    end
+   routine ext(): string
+   begin
+       var parts: array = str_split(this->_path, ".");
+       return "." + parts[count(parts) - 1];
+   end
 
-    /******************************************************/
-    routine is_absolute(): bool
-    begin
-
-    end
-
-    /******************************************************/
-    routine is_relative(): bool
-    begin
-        return false;
-    end
-
-    /******************************************************/
-    routine is_file(): bool
-    begin
-        return false;
-    end
-
-    /******************************************************/
-    routine is_dir(): bool
-    begin
-        return false;
-    end
+   routine with_ext(var extension: string): string
+   begin
+       var parts: array = str_split(this->_path, ".");
+       return Path(str_join(slice(parts, 0, count(parts) - 1), ".") + extension);
+   end
 
 end // class Path
-
-end // module Path
