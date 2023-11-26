@@ -507,7 +507,7 @@ InstructionBlock RnCodeGenVisitor::Visit(BinaryExpr* node) {
         instructions.emplace_back(new RnInstruction(
             opcode, RnConstStore::InternValue(
                         std::static_pointer_cast<Name>(node->_right)->value)));
-    } else if (opcode == OP_ATTR_ACCESS) {
+    } else if (opcode == OP_LOAD_ATTR) {
         instructions = GeneralVisit(node->_left);
         instructions.push_back(new RnInstruction(
             opcode, RnConstStore::InternValue(

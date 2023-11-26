@@ -31,7 +31,7 @@
 #include "../common/RnType.h"
 
 typedef enum : int {
-    OP_ATTR_ACCESS,
+    OP_LOAD_ATTR,
     OP_RESOLVE_NAMESPACE,
     OP_BINARY_ADD,    // op1:          op2:
     OP_BINARY_SUB,    // op1:          op2:

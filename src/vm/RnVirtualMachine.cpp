@@ -754,7 +754,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             StackPush(obj);
             break;
         }
-        case OP_ATTR_ACCESS: {
+        case OP_LOAD_ATTR: {
             auto object = dynamic_cast<RnClassObject*>(StackPop());
             auto scope = object->GetScope();
             RnObject* result = nullptr;
