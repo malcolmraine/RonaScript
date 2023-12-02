@@ -142,7 +142,7 @@ Parser::~Parser() = default;
 
 /*****************************************************************************/
 void Parser::ConditionalBufAdvance(TokenType t) {
-    if (Current()->token_type == t) {
+    if (!EndOfSequence() && Current()->token_type == t) {
         AdvanceBuffer(1);
     }
 }
@@ -1319,8 +1319,15 @@ void Parser::Run() {
 
 /*****************************************************************************/
 AstNodePtr<AstNode> Parser::AddCurrentFileInfo(AstNodePtr<AstNode> node) {
-    if (Current()) {
-        node->file_info = Current()->file_info;
+    if (EndOfSequence()) {
+        node->file_info = Lookback()->file_info;
+    } else {
+        if (Current()) {
+            node->file_info = Current()->file_info;
+        } else {
+            node->file_info = Lookback()->file_info;
+        }
     }
+
     return node;
 }
