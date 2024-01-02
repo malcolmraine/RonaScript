@@ -561,10 +561,12 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto obj =
                 dynamic_cast<RnClassObject*>(RnObject::Create(RnType::RN_OBJECT));
             obj->SetIsModule(true);
-            obj->GetScope()->SetParent(GetScope());
+            auto scope = CreateScope();
+            obj->SetData(scope);
+            scope->SetParent(GetScope());
             GetScope()->StoreObject(instruction->GetArg1(), obj);
             //            _namespaces[instruction->GetArg1()] = obj;
-            _scopes.push_back(obj->ToObject());
+            _scopes.push_back(scope);
             index++;
             size_t stop_index = index + instruction->GetArg2();
             for (; index < stop_index; index++) {
