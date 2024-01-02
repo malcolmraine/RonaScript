@@ -82,6 +82,7 @@ public:
     [[nodiscard]] std::string GetTypeName() const override;
     [[nodiscard]] RnBoolNative Contains(RnObject* obj);
     void CopyDataFromObject(RnObject* obj) override;
+    void SetNull();
 
     void SetDefinition(RnClassObject* definition) {
         _definition = definition;
@@ -147,6 +148,7 @@ public:
     static RnIntNative MAGIC_METHOD_KEY_BINOR;
     static RnIntNative MAGIC_METHOD_KEY_GET_INDEX;
     static RnIntNative MAGIC_METHOD_KEY_MEMBERSHIP;
+
 private:
     RnClassObject* _definition = nullptr;
     RnStringNative _name;

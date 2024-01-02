@@ -28,9 +28,9 @@
 
 #include "RnVirtualMachine.h"
 
+#include <memory>
 #include <tuple>
 #include <utility>
-#include <memory>
 #include <vector>
 
 #include "../builtins/RnBuiltins.h"
@@ -76,6 +76,7 @@ RnVirtualMachine::RnVirtualMachine() {
 /*****************************************************************************/
 void RnVirtualMachine::Init() {
     auto obj = RnObject::Create(RnType::RN_OBJECT);
+    obj->SetData(CreateScope());
     auto scope = obj->ToObject();
     scope->GetMemoryGroup()->AddObject(obj);
     if (!_scopes.empty()) {
@@ -447,16 +448,23 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                     auto class_obj = dynamic_cast<RnClassObject*>(object);
                     auto instance = dynamic_cast<RnClassObject*>(
                         RnMemoryManager::CreateObject(RnType::RN_OBJECT));
+                    instance->SetData(CreateScope());
                     GetScope()->GetMemoryGroup()->AddObject(instance);
                     instance->ToObject()->SetParent(class_obj->ToObject());
                     instance->SetDefinition(class_obj);
                     class_obj->CopySymbols(instance->GetScope());
                     BindThis(instance->GetScope(), instance);
                     BindCls(instance->GetScope(), class_obj);
+
+                    if (!class_obj->ToObject()) {
+                        throw std::runtime_error(
+                            "Cannot call constructor routine on null object");
+                    }
+
                     auto func_obj =
                         class_obj->ToObject()->GetObject(_object_construct_key);
                     auto func = func_obj->ToFunction();
-                    auto func_scope = RnObject::Create(RnType::RN_OBJECT)->ToObject();
+                    auto func_scope = CreateScope();
                     func_scope->SetParent(instance->GetScope());
                     BindThis(func_scope, instance);
                     func->SetScope(func_scope);
@@ -553,10 +561,11 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto obj =
                 dynamic_cast<RnClassObject*>(RnObject::Create(RnType::RN_OBJECT));
             obj->SetIsModule(true);
-            obj->GetScope()->SetParent(GetScope());
+            auto scope = CreateScope();
+            obj->SetData(scope);
+            scope->SetParent(GetScope());
             GetScope()->StoreObject(instruction->GetArg1(), obj);
-            //            _namespaces[instruction->GetArg1()] = obj;
-            _scopes.push_back(obj->ToObject());
+            _scopes.push_back(scope);
             index++;
             size_t stop_index = index + instruction->GetArg2();
             for (; index < stop_index; index++) {
@@ -571,12 +580,20 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             name_obj->SetConstFlag(true);
             auto obj =
                 dynamic_cast<RnClassObject*>(RnObject::Create(RnType::RN_OBJECT));
+            auto scope = CreateScope();
+            obj->SetData(scope);
+            scope->SetParent(GetScope());
             obj->SetIsClass(true);
             obj->SetName(name_obj->ToString());
             obj->GetScope()->StoreObject(RnConstStore::InternValue("__class"),
                                          name_obj);
             GetScope()->StoreObject(instruction->GetArg1(), obj);
             auto class_scope = obj->ToObject();
+
+            if (!class_scope) {
+                throw std::runtime_error("Invalid use of null object.");
+            }
+
             class_scope->SetParent(GetScope());
             _scopes.push_back(class_scope);
             index++;
@@ -596,7 +613,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto type = static_cast<RnType::Type>(instruction->GetArg2());
             auto scope_size = instruction->GetArg3();
             auto func_addr = RnLinearAllocator::Instance()->Malloc(sizeof(RnFunction));
-            auto func = std::construct_at<RnFunction>(reinterpret_cast<RnFunction*>(func_addr), name, index + 1, scope_size);
+            auto func = std::construct_at<RnFunction>(
+                reinterpret_cast<RnFunction*>(func_addr), name, index + 1, scope_size);
             func->SetReturnType(type);
             auto func_scope = RnMemoryManager::CreateScope();
             func_scope->SetParent(GetScope());
@@ -624,7 +642,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto type = static_cast<RnType::Type>(instruction->GetArg1());
             auto scope_size = instruction->GetArg2();
             auto func_addr = RnLinearAllocator::Instance()->Malloc(sizeof(RnFunction));
-            auto func = std::construct_at<RnFunction>(reinterpret_cast<RnFunction*>(func_addr), "closure", index + 1, scope_size);
+            auto func =
+                std::construct_at<RnFunction>(reinterpret_cast<RnFunction*>(func_addr),
+                                              "closure", index + 1, scope_size);
             func->SetReturnType(type);
             auto func_scope = RnMemoryManager::CreateScope();
             func_scope->SetParent(GetScope());
@@ -757,6 +777,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_LOAD_ATTR: {
             auto object = dynamic_cast<RnClassObject*>(StackPop());
             auto scope = object->GetScope();
+            if (!scope) {
+                throw std::runtime_error("Cannot get attribute from null object.");
+            }
             RnObject* result = nullptr;
             if (scope->GetSymbolTable()->SymbolExists(instruction->GetArg1(), false)) {
                 result = scope->GetObject(instruction->GetArg1());

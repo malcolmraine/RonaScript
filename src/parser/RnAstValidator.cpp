@@ -348,7 +348,8 @@ bool RnAstValidator::Visit(FuncDecl* node) {
     _current_scope->symbol_table->AddSymbol(node->id, node->type);
 
     for (auto arg : node->args) {
-        node->scope->symbol_table->AddSymbol(arg->GetChild<Name>(0)->value, arg->GetType());
+        node->scope->symbol_table->AddSymbol(arg->GetChild<Name>(0)->value,
+                                             arg->GetType());
     }
     _current_type_reference = node->type;
     GeneralVisit(node->scope);

@@ -343,6 +343,12 @@ void RnClassObject::CopyDataFromObject(RnObject* obj) {
 }
 
 /*****************************************************************************/
+void RnClassObject::SetNull() {
+    SetName("null");
+    _data = nullptr;
+}
+
+/*****************************************************************************/
 std::string RnClassObject::GetTypeName() const {
     return GetName();
 }

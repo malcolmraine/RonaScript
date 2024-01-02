@@ -43,10 +43,8 @@ std::unordered_map<std::string, TokenType> Lexer::_token_map = {RN_TOKEN_LIST};
 const std::unordered_set<std::string> Lexer::_reserved_words = {RN_TOKEN_LIST};
 
 const std::unordered_set<std::string> Lexer::_compounds = {
-    "++", "+=", "--", "-=", "&&", "%=", "||", "**", "&=", "|=", "/=", "*=",
-    "~=", "^=", "!=", "->", "::", ">=", "<=", "==", ">>", "<<", "::", "??",
-    "in"
-};
+    "++", "+=", "--", "-=", "&&", "%=", "||", "**", "&=", "|=", "/=", "*=", "~=",
+    "^=", "!=", "->", "::", ">=", "<=", "==", ">>", "<<", "::", "??", "in"};
 
 const std::unordered_set<std::string> Lexer::_binary_ops = {
     "+"
@@ -313,8 +311,7 @@ Token* Lexer::ProcessStringLiteral() {
                         _lexeme += Current();
                         break;
                 }
-            }
-            else {
+            } else {
                 _lexeme += Current();
             }
             AdvanceBuffer(1);

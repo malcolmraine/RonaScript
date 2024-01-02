@@ -129,7 +129,8 @@ std::string FileInfo::GetLineAt(size_t line_start, bool keep_open, bool formatte
     if (!_file_obj.is_open()) {
         _file_obj.open(GetFilePath(), std::ios::in);
     }
-    _file_obj.seekg(static_cast<std::streamoff>(line_start == 0 ? line_start : line_start - 1));
+    _file_obj.seekg(
+        static_cast<std::streamoff>(line_start == 0 ? line_start : line_start - 1));
     std::string line;
     std::getline(_file_obj, line, '\r');
 

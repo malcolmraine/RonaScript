@@ -131,8 +131,7 @@ RN_BUILTIN_FUNC_DEFINE(slice, RnType::RN_ANY, 3) {
 
     if (subject->GetActiveType() == RnType::RN_STRING) {
         RnStringNative data = subject->ToString();
-        ret_val->SetData(static_cast<RnStringNative>(
-            data.substr(start_offset, count)));
+        ret_val->SetData(static_cast<RnStringNative>(data.substr(start_offset, count)));
     } else if (subject->GetActiveType() == RnType::RN_ARRAY) {
         RnArrayNative data = subject->ToArray();
         RnArrayNative slice_data;

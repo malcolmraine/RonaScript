@@ -12,7 +12,6 @@
 #include <vector>
 #include "RnObject.h"
 
-
 #define UNDEFINED_OPERATOR(op)                            \
     auto operator op(RnObject* obj)->RnObject* override { \
         ThrowUndefinedOperatorError(#op, this, obj);      \
@@ -25,7 +24,7 @@
     }
 
 #define UNDEFINED_ASSIGNMENT(type, rntype, strval)                                 \
-    auto SetData(type data)->void override {                                       \
+    auto SetData(type data) -> void override {                                     \
         throw std::runtime_error("Cannot assign value " + RnStringNative(strval) + \
                                  " of type '" + RnType::TypeToString(rntype) +     \
                                  "' to symbol of type '" + GetTypeName() + "'");   \

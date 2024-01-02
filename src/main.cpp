@@ -84,7 +84,21 @@ void Compile(const std::filesystem::path& infile, RnCodeGenerator& code_generato
     }
 }
 
-/*****************************************************************************/
+/**
+ * @brief Runs the given instructions.
+ *
+ * This function executes a series of instructions provided in the `InstructionBlock`.
+ * It first checks if the `instructions` vector is empty, and if so, it simply returns.
+ * Otherwise, it gets an instance of the `RnVirtualMachine` using the `GetInstance` method.
+ * It then loads the instructions into the virtual machine, creates an argument vector,
+ * fills it with program arguments obtained from `arg_parser`, and sets it using the `SetArgv` method.
+ * The virtual machine is then executed by calling the `Run` method on it and the exit
+ * code is stored in a variable. If any exceptions occur during the execution, a runtime
+ * error message is logged using the `ERROR` method. Finally, the instance of the virtual
+ * machine is deleted.
+ *
+ * @param instructions The block of instructions to be executed.
+ */
 void Run(const InstructionBlock& instructions) {
     if (instructions.empty()) {
         return;
@@ -107,7 +121,16 @@ void Run(const InstructionBlock& instructions) {
     delete vm;
 }
 
-/*****************************************************************************/
+/**
+ * @brief Writes the given set of instructions to a binary file.
+ *
+ * This function takes a file path and a set of instructions and writes them to a binary file.
+ * It creates a `BinaryWriter` object with the provided file path, sets the instructions using
+ * the `SetInstructions` method, and then calls the `Write` method to write the instructions to the file.
+ *
+ * @param outfile The file path to write the instructions to.
+ * @param instructions The set of instructions to write.
+ */
 void Write(const std::filesystem::path& outfile, const InstructionBlock& instructions) {
     BinaryWriter writer(std::filesystem::absolute(outfile));
     writer.SetInstructions(instructions);
@@ -198,16 +221,14 @@ void RonaScriptMain(int argc, char* argv[]) {
     if (arg_parser.IsSet("-h")) {
         arg_parser.ShowHelp();
         return;
+    } else if (arg_parser.IsSet("--repl")) {
+        Repl();
+        return;
     } else if (arg_parser.IsSet("-v")) {
         std::cout << "RonaScript " << std::string(RONASCRIPT_VERSION);
         return;
     } else if (arg_parser.GetInputFile().empty()) {
         Log::ERROR("RonaScript: Error: No input file");
-        return;
-    }
-
-    if (arg_parser.IsSet("--repl")) {
-        Repl();
         return;
     }
 

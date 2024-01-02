@@ -81,12 +81,11 @@ RnObject* RnMemoryManager::CreateObject(RnType::Type type) {
         case RnType::RN_CLASS_INSTANCE:
         case RnType::RN_OBJECT: {
             auto obj = class_allocator.CreateObject();
-            obj->SetData(scope_allocator.CreateObject(nullptr));
+            obj->SetNull();
             return obj;
         }
         case RnType::RN_NULL:
-        case RnType::RN_VOID:
-        {
+        case RnType::RN_VOID: {
             if (!_null_object) {
                 _null_object = class_allocator.CreateObject();
                 dynamic_cast<RnClassObject*>(_null_object)->SetName("null");

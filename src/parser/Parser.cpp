@@ -142,7 +142,7 @@ Parser::~Parser() = default;
 
 /*****************************************************************************/
 void Parser::ConditionalBufAdvance(TokenType t) {
-    if (Current()->token_type == t) {
+    if (!EndOfSequence() && Current()->token_type == t) {
         AdvanceBuffer(1);
     }
 }
@@ -391,7 +391,13 @@ AstNodePtr<ClassDecl> Parser::ParseClassDecl() {
     return node;
 }
 
-/*****************************************************************************/
+/**
+ * This function is responsible for parsing an expression component.
+ * It returns a shared pointer to an AstNode object representing the parsed component.
+ * If the component cannot be parsed, an error is thrown.
+ *
+ * @return AstNodePtr<AstNode> - The parsed expression component
+ */
 AstNodePtr<AstNode> Parser::GetExprComponent() {
     AstNodePtr<AstNode> node = nullptr;
 
@@ -1319,8 +1325,15 @@ void Parser::Run() {
 
 /*****************************************************************************/
 AstNodePtr<AstNode> Parser::AddCurrentFileInfo(AstNodePtr<AstNode> node) {
-    if (Current()) {
-        node->file_info = Current()->file_info;
+    if (EndOfSequence()) {
+        node->file_info = Lookback()->file_info;
+    } else {
+        if (Current()) {
+            node->file_info = Current()->file_info;
+        } else {
+            node->file_info = Lookback()->file_info;
+        }
     }
+
     return node;
 }

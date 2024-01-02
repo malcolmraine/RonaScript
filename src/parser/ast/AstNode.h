@@ -28,15 +28,14 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 #include "../../util/FileInfo.h"
 #include "NodeType.h"
-#include <memory>
 
 template <typename T>
 using AstNodePtr = std::shared_ptr<T>;
-
 
 class RnCodeGenVisitor;
 
@@ -57,12 +56,12 @@ public:
         return AstNode::CastNode<T>(_children.at(index));
     }
 
-    template<class T, typename... Args>
+    template <class T, typename... Args>
     static AstNodePtr<T> CreateNode(Args... args) {
         return std::make_shared<T>(std::forward<Args>(args)...);
     }
 
-    template<class TO, class FROM>
+    template <class TO, class FROM>
     static AstNodePtr<TO> CastNode(AstNodePtr<FROM> node) {
         return std::dynamic_pointer_cast<TO>(node);
     }

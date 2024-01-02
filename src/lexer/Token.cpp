@@ -62,7 +62,7 @@ bool Token::IsBinaryOp() const {
                 TokenType::PERCENT,     TokenType::UP_ARROW,    TokenType::DOUBLE_COLON,
                 TokenType::DBL_L_CARAT, TokenType::DBL_R_CARAT, TokenType::R_ARROW,
                 TokenType::DBL_STAR,    TokenType::OR,          TokenType::AND,
-                TokenType::XOR, TokenType::IN});
+                TokenType::XOR,         TokenType::IN});
 }
 
 /*****************************************************************************/
