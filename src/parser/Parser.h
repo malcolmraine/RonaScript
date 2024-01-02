@@ -93,8 +93,7 @@ public:
     AstNodePtr<ClassDecl> ParseClassDecl();
     AstNodePtr<AstNode> GetExprComponent();
     AstNodePtr<AstNode> ParseExpr(TokenType stop_token = TokenType::SEMICOLON);
-    AstNodePtr<UnaryExpr> ParseUnaryExpr(
-        const AstNodePtr<AstNode>& expr = nullptr);
+    AstNodePtr<UnaryExpr> ParseUnaryExpr(const AstNodePtr<AstNode>& expr = nullptr);
     AstNodePtr<FlowControl> ParseFlowControlStmt();
     AstNodePtr<ReturnStmt> ParseReturnStmt();
     AstNodePtr<DeleteStmt> ParseDeleteStmt();
@@ -103,14 +102,12 @@ public:
         const AstNodePtr<AstNode>& rexpr = nullptr);
     AstNodePtr<ConditionalStmt> ParseConditionalStmt();
     AstNodePtr<ScopeNode> ParseScope();
-    AstNodePtr<FuncCall> ParseFuncCall(
-        const AstNodePtr<AstNode>& expr = nullptr);
+    AstNodePtr<FuncCall> ParseFuncCall(const AstNodePtr<AstNode>& expr = nullptr);
     AstNodePtr<ArrayLiteral> ParseArrayLiteral();
     AstNodePtr<Loop> ParseWhileLoop();
     AstNodePtr<Loop> ParseForLoop();
     AstNodePtr<AliasDecl> ParseAliasDecl();
-    AstNodePtr<AstNode> ParseIndexedExpr(
-        const AstNodePtr<AstNode>& expr = nullptr);
+    AstNodePtr<AstNode> ParseIndexedExpr(const AstNodePtr<AstNode>& expr = nullptr);
     AstNodePtr<Name> ParseName();
     AstNodePtr<TryBlock> ParseTryBlock();
     AstNodePtr<CatchBlock> ParseCatchBlock();
@@ -119,8 +116,7 @@ public:
     void ConvertScope(const AstNodePtr<ScopeNode>& scope);
     [[nodiscard]] std::string DumpsAst() const;
     void Parse();
-    AstNodePtr<AstNode> TransformBinaryExpr(
-        AstNodePtr<BinaryExpr> binary_expr);
+    AstNodePtr<AstNode> TransformBinaryExpr(AstNodePtr<BinaryExpr> binary_expr);
 
     TokenType GetCurrentAsExpectedType() override;
     size_t GetTokenCount();

@@ -28,9 +28,9 @@
 
 #include "RnVirtualMachine.h"
 
+#include <memory>
 #include <tuple>
 #include <utility>
-#include <memory>
 #include <vector>
 
 #include "../builtins/RnBuiltins.h"
@@ -457,7 +457,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                     BindCls(instance->GetScope(), class_obj);
 
                     if (!class_obj->ToObject()) {
-                        throw std::runtime_error("Cannot call constructor routine on null object");
+                        throw std::runtime_error(
+                            "Cannot call constructor routine on null object");
                     }
 
                     auto func_obj =
@@ -608,7 +609,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto type = static_cast<RnType::Type>(instruction->GetArg2());
             auto scope_size = instruction->GetArg3();
             auto func_addr = RnLinearAllocator::Instance()->Malloc(sizeof(RnFunction));
-            auto func = std::construct_at<RnFunction>(reinterpret_cast<RnFunction*>(func_addr), name, index + 1, scope_size);
+            auto func = std::construct_at<RnFunction>(
+                reinterpret_cast<RnFunction*>(func_addr), name, index + 1, scope_size);
             func->SetReturnType(type);
             auto func_scope = RnMemoryManager::CreateScope();
             func_scope->SetParent(GetScope());
@@ -636,7 +638,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto type = static_cast<RnType::Type>(instruction->GetArg1());
             auto scope_size = instruction->GetArg2();
             auto func_addr = RnLinearAllocator::Instance()->Malloc(sizeof(RnFunction));
-            auto func = std::construct_at<RnFunction>(reinterpret_cast<RnFunction*>(func_addr), "closure", index + 1, scope_size);
+            auto func =
+                std::construct_at<RnFunction>(reinterpret_cast<RnFunction*>(func_addr),
+                                              "closure", index + 1, scope_size);
             func->SetReturnType(type);
             auto func_scope = RnMemoryManager::CreateScope();
             func_scope->SetParent(GetScope());

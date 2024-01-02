@@ -40,8 +40,8 @@ ArgDecl::~ArgDecl() = default;
 
 /*****************************************************************************/
 std::string ArgDecl::ToString(bool nl) {
-    std::string result =
-        MakeTabStr() + "ArgDecl( " + GetChild<Name>(0)->value + ", " + _type->ToString() + " )";
+    std::string result = MakeTabStr() + "ArgDecl( " + GetChild<Name>(0)->value + ", " +
+                         _type->ToString() + " )";
     if (nl) {
         result += "\n";
     }

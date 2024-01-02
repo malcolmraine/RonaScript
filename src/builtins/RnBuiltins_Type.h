@@ -39,7 +39,7 @@
     RN_BUILTIN_FUNC(RnBuiltins_Type, to_float, RnType::RN_FLOAT, 1)      \
     RN_BUILTIN_FUNC(RnBuiltins_Type, to_string, RnType::RN_STRING, 1)    \
     RN_BUILTIN_FUNC(RnBuiltins_Type, to_bool, RnType::RN_BOOLEAN, 1)     \
-    RN_BUILTIN_FUNC(RnBuiltins_Type, to_array, RnType::RN_BOOLEAN, 1)     \
+    RN_BUILTIN_FUNC(RnBuiltins_Type, to_array, RnType::RN_BOOLEAN, 1)    \
     RN_BUILTIN_FUNC(RnBuiltins_Type, is_string, RnType::RN_BOOLEAN, 1)   \
     RN_BUILTIN_FUNC(RnBuiltins_Type, is_int, RnType::RN_BOOLEAN, 1)      \
     RN_BUILTIN_FUNC(RnBuiltins_Type, is_float, RnType::RN_BOOLEAN, 1)    \
@@ -47,8 +47,8 @@
     RN_BUILTIN_FUNC(RnBuiltins_Type, is_array, RnType::RN_BOOLEAN, 1)    \
     RN_BUILTIN_FUNC(RnBuiltins_Type, is_object, RnType::RN_BOOLEAN, 1)   \
     RN_BUILTIN_FUNC(RnBuiltins_Type, is_callable, RnType::RN_BOOLEAN, 1) \
-    RN_BUILTIN_FUNC(RnBuiltins_Type, is_any, RnType::RN_BOOLEAN, 1) \
-    RN_BUILTIN_FUNC(RnBuiltins_Type, instanceof, RnType::RN_BOOLEAN, 2) \
+    RN_BUILTIN_FUNC(RnBuiltins_Type, is_any, RnType::RN_BOOLEAN, 1)      \
+    RN_BUILTIN_FUNC(RnBuiltins_Type, instanceof, RnType::RN_BOOLEAN, 2)  \
     RN_BUILTIN_FUNC(RnBuiltins_Type, is_null, RnType::RN_BOOLEAN, 1)
 
 class RnScope;

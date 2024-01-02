@@ -28,11 +28,11 @@
 
 #include "RnCallFrame.h"
 #include "RnFunction.h"
-#include "RnScope.h"
 #include "RnObject.h"
+#include "RnScope.h"
 
 /*****************************************************************************/
-RnFunction* RnCallFrame::GetFunction(){
+RnFunction* RnCallFrame::GetFunction() {
     return _func;
 }
 
@@ -42,21 +42,21 @@ void RnCallFrame::SetFunction(RnFunction* func) {
 }
 
 /*****************************************************************************/
-RnScope* RnCallFrame::GetScope() const{
+RnScope* RnCallFrame::GetScope() const {
     return _scope;
 }
 
 /*****************************************************************************/
-void RnCallFrame::SetScope(RnScope* scope){
+void RnCallFrame::SetScope(RnScope* scope) {
     _scope = scope;
 }
 
 /*****************************************************************************/
-RnObject* RnCallFrame::GetReturnValue() const{
+RnObject* RnCallFrame::GetReturnValue() const {
     return _ret_val;
 }
 
 /*****************************************************************************/
-void RnCallFrame::SetReturnValue(RnObject* value){
+void RnCallFrame::SetReturnValue(RnObject* value) {
     _ret_val = value;
 }

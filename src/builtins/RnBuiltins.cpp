@@ -33,9 +33,9 @@
 #include <stdexcept>
 #include "../util/String.h"
 #include "../vm/RnArrayObject.h"
+#include "../vm/RnClassObject.h"
 #include "../vm/RnFunction.h"
 #include "../vm/RnFunctionObject.h"
-#include "../vm/RnClassObject.h"
 #include "../vm/RnScope.h"
 #include "../vm/RnVirtualMachine.h"
 
@@ -208,7 +208,8 @@ RN_BUILTIN_FUNC_DEFINE(getattr, RnType::RN_VOID, 2) {
             ret_val->SetData(array_data);
         }
     } else {
-        throw std::runtime_error("null object has no attribute '" + args[1]->ToString() + "'");
+        throw std::runtime_error("null object has no attribute '" +
+                                 args[1]->ToString() + "'");
     }
 }
 
@@ -245,6 +246,7 @@ RN_BUILTIN_FUNC_DEFINE(delattr, RnType::RN_VOID, 2) {
             ret_val->SetData(false);
         }
     } else {
-        throw std::runtime_error("null object has no attribute '" + args[1]->ToString() + "'");
+        throw std::runtime_error("null object has no attribute '" +
+                                 args[1]->ToString() + "'");
     }
 }

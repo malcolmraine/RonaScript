@@ -91,8 +91,7 @@ void ScopeNode::AddFuncDecl(const AstNodePtr<FuncDecl>& func_decl) {
 }
 
 /*****************************************************************************/
-void ScopeNode::AddLiteral(const std::string& name,
-                           const AstNodePtr<AstNode>& node) {
+void ScopeNode::AddLiteral(const std::string& name, const AstNodePtr<AstNode>& node) {
     _literal_map[name] = node;
 }
 

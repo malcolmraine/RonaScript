@@ -85,8 +85,7 @@ RnObject* RnMemoryManager::CreateObject(RnType::Type type) {
             return obj;
         }
         case RnType::RN_NULL:
-        case RnType::RN_VOID:
-        {
+        case RnType::RN_VOID: {
             if (!_null_object) {
                 _null_object = class_allocator.CreateObject();
                 dynamic_cast<RnClassObject*>(_null_object)->SetName("null");

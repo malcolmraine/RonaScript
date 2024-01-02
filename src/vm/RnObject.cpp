@@ -61,8 +61,7 @@ bool RnObject::ValueCompare(const RnObject* a, const RnObject* b) {
             return a->ToObject() == b->ToObject();
         case RnType::RN_NULL:
             return false;
-        case RnType::RN_ANY:
-        {
+        case RnType::RN_ANY: {
             return dynamic_cast<const RnAnyObject*>(a)->IsActiveDataEqual(b);
         }
         case RnType::RN_VOID:
@@ -174,7 +173,7 @@ RnObject* RnObject::Copy(RnObject* obj) {
 
 /*****************************************************************************/
 void RnObject::ThrowUndefinedOperatorError(const RnStringNative& op, RnObject* obj1,
-                                                     RnObject* obj2) {
+                                           RnObject* obj2) {
     throw std::runtime_error("Operator '" + op + "' is not defined for types '" +
                              obj1->GetTypeName() + "' and '" + obj2->GetTypeName() +
                              "'");

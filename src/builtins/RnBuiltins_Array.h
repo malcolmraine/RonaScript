@@ -41,7 +41,7 @@
     RN_BUILTIN_FUNC(RnBuiltins_Array, array_pop, RnType::RN_ANY, 1)     \
     RN_BUILTIN_FUNC(RnBuiltins_Array, array_zeros, RnType::RN_ARRAY, 1) \
     RN_BUILTIN_FUNC(RnBuiltins_Array, array_fill, RnType::RN_ARRAY, 1)  \
-    RN_BUILTIN_FUNC(RnBuiltins_Array, sequence, RnType::RN_ARRAY, 1) \
+    RN_BUILTIN_FUNC(RnBuiltins_Array, sequence, RnType::RN_ARRAY, 1)    \
     RN_BUILTIN_FUNC(RnBuiltins_Array, slice, RnType::RN_ANY, 3)
 
 class RnScope;

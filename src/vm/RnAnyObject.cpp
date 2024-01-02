@@ -335,8 +335,7 @@ RnBoolNative RnAnyObject::IsActiveDataEqual(const RnObject* obj) const {
             RnClassObject data = std::get<RnClassObject>(_data);
             return RnObject::ValueCompare(&data, obj);
         }
-        case RnType::RN_NULL:
-        {
+        case RnType::RN_NULL: {
             return obj->GetType() == RnType::RN_NULL;
         }
         case RnType::RN_UNKNOWN:

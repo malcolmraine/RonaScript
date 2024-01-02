@@ -69,8 +69,8 @@ auto RnInstruction::ToString() -> std::string {
             if (_arg1 == UINT32_MAX) {
                 arg1_str = "null";
             } else {
-                arg1_str = std::string(
-                    RnConstStore::GetInternedObject(_arg1)->ToString());
+                arg1_str =
+                    std::string(RnConstStore::GetInternedObject(_arg1)->ToString());
             }
             break;
         case OP_LOAD_ATTR:
