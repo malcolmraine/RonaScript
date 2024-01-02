@@ -565,7 +565,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             obj->SetData(scope);
             scope->SetParent(GetScope());
             GetScope()->StoreObject(instruction->GetArg1(), obj);
-            //            _namespaces[instruction->GetArg1()] = obj;
             _scopes.push_back(scope);
             index++;
             size_t stop_index = index + instruction->GetArg2();
