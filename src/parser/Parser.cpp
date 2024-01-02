@@ -391,7 +391,13 @@ AstNodePtr<ClassDecl> Parser::ParseClassDecl() {
     return node;
 }
 
-/*****************************************************************************/
+/**
+ * This function is responsible for parsing an expression component.
+ * It returns a shared pointer to an AstNode object representing the parsed component.
+ * If the component cannot be parsed, an error is thrown.
+ *
+ * @return AstNodePtr<AstNode> - The parsed expression component
+ */
 AstNodePtr<AstNode> Parser::GetExprComponent() {
     AstNodePtr<AstNode> node = nullptr;
 

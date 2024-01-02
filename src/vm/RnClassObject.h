@@ -82,6 +82,7 @@ public:
     [[nodiscard]] std::string GetTypeName() const override;
     [[nodiscard]] RnBoolNative Contains(RnObject* obj);
     void CopyDataFromObject(RnObject* obj) override;
+    void SetNull();
 
     void SetDefinition(RnClassObject* definition) {
         _definition = definition;

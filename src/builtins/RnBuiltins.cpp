@@ -35,6 +35,7 @@
 #include "../vm/RnArrayObject.h"
 #include "../vm/RnFunction.h"
 #include "../vm/RnFunctionObject.h"
+#include "../vm/RnClassObject.h"
 #include "../vm/RnScope.h"
 #include "../vm/RnVirtualMachine.h"
 
@@ -93,9 +94,12 @@ RN_BUILTIN_FUNC_DEFINE(lload, RnType::RN_OBJECT, 1) {
 
     // TODO: Add file existence check for library
     // TODO: Add check to make sure library actually loaded and return status accordingly
-    auto scope_obj = new RnScope(nullptr);
-    RnScope::LoadLibraryIntoScope(scope_obj, args.at(0)->ToString(), true);
-    ret_val->SetData(scope_obj);
+    auto scope_obj = RnVirtualMachine::GetInstance()->CreateScope();
+    if (RnScope::LoadLibraryIntoScope(scope_obj, args.at(0)->ToString(), true)) {
+        ret_val->SetData(scope_obj);
+    } else {
+        dynamic_cast<RnClassObject*>(ret_val)->SetNull();
+    }
 }
 
 /*****************************************************************************/
@@ -143,8 +147,12 @@ RN_BUILTIN_FUNC_DEFINE(listattr, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
 
     RnArrayNative attrs;
-    for (const auto& attr : args.front()->ToObject()->GetSymbolTable()->GetSymbols()) {
-        attrs.push_back(RnObject::Create(RnConstStore::GetInternedString(attr)));
+
+    if (args.front()->ToObject()) {
+        for (const auto& attr :
+             args.front()->ToObject()->GetSymbolTable()->GetSymbols()) {
+            attrs.push_back(RnObject::Create(RnConstStore::GetInternedString(attr)));
+        }
     }
     ret_val->SetData(attrs);
 }
@@ -159,13 +167,16 @@ RN_BUILTIN_FUNC_DEFINE(attrpairs, RnType::RN_ARRAY, 1) {
 
     RnArrayNative attrs;
     auto target_scope = args.front()->ToObject();
-    for (const auto& attr : target_scope->GetSymbolTable()->GetSymbols()) {
-        auto pair_obj =
-            dynamic_cast<RnArrayObject*>(RnObject::Create(RnType::RN_ARRAY));
-        RnArrayNative data = {RnObject::Create(RnConstStore::GetInternedString(attr)),
-                              target_scope->GetObject(attr)};
-        pair_obj->SetData(data);
-        attrs.push_back(pair_obj);
+    if (target_scope) {
+        for (const auto& attr : target_scope->GetSymbolTable()->GetSymbols()) {
+            auto pair_obj =
+                dynamic_cast<RnArrayObject*>(RnObject::Create(RnType::RN_ARRAY));
+            RnArrayNative data = {
+                RnObject::Create(RnConstStore::GetInternedString(attr)),
+                target_scope->GetObject(attr)};
+            pair_obj->SetData(data);
+            attrs.push_back(pair_obj);
+        }
     }
     ret_val->SetData(attrs);
 }
@@ -174,23 +185,30 @@ RN_BUILTIN_FUNC_DEFINE(attrpairs, RnType::RN_ARRAY, 1) {
 RN_BUILTIN_FUNC_DEFINE(hasattr, RnType::RN_VOID, 2) {
     BUILTIN_ASSERTS
 
-    auto obj = args[0]->ToObject();
+    auto obj_scope = args[0]->ToObject();
+    if (!obj_scope) {
+        ret_val->SetData(false);
+    }
     auto attr_key = RnConstStore::InternValue(args[1]->ToString());
-    ret_val->SetData(obj->GetSymbolTable()->SymbolExists(attr_key));
+    ret_val->SetData(obj_scope->GetSymbolTable()->SymbolExists(attr_key));
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(getattr, RnType::RN_VOID, 2) {
     BUILTIN_ASSERTS
 
-    auto obj = args[0]->ToObject();
-    auto attr_key = RnConstStore::InternValue(args[1]->ToString());
-    if (obj->GetSymbolTable()->SymbolExists(attr_key)) {
-        auto original = obj->GetObject(attr_key);
-        auto result = RnObject::Create(original->GetType());
-        result->CopyDataFromObject(original);
-        RnArrayNative array_data = {result};
-        ret_val->SetData(array_data);
+    auto obj_scope = args[0]->ToObject();
+    if (obj_scope) {
+        auto attr_key = RnConstStore::InternValue(args[1]->ToString());
+        if (obj_scope->GetSymbolTable()->SymbolExists(attr_key)) {
+            auto original = obj_scope->GetObject(attr_key);
+            auto result = RnObject::Create(original->GetType());
+            result->CopyDataFromObject(original);
+            RnArrayNative array_data = {result};
+            ret_val->SetData(array_data);
+        }
+    } else {
+        throw std::runtime_error("null object has no attribute '" + args[1]->ToString() + "'");
     }
 }
 
@@ -198,29 +216,35 @@ RN_BUILTIN_FUNC_DEFINE(getattr, RnType::RN_VOID, 2) {
 RN_BUILTIN_FUNC_DEFINE(setattr, RnType::RN_VOID, 3) {
     BUILTIN_ASSERTS
 
-    auto obj = args[0]->ToObject();
-    auto attr_key = RnConstStore::InternValue(args[1]->ToString());
-    if (obj->GetSymbolTable()->SymbolExists(attr_key)) {
-        auto original = obj->GetObject(attr_key);
-        original->CopyDataFromObject(args[2]);
-    } else {
-        auto copy = RnObject::Create(args[2]->GetType());
-        copy->CopyDataFromObject(args[2]);
-        obj->StoreObject(attr_key, copy);
+    auto obj_scope = args[0]->ToObject();
+    if (obj_scope) {
+        auto attr_key = RnConstStore::InternValue(args[1]->ToString());
+        if (obj_scope->GetSymbolTable()->SymbolExists(attr_key)) {
+            auto original = obj_scope->GetObject(attr_key);
+            original->CopyDataFromObject(args[2]);
+        } else {
+            auto copy = RnObject::Create(args[2]->GetType());
+            copy->CopyDataFromObject(args[2]);
+            obj_scope->StoreObject(attr_key, copy);
+        }
+        ret_val->SetData(true);
     }
-    ret_val->SetData(true);
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(delattr, RnType::RN_VOID, 2) {
     BUILTIN_ASSERTS
 
-    auto obj = args[0]->ToObject();
-    auto attr_key = RnConstStore::InternValue(args[1]->ToString());
-    if (obj->GetSymbolTable()->SymbolExists(attr_key)) {
-        obj->RemoveObject(attr_key);
-        ret_val->SetData(true);
+    auto obj_scope = args[0]->ToObject();
+    if (obj_scope) {
+        auto attr_key = RnConstStore::InternValue(args[1]->ToString());
+        if (obj_scope->GetSymbolTable()->SymbolExists(attr_key)) {
+            obj_scope->RemoveObject(attr_key);
+            ret_val->SetData(true);
+        } else {
+            ret_val->SetData(false);
+        }
     } else {
-        ret_val->SetData(false);
+        throw std::runtime_error("null object has no attribute '" + args[1]->ToString() + "'");
     }
 }

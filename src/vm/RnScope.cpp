@@ -103,7 +103,7 @@ RnMemoryGroup* RnScope::GetMemoryGroup() {
 }
 
 /*****************************************************************************/
-void RnScope::LoadLibraryIntoScope(RnScope* scope, const RnStringNative& library,
+bool RnScope::LoadLibraryIntoScope(RnScope* scope, const RnStringNative& library,
                                    bool add_data) {
     // This function should really be moved somewhere more appropriate and
     // should do something other than just load the names into the parent scope.
@@ -154,7 +154,9 @@ void RnScope::LoadLibraryIntoScope(RnScope* scope, const RnStringNative& library
         }
     } else {
         Log::DEBUG("Unable to load external library: " + library);
+        return false;
     }
+    return true;
 }
 
 /*****************************************************************************/

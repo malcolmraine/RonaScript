@@ -81,7 +81,7 @@ RnObject* RnMemoryManager::CreateObject(RnType::Type type) {
         case RnType::RN_CLASS_INSTANCE:
         case RnType::RN_OBJECT: {
             auto obj = class_allocator.CreateObject();
-            obj->SetData(scope_allocator.CreateObject(nullptr));
+            obj->SetNull();
             return obj;
         }
         case RnType::RN_NULL:

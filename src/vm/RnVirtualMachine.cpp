@@ -76,6 +76,7 @@ RnVirtualMachine::RnVirtualMachine() {
 /*****************************************************************************/
 void RnVirtualMachine::Init() {
     auto obj = RnObject::Create(RnType::RN_OBJECT);
+    obj->SetData(CreateScope());
     auto scope = obj->ToObject();
     scope->GetMemoryGroup()->AddObject(obj);
     if (!_scopes.empty()) {
@@ -447,12 +448,18 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                     auto class_obj = dynamic_cast<RnClassObject*>(object);
                     auto instance = dynamic_cast<RnClassObject*>(
                         RnMemoryManager::CreateObject(RnType::RN_OBJECT));
+                    instance->SetData(CreateScope());
                     GetScope()->GetMemoryGroup()->AddObject(instance);
                     instance->ToObject()->SetParent(class_obj->ToObject());
                     instance->SetDefinition(class_obj);
                     class_obj->CopySymbols(instance->GetScope());
                     BindThis(instance->GetScope(), instance);
                     BindCls(instance->GetScope(), class_obj);
+
+                    if (!class_obj->ToObject()) {
+                        throw std::runtime_error("Cannot call constructor routine on null object");
+                    }
+
                     auto func_obj =
                         class_obj->ToObject()->GetObject(_object_construct_key);
                     auto func = func_obj->ToFunction();
@@ -577,6 +584,11 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                                          name_obj);
             GetScope()->StoreObject(instruction->GetArg1(), obj);
             auto class_scope = obj->ToObject();
+
+            if (!class_scope) {
+                throw std::runtime_error("Invalid use of null object.");
+            }
+
             class_scope->SetParent(GetScope());
             _scopes.push_back(class_scope);
             index++;
@@ -757,6 +769,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_LOAD_ATTR: {
             auto object = dynamic_cast<RnClassObject*>(StackPop());
             auto scope = object->GetScope();
+            if (!scope) {
+                throw std::runtime_error("Cannot get attribute from null object.");
+            }
             RnObject* result = nullptr;
             if (scope->GetSymbolTable()->SymbolExists(instruction->GetArg1(), false)) {
                 result = scope->GetObject(instruction->GetArg1());

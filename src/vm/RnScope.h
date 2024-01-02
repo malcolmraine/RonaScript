@@ -56,7 +56,7 @@ public:
     [[nodiscard]] RnScope* GetParent() const;
     [[nodiscard]] RnMemoryGroup* GetMemoryGroup();
 
-    static void LoadLibraryIntoScope(RnScope* scope, const RnStringNative& library,
+    static bool LoadLibraryIntoScope(RnScope* scope, const RnStringNative& library,
                                      bool add_data = false);
     RnObject* MakeLocal(RnType::Type type);
     void Reset();
