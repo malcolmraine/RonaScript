@@ -464,7 +464,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                     auto func_obj =
                         class_obj->ToObject()->GetObject(_object_construct_key);
                     auto func = func_obj->ToFunction();
-                    auto func_scope = RnObject::Create(RnType::RN_OBJECT)->ToObject();
+                    auto func_scope = CreateScope();
                     func_scope->SetParent(instance->GetScope());
                     BindThis(func_scope, instance);
                     func->SetScope(func_scope);
@@ -579,6 +579,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             name_obj->SetConstFlag(true);
             auto obj =
                 dynamic_cast<RnClassObject*>(RnObject::Create(RnType::RN_OBJECT));
+            auto scope = CreateScope();
+            obj->SetData(scope);
+            scope->SetParent(GetScope());
             obj->SetIsClass(true);
             obj->SetName(name_obj->ToString());
             obj->GetScope()->StoreObject(RnConstStore::InternValue("__class"),
