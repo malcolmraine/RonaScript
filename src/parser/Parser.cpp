@@ -351,6 +351,8 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
         node->scope->symbol_table->AddSymbol(
             "this", std::make_shared<RnTypeComposite>(RnType::RN_OBJECT), node);
     }
+
+    _current_scope->symbol_table->AddSymbol(node->id, std::make_shared<RnTypeComposite>(RnType::RN_CALLABLE));
     return node;
 }
 
@@ -388,6 +390,9 @@ AstNodePtr<ClassDecl> Parser::ParseClassDecl() {
     assert(_scope_count == previous_scope_count);
     _current_state = _previous_state;
 
+    if (!node->scope->symbol_table->HasSymbolEntry("construct")) {
+        throw std::runtime_error("No constructor found for class '" + node->id + "'");
+    }
     return node;
 }
 

@@ -74,6 +74,7 @@ public:
         const std::string& symbol, const std::shared_ptr<RnTypeComposite>& type,
         const AstNodePtr<AstNode>& type_decl_node = nullptr);
     std::shared_ptr<SymbolTableEntry> GetSymbolEntry(const std::string& symbol);
+    bool HasSymbolEntry(const std::string& symbol) const;
 
     void SetParent(std::shared_ptr<RnAstSymbolTable> parent) {
         _parent = std::move(parent);
