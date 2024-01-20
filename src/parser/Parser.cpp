@@ -29,6 +29,13 @@
 #include "Parser.h"
 #include <memory>
 #include <utility>
+#include "../builtins/RnBuiltins.h"
+#include "../builtins/RnBuiltins_Array.h"
+#include "../builtins/RnBuiltins_IO.h"
+#include "../builtins/RnBuiltins_Math.h"
+#include "../builtins/RnBuiltins_String.h"
+#include "../builtins/RnBuiltins_System.h"
+#include "../builtins/RnBuiltins_Type.h"
 #include "../common/RnConfig.h"
 #include "../common/RnInternment.h"
 #include "../lexer/Lexer.h"
@@ -113,25 +120,12 @@ Parser::Parser() {
     _current_scope = ast->root;
     _global_scope = ast->root;
 
-    // TODO: Add rest of builtin functions
-    _current_scope->symbol_table->AddSymbol(
-        "print", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
-    _current_scope->symbol_table->AddSymbol(
-        "prompt", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
-    _current_scope->symbol_table->AddSymbol(
-        "read", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
-    _current_scope->symbol_table->AddSymbol(
-        "write", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
-    _current_scope->symbol_table->AddSymbol(
-        "array_merge", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
-    _current_scope->symbol_table->AddSymbol(
-        "array_push", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
-    _current_scope->symbol_table->AddSymbol(
-        "array_pop", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
-    _current_scope->symbol_table->AddSymbol(
-        "count", std::make_shared<RnTypeComposite>(RnType::RN_INT));
-    _current_scope->symbol_table->AddSymbol(
-        "lload", std::make_shared<RnTypeComposite>(RnType::RN_OBJECT));
+#undef RN_BUILTIN_FUNC
+#define RN_BUILTIN_FUNC(ns, name, retval, argcnt) \
+    _current_scope->symbol_table->AddSymbol(      \
+        #name, std::make_shared<RnTypeComposite>(retval));
+
+    RN_BUILTIN_REGISTRATIONS
 
     _current_scope->pragma_table["bounds"] = "not-enforced";
     _current_scope->pragma_table["typing"] = "not-enforced";
@@ -977,13 +971,16 @@ AstNodePtr<Name> Parser::ParseName() {
     node->value += Current()->lexeme;
     AdvanceBuffer(1);
 
-    while (Current()->token_type == TokenType::NAME || Current()->token_type == TokenType::DBL_COLON) {
+    while (Current()->token_type == TokenType::NAME ||
+           Current()->token_type == TokenType::DBL_COLON) {
         node->value += Current()->lexeme;
         AdvanceBuffer(1);
     }
 
-    if (!_namespaces.empty() && node->value.find("::") == std::string::npos) {
-        node->value.insert(0, _namespaces.back() + "::");
+    if (!_current_scope->symbol_table->HasSymbolEntry(node->value)) {
+        if (!_namespaces.empty() && node->value.find("::") == std::string::npos) {
+            node->value.insert(0, _namespaces.back() + "::");
+        }
     }
 
     _intern_count++;
