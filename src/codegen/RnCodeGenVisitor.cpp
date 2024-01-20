@@ -256,10 +256,10 @@ InstructionBlock RnCodeGenVisitor::Visit(ImportStmt* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(Module* node) {
     InstructionBlock instructions = GeneralVisit(node->scope);
-    instructions.insert(
-        instructions.begin(),
-        new RnInstruction(OP_MAKE_MODULE, RnConstStore::InternValue(node->name->value),
-                          instructions.size()));
+//    instructions.insert(
+//        instructions.begin(),
+//        new RnInstruction(OP_MAKE_MODULE, RnConstStore::InternValue(node->name->value),
+//                          instructions.size()));
     return instructions;
 }
 
@@ -502,12 +502,7 @@ InstructionBlock RnCodeGenVisitor::Visit(BinaryExpr* node) {
     InstructionBlock instructions;
     RnOpCode opcode = GetOpCodeFromOperator(node->_op);
 
-    if (opcode == OP_RESOLVE_NAMESPACE) {
-        instructions = GeneralVisit(node->_left);
-        instructions.emplace_back(new RnInstruction(
-            opcode, RnConstStore::InternValue(
-                        std::static_pointer_cast<Name>(node->_right)->value)));
-    } else if (opcode == OP_LOAD_ATTR) {
+    if (opcode == OP_LOAD_ATTR) {
         instructions = GeneralVisit(node->_left);
         instructions.push_back(new RnInstruction(
             opcode, RnConstStore::InternValue(

@@ -556,25 +556,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             _scopes.front()->StoreObject(instruction->GetArg2(), obj);
             break;
         }
-        case OP_MAKE_MODULE: {
-            auto name = RnConstStore::GetInternedString(instruction->GetArg1());
-            auto obj =
-                dynamic_cast<RnClassObject*>(RnObject::Create(RnType::RN_OBJECT));
-            obj->SetIsModule(true);
-            auto scope = CreateScope();
-            obj->SetData(scope);
-            scope->SetParent(GetScope());
-            GetScope()->StoreObject(instruction->GetArg1(), obj);
-            _scopes.push_back(scope);
-            index++;
-            size_t stop_index = index + instruction->GetArg2();
-            for (; index < stop_index; index++) {
-                ExecuteInstruction(break_scope, index);
-            }
-            index--;
-            PopScope();
-            break;
-        }
         case OP_MAKE_CLASS: {
             auto name_obj = RnConstStore::GetInternedObject(instruction->GetArg1());
             name_obj->SetConstFlag(true);
@@ -801,17 +782,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 auto func = dynamic_cast<RnFunctionObject*>(result)->GetData();
                 BindThis(func->GetScope(), object);
             }
-            break;
-        }
-        case OP_RESOLVE_NAMESPACE: {
-            auto nspace = dynamic_cast<RnClassObject*>(StackPop());
-            auto object = nspace->GetScope()->GetSymbolTable()->GetObject(
-                instruction->GetArg1(), true);
-            if (object->GetType() == RnType::RN_FUNCTION && !nspace->IsModule()) {
-                BindCls(object->ToFunction()->GetScope(), nspace);
-                BindThis(object->ToFunction()->GetScope(), nspace);
-            }
-            StackPush(object);
             break;
         }
     }

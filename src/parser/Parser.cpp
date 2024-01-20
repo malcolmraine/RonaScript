@@ -1086,7 +1086,6 @@ void Parser::Parse() {
                 }
                 case TokenType::MODULE: {
                     auto node = ParseModule();
-//                    ast->modules[node->name->value] = node;
                     break;
                 }
                 case TokenType::R_BRACE:
@@ -1255,7 +1254,6 @@ AstNodePtr<Module> Parser::ParseModule() {
     CheckExpected();
     AdvanceBuffer(1);
     auto previous_scope_count = _scope_count;
-//    node->scope = ParseScope();
     Parse();
     assert(_scope_count == previous_scope_count);
     _namespaces.pop_back();
