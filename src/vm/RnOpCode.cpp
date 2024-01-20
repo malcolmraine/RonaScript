@@ -33,8 +33,6 @@ RnStringNative GetOpCodeAsString(RnOpCode opcode) {
     switch (opcode) {
         case OP_LOAD_ATTR:
             return "OP_LOAD_ATTR";
-        case OP_RESOLVE_NAMESPACE:
-            return "OP_RESOLVE_NAMESPACE";
         case OP_BINARY_ADD:
             return "OP_BINARY_ADD";
         case OP_BINARY_SUB:
@@ -111,8 +109,6 @@ RnStringNative GetOpCodeAsString(RnOpCode opcode) {
             return "OP_MAKE_CLASS";
         case OP_MAKE_FUNC:
             return "OP_MAKE_FUNC";
-        case OP_MAKE_MODULE:
-            return "OP_MAKE_MODULE";
         case OP_CREATE_CONTEXT:
             return "OP_CREATE_CONTEXT";
         case OP_DESTROY_CONTEXT:
@@ -190,8 +186,6 @@ RnOpCode GetOpCodeFromOperator(const RnStringNative& op) {
         return OP_BINARY_NEQ;
     } else if (op == "?") {
         return OP_BINARY_ADD;
-    } else if (op == "::") {
-        return OP_RESOLVE_NAMESPACE;
     } else if (op == "->") {
         return OP_LOAD_ATTR;
     } else if (op == "%") {

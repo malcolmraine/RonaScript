@@ -68,7 +68,7 @@
 std::vector<std::string> Parser::parsed_files;
 
 std::unordered_map<TokenType, int> Parser::_prec_tbl = {
-    {TokenType::DBL_COLON, 200},  {TokenType::R_ARROW, 200},
+    {TokenType::DBL_COLON, 300},  {TokenType::R_ARROW, 200},
     {TokenType::R_PARAN, 100},    {TokenType::STAR, 90},
     {TokenType::SLASH, 90},       {TokenType::PERCENT, 90},
     {TokenType::PLUS, 80},        {TokenType::MINUS, 80},
@@ -228,9 +228,9 @@ AstNodePtr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
 
     AdvanceBuffer(1);
     AddCurrentFileInfo(node);
-    node->id = Current()->lexeme;
+    node->id = ParseName()->value;
     Expect(TokenType::COLON);
-    AdvanceBuffer(1);
+    CheckExpected();
     AdvanceBuffer(1);
     node->type = ParseType();
 
@@ -266,8 +266,7 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
     if (Current()->token_type == TokenType::R_PARAN) {
         node->is_closure = true;
     } else {
-        node->id = Current()->lexeme;
-        AdvanceBuffer(1);
+        node->id = ParseName()->value;
     }
 
     AdvanceBuffer(1);
@@ -280,8 +279,9 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
         auto arg = new ArgDecl();
 
         if (!Current()->IsType()) {
-            Expect(TokenType::NAME);
-            AdvanceBuffer(1);
+            Expect({TokenType::NAME, TokenType::VAR});
+            CheckExpected();
+            ConditionalBufAdvance(TokenType::VAR);
         }
 
         if (Current()->token_type == TokenType::NAME) {
@@ -296,7 +296,6 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
 
             if (Current()->IsType()) {
                 arg->SetType(ParseType());
-                AdvanceBuffer(1);
             } else {
                 ThrowError("Invalid type '" + Current()->lexeme + "' for parameter '" +
                            arg->GetChild<Name>(0)->value +
@@ -331,8 +330,6 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
             _current_state == CLASS_DECL_CONTEXT && node->id == "construct") {
             ThrowError("Class constructor must return object type");
         }
-
-        AdvanceBuffer(1);
     } else {
         node->type = std::make_shared<RnTypeComposite>(RnType::RN_VOID);
     }
@@ -351,6 +348,9 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
         node->scope->symbol_table->AddSymbol(
             "this", std::make_shared<RnTypeComposite>(RnType::RN_OBJECT), node);
     }
+
+    _current_scope->symbol_table->AddSymbol(
+        node->id, std::make_shared<RnTypeComposite>(RnType::RN_CALLABLE));
     return node;
 }
 
@@ -361,11 +361,11 @@ AstNodePtr<ClassDecl> Parser::ParseClassDecl() {
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
 
-    node->id = Current()->lexeme;
+    node->id = ParseName()->value;
     _user_defined_type_map[node->id] =
         std::make_shared<RnTypeComposite>(RnType::RN_OBJECT);
     Expect({TokenType::EXTENDS, TokenType::BEGIN, TokenType::R_BRACE, TokenType::IS});
-    AdvanceBuffer(1);
+    CheckExpected();
 
     // Check for inherited classes and parse if necessary
     if (Current()->token_type == TokenType::EXTENDS) {
@@ -388,6 +388,9 @@ AstNodePtr<ClassDecl> Parser::ParseClassDecl() {
     assert(_scope_count == previous_scope_count);
     _current_state = _previous_state;
 
+    if (!node->scope->symbol_table->HasSymbolEntry("construct")) {
+        throw std::runtime_error("No constructor found for class '" + node->id + "'");
+    }
     return node;
 }
 
@@ -935,7 +938,6 @@ AstNodePtr<AliasDecl> Parser::ParseAliasDecl() {
         Expect(TokenType::NAME);
         AdvanceBuffer(1);
         node->AddChild(ParseName());
-        AdvanceBuffer(1);
     } else {
         Expect({TokenType::OBJECT, TokenType::STRING, TokenType::INT, TokenType::FLOAT,
                 TokenType::ARRAY, TokenType::CALLABLE});
@@ -972,8 +974,18 @@ AstNodePtr<AstNode> Parser::ParseIndexedExpr(const AstNodePtr<AstNode>& expr) {
 AstNodePtr<Name> Parser::ParseName() {
     auto node = AstNode::CreateNode<Name>();
     AddCurrentFileInfo(node);
-    node->value = Current()->lexeme;
+    node->value += Current()->lexeme;
     AdvanceBuffer(1);
+
+    while (Current()->token_type == TokenType::NAME || Current()->token_type == TokenType::DBL_COLON) {
+        node->value += Current()->lexeme;
+        AdvanceBuffer(1);
+    }
+
+    if (!_namespaces.empty() && node->value.find("::") == std::string::npos) {
+        node->value.insert(0, _namespaces.back() + "::");
+    }
+
     _intern_count++;
 
     return node;
@@ -1074,7 +1086,6 @@ void Parser::Parse() {
                 }
                 case TokenType::MODULE: {
                     auto node = ParseModule();
-                    ast->modules[node->name->value] = node;
                     break;
                 }
                 case TokenType::R_BRACE:
@@ -1237,13 +1248,16 @@ AstNodePtr<Module> Parser::ParseModule() {
     auto node = AstNode::CreateNode<Module>();
     AddCurrentFileInfo(node);
     node->name = ParseName();
+    _namespaces.push_back(node->name->value);
+
     Expect(TokenType::IS);
     CheckExpected();
     AdvanceBuffer(1);
     auto previous_scope_count = _scope_count;
-    node->scope = ParseScope();
+    Parse();
     assert(_scope_count == previous_scope_count);
-
+    _namespaces.pop_back();
+    AdvanceBuffer(1);
     return node;
 }
 

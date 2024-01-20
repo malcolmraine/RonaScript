@@ -61,3 +61,14 @@ std::shared_ptr<SymbolTableEntry> RnAstSymbolTable::GetSymbolEntry(
     }
     throw std::runtime_error("Fatal: could not find symbol '" + symbol + "'");
 }
+
+/*****************************************************************************/
+bool RnAstSymbolTable::HasSymbolEntry(const std::string& symbol) const {
+    auto iter = _table.find(symbol);
+    if (iter != _table.end()) {
+        return true;
+    } else if (_parent) {
+        return _parent->HasSymbolEntry(symbol);
+    }
+    return false;
+}

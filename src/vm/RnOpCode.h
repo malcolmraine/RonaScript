@@ -31,7 +31,6 @@
 #include "../common/RnType.h"
 
 typedef enum : uint8_t {
-    OP_RESOLVE_NAMESPACE,
     OP_BINARY_ADD,
     OP_BINARY_SUB,
     OP_BINARY_MUL,
@@ -71,7 +70,6 @@ typedef enum : uint8_t {
     OP_MAKE_LOCAL,
     OP_MAKE_CLASS,
     OP_MAKE_FUNC,
-    OP_MAKE_MODULE,
     OP_MAKE_ARG,
     OP_MAKE_ALIAS,
     OP_MAKE_ARRAY,

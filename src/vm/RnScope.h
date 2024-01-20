@@ -100,5 +100,4 @@ protected:
 private:
     int _linked_scope_count = 0;
     static std::unordered_map<RnStringNative, void*> _handles;
-    std::unordered_map<RnIntNative, RnClassObject*> _namespaces;
 };
