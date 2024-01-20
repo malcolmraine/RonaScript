@@ -983,7 +983,7 @@ AstNodePtr<Name> Parser::ParseName() {
     }
 
     if (!_namespaces.empty() && node->value.find("::") == std::string::npos) {
-        node->value = _namespaces.back() + "::";
+        node->value.insert(0, _namespaces.back() + "::");
     }
 
     _intern_count++;
