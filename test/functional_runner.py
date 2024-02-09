@@ -8,6 +8,7 @@ import threading
 import time
 from difflib import ndiff, SequenceMatcher
 import junit_reporter
+from typing import List
 
 
 rn_executable = sys.argv[1]
@@ -26,54 +27,55 @@ class Test(object):
     fixed_args = []
 
     def __init__(self,
-                 name,
+                 name: str,
                  test_id,
                  source_dir: str,
                  expected_output_file: str = "",
                  args: list = None,
                  timeout: int = 5,
-                 invoke_count=1,
-                 enabled=False,
-                 similarity=1.0):
+                 invoke_count: int = 1,
+                 enabled: bool = False,
+                 similarity: float = 1.0):
         self.id = test_id
-        self.stdout = []
-        self.stderr = []
-        self.source_dir = source_dir
-        self.source_file = f"{source_dir}/source.rn"
-        self.expected_output = f"{source_dir}/{expected_output_file}"
-        self.enabled = enabled
-        self.similarity_threshold = similarity
-        self.passed = False
-        self.timestamp = ""
+        self.stdout: list = []
+        self.stderr: list = []
+        self.source_dir: str = source_dir
+        self.source_file: str = f"{source_dir}/source.rn"
+        self.expected_output: str = f"{source_dir}/{expected_output_file}"
+        self.enabled: bool = enabled
+        self.similarity_threshold: float = similarity
+        self.passed: bool = False
+        self.timestamp: str = ""
 
         if args is None:
-            self.args = []
+            self.args: list = []
         else:
-            self.args = args
-        self.timeout = timeout
-        self.returncode = -1
-        self.name = name
-        self.log_file = f"{self.source_dir}/test.results"
+            self.args: list = args
+
+        self.timeout: int = timeout
+        self.returncode: int = -1
+        self.name: str = name
+        self.log_file: str = f"{self.source_dir}/test.results"
         open(self.log_file, "w").close()
         self.process = None
-        self.timeout_occurred = False
-        self.invoke_count = invoke_count
-        self.runtime = 0
-        self.similarity_scores = []
+        self.timeout_occurred: bool = False
+        self.invoke_count: int = invoke_count
+        self.runtime: float | int = 0
+        self.similarity_scores: List[float] = []
         self.msg = ""
 
-    def log(self, *args):
+    def log(self, *args) -> None:
         with open(self.log_file, "a+") as file:
             for arg in args:
                 file.write(arg)
             file.write("\n")
 
-    def log_header(self, header: str):
+    def log_header(self, header: str) -> None:
         self.log("=" * 80)
         self.log(" " + header)
         self.log("=" * 80)
 
-    def check_output(self):
+    def check_output(self) -> None:
         if not self.enabled:
             return
 
@@ -140,7 +142,7 @@ class Test(object):
             if not self.passed:
                 self.log("\n".join(ndiff(expected.splitlines(), invalid_output.splitlines())))
 
-    def run(self):
+    def run(self) -> None:
         self.timestamp = str(datetime.datetime.now().replace(microsecond=0).isoformat())
         if not self.enabled:
             self.msg = "DISABLED"
@@ -179,13 +181,13 @@ class Test(object):
 
 class TestRunner(object):
     def __init__(self):
-        self.tests = []
-        self.enabled_count = 0
-        self.disabled_count = 0
-        self.passed_count = 0
-        self.timeout_count = 0
-        self.failed_count = 0
-        self.total_runtime = 0.0
+        self.tests: List[Test] = []
+        self.enabled_count: int = 0
+        self.disabled_count: int = 0
+        self.passed_count: int = 0
+        self.timeout_count: int = 0
+        self.failed_count: int = 0
+        self.total_runtime: float = 0.0
 
     def add_test(self, test: Test):
         self.tests.append(test)
