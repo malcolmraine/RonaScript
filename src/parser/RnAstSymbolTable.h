@@ -80,6 +80,10 @@ public:
         _parent = std::move(parent);
     }
 
+    std::shared_ptr<RnAstSymbolTable> GetParent() {
+        return _parent;
+    }
+
 private:
     std::map<std::string, std::shared_ptr<SymbolTableEntry>> _table;
     std::shared_ptr<RnAstSymbolTable> _parent;

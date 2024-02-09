@@ -108,7 +108,7 @@ public:
     AstNodePtr<Loop> ParseForLoop();
     AstNodePtr<AliasDecl> ParseAliasDecl();
     AstNodePtr<AstNode> ParseIndexedExpr(const AstNodePtr<AstNode>& expr = nullptr);
-    AstNodePtr<Name> ParseName();
+    AstNodePtr<Name> ParseName(bool is_declaration = false);
     AstNodePtr<TryBlock> ParseTryBlock();
     AstNodePtr<CatchBlock> ParseCatchBlock();
     AstNodePtr<Module> ParseModule();
