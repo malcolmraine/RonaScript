@@ -2,6 +2,8 @@
 
 module Matrix is
 begin
+    var test: int = 99;
+
     class _MatrixInternal is
     begin
         var _data: array = [];
@@ -17,7 +19,20 @@ begin
             end
             return this;
         end
+
+        routine __str(): string
+        begin
+            import PrettyPrint;
+            return PrettyPrint::matrix(this->_data);
+        end
+    end
+
+    routine Create(var rows: int, var columns: int): object
+    begin
+        print(test);
+        return _MatrixInternal(rows, columns);
     end
 end
 
-print(Matrix::_MatrixInternal);
+var matrix: Matrix::_MatrixInternal = Matrix::Create(4, 4);
+print(matrix);
