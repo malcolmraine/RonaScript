@@ -361,6 +361,8 @@ AstNodePtr<ClassDecl> Parser::ParseClassDecl() {
     AdvanceBuffer(1);
 
     node->id = ParseName(true)->value;
+    _current_scope->symbol_table->AddSymbol(
+        node->id, std::make_shared<RnTypeComposite>(RnType::RN_CALLABLE), node);
     _user_defined_type_map[node->id] =
         std::make_shared<RnTypeComposite>(RnType::RN_OBJECT);
     Expect({TokenType::EXTENDS, TokenType::BEGIN, TokenType::R_BRACE, TokenType::IS});
