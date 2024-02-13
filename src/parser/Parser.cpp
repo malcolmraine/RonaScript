@@ -91,7 +91,7 @@ std::unordered_map<TokenType, int> Parser::_prec_tbl = {
 std::unordered_map<TokenType, Associativity> Parser::_associativity = {
     {TokenType::R_PARAN, NO_ASSOCIATIVITY},
     {TokenType::R_ARROW, LEFT},
-    {TokenType::DOUBLE_COLON, LEFT},
+    {TokenType::DBL_COLON, LEFT},
     {TokenType::STAR, LEFT},
     {TokenType::SLASH, LEFT},
     {TokenType::PERCENT, LEFT},
@@ -1308,9 +1308,15 @@ void Parser::ThrowError(const std::string& message) {
 std::shared_ptr<RnTypeComposite> Parser::ParseType() {
     auto basic_type = RnType::StringToType(Current()->lexeme);
     if (basic_type == RnType::RN_UNKNOWN) {
-        if (_user_defined_type_map.find(Current()->lexeme) !=
-            _user_defined_type_map.end()) {
-            auto type_composite = _user_defined_type_map[Current()->lexeme];
+        std::string type_lexeme = Current()->lexeme;
+
+        while (Peek()->token_type == TokenType::DBL_COLON ||
+               Peek()->token_type == TokenType::NAME) {
+            AdvanceBuffer(1);
+            type_lexeme += Current()->lexeme;
+        }
+        if (_user_defined_type_map.find(type_lexeme) != _user_defined_type_map.end()) {
+            auto type_composite = _user_defined_type_map[type_lexeme];
             AdvanceBuffer(1);
             return type_composite;
         }

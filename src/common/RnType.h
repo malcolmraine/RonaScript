@@ -126,7 +126,6 @@ public:
         } else if (type == "bool") {
             return RN_BOOLEAN;
         } else {
-            assert(false);
             return RN_UNKNOWN;
         }
     }

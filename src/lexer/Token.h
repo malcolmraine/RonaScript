@@ -112,7 +112,6 @@
     RESERVED_WORD(CONSTRUCT, "construct") \
     RESERVED_WORD(DESTRUCT, "destruct")   \
     TOKEN_DEF(R_ARROW, "->")              \
-    TOKEN_DEF(DOUBLE_COLON, "::")         \
     RESERVED_WORD(IF, "if")               \
     RESERVED_WORD(ELIF, "elif")           \
     RESERVED_WORD(ELSE, "else")           \
