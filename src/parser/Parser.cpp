@@ -29,6 +29,13 @@
 #include "Parser.h"
 #include <memory>
 #include <utility>
+#include "../builtins/RnBuiltins.h"
+#include "../builtins/RnBuiltins_Array.h"
+#include "../builtins/RnBuiltins_IO.h"
+#include "../builtins/RnBuiltins_Math.h"
+#include "../builtins/RnBuiltins_String.h"
+#include "../builtins/RnBuiltins_System.h"
+#include "../builtins/RnBuiltins_Type.h"
 #include "../common/RnConfig.h"
 #include "../common/RnInternment.h"
 #include "../lexer/Lexer.h"
@@ -84,7 +91,7 @@ std::unordered_map<TokenType, int> Parser::_prec_tbl = {
 std::unordered_map<TokenType, Associativity> Parser::_associativity = {
     {TokenType::R_PARAN, NO_ASSOCIATIVITY},
     {TokenType::R_ARROW, LEFT},
-    {TokenType::DOUBLE_COLON, LEFT},
+    {TokenType::DBL_COLON, LEFT},
     {TokenType::STAR, LEFT},
     {TokenType::SLASH, LEFT},
     {TokenType::PERCENT, LEFT},
@@ -113,25 +120,12 @@ Parser::Parser() {
     _current_scope = ast->root;
     _global_scope = ast->root;
 
-    // TODO: Add rest of builtin functions
-    _current_scope->symbol_table->AddSymbol(
-        "print", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
-    _current_scope->symbol_table->AddSymbol(
-        "prompt", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
-    _current_scope->symbol_table->AddSymbol(
-        "read", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
-    _current_scope->symbol_table->AddSymbol(
-        "write", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
-    _current_scope->symbol_table->AddSymbol(
-        "array_merge", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
-    _current_scope->symbol_table->AddSymbol(
-        "array_push", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
-    _current_scope->symbol_table->AddSymbol(
-        "array_pop", std::make_shared<RnTypeComposite>(RnType::RN_NULL));
-    _current_scope->symbol_table->AddSymbol(
-        "count", std::make_shared<RnTypeComposite>(RnType::RN_INT));
-    _current_scope->symbol_table->AddSymbol(
-        "lload", std::make_shared<RnTypeComposite>(RnType::RN_OBJECT));
+#undef RN_BUILTIN_FUNC
+#define RN_BUILTIN_FUNC(ns, name, retval, argcnt) \
+    _current_scope->symbol_table->AddSymbol(      \
+        #name, std::make_shared<RnTypeComposite>(retval));
+
+    RN_BUILTIN_REGISTRATIONS
 
     _current_scope->pragma_table["bounds"] = "not-enforced";
     _current_scope->pragma_table["typing"] = "not-enforced";
@@ -228,7 +222,7 @@ AstNodePtr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
 
     AdvanceBuffer(1);
     AddCurrentFileInfo(node);
-    node->id = ParseName()->value;
+    node->id = ParseName(true)->value;
     Expect(TokenType::COLON);
     CheckExpected();
     AdvanceBuffer(1);
@@ -249,6 +243,7 @@ AstNodePtr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
             _current_scope->AddLiteral(node->id, node->init_value);
     }
 
+    _current_scope->symbol_table->AddSymbol(node->id, node->type, node);
     return node;
 }
 
@@ -266,10 +261,13 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
     if (Current()->token_type == TokenType::R_PARAN) {
         node->is_closure = true;
     } else {
-        node->id = ParseName()->value;
+        node->id = ParseName(true)->value;
     }
 
     AdvanceBuffer(1);
+
+    auto previousState = _current_state;
+    _current_state = FUNC_DECL_CONTEXT;
 
     // Get the function arguments
     std::map<std::string, std::shared_ptr<RnTypeComposite>> arg_symbols;
@@ -350,7 +348,8 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
     }
 
     _current_scope->symbol_table->AddSymbol(
-        node->id, std::make_shared<RnTypeComposite>(RnType::RN_CALLABLE));
+        node->id, std::make_shared<RnTypeComposite>(RnType::RN_CALLABLE), node);
+    _current_state = previousState;
     return node;
 }
 
@@ -361,7 +360,9 @@ AstNodePtr<ClassDecl> Parser::ParseClassDecl() {
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
 
-    node->id = ParseName()->value;
+    node->id = ParseName(true)->value;
+    _current_scope->symbol_table->AddSymbol(
+        node->id, std::make_shared<RnTypeComposite>(RnType::RN_CALLABLE), node);
     _user_defined_type_map[node->id] =
         std::make_shared<RnTypeComposite>(RnType::RN_OBJECT);
     Expect({TokenType::EXTENDS, TokenType::BEGIN, TokenType::R_BRACE, TokenType::IS});
@@ -930,7 +931,7 @@ AstNodePtr<AliasDecl> Parser::ParseAliasDecl() {
 
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
-    node->AddChild(ParseName());
+    node->AddChild(ParseName(true));
 
     node->alias_type = Peek()->token_type == TokenType::TYPE ? TYPE_ALIAS : NAME_ALIAS;
 
@@ -971,19 +972,38 @@ AstNodePtr<AstNode> Parser::ParseIndexedExpr(const AstNodePtr<AstNode>& expr) {
 }
 
 /*****************************************************************************/
-AstNodePtr<Name> Parser::ParseName() {
+AstNodePtr<Name> Parser::ParseName(bool is_declaration) {
     auto node = AstNode::CreateNode<Name>();
     AddCurrentFileInfo(node);
     node->value += Current()->lexeme;
     AdvanceBuffer(1);
 
-    while (Current()->token_type == TokenType::NAME || Current()->token_type == TokenType::DBL_COLON) {
+    while (Current()->token_type == TokenType::NAME ||
+           Current()->token_type == TokenType::DBL_COLON) {
         node->value += Current()->lexeme;
         AdvanceBuffer(1);
     }
 
+    // We need to add the namespace prefix if it's a module level declaration
     if (!_namespaces.empty() && node->value.find("::") == std::string::npos) {
-        node->value.insert(0, _namespaces.back() + "::");
+        if (is_declaration && _current_state != CLASS_DECL_CONTEXT &&
+            _current_state != FUNC_DECL_CONTEXT) {
+            node->value.insert(0, _namespaces.back() + "::");
+        } else if (!_current_scope->symbol_table->HasSymbolEntry(node->value)) {
+            std::string namespaced_name = _namespaces.back() + "::" + node->value;
+
+            // Look for both the namespaced and non-namespaced name and use whichever if found first
+            auto symbol_table = _current_scope->symbol_table;
+            while (symbol_table) {
+                if (symbol_table->HasSymbolEntry(namespaced_name)) {
+                    node->value = namespaced_name;
+                    break;
+                } else if (symbol_table->HasSymbolEntry(node->value)) {
+                    break;
+                }
+                symbol_table = symbol_table->GetParent();
+            }
+        }
     }
 
     _intern_count++;
@@ -1133,11 +1153,7 @@ void Parser::Parse() {
                     _current_scope->AddSubTree(ParseFlowControlStmt());
                     break;
                 case TokenType::CLASS: {
-                    _previous_state = _current_state;
-                    _current_state = CLASS_DECL_CONTEXT;
                     _current_scope->AddClassDecl(ParseClassDecl());
-                    _current_state = _previous_state;
-                    _previous_state = GENERAL_CONTEXT;
                     break;
                 }
                 case TokenType::R_PARAN:
@@ -1247,7 +1263,7 @@ AstNodePtr<Module> Parser::ParseModule() {
     AdvanceBuffer(1);
     auto node = AstNode::CreateNode<Module>();
     AddCurrentFileInfo(node);
-    node->name = ParseName();
+    node->name = ParseName(true);
     _namespaces.push_back(node->name->value);
 
     Expect(TokenType::IS);
@@ -1292,9 +1308,15 @@ void Parser::ThrowError(const std::string& message) {
 std::shared_ptr<RnTypeComposite> Parser::ParseType() {
     auto basic_type = RnType::StringToType(Current()->lexeme);
     if (basic_type == RnType::RN_UNKNOWN) {
-        if (_user_defined_type_map.find(Current()->lexeme) !=
-            _user_defined_type_map.end()) {
-            auto type_composite = _user_defined_type_map[Current()->lexeme];
+        std::string type_lexeme = Current()->lexeme;
+
+        while (Peek()->token_type == TokenType::DBL_COLON ||
+               Peek()->token_type == TokenType::NAME) {
+            AdvanceBuffer(1);
+            type_lexeme += Current()->lexeme;
+        }
+        if (_user_defined_type_map.find(type_lexeme) != _user_defined_type_map.end()) {
+            auto type_composite = _user_defined_type_map[type_lexeme];
             AdvanceBuffer(1);
             return type_composite;
         }
