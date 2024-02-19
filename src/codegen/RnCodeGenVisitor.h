@@ -72,7 +72,6 @@ public:
     InstructionBlock Visit(ScopeNode* node) override;
     InstructionBlock Visit(Loop* node) override;
     InstructionBlock Visit(ImportStmt* node) override;
-    InstructionBlock Visit(Module* node) override;
     InstructionBlock Visit(FuncDecl* node) override;
     InstructionBlock Visit(FuncCall* node) override;
     InstructionBlock Visit(VarDecl* node) override;

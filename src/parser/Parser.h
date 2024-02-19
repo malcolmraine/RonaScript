@@ -111,7 +111,7 @@ public:
     AstNodePtr<Name> ParseName(bool is_declaration = false);
     AstNodePtr<TryBlock> ParseTryBlock();
     AstNodePtr<CatchBlock> ParseCatchBlock();
-    AstNodePtr<Module> ParseModule();
+    void ParseModule();
     void RevertScope();
     void ConvertScope(const AstNodePtr<ScopeNode>& scope);
     [[nodiscard]] std::string DumpsAst() const;

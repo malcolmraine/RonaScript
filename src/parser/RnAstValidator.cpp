@@ -42,6 +42,7 @@
 #include "../parser/ast/FlowControl.h"
 #include "../parser/ast/FuncCall.h"
 #include "../parser/ast/FuncDecl.h"
+#include "../parser/ast/Name.h"
 #include "../parser/ast/ImportStmt.h"
 #include "../parser/ast/IndexedExpr.h"
 #include "../parser/ast/LiteralValue.h"
@@ -280,8 +281,6 @@ bool RnAstValidator::GeneralVisit(AstNode* node) {
             return Visit(dynamic_cast<ScopeNode*>(node));
         case AST_BREAK_STMT:
             return Visit(dynamic_cast<FlowControl*>(node));
-        case AST_MODULE:
-            return Visit(dynamic_cast<Module*>(node));
         case AST_EXIT_STMT:
             return Visit(dynamic_cast<ExitStmt*>(node));
         case AST_DELETE_STMT:
@@ -334,11 +333,6 @@ bool RnAstValidator::Visit(Loop* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(ImportStmt* node) {
-    return true;
-}
-
-/*****************************************************************************/
-bool RnAstValidator::Visit(Module* node) {
     return true;
 }
 

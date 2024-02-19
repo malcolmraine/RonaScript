@@ -63,7 +63,6 @@
 #include "ast/IndexedExpr.h"
 #include "ast/LiteralValue.h"
 #include "ast/Loop.h"
-#include "ast/Module.h"
 #include "ast/Name.h"
 #include "ast/NodeType.h"
 #include "ast/ReturnStmt.h"
@@ -1065,14 +1064,7 @@ void Parser::ConvertScope(const AstNodePtr<ScopeNode>& scope) {
 
 /*****************************************************************************/
 std::string Parser::DumpsAst() const {
-    std::string output;
-
-    for (auto& [key, module] : ast->modules) {
-        output += module->ToString(true);
-    }
-    output += ast->root->ToString(true);
-
-    return output;
+    return ast->root->ToString(true);
 }
 
 /*****************************************************************************/
@@ -1100,7 +1092,7 @@ void Parser::Parse() {
                     break;
                 }
                 case TokenType::MODULE: {
-                    auto node = ParseModule();
+                    ParseModule();
                     break;
                 }
                 case TokenType::R_BRACE:
@@ -1253,13 +1245,11 @@ AstNodePtr<AstNode> Parser::TransformBinaryExpr(AstNodePtr<BinaryExpr> binary_ex
 }
 
 /*****************************************************************************/
-AstNodePtr<Module> Parser::ParseModule() {
+void Parser::ParseModule() {
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
-    auto node = AstNode::CreateNode<Module>();
-    AddCurrentFileInfo(node);
-    node->name = ParseName(true);
-    _namespaces.push_back(node->name->value);
+    auto name = ParseName(true);
+    _namespaces.push_back(name->value);
 
     Expect(TokenType::IS);
     CheckExpected();
@@ -1269,7 +1259,6 @@ AstNodePtr<Module> Parser::ParseModule() {
     assert(_scope_count == previous_scope_count);
     _namespaces.pop_back();
     AdvanceBuffer(1);
-    return node;
 }
 
 /*****************************************************************************/

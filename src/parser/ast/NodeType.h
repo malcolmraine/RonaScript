@@ -57,7 +57,6 @@ enum NodeType_t {
     AST_SCOPE,
     AST_BREAK_STMT,
     AST_NAME,
-    AST_MODULE,
     AST_DEFAULT,
     AST_EXIT_STMT,
     AST_DELETE_STMT,

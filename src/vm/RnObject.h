@@ -114,16 +114,6 @@ public:
     }
 
     /*************************************************************************/
-    [[nodiscard]] inline bool IsModule() const {
-        return _is_module;
-    }
-
-    /*************************************************************************/
-    inline void SetIsModule(bool flag) {
-        _is_module = flag;
-    }
-
-    /*************************************************************************/
     [[nodiscard]] bool IsClass() const {
         return _is_class;
     }
@@ -138,6 +128,5 @@ public:
 
 private:
     bool _is_marked = false;
-    bool _is_module = false;
     bool _is_class = false;
 };

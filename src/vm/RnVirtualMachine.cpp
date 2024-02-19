@@ -488,33 +488,29 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             RnObject* func_obj = nullptr;
             if (stack_val->GetType() == RnType::RN_OBJECT) {
                 auto class_obj = dynamic_cast<RnClassObject*>(stack_val);
-                if (class_obj->IsModule()) {
-                    throw std::runtime_error("Cannot instantiate module '" +
-                                             class_obj->GetName() + "'");
-                }
-
                 auto instance = dynamic_cast<RnClassObject*>(
                     RnMemoryManager::CreateObject(RnType::RN_OBJECT));
                 GetScope()->GetMemoryGroup()->AddObject(instance);
                 instance->ToObject()->SetParent(class_obj->ToObject());
                 class_obj->CopySymbols(instance->GetScope());
+
                 BindThis(instance->GetScope(), instance);
                 BindCls(instance->GetScope(), class_obj);
+
                 auto constructor_obj = dynamic_cast<RnFunctionObject*>(
                     class_obj->ToObject()->GetObject(_object_construct_key));
                 auto func = constructor_obj->ToFunction();
                 auto func_scope = RnObject::Create(RnType::RN_OBJECT)->ToObject();
                 func_scope->SetParent(instance->GetScope());
+
                 BindThis(func_scope, instance);
                 func->SetScope(func_scope);
-                //                StackPush(constructor_obj);
                 func_obj = constructor_obj;
             } else {
                 func_obj = stack_val;
             }
 
             RnArrayNative args;
-            auto func = func_obj->ToFunction();
             args.reserve(instruction->GetArg1());
             for (uint32_t i = 0; i < instruction->GetArg1(); i++) {
                 args.push_back(StackPop());
@@ -809,7 +805,7 @@ RnIntNative RnVirtualMachine::Run() {
         i_idx++;
     }
     stopwatch.Stop();
-//                Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
+    //                Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
     return StackPop()->ToInt();
 }
 

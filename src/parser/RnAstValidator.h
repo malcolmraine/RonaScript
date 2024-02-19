@@ -57,7 +57,6 @@ class Name;
 class TryBlock;
 class CatchBlock;
 class DeleteStmt;
-class Module;
 class ExitStmt;
 class AttributeAccess;
 class Ast;
@@ -75,7 +74,6 @@ public:
     bool Visit(Loop* node) override;
     bool Visit(LiteralValue* node) override;
     bool Visit(ImportStmt* node) override;
-    bool Visit(Module* node) override;
     bool Visit(FuncDecl* node) override;
     bool Visit(FuncCall* node) override;
     bool Visit(VarDecl* node) override;

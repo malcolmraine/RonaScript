@@ -38,11 +38,13 @@
 #include "../parser/ast/ConditionalStmt.h"
 #include "../parser/ast/DeleteStmt.h"
 #include "../parser/ast/ExitStmt.h"
+#include "../parser/ast/ScopeNode.h"
 #include "../parser/ast/Expr.h"
 #include "../parser/ast/FlowControl.h"
 #include "../parser/ast/FuncCall.h"
 #include "../parser/ast/FuncDecl.h"
 #include "../parser/ast/ImportStmt.h"
+#include "../parser/ast/Name.h"
 #include "../parser/ast/IndexedExpr.h"
 #include "../parser/ast/LiteralValue.h"
 #include "../parser/ast/Loop.h"
@@ -106,8 +108,6 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
             return Visit(dynamic_cast<ScopeNode*>(node));
         case AST_BREAK_STMT:
             return Visit(dynamic_cast<FlowControl*>(node));
-        case AST_MODULE:
-            return Visit(dynamic_cast<Module*>(node));
         case AST_EXIT_STMT:
             return Visit(dynamic_cast<ExitStmt*>(node));
         case AST_DELETE_STMT:
@@ -242,24 +242,9 @@ InstructionBlock RnCodeGenVisitor::Visit(Loop* node) {
 InstructionBlock RnCodeGenVisitor::Visit(ImportStmt* node) {
     InstructionBlock instructions;
     if (node && node->ast) {
-        for (auto& m : node->ast->modules) {
-            InstructionBlock module_instructions = GeneralVisit(m.second);
-            instructions.insert(instructions.end(), module_instructions.begin(),
-                                module_instructions.end());
-        }
         auto root_scope = GeneralVisit(node->ast->root);
         instructions.insert(instructions.end(), root_scope.begin(), root_scope.end());
     }
-    return instructions;
-}
-
-/*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::Visit(Module* node) {
-    InstructionBlock instructions = GeneralVisit(node->scope);
-//    instructions.insert(
-//        instructions.begin(),
-//        new RnInstruction(OP_MAKE_MODULE, RnConstStore::InternValue(node->name->value),
-//                          instructions.size()));
     return instructions;
 }
 
