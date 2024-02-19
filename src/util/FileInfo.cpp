@@ -92,13 +92,13 @@ void FileInfo::IncrementCharNum() {
 /*****************************************************************************/
 std::string FileInfo::GetContextualBlock(bool formatted) {
     size_t line_start_index = _previous_line_start > 0 ? (_previous_line_start - 1) : 0;
-    std::string block = _line_prefix + ">" + GetContextualBlockTabStr() +
+    std::string block = _line_prefix + " " + GetContextualBlockTabStr() +
                         GetLineAt(line_start_index, true, false) + "\n";
     std::string line;
 
     if (std::getline(_file_obj, line, '\r')) {
         if (formatted) {
-            block += " " + GetFormattedLine(line) + "\n";
+            block += ">" + GetFormattedLine(line) + "\n";
         } else {
             block += " " + line + "\n";
         }
