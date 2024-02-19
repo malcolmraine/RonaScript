@@ -756,11 +756,20 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_LOAD_ATTR: {
-            auto object = dynamic_cast<RnClassObject*>(StackPop());
-            auto scope = object->GetScope();
+            auto stack_obj = StackPop();
+            assert(stack_obj);
+            auto instance = dynamic_cast<RnClassObject*>(stack_obj);
+            if (!instance) {
+                throw std::runtime_error("Cannot get attribute from type '" +
+                                         RnType::TypeToString(stack_obj->GetType()) +
+                                         "'");
+            }
+
+            auto scope = instance->GetScope();
             if (!scope) {
                 throw std::runtime_error("Cannot get attribute from null object.");
             }
+
             RnObject* result = nullptr;
             if (scope->GetSymbolTable()->SymbolExists(instruction->GetArg1(), false)) {
                 result = scope->GetObject(instruction->GetArg1());
@@ -780,7 +789,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             // Otherwise, the user will need to bind the function
             if (result->GetType() == RnType::RN_FUNCTION) {
                 auto func = dynamic_cast<RnFunctionObject*>(result)->GetData();
-                BindThis(func->GetScope(), object);
+                BindThis(func->GetScope(), instance);
             }
             break;
         }
