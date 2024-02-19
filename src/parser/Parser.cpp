@@ -390,7 +390,7 @@ AstNodePtr<ClassDecl> Parser::ParseClassDecl() {
     _current_state = _previous_state;
 
     if (!node->scope->symbol_table->HasSymbolEntry("construct")) {
-        throw std::runtime_error("No constructor found for class '" + node->id + "'");
+        ThrowError("No constructor found for class '" + node->id + "'");
     }
     return node;
 }
@@ -495,17 +495,6 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         auto node = ParseUnaryExpr();
         result_stack.push_back(node);
     }
-
-    //        auto node = AstNode::CreateNode<UnaryExpr>();
-    //        node->op = Current()->lexeme;
-    //        AdvanceBuffer(1);
-    //        if (Current()->token_type == TokenType::R_PARAN) {
-    //            node->expr = ParseExpr(TokenType::L_PARAN);
-    //        } else {
-    //            node->expr = GetExprComponent();
-    //        }
-    //        result_stack.push_back(node);
-    //    }
 
     bool break_next_iteration = false;
     MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)

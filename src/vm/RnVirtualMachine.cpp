@@ -476,8 +476,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 throw std::runtime_error("Symbol does not exist: " +
                                          RnConstStore::GetInternedString(key));
             }
-            PREDICT_OPCODE3(OP_LOAD_VALUE, OP_LOAD_LITERAL, OP_CALL)
-            PREDICT_OPCODE(OP_STORE)
+            PREDICT_OPCODE3(OP_LOAD_VALUE, OP_LOAD_LITERAL, OP_STORE)
             break;
         }
         case OP_LOAD_NULL: {
@@ -485,7 +484,6 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_CALL: {
-            PREDICTION_TARGET(OP_CALL)
             auto stack_val = StackPop();
             RnObject* func_obj = nullptr;
             if (stack_val->GetType() == RnType::RN_OBJECT) {
@@ -811,7 +809,7 @@ RnIntNative RnVirtualMachine::Run() {
         i_idx++;
     }
     stopwatch.Stop();
-    //            Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
+//                Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
     return StackPop()->ToInt();
 }
 
