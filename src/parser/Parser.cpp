@@ -423,9 +423,10 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
         }
     } else if (Current()->IsLiteral()) {
         AdvanceBuffer(1);
+        node = AstNode::CreateNode<LiteralValue>();
+        AddCurrentFileInfo(node);
         switch (Lookback()->token_type) {
             case TokenType::INT_LITERAL: {
-                node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_INT_LITERAL;
                 AstNode::CastNode<LiteralValue>(node)->data =
                     static_cast<RnIntNative>(std::stol(Lookback()->lexeme));
@@ -433,7 +434,6 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
                 break;
             }
             case TokenType::FLOAT_LITERAL: {
-                node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_FLOAT_LITERAL;
                 AstNode::CastNode<LiteralValue>(node)->data =
                     static_cast<RnFloatNative>(std::stod(Lookback()->lexeme));
@@ -441,14 +441,12 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
                 break;
             }
             case TokenType::STRING_LITERAL: {
-                node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_STRING_LITERAL;
                 AstNode::CastNode<LiteralValue>(node)->data = Lookback()->lexeme;
                 _intern_count++;
                 break;
             }
             case TokenType::BOOL_LITERAL: {
-                node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_BOOL_LITERAL;
                 AstNode::CastNode<LiteralValue>(node)->data =
                     Lookback()->lexeme == "true";
@@ -456,7 +454,6 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
                 break;
             }
             case TokenType::NULL_LITERAL: {
-                node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_NULL_LITERAL;
                 break;
             }
@@ -468,7 +465,7 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
     if (!node) {
         ThrowError("Failed to parse expression component");
     }
-    return AddCurrentFileInfo(node);
+    return node;
 }
 
 /*****************************************************************************/
@@ -494,19 +491,21 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         }
     };
 
-    // Grab any immediate unary operators and apply them to the closest
-    // expression. This may need some fine-tuning.
     if (Current()->IsUnaryOp()) {
-        auto node = AstNode::CreateNode<UnaryExpr>();
-        node->op = Current()->lexeme;
-        AdvanceBuffer(1);
-        if (Current()->token_type == TokenType::R_PARAN) {
-            node->expr = ParseExpr(TokenType::L_PARAN);
-        } else {
-            node->expr = GetExprComponent();
-        }
+        auto node = ParseUnaryExpr();
         result_stack.push_back(node);
     }
+
+    //        auto node = AstNode::CreateNode<UnaryExpr>();
+    //        node->op = Current()->lexeme;
+    //        AdvanceBuffer(1);
+    //        if (Current()->token_type == TokenType::R_PARAN) {
+    //            node->expr = ParseExpr(TokenType::L_PARAN);
+    //        } else {
+    //            node->expr = GetExprComponent();
+    //        }
+    //        result_stack.push_back(node);
+    //    }
 
     bool break_next_iteration = false;
     MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
@@ -639,13 +638,20 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
 /*****************************************************************************/
 AstNodePtr<UnaryExpr> Parser::ParseUnaryExpr(const AstNodePtr<AstNode>& expr) {
     auto node = AstNode::CreateNode<UnaryExpr>();
+    AddCurrentFileInfo(node);
     node->op = Current()->lexeme;
     AdvanceBuffer(1);
 
     if (expr != nullptr) {
         node->expr = expr;
+    } else if (Current()->IsUnaryOp()) {
+        node->expr = ParseUnaryExpr();
     } else {
-        node->expr = ParseExpr();
+        if (Current()->token_type == TokenType::R_PARAN) {
+            node->expr = ParseExpr(TokenType::L_PARAN);
+        } else {
+            node->expr = GetExprComponent();
+        }
     }
 
     return node;
