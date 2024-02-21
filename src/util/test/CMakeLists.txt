@@ -8,6 +8,6 @@
 ###############################################################################
 
 file(GLOB source_files ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
-file(GLOB include_files ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
+file(GLOB include_files ${CMAKE_CURRENT_LIST_DIR}/*.h)
 list(APPEND RN_SOURCES_TEST_UTIL_STRING ${source_files})
 list(APPEND RN_INCLUDES_TEST_UTIL_STRING ${include_files})
