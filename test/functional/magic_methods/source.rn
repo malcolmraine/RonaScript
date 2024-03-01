@@ -1,0 +1,203 @@
+// Magic Methods
+
+/*****************************************************************************/
+/*****************************************************************************/
+class Test is
+begin
+    var data: any = 0.0;
+
+    /*************************************************************************/
+    routine construct(var x: any): object
+    begin
+        this->data = x;
+        return this;
+    end
+
+    /*************************************************************************/
+    routine __str(): string
+    begin
+        return to_string(this->data);
+    end
+
+    /*************************************************************************/
+    routine __int(): int
+    begin
+        return to_int(this->data);
+    end
+
+    /*************************************************************************/
+    routine __float(): float
+    begin
+        return to_float(this->data);
+    end
+
+    /*************************************************************************/
+    routine __array(): array
+    begin
+        return [this->data];
+    end
+
+    /*************************************************************************/
+    routine __bool(): bool
+    begin
+        return to_bool(this->data);
+    end
+
+    /*************************************************************************/
+    routine __plus(var x: any): int
+    begin
+        if is_object(x):
+            return Test(this->data + x->data);
+        end
+        return Test(this->data + x);
+    end
+
+    /*************************************************************************/
+    routine __minus(var x: any): int
+    begin
+        return Test(this->data - x);
+    end
+
+    /*************************************************************************/
+    routine __mod(var x: any): int
+    begin
+        return Test(to_int(this->data) % x);
+    end
+
+    /*************************************************************************/
+    routine __eq(var x: any): bool
+    begin
+        return Test(this->data == x);
+    end
+
+    /*************************************************************************/
+    routine __neq(var x: any): bool
+    begin
+        return Test(this->data != x);
+    end
+
+    /*************************************************************************/
+    routine __div(var x: any): float
+    begin
+        return Test(this->data / x);
+    end
+
+    /*************************************************************************/
+    routine __or(var x: any): bool
+    begin
+        return Test(this->data or x);
+    end
+
+    /*************************************************************************/
+    routine __and(var x: any): bool
+    begin
+        return Test(this->data and x);
+    end
+
+    /*************************************************************************/
+    routine __xor(var x: any): int
+    begin
+        return Test(this->data xor x);
+    end
+
+    /*************************************************************************/
+    routine __gt(var x: any): bool
+    begin
+        return Test(this->data > x);
+    end
+
+    /*************************************************************************/
+    routine __lt(var x: any): bool
+    begin
+        return Test(this->data < x);
+    end
+
+    /*************************************************************************/
+    routine __geq(var x: any): bool
+    begin
+        return Test(this->data >= x);
+    end
+
+    /*************************************************************************/
+    routine __leq(var x: any): bool
+    begin
+        return Test(this->data <= x);
+    end
+
+    /*************************************************************************/
+    routine __rshift(var x: any): int
+    begin
+        return Test(to_int(this->data) >> x);
+    end
+
+    /*************************************************************************/
+    routine __lshift(var x: any): int
+    begin
+        return Test(to_int(this->data) << x);
+    end
+
+    /*************************************************************************/
+    routine __mul(var x: any): float
+    begin
+        return Test(this->data * x);
+    end
+
+    /*************************************************************************/
+    routine __binand(var x: any): int
+    begin
+        return Test(to_int(this->data) & x);
+    end
+
+    /*************************************************************************/
+    routine __binor(var x: any): int
+    begin
+        return Test(to_int(this->data) | x);
+    end
+
+    /*************************************************************************/
+    routine __getindex(var x: any): any
+    begin
+        return Test(98);
+    end
+
+    /*************************************************************************/
+    routine __in(var x: any): bool
+    begin
+        return (x in this->data);
+    end
+end
+
+print(to_string(Test(33.5))); // "33.5"
+print(to_float(Test(56))); // 56.0
+print(to_int(Test(22.0023882))); // 22
+print(to_bool(Test(1))); // true
+print(to_bool(Test(0))); // false
+print(Test(1) + 1); // 2
+print(Test(1) + Test(1)); // 2
+print(Test(7) * 0.5); // 3.5
+print(Test(2) << 8); // 512
+print(Test(8) >> 2); // 2
+print(to_array(Test(55)));
+print(Test(1) | 0);
+print(Test(0) | 0);
+print(Test(1) & 1);
+print(Test(1) & 0);
+print(Test(true) && false);
+print(Test(true) && true);
+print(Test(true) || false);
+print(Test(true) || true);
+print(Test(false) || false);
+print(Test([1, 2, 3, 4])[3]);
+print(5 in Test([1, 2, 3, 4, 5, 6]));
+print(Test(1) == 1);
+print(Test(1) == 0);
+print(Test(0.00004) == 0.1);
+print(Test(0.00004) == 0.00004);
+print(Test("one") != 1);
+print(Test("two") == "two");
+print(Test(9) > 5);
+print(Test(8) < 19);
+print(Test(8) <= 8);
+print(Test(8) <= 9);
+print(Test(8) >= 8);
+print(Test(8) >= 5);
