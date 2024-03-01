@@ -86,6 +86,7 @@ typedef enum : uint8_t {
     OP_EXIT,
     OP_INDEX_ACCESS,
     OP_CHECK_MEMBERSHIP,
+    OP_IMPORT,
 } RnOpCode;
 
 RnStringNative GetOpCodeAsString(RnOpCode opcode);

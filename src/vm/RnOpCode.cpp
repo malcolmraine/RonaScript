@@ -141,6 +141,8 @@ RnStringNative GetOpCodeAsString(RnOpCode opcode) {
             return "OP_CHECK_MEMBERSHIP";
         case OP_MAKE_CLOSURE:
             return "OP_MAKE_CLOSURE";
+        case OP_IMPORT:
+            return "OP_IMPORT";
         default:
             return "UNKNOWN";
     }
@@ -192,6 +194,10 @@ RnOpCode GetOpCodeFromOperator(const RnStringNative& op) {
         return OP_BINARY_MOD;
     } else if (op == "in") {
         return OP_CHECK_MEMBERSHIP;
+    } else if (op == "<<") {
+        return OP_BINARY_LSH;
+    } else if (op == ">>") {
+        return OP_BINARY_RSH;
     } else {
         return OP_NOP;
     }
