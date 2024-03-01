@@ -45,7 +45,7 @@ public:
     RnObject* operator/(RnObject* obj) override;
 
     RnObject* operator|(RnObject* obj) override {
-        return RnObject::Create(static_cast<bool>(_data.i_data | obj->ToInt()));
+        return RnObject::Create(static_cast<RnIntNative>(_data.i_data | obj->ToInt()));
     }
 
     RnObject* operator||(RnObject* obj) override {
@@ -57,7 +57,7 @@ public:
     }
 
     RnObject* operator&(RnObject* obj) override {
-        return RnObject::Create(static_cast<bool>(_data.i_data & obj->ToInt()));
+        return RnObject::Create(static_cast<RnIntNative>(_data.i_data & obj->ToInt()));
     }
 
     RnObject* operator>(RnObject* obj) override {
