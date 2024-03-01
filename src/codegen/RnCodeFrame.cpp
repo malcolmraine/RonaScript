@@ -23,10 +23,7 @@ RnCodeFrame::RnCodeFrame() {
 }
 
 /*****************************************************************************/
-RnCodeFrame::~RnCodeFrame() {
-    delete[] _instructions;
-    delete[] _subframes;
-}
+RnCodeFrame::~RnCodeFrame() {}
 
 /*****************************************************************************/
 RnCodeFrame* RnCodeFrame::CreateFromFile(const std::string& file) {
@@ -42,27 +39,52 @@ RnCodeFrame* RnCodeFrame::CreateEmpty() {
 }
 
 /*****************************************************************************/
-RnCodeFrame* RnCodeFrame::GetSubframe(uint32_t index) const {
-    assert(index < _subframe_cnt);
-    auto frame = _subframes + index;
+RnCodeFrame* RnCodeFrame::GetSubframe(uint32_t index, LOAD_POLICY load_policy) const {
+    assert(index <= _subframe_cnt);
+    auto frame = const_cast<RnCodeFrame*>(_subframes.data() + index);
     assert(frame);
+
+    switch (load_policy) {
+        case LOAD_POLICY::LAZY:
+            // Load only the requested frame
+            if (frame->GetIsExternal() && !frame->_is_loaded) {
+                frame->ReadFromFile(frame->GetModulePath());
+            }
+            frame->_is_loaded = true;
+            break;
+        case LOAD_POLICY::EAGER:
+            // Load the requested frame and all its subframes immediately
+            if (frame->GetIsExternal() && !frame->_is_loaded) {
+                frame->ReadFromFile(frame->GetModulePath());
+            }
+            for (uint32_t i = 0; i < frame->GetSubframeCount(); i++) {
+                frame->GetSubframe(i, load_policy);
+            }
+            frame->_is_loaded = true;
+            break;
+        case LOAD_POLICY::NONE:
+            // Get the requested subframe without loading
+            break;
+        default:
+            assert(false);
+            break;
+    }
+
     return frame;
 }
 
-/*****************************************************************************/
-RnInstruction* RnCodeFrame::GetInstruction(uint32_t index) const {
-    assert(index < _instruction_cnt);
-    auto instruction = _instructions + index;
-    assert(instruction);
-    return instruction;
-}
+///*****************************************************************************/
+//RnInstruction* RnCodeFrame::GetInstruction(uint32_t index) const {
+//    assert(index < _instruction_cnt);
+//    auto instruction = const_cast<RnInstruction*>(_instructions.data() + index);
+//    assert(instruction);
+//    return instruction;
+//}
 
 /*****************************************************************************/
 RnCodeFrame* RnCodeFrame::AddSubframe() {
-    auto block = static_cast<RnCodeFrame*>(
-        std::realloc(_subframes, sizeof(RnCodeFrame) * (_subframe_cnt + 1)));
-    _subframes = block;
-    auto frame = new (_subframes + _subframe_cnt) RnCodeFrame();
+    _subframes.emplace_back();
+    auto frame = const_cast<RnCodeFrame*>(_subframes.data() + _subframe_cnt);
     _subframe_cnt += 1;
     return frame;
 }
@@ -71,13 +93,10 @@ RnCodeFrame* RnCodeFrame::AddSubframe() {
 RnInstruction* RnCodeFrame::AddInstruction(RnOpCode opcode, RnInstructionArg arg1,
                                            RnInstructionArg arg2,
                                            RnInstructionArg arg3) {
-    auto block = static_cast<RnInstruction*>(
-        std::realloc(_instructions, sizeof(RnInstruction) * (_instruction_cnt + 1)));
-    _instructions = block;
+    _instructions.emplace_back(opcode, arg1, arg2, arg3);
     auto instruction =
-        new (_instructions + _instruction_cnt) RnInstruction(opcode, arg1, arg2, arg3);
+        const_cast<RnInstruction*>(_instructions.data() + _instruction_cnt);
     _instruction_cnt += 1;
-
     return instruction;
 }
 
@@ -85,20 +104,19 @@ RnInstruction* RnCodeFrame::AddInstruction(RnOpCode opcode, RnInstructionArg arg
 /*****************************************************************************/
 void RnCodeFrame::ReadFrame(std::ifstream& fs, RnCodeFrame* frame) {
     delete frame->_module_path;
-    delete[] frame->_instructions;
-    delete[] frame->_subframes;
     frame->_module_path = nullptr;
-    frame->_instructions = nullptr;
-    frame->_subframes = nullptr;
+    frame->_instructions.clear();
+    frame->_subframes.clear();
     frame->_int_width = 0;
     frame->_bool_width = 0;
     frame->_float_width = 0;
     frame->_module_path_length = 0;
     frame->_instruction_cnt = 0;
     frame->_subframe_cnt = 0;
+    frame->_is_external = 0;
 
     fs.read(reinterpret_cast<char*>(&frame->_timestamp), sizeof(frame->_timestamp));
-    fs.read(reinterpret_cast<char*>(&frame->_int_width), sizeof(frame->_int_width));
+    fs.read(reinterpret_cast<char*>(&frame->_is_external), sizeof(frame->_is_external));
     fs.read(reinterpret_cast<char*>(&frame->_float_width), sizeof(frame->_float_width));
     fs.read(reinterpret_cast<char*>(&frame->_bool_width), sizeof(frame->_bool_width));
     fs.read(reinterpret_cast<char*>(&frame->_module_path_length),
@@ -113,6 +131,7 @@ void RnCodeFrame::ReadFrame(std::ifstream& fs, RnCodeFrame* frame) {
 
     uint32_t instruction_count = 0;
     fs.read(reinterpret_cast<char*>(&instruction_count), sizeof(instruction_count));
+    frame->_instructions.reserve(instruction_count);
 
     for (uint32_t i = 0; i < instruction_count; i++) {
         RnOpCode opcode = OP_NOP;
@@ -123,38 +142,38 @@ void RnCodeFrame::ReadFrame(std::ifstream& fs, RnCodeFrame* frame) {
         fs.read(reinterpret_cast<char*>(&arg1), RN_INSTRUCTION_ARG_WIDTH);
         fs.read(reinterpret_cast<char*>(&arg2), RN_INSTRUCTION_ARG_WIDTH);
         fs.read(reinterpret_cast<char*>(&arg3), RN_INSTRUCTION_ARG_WIDTH);
-        auto instruction = frame->AddInstruction(opcode, arg1, arg2, arg3);
+        frame->AddInstruction(opcode, arg1, arg2, arg3);
     }
+
+    frame->_instructions.reserve(subframe_count);
+    for (uint32_t i = 0; i < subframe_count; i++) {
+        auto subframe = frame->AddSubframe();
+        ReadFrame(fs, subframe);
+    }
+    assert(frame->_subframe_cnt == subframe_count);
 
     char* frameEndMarker = new char[std::string(CODEFRAME_END_MARKER).size()];
     fs.read(frameEndMarker, 17);
     if (frameEndMarker != std::string(CODEFRAME_END_MARKER)) {
         throw std::runtime_error("Failed to read code frame: no end marker found.");
     }
-
-    for (uint32_t i = 0; i < subframe_count; i++) {
-        auto subframe = frame->AddSubframe();
-        ReadFrame(fs, subframe);
-    }
-    assert(frame->_subframe_cnt == subframe_count);
 }
 
 /*****************************************************************************/
 void RnCodeFrame::WriteFrame(std::ofstream& fs, RnCodeFrame* frame) {
-    fs.write(reinterpret_cast<const char*>(&frame->_timestamp),
-             sizeof(frame->_timestamp));
-    fs.write(reinterpret_cast<const char*>(&frame->_int_width),
-             sizeof(frame->_int_width));
-    fs.write(reinterpret_cast<const char*>(&frame->_float_width),
+    fs.write(reinterpret_cast<char*>(&frame->_timestamp), sizeof(frame->_timestamp));
+    fs.write(reinterpret_cast<char*>(&frame->_is_external),
+             sizeof(frame->_is_external));
+    fs.write(reinterpret_cast<char*>(&frame->_int_width), sizeof(frame->_int_width));
+    fs.write(reinterpret_cast<char*>(&frame->_float_width),
              sizeof(frame->_float_width));
-    fs.write(reinterpret_cast<const char*>(&frame->_bool_width),
-             sizeof(frame->_bool_width));
-    fs.write(reinterpret_cast<const char*>(&frame->_module_path_length),
+    fs.write(reinterpret_cast<char*>(&frame->_bool_width), sizeof(frame->_bool_width));
+    fs.write(reinterpret_cast<char*>(&frame->_module_path_length),
              sizeof(frame->_module_path_length));
     fs.write(frame->_module_path, frame->_module_path_length);
-    fs.write(reinterpret_cast<const char*>(&frame->_subframe_cnt),
+    fs.write(reinterpret_cast<char*>(&frame->_subframe_cnt),
              sizeof(frame->_subframe_cnt));
-    fs.write(reinterpret_cast<const char*>(&frame->_instruction_cnt),
+    fs.write(reinterpret_cast<char*>(&frame->_instruction_cnt),
              sizeof(_instruction_cnt));
 
     for (uint32_t i = 0; i < frame->_instruction_cnt; i++) {
@@ -169,13 +188,13 @@ void RnCodeFrame::WriteFrame(std::ofstream& fs, RnCodeFrame* frame) {
         fs.write(reinterpret_cast<char*>(&arg3), RN_INSTRUCTION_ARG_WIDTH);
     }
 
-    std::string frameEndMarker = CODEFRAME_END_MARKER;
-    fs.write(frameEndMarker.c_str(),
-             static_cast<std::streamsize>(frameEndMarker.size()));
-
     for (uint32_t i = 0; i < frame->_subframe_cnt; i++) {
         WriteFrame(fs, frame->GetSubframe(i));
     }
+
+    std::string frameEndMarker = CODEFRAME_END_MARKER;
+    fs.write(frameEndMarker.c_str(),
+             static_cast<std::streamsize>(frameEndMarker.size()));
 }
 
 /*****************************************************************************/
@@ -207,6 +226,7 @@ void RnCodeFrame::ReadFromFile(const std::string& file) {
     ReadFrame(fs, this);
 }
 
+/*****************************************************************************/
 std::string RnCodeFrame::ToString() const {
     std::string str;
     str += std::string(80, '=') + "\n";
@@ -239,4 +259,14 @@ std::string RnCodeFrame::ToString() const {
     str += "END Code Frame\n";
     str += std::string(80, '=') + "\n";
     return str;
+}
+
+/*****************************************************************************/
+void RnCodeFrame::PrependInstructionBlock(const std::vector<RnInstruction>& block) {
+    _instructions.insert(_instructions.begin(), block.begin(), block.end());
+}
+
+/*****************************************************************************/
+void RnCodeFrame::AppendInstructionBlock(const std::vector<RnInstruction>& block) {
+    _instructions.insert(_instructions.end(), block.begin(), block.end());
 }

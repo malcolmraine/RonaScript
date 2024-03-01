@@ -32,10 +32,11 @@
 #include "../common/RnCompilerPhase.h"
 #include "../common/RnInternment.h"
 #include "RnCodeGenVisitor.h"
+#include "RnCodeFrame.h"
 
 class Ast;
 
-class RnCodeGenerator : public RnCompilerPhase<Ast*, InstructionBlock> {
+class RnCodeGenerator : public RnCompilerPhase<Ast*, RnCodeFrame*> {
 public:
     RnCodeGenerator();
     ~RnCodeGenerator() override;

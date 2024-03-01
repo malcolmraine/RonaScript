@@ -38,21 +38,22 @@
 #include "../parser/ast/ConditionalStmt.h"
 #include "../parser/ast/DeleteStmt.h"
 #include "../parser/ast/ExitStmt.h"
-#include "../parser/ast/ScopeNode.h"
 #include "../parser/ast/Expr.h"
 #include "../parser/ast/FlowControl.h"
 #include "../parser/ast/FuncCall.h"
 #include "../parser/ast/FuncDecl.h"
 #include "../parser/ast/ImportStmt.h"
-#include "../parser/ast/Name.h"
 #include "../parser/ast/IndexedExpr.h"
 #include "../parser/ast/LiteralValue.h"
 #include "../parser/ast/Loop.h"
+#include "../parser/ast/Name.h"
 #include "../parser/ast/ReturnStmt.h"
+#include "../parser/ast/ScopeNode.h"
 #include "../parser/ast/TryBlock.h"
 #include "../parser/ast/UnaryExpr.h"
 #include "../parser/ast/VarDecl.h"
 #include "../vm/RnObject.h"
+#include "RnCodeFrame.h"
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
@@ -245,7 +246,19 @@ InstructionBlock RnCodeGenVisitor::Visit(ImportStmt* node) {
         auto root_scope = GeneralVisit(node->ast->root);
         instructions.insert(instructions.end(), root_scope.begin(), root_scope.end());
     }
-    return instructions;
+
+    _current_frame->AddInstruction(OP_IMPORT, _current_frame->GetSubframeCount());
+    auto frame = _current_frame->AddSubframe();
+    frame->SetModulePath(node->GetFullSourceFile());
+    auto previous_frame = _current_frame;
+    _current_frame = frame;
+    for (auto instruction : instructions) {
+        _current_frame->AddInstruction(instruction->GetOpcode(), instruction->GetArg1(),
+                                       instruction->GetArg2(), instruction->GetArg3());
+    }
+    _current_frame = previous_frame;
+
+    return {};
 }
 
 /*****************************************************************************/
@@ -370,8 +383,7 @@ InstructionBlock RnCodeGenVisitor::Visit(ExitStmt* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ReturnStmt* node) {
     InstructionBlock instructions = GeneralVisit(node->expr);
-    instructions.emplace_back(new RnInstruction(OP_RETURN));
-
+    instructions.push_back(new RnInstruction(OP_RETURN));
     return instructions;
 }
 
@@ -407,16 +419,16 @@ InstructionBlock RnCodeGenVisitor::Visit(ConditionalStmt* node) {
 
     instructions.insert(instructions.end(), test.begin(), test.end());
     auto jumpf = new RnInstruction(OP_JUMPF_IF, consequent.size());
+
     instructions.push_back(jumpf);
     instructions.insert(instructions.end(), consequent.begin(), consequent.end());
 
     if (!alternative.empty()) {
         jumpf->SetArg1(jumpf->GetArg1() + 1);
         WrapContext(alternative);
-        instructions.emplace_back(new RnInstruction(OP_JUMPF, alternative.size()));
+        instructions.push_back(new RnInstruction(OP_JUMPF, alternative.size()));
         instructions.insert(instructions.end(), alternative.begin(), alternative.end());
     }
-
     return instructions;
 }
 

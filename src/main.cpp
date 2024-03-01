@@ -17,6 +17,10 @@
 #include "vm/RnObject.h"
 #include "vm/RnVirtualMachine.h"
 
+#include "codegen/RnCodeFrame.h"
+#include "codegen/RnInstruction.h"
+#include "vm/RnOpCode.h"
+
 // @formatter:off
 #include "common/RnBuildInfo.h"
 
@@ -71,41 +75,20 @@ void Compile(const std::filesystem::path& infile, RnCodeGenerator& code_generato
         code_generator.Run();
         stopwatch.Stop();
         if (arg_parser.IsSet("-p")) {
-            size_t index = 0;
-            for (auto& instruction : code_generator.GetResult()) {
-                Log::INFO(String::Pad(std::to_string(index++), 6) +
-                          instruction->ToString());
-            }
+            Log::INFO(code_generator.GetResult()->ToString());
         }
-        //        Log::INFO("CodeGen Duration: " + std::to_string(stopwatch.Duration()));
     } catch (const std::exception& e) {
         Log::ERROR("Codegen Error: " + std::string(e.what()));
         return;
     }
 }
 
-/**
- * @brief Runs the given instructions.
- *
- * This function executes a series of instructions provided in the `InstructionBlock`.
- * It first checks if the `instructions` vector is empty, and if so, it simply returns.
- * Otherwise, it gets an instance of the `RnVirtualMachine` using the `GetInstance` method.
- * It then loads the instructions into the virtual machine, creates an argument vector,
- * fills it with program arguments obtained from `arg_parser`, and sets it using the `SetArgv` method.
- * The virtual machine is then executed by calling the `Run` method on it and the exit
- * code is stored in a variable. If any exceptions occur during the execution, a runtime
- * error message is logged using the `ERROR` method. Finally, the instance of the virtual
- * machine is deleted.
- *
- * @param instructions The block of instructions to be executed.
- */
-void Run(const InstructionBlock& instructions) {
-    if (instructions.empty()) {
+void Run(RnCodeFrame* frame) {
+    if (!frame || !frame->GetInstructionCount()) {
         return;
     }
     auto vm = RnVirtualMachine::GetInstance();
     try {
-        vm->LoadInstructions(instructions);
         RnArrayNative argv;
         auto argv_strings = arg_parser.GetProgramArguments();
         argv.reserve(argv_strings.size());
@@ -113,34 +96,12 @@ void Run(const InstructionBlock& instructions) {
             argv_strings.begin(), argv_strings.end(), std::back_inserter(argv),
             [](const std::string& argument) { return RnObject::Create(argument); });
         RnConfig::SetArgv(argv);
-        RnIntNative exit_code = vm->Run();
+        RnIntNative exit_code = vm->ExecuteCodeFrame(frame, vm->GetScope());
     } catch (const std::exception& e) {
         Log::ERROR("Runtime Error: " + std::string(e.what()));
         return;
     }
     delete vm;
-}
-
-/**
- * @brief Writes the given set of instructions to a binary file.
- *
- * This function takes a file path and a set of instructions and writes them to a binary file.
- * It creates a `BinaryWriter` object with the provided file path, sets the instructions using
- * the `SetInstructions` method, and then calls the `Write` method to write the instructions to the file.
- *
- * @param outfile The file path to write the instructions to.
- * @param instructions The set of instructions to write.
- */
-void Write(const std::filesystem::path& outfile, const InstructionBlock& instructions) {
-    BinaryWriter writer(std::filesystem::absolute(outfile));
-    writer.SetInstructions(instructions);
-    writer.Write();
-}
-
-/*****************************************************************************/
-void Read(const std::filesystem::path& infile, InstructionBlock& instructions) {
-    BinaryReader reader(std::filesystem::absolute(infile));
-    reader.Read(instructions);
 }
 
 /*****************************************************************************/
@@ -186,16 +147,12 @@ void Repl() {
                 parser.Run();
 
                 code_generator.Generate(parser.ast.get());
-                vm->LoadInstructions(code_generator.GetResult());
-                vm->Run();
+                vm->ExecuteCodeFrame(code_generator.GetResult(), vm->GetScope());
                 parser.Reset();
                 lexer.Reset();
             } catch (const std::exception& e) {
                 Log::ERROR(e.what());
             }
-            //            if (!vm->GetStack().empty()) {
-            //                std::cout << "\n" << vm->GetStack().back()->ToString() << std::endl;
-            //            }
         }
     }
 }
@@ -206,9 +163,8 @@ void RonaScriptMain(int argc, char* argv[]) {
     arg_parser.SetMainDescription(
         "Usage: RonaScript [options...] <file> [arguments...]");
     arg_parser.AddArgument("<file>", {}, "Input file (*.rn | *.rnc)");
-    arg_parser.AddArgument("-c", {}, "Compile to *.rnc file");
     arg_parser.AddArgument("--repl", {}, "REPL");
-    arg_parser.AddArgument("-r", {"--norun"}, "Compile to *.rnc file without running");
+    arg_parser.AddArgument("-c", {"--compile"}, "Compile to *.rnc file without running");
     arg_parser.AddArgument("--no-validation", {}, "Don't perform AST validation");
     arg_parser.AddArgument("-a", {"--print-ast"}, "Print AST after parsing");
     arg_parser.AddArgument("-t", {"--print-tokens"}, "Print tokens after lexing");
@@ -241,24 +197,20 @@ void RonaScriptMain(int argc, char* argv[]) {
         return;
     }
 
-    InstructionBlock instructions;
-
     if (file.extension() == ".rnc") {
-        Read(file, instructions);
-        //        PrintInstructions(instructions);
-        Run(instructions);
+        auto frame = RnCodeFrame::CreateFromFile(file.string());
+        Run(frame);
         return;
     } else {
         RnCodeGenerator code_generator;
         Compile(file, code_generator);
-        instructions = code_generator.GetResult();
-        if (arg_parser.IsSet("-c")) {
-            Write(std::filesystem::path(file.string() + "c"), instructions);
+        auto frame = code_generator.GetResult();
+
+        if (arg_parser.IsSet("--compile")) {
+            frame->WriteToFile("matrix_test.rnc");
+        } else {
+            Run(frame);
         }
-        if (!arg_parser.IsSet("-r")) {
-            Run(instructions);
-        }
-        //        PrintInstructions(instructions);
     }
 }
 

@@ -177,43 +177,43 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
 // This is exactly how cpython handles opcode prediction, so all credit to the
 // authors there
 #ifdef ENABLE_OPCODE_PREDICTION
-#define PREDICT_OPCODE(op)                                 \
+#define PREDICT_OPCODE(op)                                   \
+    {                                                        \
+        if (GET_INSTRUCTION(index + 1)->GetOpcode() == op) { \
+            instruction = GET_INSTRUCTION(++index);          \
+            goto TARGET_##op;                                \
+        }                                                    \
+    }
+
+#define PREDICT_OPCODE2(op1, op2)                          \
     {                                                      \
-        if (_instructions[index + 1]->GetOpcode() == op) { \
-            instruction = _instructions[++index];          \
-            goto TARGET_##op;                              \
+        switch (GET_INSTRUCTION(index + 1)->GetOpcode()) { \
+            case op1:                                      \
+                instruction = GET_INSTRUCTION(++index);    \
+                goto TARGET_##op1;                         \
+            case op2:                                      \
+                instruction = GET_INSTRUCTION(++index);    \
+                goto TARGET_##op2;                         \
+            default:                                       \
+                break;                                     \
         }                                                  \
     }
 
-#define PREDICT_OPCODE2(op1, op2)                        \
-    {                                                    \
-        switch (_instructions[index + 1]->GetOpcode()) { \
-            case op1:                                    \
-                instruction = _instructions[++index];    \
-                goto TARGET_##op1;                       \
-            case op2:                                    \
-                instruction = _instructions[++index];    \
-                goto TARGET_##op2;                       \
-            default:                                     \
-                break;                                   \
-        }                                                \
-    }
-
-#define PREDICT_OPCODE3(op1, op2, op3)                   \
-    {                                                    \
-        switch (_instructions[index + 1]->GetOpcode()) { \
-            case op1:                                    \
-                instruction = _instructions[++index];    \
-                goto TARGET_##op1;                       \
-            case op2:                                    \
-                instruction = _instructions[++index];    \
-                goto TARGET_##op2;                       \
-            case op3:                                    \
-                instruction = _instructions[++index];    \
-                goto TARGET_##op3;                       \
-            default:                                     \
-                break;                                   \
-        }                                                \
+#define PREDICT_OPCODE3(op1, op2, op3)                     \
+    {                                                      \
+        switch (GET_INSTRUCTION(index + 1)->GetOpcode()) { \
+            case op1:                                      \
+                instruction = GET_INSTRUCTION(++index);    \
+                goto TARGET_##op1;                         \
+            case op2:                                      \
+                instruction = GET_INSTRUCTION(++index);    \
+                goto TARGET_##op2;                         \
+            case op3:                                      \
+                instruction = GET_INSTRUCTION(++index);    \
+                goto TARGET_##op3;                         \
+            default:                                       \
+                break;                                     \
+        }                                                  \
     }
 
 #define PREDICTION_TARGET(op) TARGET_##op:
@@ -224,6 +224,8 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
 #define PREDICTION_TARGET(op)
 #endif
 
+#define GET_INSTRUCTION(i) _current_frame->GetInstruction(i)
+
 /*****************************************************************************/
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
     if (_gc_count > 20) {
@@ -233,8 +235,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         _gc_count = 0;
     }
 
-    auto instruction = _instructions[index];
-    //    Log::INFO(instruction->ToString());
+    auto instruction = GET_INSTRUCTION(index);
+
+//    Log::INFO(instruction->ToString());
     switch (instruction->GetOpcode()) {
         case OP_BINARY_ADD: {
             SIMPLE_BINARY_OPERATION(+)
@@ -444,7 +447,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto object = GetScope()->GetObject(key);
             if (object) {
                 if (object->IsClass() &&
-                    _instructions[index + 1]->GetOpcode() == OP_CALL) {
+                    GET_INSTRUCTION(index + 1)->GetOpcode() == OP_CALL) {
                     auto class_obj = dynamic_cast<RnClassObject*>(object);
                     auto instance = dynamic_cast<RnClassObject*>(
                         RnMemoryManager::CreateObject(RnType::RN_OBJECT));
@@ -597,8 +600,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             obj->SetData(func);
 
             uint32_t i = 0;  // Argument count
-            for (; _instructions[i + index + 1]->GetOpcode() == OP_MAKE_ARG; i++) {
-                auto arg_instruction = _instructions[i + index + 1];
+            for (; GET_INSTRUCTION(i + index + 1)->GetOpcode() == OP_MAKE_ARG; i++) {
+                auto arg_instruction = GET_INSTRUCTION(i + index + 1);
                 func->CreateArgument(
                     arg_instruction->GetArg2(),
                     static_cast<RnType::Type>(arg_instruction->GetArg1()), i);
@@ -627,8 +630,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             obj->SetData(func);
 
             uint32_t i = 0;  // Argument count
-            for (; _instructions[i + index + 1]->GetOpcode() == OP_MAKE_ARG; i++) {
-                auto arg_instruction = _instructions[i + index + 1];
+            for (; GET_INSTRUCTION(i + index + 1)->GetOpcode() == OP_MAKE_ARG; i++) {
+                auto arg_instruction = GET_INSTRUCTION(i + index + 1);
                 func->CreateArgument(
                     arg_instruction->GetArg2(),
                     static_cast<RnType::Type>(arg_instruction->GetArg1()), i);
@@ -787,6 +790,12 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             }
             break;
         }
+        case OP_IMPORT: {
+            auto import_frame = _current_frame->GetSubframe(instruction->GetArg1());
+            auto scope = _scopes.front();
+            ExecuteCodeFrame(import_frame, scope);
+            break;
+        }
     }
 }
 
@@ -807,6 +816,33 @@ RnIntNative RnVirtualMachine::Run() {
     stopwatch.Stop();
     //                Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
     return StackPop()->ToInt();
+}
+
+/*****************************************************************************/
+RnIntNative RnVirtualMachine::ExecuteCodeFrame(RnCodeFrame* frame, RnScope* scope) {
+    _scopes.push_back(scope);
+    std::setvbuf(stdout, nullptr, _IOLBF, 65536);
+    auto stopwatch = StopWatch();
+
+    auto previous_frame = _current_frame;
+    _current_frame = frame;
+    auto instructionCount = frame->GetInstructionCount();
+    size_t instructionIndex = 0;
+    bool has_returned = false;
+
+    stopwatch.Start();
+    while (instructionIndex < instructionCount && !_should_exit) {
+        ExecuteInstruction(has_returned, instructionIndex);
+        if (has_returned) {
+            break;
+        }
+        instructionIndex++;
+    }
+    stopwatch.Stop();
+//    Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
+    _scopes.pop_back();
+    _current_frame = previous_frame;
+    return 0;
 }
 
 /*****************************************************************************/

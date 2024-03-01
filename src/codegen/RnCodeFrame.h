@@ -29,34 +29,51 @@
 #pragma once
 
 #include <stdint.h>
-#include <string>
-#include "../vm/RnOpCode.h"
-#include "../common/RnType.h"
 #include <fstream>
+#include <string>
+#include <vector>
+#include "../common/RnType.h"
+#include "../vm/RnOpCode.h"
+#include "RnInstruction.h"
 
 class RnInstruction;
 
 class RnCodeFrame {
 public:
+    enum LOAD_POLICY : uint8_t { NONE, EAGER, LAZY };
+
     RnCodeFrame();
     ~RnCodeFrame();
 
     static RnCodeFrame* CreateFromFile(const std::string& file);
     static RnCodeFrame* CreateEmpty();
-    [[nodiscard]] RnCodeFrame* GetSubframe(uint32_t index) const;
-    [[nodiscard]] RnInstruction* GetInstruction(uint32_t index) const;
+    RnCodeFrame* GetSubframe(uint32_t index, LOAD_POLICY load_policy = LAZY) const;
     RnCodeFrame* AddSubframe();
     RnInstruction* AddInstruction(RnOpCode opcode = OP_NOP, uint32_t arg1 = 0,
                                   uint32_t arg2 = 0, uint32_t arg3 = 0);
     bool WriteToFile(const std::string& file);
     void ReadFromFile(const std::string& file);
     [[nodiscard]] std::string ToString() const;
+    void PrependInstructionBlock(const std::vector<RnInstruction>& block);
+    void AppendInstructionBlock(const std::vector<RnInstruction>& block);
+
+    [[nodiscard]] RnInstruction* GetInstruction(uint32_t index) const {
+        return const_cast<RnInstruction*>(&_instructions[index]);
+    }
 
     void SetModulePath(const std::string& path) {
         _module_path_length = path.size();
         _module_path = new char[_module_path_length];
         std::memset(_module_path, 0, _module_path_length);
         std::memcpy(_module_path, path.c_str(), _module_path_length);
+    }
+
+    [[nodiscard]] bool GetIsExternal() const {
+        return static_cast<bool>(_is_external);
+    }
+
+    void SetIsExternal(bool flag) {
+        _is_external = flag ? 1 : 0;
     }
 
     [[nodiscard]] uint32_t GetTimeStamp() const {
@@ -92,6 +109,8 @@ private:
     static void WriteFrame(std::ofstream& fs, RnCodeFrame* frame);
 
 private:
+    bool _is_loaded = false;
+    uint8_t _is_external = 0;
     uint64_t _timestamp = 0;
     uint8_t _int_width = sizeof(RnIntNative);
     uint8_t _float_width = sizeof(RnFloatNative);
@@ -100,6 +119,6 @@ private:
     char* _module_path = nullptr;
     uint32_t _subframe_cnt = 0;
     uint32_t _instruction_cnt = 0;
-    RnInstruction* _instructions = nullptr;
-    RnCodeFrame* _subframes = nullptr;
+    std::vector<RnInstruction> _instructions;
+    std::vector<RnCodeFrame> _subframes;
 };

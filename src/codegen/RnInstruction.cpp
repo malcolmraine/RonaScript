@@ -65,6 +65,8 @@ auto RnInstruction::ToString() -> std::string {
     }
 
     switch (_opcode) {
+        case OP_IMPORT:
+            arg1_str = std::to_string(_arg1);
         case OP_LOAD_LITERAL:
             if (_arg1 == UINT32_MAX) {
                 arg1_str = "null";

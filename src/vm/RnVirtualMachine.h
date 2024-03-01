@@ -36,6 +36,7 @@
 #include "../codegen/RnInstruction.h"
 #include "../common/RnInternment.h"
 #include "RnScope.h"
+#include "../codegen/RnCodeFrame.h"
 
 class RnObject;
 class RnFunctionObject;
@@ -77,6 +78,7 @@ public:
     void CallStackPop();
     RnObject* CallFunction(RnFunction* func, RnArrayNative args);
     RnIntNative Run();
+    RnIntNative ExecuteCodeFrame(RnCodeFrame* frame, RnScope* scope);
     void LoadInstructions(std::vector<RnInstruction*> instructions);
     static RnVirtualMachine* GetInstance();
     RnObject* CreateObject(RnType::Type type);
@@ -98,6 +100,7 @@ private:
     void Init();
 
 protected:
+    RnCodeFrame* _current_frame = nullptr;
     RnArrayNative _stack;
     std::vector<RnScope*> _scopes;
     std::vector<RnScope*> _call_stack;

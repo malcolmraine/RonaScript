@@ -75,14 +75,15 @@ std::vector<std::string> Parser::parsed_files;
 
 std::unordered_map<TokenType, int> Parser::_prec_tbl = {
     {TokenType::DBL_COLON, 300},  {TokenType::R_ARROW, 200},
-    {TokenType::R_PARAN, 100},    {TokenType::STAR, 90},
-    {TokenType::SLASH, 90},       {TokenType::PERCENT, 90},
-    {TokenType::PLUS, 80},        {TokenType::MINUS, 80},
-    {TokenType::DBL_R_CARAT, 70}, {TokenType::DBL_L_CARAT, 70},
-    {TokenType::L_CARAT, 60},     {TokenType::R_CARAT, 60},
-    {TokenType::LEQ, 60},         {TokenType::GEQ, 60},
-    {TokenType::DBL_EQUAL, 50},   {TokenType::NOT_EQUAL, 50},
-    {TokenType::AMPER, 40},       {TokenType::DBL_AMPER, 40},
+    {TokenType::R_PARAN, 100},    {TokenType::DBL_STAR, 95},
+    {TokenType::STAR, 90},        {TokenType::SLASH, 90},
+    {TokenType::PERCENT, 90},     {TokenType::PLUS, 80},
+    {TokenType::MINUS, 80},       {TokenType::DBL_R_CARAT, 70},
+    {TokenType::DBL_L_CARAT, 70}, {TokenType::L_CARAT, 60},
+    {TokenType::R_CARAT, 60},     {TokenType::LEQ, 60},
+    {TokenType::GEQ, 60},         {TokenType::DBL_EQUAL, 50},
+    {TokenType::NOT_EQUAL, 50},   {TokenType::AMPER, 40},
+    {TokenType::TILDE, 40},       {TokenType::DBL_AMPER, 40},
     {TokenType::UP_ARROW, 30},    {TokenType::BAR, 20},
     {TokenType::DBL_BAR, 20},     {TokenType::L_PARAN, 0},
 };
