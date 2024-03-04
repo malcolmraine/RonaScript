@@ -128,7 +128,7 @@ void Repl() {
     while (true) {
         line.clear();
         std::cout << ">>> ";
-        std::cin >> line;
+        std::getline(std::cin, line);
 
         if (line.empty()) {
             std::cout << std::endl;
