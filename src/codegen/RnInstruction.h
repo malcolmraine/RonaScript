@@ -36,7 +36,6 @@ typedef uint32_t RnInstructionArg;
 constexpr size_t RN_INSTRUCTION_OP_WIDTH = sizeof(RnOpCode);
 constexpr size_t RN_INSTRUCTION_ARG_WIDTH = sizeof(RnInstructionArg);
 
-
 class RnInstruction {
 public:
     explicit RnInstruction(RnOpCode opcode = OP_NOP, RnInstructionArg arg1 = 0,

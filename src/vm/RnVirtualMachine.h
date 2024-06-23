@@ -33,10 +33,10 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include "../codegen/RnCodeFrame.h"
 #include "../codegen/RnInstruction.h"
 #include "../common/RnInternment.h"
 #include "RnScope.h"
-#include "../codegen/RnCodeFrame.h"
 
 class RnObject;
 class RnFunctionObject;

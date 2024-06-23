@@ -31,8 +31,8 @@
 #include <memory>
 #include "../common/RnCompilerPhase.h"
 #include "../common/RnInternment.h"
-#include "RnCodeGenVisitor.h"
 #include "RnCodeFrame.h"
+#include "RnCodeGenVisitor.h"
 
 class Ast;
 

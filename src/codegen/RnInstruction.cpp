@@ -39,8 +39,8 @@ union argdata {
 };
 
 /*****************************************************************************/
-RnInstruction::RnInstruction(RnOpCode opcode, RnInstructionArg arg1, RnInstructionArg arg2,
-                             RnInstructionArg arg3)
+RnInstruction::RnInstruction(RnOpCode opcode, RnInstructionArg arg1,
+                             RnInstructionArg arg2, RnInstructionArg arg3)
     : _opcode(opcode), _arg1(arg1), _arg2(arg2), _arg3(arg3) {}
 
 /*****************************************************************************/

@@ -164,7 +164,8 @@ void RonaScriptMain(int argc, char* argv[]) {
         "Usage: RonaScript [options...] <file> [arguments...]");
     arg_parser.AddArgument("<file>", {}, "Input file (*.rn | *.rnc)");
     arg_parser.AddArgument("--repl", {}, "REPL");
-    arg_parser.AddArgument("-c", {"--compile"}, "Compile to *.rnc file without running");
+    arg_parser.AddArgument("-c", {"--compile"},
+                           "Compile to *.rnc file without running");
     arg_parser.AddArgument("--no-validation", {}, "Don't perform AST validation");
     arg_parser.AddArgument("-a", {"--print-ast"}, "Print AST after parsing");
     arg_parser.AddArgument("-t", {"--print-tokens"}, "Print tokens after lexing");
