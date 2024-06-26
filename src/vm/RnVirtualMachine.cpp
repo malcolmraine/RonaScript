@@ -367,14 +367,14 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             StackPush(result);
             break;
         }
-        case OP_UNARY_DECREMENT: {
-            PREDICTION_TARGET(OP_UNARY_DECREMENT)
+        case OP_FAST_SUB: {
+            PREDICTION_TARGET(OP_FAST_SUB)
             RnObject* obj = GetScope()->GetObject(instruction->GetArg1());
             obj->SetData(obj->ToFloat() - 1);
             break;
         }
-        case OP_UNARY_INCREMENT: {
-            PREDICTION_TARGET(OP_UNARY_INCREMENT)
+        case OP_FAST_ADD: {
+            PREDICTION_TARGET(OP_FAST_ADD)
             RnObject* obj = GetScope()->GetObject(instruction->GetArg1());
             obj->SetData(obj->ToFloat() + 1);
             break;
@@ -670,7 +670,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_RESET_CONTEXT: {
             GetScope()->Reset();
-            PREDICT_OPCODE2(OP_UNARY_INCREMENT, OP_UNARY_DECREMENT)
+            PREDICT_OPCODE2(OP_FAST_ADD, OP_FAST_SUB)
             break;
         }
         case OP_DELETE: {

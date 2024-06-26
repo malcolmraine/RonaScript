@@ -76,8 +76,8 @@ auto RnInstruction::ToString() -> std::string {
             }
             break;
         case OP_LOAD_ATTR:
-        case OP_UNARY_INCREMENT:
-        case OP_UNARY_DECREMENT:
+        case OP_FAST_ADD:
+        case OP_FAST_SUB:
         case OP_LOAD_VALUE:
             arg1_str = RnConstStore::GetInternedString(_arg1);
             break;

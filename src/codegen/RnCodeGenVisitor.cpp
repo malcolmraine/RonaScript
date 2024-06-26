@@ -445,11 +445,11 @@ InstructionBlock RnCodeGenVisitor::Visit(UnaryExpr* node) {
 
     if (node->op == "++") {
         return {new RnInstruction(
-            OP_UNARY_INCREMENT,
+            OP_FAST_ADD,
             RnConstStore::InternValue(dynamic_pointer_cast<Name>(node->expr)->value))};
     } else if (node->op == "--") {
         return {new RnInstruction(
-            OP_UNARY_DECREMENT,
+            OP_FAST_SUB,
             RnConstStore::InternValue(dynamic_pointer_cast<Name>(node->expr)->value))};
     } else {
         InstructionBlock instructions = GeneralVisit(node->expr);
