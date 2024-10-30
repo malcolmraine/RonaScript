@@ -504,14 +504,42 @@ InstructionBlock RnCodeGenVisitor::Visit(BinaryExpr* node) {
         instructions.push_back(new RnInstruction(
             opcode, RnConstStore::InternValue(
                         std::static_pointer_cast<Name>(node->_right)->value)));
-    } else {
-        InstructionBlock left = GeneralVisit(node->_left);
-        InstructionBlock right = GeneralVisit(node->_right);
-        instructions.insert(instructions.end(), left.begin(), left.end());
-        instructions.insert(instructions.end(), right.begin(), right.end());
-        instructions.emplace_back(new RnInstruction(opcode));
+        return instructions;
+    } else if (opcode == OP_BINARY_ADD) {
+        // Check for fast addition operations
+        if (node->_right->node_type == AST_INT_LITERAL) {
+            RnIntNative data = std::get<RnIntNative>(
+                AstNode::CastNode<LiteralValue>(node->_right)->data);
+            if (node->_left->node_type == AST_NAME && (data == 1 || data == -1)) {
+                opcode = data == 1 ? OP_FAST_ADD : OP_FAST_SUB;
+                instructions.push_back(new RnInstruction(
+                    opcode, RnConstStore::InternValue(
+                                dynamic_pointer_cast<Name>(node->_left)->value)));
+                return instructions;
+            }
+        }
+    } else if (opcode == OP_BINARY_SUB) {
+        // Check for fast subtraction operations
+        if (node->_right->node_type == AST_INT_LITERAL) {
+            RnIntNative data = std::get<RnIntNative>(
+                AstNode::CastNode<LiteralValue>(node->_right)->data);
+            if (node->_left->node_type == AST_NAME &&
+                node->_right->node_type == AST_INT_LITERAL &&
+                (data == 1 || data == -1)) {
+                opcode = data == 1 ? OP_FAST_SUB : OP_FAST_ADD;
+                instructions.push_back(new RnInstruction(
+                    opcode, RnConstStore::InternValue(
+                                dynamic_pointer_cast<Name>(node->_left)->value)));
+                return instructions;
+            }
+        }
     }
 
+    InstructionBlock left = GeneralVisit(node->_left);
+    InstructionBlock right = GeneralVisit(node->_right);
+    instructions.insert(instructions.end(), left.begin(), left.end());
+    instructions.insert(instructions.end(), right.begin(), right.end());
+    instructions.emplace_back(new RnInstruction(opcode));
     return instructions;
 }
 
