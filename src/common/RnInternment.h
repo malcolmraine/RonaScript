@@ -89,5 +89,8 @@ public:
     static RnIntNative InternValue(RnIntNative x);
     static void LoadObject(RnObject* object);
     static void Init(size_t size);
+    static RnInternment<RnObject*>* GetObjectInternment();
+
+private:
     static RnInternment<RnObject*>* object_internment;
 };
