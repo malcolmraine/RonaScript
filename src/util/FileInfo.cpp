@@ -121,11 +121,6 @@ std::string FileInfo::ToString() const {
 }
 
 /*****************************************************************************/
-bool FileInfo::IsOriginal() const {
-    return _is_original;
-}
-
-/*****************************************************************************/
 std::string FileInfo::GetLineAt(size_t line_start, bool keep_open, bool formatted) {
     if (!_file_obj.is_open()) {
         _file_obj.open(GetFilePath(), std::ios::in);

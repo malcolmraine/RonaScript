@@ -50,9 +50,7 @@ public:
     [[nodiscard]] size_t GetCharNum() const;
     void IncrementCharNum();
     std::string GetContextualBlock(bool formatted = true);
-    std::string GetLine();
-    std::string ToString() const;
-    [[nodiscard]] bool IsOriginal() const;
+    [[nodiscard]] std::string ToString() const;
 
     FileInfo& operator=(const FileInfo& file_info) {
         SetFilePath(file_info.GetFilePath());
@@ -100,7 +98,7 @@ protected:
     std::string GetLineAt(size_t line_start, bool keep_open = false,
                           bool formatted = true);
     std::string GetFormattedLine(const std::string& line);
-    std::string _filepath;
+    std::string _filepath = "";
     size_t _linenum = 0;
     size_t _charnum = 0;
     size_t _previous_line_start = 0;
