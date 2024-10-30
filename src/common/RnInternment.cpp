@@ -35,53 +35,65 @@
 RnInternment<RnObject*>* RnConstStore::object_internment = new RnInternment<RnObject*>(
     [](RnObject* a, RnObject* b) { return RnObject::ValueCompare(a, b); });
 
+
+
+
 /*****************************************************************************/
 RnStringNative RnConstStore::GetInternedString(InternmentKey key) {
-    return object_internment->GetInternedItem(key)->ToString();
+    return GetObjectInternment()->GetInternedItem(key)->ToString();
 }
 
 /*****************************************************************************/
 double RnConstStore::GetInternedFloat(InternmentKey key) {
-    return object_internment->GetInternedItem(key)->ToFloat();
+    return GetObjectInternment()->GetInternedItem(key)->ToFloat();
 }
 
 /*****************************************************************************/
 long RnConstStore::GetInternedInt(InternmentKey key) {
-    return object_internment->GetInternedItem(key)->ToInt();
+    return GetObjectInternment()->GetInternedItem(key)->ToInt();
 }
 
 /*****************************************************************************/
 RnObject* RnConstStore::GetInternedObject(InternmentKey key) {
-    return object_internment->GetInternedItem(key);
+    return GetObjectInternment()->GetInternedItem(key);
 }
 
 /*****************************************************************************/
 RnIntNative RnConstStore::InternValue(RnFloatNative x) {
-    return object_internment->InternItem(new RnFloatObject(x));
+    return GetObjectInternment()->InternItem(new RnFloatObject(x));
 }
 
 /*****************************************************************************/
 RnIntNative RnConstStore::InternValue(RnBoolNative x) {
 
-    return object_internment->InternItem(new RnBoolObject(x));
+    return GetObjectInternment()->InternItem(new RnBoolObject(x));
 }
 
 /*****************************************************************************/
 RnIntNative RnConstStore::InternValue(const RnStringNative& x) {
-    return object_internment->InternItem(new RnStringObject(x));
+    return GetObjectInternment()->InternItem(new RnStringObject(x));
 }
 
 /*****************************************************************************/
 RnIntNative RnConstStore::InternValue(RnIntNative x) {
-    return object_internment->InternItem(new RnIntObject(x));
+    return GetObjectInternment()->InternItem(new RnIntObject(x));
 }
 
 /*****************************************************************************/
 void RnConstStore::LoadObject(RnObject* object) {
-    object_internment->LoadObject(object);
+    GetObjectInternment()->LoadObject(object);
 }
 
 /*****************************************************************************/
 void RnConstStore::Init(size_t size) {
-    object_internment->Init(size);
+    GetObjectInternment()->Init(size);
+}
+
+/*****************************************************************************/
+RnInternment<RnObject*>* RnConstStore::GetObjectInternment() {
+    if (!object_internment) {
+        object_internment = new RnInternment<RnObject*>(
+            [](RnObject* a, RnObject* b) { return RnObject::ValueCompare(a, b); });
+    }
+    return object_internment;
 }

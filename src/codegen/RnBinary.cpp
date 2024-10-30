@@ -93,13 +93,13 @@ bool BinaryWriter::Write() {
     WriteHeader(fs, CONST_HEADER);
     IntByteConversion const_count;
     std::memset(const_count.bytes, 0, RN_SIZE_BYTES_LENGTH);
-    const_count.i_value = RnConstStore::object_internment->GetIndex();
+    const_count.i_value = RnConstStore::GetObjectInternment()->GetIndex();
     fs.write(const_count.bytes, RN_SIZE_BYTES_LENGTH);
 
     size_t buf_size = 0;
     char* buf = nullptr;
-    for (RnIntNative i = 1; i <= RnConstStore::object_internment->GetIndex(); i++) {
-        auto object = RnConstStore::object_internment->GetInternedItem(i);
+    for (RnIntNative i = 1; i <= RnConstStore::GetObjectInternment()->GetIndex(); i++) {
+        auto object = RnConstStore::GetObjectInternment()->GetInternedItem(i);
         size_t byte_size = object->GetByteSize();
         if (byte_size > buf_size) {
             buf = static_cast<char*>(std::realloc(buf, byte_size));
