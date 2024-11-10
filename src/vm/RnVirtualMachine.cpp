@@ -70,7 +70,6 @@ RnVirtualMachine::RnVirtualMachine() {
     _object_cls_key = RnConstStore::InternValue(static_cast<RnStringNative>("cls"));
     _object_construct_key =
         RnConstStore::InternValue(static_cast<RnStringNative>("construct"));
-    RnLinearAllocator::SetInstance(new RnLinearAllocator(100000, 100000000));
 }
 
 /*****************************************************************************/

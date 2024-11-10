@@ -35,9 +35,6 @@
 RnInternment<RnObject*>* RnConstStore::object_internment = new RnInternment<RnObject*>(
     [](RnObject* a, RnObject* b) { return RnObject::ValueCompare(a, b); });
 
-
-
-
 /*****************************************************************************/
 RnStringNative RnConstStore::GetInternedString(InternmentKey key) {
     return GetObjectInternment()->GetInternedItem(key)->ToString();

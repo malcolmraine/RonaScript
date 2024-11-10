@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <utility>
 #include "Token.h"
+#include "../memory_mgmt/RnLinearAllocator.h"
 
 #undef TOKEN_DEF
 #undef RESERVED_WORD

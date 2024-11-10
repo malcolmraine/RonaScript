@@ -32,11 +32,14 @@
 #include <string>
 #include <unordered_map>
 #include "RnType.h"
+#include "../vm/RnObjectList.h"
 
 class RnObject;
 
 typedef RnIntNative InternmentKey;
 
+/*****************************************************************************/
+/*****************************************************************************/
 template <typename T, typename FUNC = std::function<bool(T a, T b)>>
 class RnInternment {
 public:
@@ -74,9 +77,11 @@ public:
 
 protected:
     FUNC _compare;
-    std::vector<T> _items;
+    RnObjectList _items;
 };
 
+/*****************************************************************************/
+/*****************************************************************************/
 class RnConstStore {
 public:
     static RnStringNative GetInternedString(InternmentKey key);

@@ -34,6 +34,7 @@
 #include <utility>
 #include <vector>
 #include "../common/RnString.h"
+#include "../vm/RnObjectList.h"
 
 class RnObject;
 
@@ -41,7 +42,7 @@ typedef int64_t RnIntNative;
 typedef double RnFloatNative;
 typedef std::string RnStringNative;
 typedef bool RnBoolNative;
-typedef std::vector<RnObject*> RnArrayNative;
+typedef RnObjectList RnArrayNative;
 
 #define RN_NUMERIC_DATA_LENGTH (8)
 #define RN_TYPE_BYTES_LENGTH (1)
@@ -53,6 +54,8 @@ typedef union {
     RnFloatNative d_data;
 } RnNumericUnion;
 
+/*****************************************************************************/
+/*****************************************************************************/
 class RnType {
 public:
     enum Type : uint8_t {
