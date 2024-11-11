@@ -32,8 +32,7 @@
 #include "../vm/RnIntObject.h"
 #include "../vm/RnStringObject.h"
 
-RnInternment<RnObject*>* RnConstStore::object_internment = new RnInternment<RnObject*>(
-    [](RnObject* a, RnObject* b) { return RnObject::ValueCompare(a, b); });
+RnInternment<RnObject*>* RnConstStore::object_internment = nullptr;
 
 /*****************************************************************************/
 RnStringNative RnConstStore::GetInternedString(InternmentKey key) {

@@ -49,7 +49,7 @@ public:
     ~RnInternment() = default;
 
     InternmentKey InternItem(T item) {
-        for (size_t i = 0; i < static_cast<InternmentKey>(_items.size()); i++) {
+        for (InternmentKey i = 0; i < static_cast<InternmentKey>(_items.size()); i++) {
             if (_compare(item, _items[i])) {
                 return i;
             }
