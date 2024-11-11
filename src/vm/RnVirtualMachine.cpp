@@ -397,19 +397,27 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_CHECK_MEMBERSHIP: {
             RnObject* lhs_object = StackPop();
             RnObject* rhs_object = StackPop();
-            auto array_object = dynamic_cast<RnArrayObject*>(lhs_object);
-            if (array_object) {
+
+            if (lhs_object->GetType() == RnType::RN_ARRAY) {
+                auto array_object = dynamic_cast<RnArrayObject*>(lhs_object);
+                assert(array_object);
                 RnObject* result = CreateObject(
                     static_cast<RnBoolNative>(array_object->Contains(rhs_object)));
                 StackPush(result);
-            } else {
+            } else if (lhs_object->GetType() == RnType::RN_ANY) {
+                auto any_object = dynamic_cast<RnAnyObject*>(lhs_object);
+                assert(any_object);
+                RnObject* result = CreateObject(
+                    static_cast<RnBoolNative>(any_object->Contains(rhs_object)));
+                StackPush(result);
+            }else {
                 auto class_object = dynamic_cast<RnClassObject*>(lhs_object);
                 if (class_object) {
                     RnObject* result = CreateObject(
                         static_cast<RnBoolNative>(class_object->Contains(rhs_object)));
                     StackPush(result);
                 } else {
-                    RnObject::ThrowUndefinedOperatorError("in", StackPop(), lhs_object);
+                    RnObject::ThrowUndefinedOperatorError("in", rhs_object, lhs_object);
                 }
             };
             break;

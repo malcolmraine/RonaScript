@@ -88,6 +88,7 @@ public:
     void CopyFrom(RnObject* obj);
     RnObject* At(RnIntNative index) override;
     RnBoolNative IsActiveDataEqual(const RnObject* obj) const;
+    RnBoolNative Contains(RnObject* obj) const;
 
     [[nodiscard]] RnType::Type GetType() const override {
         return RnType::RN_ANY;

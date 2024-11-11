@@ -346,3 +346,13 @@ RnBoolNative RnAnyObject::IsActiveDataEqual(const RnObject* obj) const {
             break;
     }
 }
+
+/*****************************************************************************/
+RnBoolNative RnAnyObject::Contains(RnObject* obj) const {
+    switch (_active_type) {
+        case RnType::RN_ARRAY:
+            return std::get<RnArrayObject>(_data).Contains(obj);
+        default:
+            RnObject::ThrowUndefinedOperatorError("in", this, obj);
+    }
+}

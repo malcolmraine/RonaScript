@@ -90,8 +90,8 @@ public:
     virtual size_t GetBytes(char* buf) = 0;
     virtual void SetBytes(const char* buf, size_t n) = 0;
     [[noreturn]] static void ThrowUndefinedOperatorError(const RnStringNative& op,
-                                                         RnObject* obj1,
-                                                         RnObject* obj2);
+                                                         const RnObject* obj1,
+                                                         const RnObject* obj2);
 
     /*************************************************************************/
     [[nodiscard]] virtual std::string GetTypeName() const {
