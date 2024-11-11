@@ -484,7 +484,7 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
 
     auto parse_bracketed_node = [this, &result_stack]() mutable {
         if (Lookback()->token_type == TokenType::NAME ||
-            Current()->token_type == TokenType::L_PARAN) {
+            Lookback()->token_type == TokenType::L_PARAN) {
             result_stack.push_back(ParseIndexedExpr(result_stack.Pop()));
         } else {
             result_stack.Push(ParseArrayLiteral());
