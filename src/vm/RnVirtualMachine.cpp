@@ -856,10 +856,10 @@ RnIntNative RnVirtualMachine::ExecuteCodeFrame(RnCodeFrame* frame, RnScope* scop
 }
 
 /*****************************************************************************/
-void RnVirtualMachine::LoadInstructions(std::vector<RnInstruction*> instructions) {
+void RnVirtualMachine::LoadInstructions(RnStdVector<RnInstruction*>& instructions) {
     _instructions.clear();
     i_idx = 0;
-    _instructions = std::move(instructions);
+    std::swap(_instructions, instructions);
 }
 
 /*****************************************************************************/

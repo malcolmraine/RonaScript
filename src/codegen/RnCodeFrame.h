@@ -35,6 +35,7 @@
 #include "../common/RnType.h"
 #include "../vm/RnOpCode.h"
 #include "RnInstruction.h"
+#include "../memory_mgmt/RnStdAllocator.h"
 
 class RnInstruction;
 
@@ -119,6 +120,6 @@ private:
     char* _module_path = nullptr;
     uint32_t _subframe_cnt = 0;
     uint32_t _instruction_cnt = 0;
-    std::vector<RnInstruction> _instructions;
-    std::vector<RnCodeFrame> _subframes;
+    RnStdVector<RnInstruction> _instructions;
+    RnStdVector<RnCodeFrame> _subframes;
 };

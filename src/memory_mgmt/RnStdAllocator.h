@@ -26,6 +26,8 @@
 * SOFTWARE.
 ******************************************************************************/
 
+#pragma once
+
 #include <iostream>
 #include <numeric>
 #include "RnLinearAllocator.h"
@@ -65,3 +67,6 @@ private:
                   << '\n';
     }
 };
+
+template<class T>
+using RnStdVector = std::vector<T, RnStdAllocator<T>>;

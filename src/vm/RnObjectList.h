@@ -33,17 +33,15 @@
 
 class RnObject;
 
-typedef std::vector<RnObject*, RnStdAllocator<RnObject*>> RnStdVector;
-
 /*****************************************************************************/
 /*****************************************************************************/
-class RnObjectList : public RnStdVector {
+class RnObjectList : public RnStdVector<RnObject*> {
 public:
-    RnObjectList() : RnStdVector() {}
+    RnObjectList() : RnStdVector<RnObject*>() {}
 
     RnObjectList(std::initializer_list<RnObject*> initializerList)
-        : RnStdVector(initializerList) {}
+        : RnStdVector<RnObject*>(initializerList) {}
 
-    RnObjectList(RnStdVector::const_iterator first, RnStdVector::const_iterator last)
-        : RnStdVector(first, last) {}
+    RnObjectList(RnStdVector<RnObject*>::const_iterator first, RnStdVector<RnObject*>::const_iterator last)
+        : RnStdVector<RnObject*>(first, last) {}
 };

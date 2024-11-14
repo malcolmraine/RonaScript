@@ -79,7 +79,7 @@ public:
     RnObject* CallFunction(RnFunction* func, RnArrayNative args);
     RnIntNative Run();
     RnIntNative ExecuteCodeFrame(RnCodeFrame* frame, RnScope* scope);
-    void LoadInstructions(std::vector<RnInstruction*> instructions);
+    void LoadInstructions(RnStdVector<RnInstruction*>& instructions);
     static RnVirtualMachine* GetInstance();
     RnObject* CreateObject(RnType::Type type);
     RnObject* CreateObject(RnStringNative data);
@@ -102,9 +102,9 @@ private:
 protected:
     RnCodeFrame* _current_frame = nullptr;
     RnArrayNative _stack;
-    std::vector<RnScope*> _scopes;
-    std::vector<RnScope*> _call_stack;
-    std::vector<RnInstruction*> _instructions;
+    RnStdVector<RnScope*> _scopes;
+    RnStdVector<RnScope*> _call_stack;
+    RnStdVector<RnInstruction*> _instructions;
     RnMemoryManager* _memory_manager;
     size_t i_idx = 0;
     size_t _gc_count = 0;
