@@ -142,7 +142,7 @@ Token* Lexer::MakeToken(const std::string& s, TokenType initial_type) const {
 }
 
 /*****************************************************************************/
-bool Lexer::IsIntLiteral(std::string s) {
+bool Lexer::IsIntLiteral(const std::string& s) {
     size_t i = 0;
     char c;
     for (; i < s.length(); i++) {
@@ -159,7 +159,7 @@ bool Lexer::IsIntLiteral(std::string s) {
 }
 
 /*****************************************************************************/
-bool Lexer::IsFloatLiteral(std::string s) {
+bool Lexer::IsFloatLiteral(const std::string& s) {
     bool decimal_found = false;
     size_t i = 0;
     char c;
@@ -182,7 +182,7 @@ bool Lexer::IsFloatLiteral(std::string s) {
 }
 
 /*****************************************************************************/
-bool Lexer::IsHexLiteral(std::string s) {
+bool Lexer::IsHexLiteral(const std::string& s) {
     std::string prefix = std::string(1, s[0]) + std::string(1, s[1]);
     if (prefix == "0x" || prefix == "0X") {
         for (size_t i = 2; i < s.length(); ++i) {

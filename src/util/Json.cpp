@@ -169,7 +169,7 @@ JSONString::JSONString() {
 }
 
 /*****************************************************************************/
-JSONString::JSONString(std::string data) : JSONValue(std::move(data)) {}
+JSONString::JSONString(const std::string& data) : JSONValue(data) {}
 
 /*****************************************************************************/
 std::string JSONString::ToString() const {

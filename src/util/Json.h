@@ -186,7 +186,7 @@ public:
 class JSONString : public JSONValue<std::string> {
 public:
     JSONString();
-    explicit JSONString(std::string data);
+    explicit JSONString(const std::string& data);
     [[nodiscard]] std::string ToString() const override;
 
     /*************************************************************************/
