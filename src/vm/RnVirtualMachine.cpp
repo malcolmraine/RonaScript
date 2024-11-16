@@ -641,6 +641,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             RnScope* func_scope = RnMemoryManager::CreateScope();
             func_scope->SetParent(GetScope());
             func->SetScope(func_scope);
+            func->SetCodeFrame(_current_frame);
             obj->SetData(func);
 
             uint32_t i = 0;  // Argument count
