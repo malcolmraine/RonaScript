@@ -139,12 +139,16 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
         bool has_returned = false;
         size_t func_index = func->GetIStart();
         size_t end_index = func->GetIStart() + func->GetICnt();
+        RnCodeFrame* previous_frame = _current_frame;
+        _current_frame = func->GetCodeFrame();
+
         for (; func_index <= end_index; func_index++) {
             ExecuteInstruction(has_returned, func_index);
             if (has_returned) {
                 break;
             }
         }
+        _current_frame = previous_frame;
 
         CallStackPop();
         PopScope();
@@ -606,6 +610,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             RnScope* func_scope = RnMemoryManager::CreateScope();
             func_scope->SetParent(GetScope());
             func->SetScope(func_scope);
+            func->SetCodeFrame(_current_frame);
             obj->SetData(func);
 
             uint32_t i = 0;  // Argument count

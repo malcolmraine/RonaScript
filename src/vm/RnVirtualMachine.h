@@ -62,6 +62,8 @@ public:
     }
 
     inline RnObject* StackPop() {
+        if (GetStack().empty()) return nullptr;
+
         auto item = GetStack().back();
         GetStack().pop_back();
         assert(item);

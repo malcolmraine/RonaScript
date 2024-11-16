@@ -36,6 +36,7 @@
 
 class RnScope;
 class RnObject;
+class RnCodeFrame;
 
 /*****************************************************************************/
 class RnFunction {
@@ -72,6 +73,14 @@ public:
         _return_type = type;
     }
 
+    void SetCodeFrame(RnCodeFrame* codeframe) {
+        _codeframe = codeframe;
+    }
+
+    RnCodeFrame* GetCodeFrame() const {
+        return _codeframe;
+    }
+
 private:
     std::unordered_map<size_t, RnIntNative> _argument_index_map;
     RnStringNative _name;
@@ -80,6 +89,7 @@ private:
     RnScope* _scope = nullptr;
     RnScope* _argument_scope = nullptr;
     RnType::Type _return_type = RnType::RN_VOID;
+    RnCodeFrame* _codeframe = nullptr;
 };
 
 /*****************************************************************************/
