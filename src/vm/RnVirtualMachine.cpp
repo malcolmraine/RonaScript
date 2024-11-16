@@ -74,7 +74,7 @@ RnVirtualMachine::RnVirtualMachine() {
 
 /*****************************************************************************/
 void RnVirtualMachine::Init() {
-    RnObject* obj = RnObject::Create(RnType::RN_OBJECT);
+    RnObject* obj = CreateObject(RnType::RN_OBJECT);
     obj->SetData(CreateScope());
     RnScope* scope = obj->ToObject();
     scope->GetMemoryGroup()->AddObject(obj);
@@ -124,8 +124,7 @@ void RnVirtualMachine::CallStackPop() {
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
     if (func->IsBuiltIn()) {
-        RnObject* ret_val = RnMemoryManager::CreateObject(func->GetReturnType());
-        GetScope()->GetMemoryGroup()->AddObject(ret_val);
+        RnObject* ret_val = CreateObject(func->GetReturnType());
         func->Call(args, ret_val);
         return ret_val;
     } else {
@@ -227,7 +226,7 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
 #define PREDICTION_TARGET(op)
 #endif
 
-#define GET_INSTRUCTION(i) _current_frame->GetInstruction(i)
+#define GET_INSTRUCTION(i)  _current_frame->GetInstruction(i)
 
 /*****************************************************************************/
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
@@ -461,9 +460,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                     GET_INSTRUCTION(index + 1)->GetOpcode() == OP_CALL) {
                     auto class_obj = dynamic_cast<RnClassObject*>(object);
                     auto instance = dynamic_cast<RnClassObject*>(
-                        RnMemoryManager::CreateObject(RnType::RN_OBJECT));
+                        CreateObject(RnType::RN_OBJECT));
                     instance->SetData(CreateScope());
-                    GetScope()->GetMemoryGroup()->AddObject(instance);
                     instance->ToObject()->SetParent(class_obj->ToObject());
                     instance->SetDefinition(class_obj);
                     class_obj->CopySymbols(instance->GetScope());
@@ -503,7 +501,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             if (stack_val->GetType() == RnType::RN_OBJECT) {
                 auto class_obj = dynamic_cast<RnClassObject*>(stack_val);
                 auto instance = dynamic_cast<RnClassObject*>(
-                    RnMemoryManager::CreateObject(RnType::RN_OBJECT));
+                    CreateObject(RnType::RN_OBJECT));
                 GetScope()->GetMemoryGroup()->AddObject(instance);
                 instance->ToObject()->SetParent(class_obj->ToObject());
                 class_obj->CopySymbols(instance->GetScope());
@@ -538,7 +536,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_MAKE_CONST: {
             auto type = static_cast<RnType::Type>(instruction->GetArg1());
-            RnObject* obj = RnMemoryManager::CreateObject(type);
+            RnObject* obj = CreateObject(type);
             obj->SetConstFlag(true);
             GetScope()->GetMemoryGroup()->AddObject(obj);
             GetScope()->StoreObject(instruction->GetArg2(), obj);
@@ -552,8 +550,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_MAKE_VAR: {
             auto type = static_cast<RnType::Type>(instruction->GetArg1());
-            RnObject* obj = RnMemoryManager::CreateObject(type);
-            GetScope()->GetMemoryGroup()->AddObject(obj);
+            RnObject* obj = CreateObject(type);
             GetScope()->StoreObject(instruction->GetArg2(), obj);
             break;
         }
@@ -597,8 +594,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_MAKE_FUNC: {
             auto obj = dynamic_cast<RnFunctionObject*>(
-                RnMemoryManager::CreateObject(RnType::RN_FUNCTION));
-            GetScope()->GetMemoryGroup()->AddObject(obj);
+               CreateObject(RnType::RN_FUNCTION));
             RnStringNative name =
                 RnConstStore::GetInternedString(instruction->GetArg1());
             auto type = static_cast<RnType::Type>(instruction->GetArg2());
@@ -629,8 +625,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         }
         case OP_MAKE_CLOSURE: {
             auto obj = dynamic_cast<RnFunctionObject*>(
-                RnMemoryManager::CreateObject(RnType::RN_FUNCTION));
-            GetScope()->GetMemoryGroup()->AddObject(obj);
+                CreateObject(RnType::RN_FUNCTION));
             auto type = static_cast<RnType::Type>(instruction->GetArg1());
             RnInstructionArg scope_size = instruction->GetArg2();
             void* func_addr = RnLinearAllocator::Instance()->Malloc(sizeof(RnFunction));
@@ -880,31 +875,43 @@ RnVirtualMachine* RnVirtualMachine::GetInstance() {
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnType::Type type) {
     _gc_count++;
-    return RnMemoryManager::CreateObject(type);
+    auto obj = RnMemoryManager::CreateObject(type);
+    if (!_scopes.empty()) {
+        GetScope()->GetMemoryGroup()->AddObject(obj);
+    }
+    return obj;
 }
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnStringNative data) {
     _gc_count++;
-    return RnMemoryManager::Create(std::move(data));
+    auto obj = RnMemoryManager::Create(std::move(data));
+    GetScope()->GetMemoryGroup()->AddObject(obj);
+    return obj;
 }
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnBoolNative data) {
     _gc_count++;
-    return RnMemoryManager::Create(data);
+    auto obj = RnMemoryManager::Create(data);
+    GetScope()->GetMemoryGroup()->AddObject(obj);
+    return obj;
 }
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnIntNative data) {
     _gc_count++;
-    return RnMemoryManager::Create(data);
+    auto obj = RnMemoryManager::Create(data);
+    GetScope()->GetMemoryGroup()->AddObject(obj);
+    return obj;
 }
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnFloatNative data) {
     _gc_count++;
-    return RnMemoryManager::Create(data);
+    auto obj = RnMemoryManager::Create(data);
+    GetScope()->GetMemoryGroup()->AddObject(obj);
+    return obj;
 }
 
 /*****************************************************************************/
@@ -927,8 +934,7 @@ void RnVirtualMachine::RegisterBuiltins() {
         func->SetScope(GetScope());
         func->SetReturnType(std::get<2>(parts));
         auto obj = dynamic_cast<RnFunctionObject*>(
-            RnMemoryManager::CreateObject(RnType::RN_FUNCTION));
-        GetScope()->GetMemoryGroup()->AddObject(obj);
+            CreateObject(RnType::RN_FUNCTION));
         obj->SetData(func);
         GetScope()->StoreObject(RnConstStore::InternValue(std::get<0>(parts)), obj);
     }
