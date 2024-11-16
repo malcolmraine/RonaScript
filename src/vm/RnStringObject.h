@@ -29,7 +29,6 @@
 #pragma once
 
 #include <string>
-#include "../common/RnString.h"
 #include "RnObjectBase.h"
 
 class RnStringObject : public RnObjectBase<RnStringNative> {

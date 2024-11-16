@@ -33,7 +33,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include "../common/RnString.h"
 #include "../vm/RnObjectList.h"
 
 class RnObject;
