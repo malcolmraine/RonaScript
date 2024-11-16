@@ -28,8 +28,8 @@
 
 #pragma once
 
-enum NodeType_t {
-    AST_ASSIGNMENT_STMT,
+enum NodeType_t : uint8_t {
+    AST_ASSIGNMENT_STMT = 0,
     AST_BINARY_EXPR,
     AST_INDEXED_EXPR,
     AST_WHILE_LOOP,

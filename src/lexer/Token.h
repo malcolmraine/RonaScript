@@ -142,7 +142,7 @@
 #define RESERVED_WORD TOKEN_DEF
 #define TOKEN_DEF(token, lexeme) token,
 
-enum TokenType : int { RN_TOKEN_LIST };
+enum TokenType : uint8_t {INVALID_TOKEN = 0, RN_TOKEN_LIST };
 
 class Token {
 public:
