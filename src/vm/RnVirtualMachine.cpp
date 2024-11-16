@@ -522,12 +522,10 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 func_obj = stack_val;
             }
 
-            RnArrayNative args;
-            args.reserve(instruction->GetArg1());
-            for (uint32_t i = 0; i < instruction->GetArg1(); i++) {
-                args.push_back(StackPop());
+            RnArrayNative args(instruction->GetArg1(), nullptr);
+            for (uint32_t i = instruction->GetArg1(); i > 0; --i) {
+                args[i - 1] = StackPop();
             }
-            std::reverse(args.begin(), args.end());
 
             RnObject* ret_val = CallFunction(func_obj->ToFunction(), args);
             StackPush(ret_val);

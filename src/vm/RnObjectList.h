@@ -44,4 +44,7 @@ public:
 
     RnObjectList(RnStdVector<RnObject*>::const_iterator first, RnStdVector<RnObject*>::const_iterator last)
         : RnStdVector<RnObject*>(first, last) {}
+
+    RnObjectList(size_t n, RnObject* value)
+        : RnStdVector<RnObject*>(n, value) {}
 };
