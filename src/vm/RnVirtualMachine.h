@@ -78,7 +78,7 @@ public:
 
     void CallStackPush(RnScope* scope);
     void CallStackPop();
-    RnObject* CallFunction(RnFunction* func, RnArrayNative args);
+    RnObject* CallFunction(RnFunction* func, const RnArrayNative& args);
     RnIntNative Run();
     RnIntNative ExecuteCodeFrame(RnCodeFrame* frame, RnScope* scope);
     void LoadInstructions(RnStdVector<RnInstruction*>& instructions);

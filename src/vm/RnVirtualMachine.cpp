@@ -122,7 +122,7 @@ void RnVirtualMachine::CallStackPop() {
 }
 
 /*****************************************************************************/
-RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
+RnObject* RnVirtualMachine::CallFunction(RnFunction* func, const RnArrayNative& args) {
     if (func->IsBuiltIn()) {
         RnObject* ret_val = CreateObject(func->GetReturnType());
         func->Call(args, ret_val);
@@ -231,9 +231,9 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, RnArrayNative args) {
 /*****************************************************************************/
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
     if (_gc_count > 20) {
-        //        std::cout << "Garbage collecting...\n";
-        //        _memory_manager->GCMark();
-        //        _memory_manager->GCSweep();
+//                std::cout << "Garbage collecting...\n";
+//                _memory_manager->GCMark();
+//                RnMemoryManager::GCSweep();
         _gc_count = 0;
     }
 
