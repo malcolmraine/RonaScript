@@ -72,7 +72,7 @@ RnAnyObject::RnAnyObject(RnScope* data) {
 }
 
 /*****************************************************************************/
-RnAnyObject::RnAnyObject(RnArrayNative data) {
+RnAnyObject::RnAnyObject(const RnArrayNative& data) {
     _data = RnArrayObject();
     _active_type = RnType::RN_ARRAY;
 }
@@ -228,7 +228,7 @@ void RnAnyObject::SetData(RnFloatNative data) {
 }
 
 /*****************************************************************************/
-void RnAnyObject::SetData(RnArrayNative data) {
+void RnAnyObject::SetData(const RnArrayNative& data) {
     _data = RnArrayObject(data);
     _active_type = RnType::RN_ARRAY;
 }
@@ -344,5 +344,15 @@ RnBoolNative RnAnyObject::IsActiveDataEqual(const RnObject* obj) const {
         default:
             assert(false);
             break;
+    }
+}
+
+/*****************************************************************************/
+RnBoolNative RnAnyObject::Contains(RnObject* obj) const {
+    switch (_active_type) {
+        case RnType::RN_ARRAY:
+            return std::get<RnArrayObject>(_data).Contains(obj);
+        default:
+            RnObject::ThrowUndefinedOperatorError("in", this, obj);
     }
 }

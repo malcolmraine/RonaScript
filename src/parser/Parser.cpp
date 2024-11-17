@@ -63,7 +63,6 @@
 #include "ast/IndexedExpr.h"
 #include "ast/LiteralValue.h"
 #include "ast/Loop.h"
-#include "ast/Module.h"
 #include "ast/Name.h"
 #include "ast/NodeType.h"
 #include "ast/ReturnStmt.h"
@@ -76,14 +75,15 @@ std::vector<std::string> Parser::parsed_files;
 
 std::unordered_map<TokenType, int> Parser::_prec_tbl = {
     {TokenType::DBL_COLON, 300},  {TokenType::R_ARROW, 200},
-    {TokenType::R_PARAN, 100},    {TokenType::STAR, 90},
-    {TokenType::SLASH, 90},       {TokenType::PERCENT, 90},
-    {TokenType::PLUS, 80},        {TokenType::MINUS, 80},
-    {TokenType::DBL_R_CARAT, 70}, {TokenType::DBL_L_CARAT, 70},
-    {TokenType::L_CARAT, 60},     {TokenType::R_CARAT, 60},
-    {TokenType::LEQ, 60},         {TokenType::GEQ, 60},
-    {TokenType::DBL_EQUAL, 50},   {TokenType::NOT_EQUAL, 50},
-    {TokenType::AMPER, 40},       {TokenType::DBL_AMPER, 40},
+    {TokenType::R_PARAN, 100},    {TokenType::DBL_STAR, 95},
+    {TokenType::STAR, 90},        {TokenType::SLASH, 90},
+    {TokenType::PERCENT, 90},     {TokenType::PLUS, 80},
+    {TokenType::MINUS, 80},       {TokenType::DBL_R_CARAT, 70},
+    {TokenType::DBL_L_CARAT, 70}, {TokenType::L_CARAT, 60},
+    {TokenType::R_CARAT, 60},     {TokenType::LEQ, 60},
+    {TokenType::GEQ, 60},         {TokenType::DBL_EQUAL, 50},
+    {TokenType::NOT_EQUAL, 50},   {TokenType::AMPER, 40},
+    {TokenType::TILDE, 40},       {TokenType::DBL_AMPER, 40},
     {TokenType::UP_ARROW, 30},    {TokenType::BAR, 20},
     {TokenType::DBL_BAR, 20},     {TokenType::L_PARAN, 0},
 };
@@ -136,7 +136,7 @@ Parser::~Parser() = default;
 
 /*****************************************************************************/
 void Parser::ConditionalBufAdvance(TokenType t) {
-    if (!EndOfSequence() && Current()->token_type == t) {
+    if (!EndOfSequence() && Current()->GetType() == t) {
         AdvanceBuffer(1);
     }
 }
@@ -147,7 +147,7 @@ AstNodePtr<ImportStmt> Parser::ParseImportStmt() {
     AddCurrentFileInfo(node);
     Expect({TokenType::NAME, TokenType::STRING_LITERAL});
     AdvanceBuffer(1);
-    node->source_file = Current()->lexeme;
+    node->source_file = Current()->GetLexeme();
     Expect(TokenType::SEMICOLON);
     AdvanceBuffer(1);
 
@@ -192,12 +192,12 @@ AstNodePtr<ImportStmt> Parser::ParseImportStmt() {
 }
 
 /*****************************************************************************/
-AstNodePtr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
+AstNodePtr<VarDecl> Parser::ParseVarDecl(const std::vector<Token*>& qualifiers) {
     auto node = AstNode::CreateNode<VarDecl>();
     AddCurrentFileInfo(node);
     Expect(TokenType::NAME);
 
-    switch (Current()->token_type) {
+    switch (Current()->GetType()) {
         case TokenType::CONST:
             node->is_const = true;
             break;
@@ -228,7 +228,7 @@ AstNodePtr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
     AdvanceBuffer(1);
     node->type = ParseType();
 
-    if (Current()->token_type == TokenType::EQUAL) {
+    if (Current()->GetType() == TokenType::EQUAL) {
         AdvanceBuffer(1);
         node->init_value = ParseExpr();
     } else {
@@ -248,7 +248,7 @@ AstNodePtr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
 }
 
 /*****************************************************************************/
-AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
+AstNodePtr<FuncDecl> Parser::ParseFuncDecl(const std::vector<Token*>& qualifiers) {
     auto node = AstNode::CreateNode<FuncDecl>();
     AddCurrentFileInfo(node);
 
@@ -258,7 +258,7 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
 
     ConditionalBufAdvance(TokenType::ROUTINE);
 
-    if (Current()->token_type == TokenType::R_PARAN) {
+    if (Current()->GetType() == TokenType::R_PARAN) {
         node->is_closure = true;
     } else {
         node->id = ParseName(true)->value;
@@ -272,7 +272,7 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
     // Get the function arguments
     std::map<std::string, std::shared_ptr<RnTypeComposite>> arg_symbols;
     MAKE_LOOP_COUNTER(1000)
-    while (Current()->token_type != TokenType::L_PARAN) {
+    while (Current()->GetType() != TokenType::L_PARAN) {
         INCR_LOOP_COUNTER
         auto arg = new ArgDecl();
 
@@ -282,7 +282,7 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
             ConditionalBufAdvance(TokenType::VAR);
         }
 
-        if (Current()->token_type == TokenType::NAME) {
+        if (Current()->GetType() == TokenType::NAME) {
             arg->AddChild(ParseName());
 
             if (arg_symbols.find(arg->GetChild<Name>(0)->value) != arg_symbols.end()) {
@@ -295,7 +295,7 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
             if (Current()->IsType()) {
                 arg->SetType(ParseType());
             } else {
-                ThrowError("Invalid type '" + Current()->lexeme + "' for parameter '" +
+                ThrowError("Invalid type '" + Current()->GetLexeme() + "' for parameter '" +
                            arg->GetChild<Name>(0)->value +
                            "' while declaring routine '" + node->id + "'");
             }
@@ -311,7 +311,7 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
         node->args.emplace_back(arg);
         arg_symbols[arg->GetChild<Name>(0)->value] = arg->GetType();
 
-        if (Current()->token_type != TokenType::VAR && !Current()->IsType()) {
+        if (Current()->GetType() != TokenType::VAR && !Current()->IsType()) {
             ConditionalBufAdvance(TokenType::COMMA);
             break;
         }
@@ -320,7 +320,7 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
     ConditionalBufAdvance(TokenType::L_PARAN);
 
     // Get the function's return type
-    if (Current()->token_type == TokenType::COLON) {
+    if (Current()->GetType() == TokenType::COLON) {
         AdvanceBuffer(1);
         node->type = ParseType();
 
@@ -369,12 +369,12 @@ AstNodePtr<ClassDecl> Parser::ParseClassDecl() {
     CheckExpected();
 
     // Check for inherited classes and parse if necessary
-    if (Current()->token_type == TokenType::EXTENDS) {
+    if (Current()->GetType() == TokenType::EXTENDS) {
         Expect(TokenType::NAME);
         AdvanceBuffer(1);
 
         MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
-        while (Current()->token_type == TokenType::NAME) {
+        while (Current()->GetType() == TokenType::NAME) {
             INCR_LOOP_COUNTER
             node->parent_classes.emplace_back(ParseName());
             ConditionalBufAdvance(TokenType::COMMA);
@@ -390,7 +390,7 @@ AstNodePtr<ClassDecl> Parser::ParseClassDecl() {
     _current_state = _previous_state;
 
     if (!node->scope->symbol_table->HasSymbolEntry("construct")) {
-        throw std::runtime_error("No constructor found for class '" + node->id + "'");
+        ThrowError("No constructor found for class '" + node->id + "'");
     }
     return node;
 }
@@ -407,13 +407,13 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
 
     if ((Lookback() && Lookback()->IsOperator()) && Current()->IsUnaryOp()) {
         return ParseUnaryExpr();
-    } else if (Current()->token_type == TokenType::ROUTINE) {
+    } else if (Current()->GetType() == TokenType::ROUTINE) {
         node = ParseFuncDecl();
-    } else if (Current()->token_type == TokenType::R_BRACK) {
+    } else if (Current()->GetType() == TokenType::R_BRACK) {
         node = ParseArrayLiteral();
-    } else if (Current()->token_type == TokenType::NAME) {
-        if (_current_scope->GetLiteral(Current()->lexeme)) {
-            node = _current_scope->GetLiteral(Current()->lexeme);
+    } else if (Current()->GetType() == TokenType::NAME) {
+        if (_current_scope->GetLiteral(Current()->GetLexeme())) {
+            node = _current_scope->GetLiteral(Current()->GetLexeme());
             AdvanceBuffer(1);
         } else {
             node = ParseName();
@@ -423,40 +423,37 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
         }
     } else if (Current()->IsLiteral()) {
         AdvanceBuffer(1);
-        switch (Lookback()->token_type) {
+        node = AstNode::CreateNode<LiteralValue>();
+        AddCurrentFileInfo(node);
+        switch (Lookback()->GetType()) {
             case TokenType::INT_LITERAL: {
-                node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_INT_LITERAL;
                 AstNode::CastNode<LiteralValue>(node)->data =
-                    static_cast<RnIntNative>(std::stol(Lookback()->lexeme));
+                    static_cast<RnIntNative>(std::stol(Lookback()->GetLexeme()));
                 _intern_count++;
                 break;
             }
             case TokenType::FLOAT_LITERAL: {
-                node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_FLOAT_LITERAL;
                 AstNode::CastNode<LiteralValue>(node)->data =
-                    static_cast<RnFloatNative>(std::stod(Lookback()->lexeme));
+                    static_cast<RnFloatNative>(std::stod(Lookback()->GetLexeme()));
                 _intern_count++;
                 break;
             }
             case TokenType::STRING_LITERAL: {
-                node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_STRING_LITERAL;
-                AstNode::CastNode<LiteralValue>(node)->data = Lookback()->lexeme;
+                AstNode::CastNode<LiteralValue>(node)->data = Lookback()->GetLexeme();
                 _intern_count++;
                 break;
             }
             case TokenType::BOOL_LITERAL: {
-                node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_BOOL_LITERAL;
                 AstNode::CastNode<LiteralValue>(node)->data =
-                    Lookback()->lexeme == "true";
+                    Lookback()->GetLexeme() == "true";
                 _intern_count++;
                 break;
             }
             case TokenType::NULL_LITERAL: {
-                node = AstNode::CreateNode<LiteralValue>();
                 node->node_type = AST_NULL_LITERAL;
                 break;
             }
@@ -468,7 +465,7 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
     if (!node) {
         ThrowError("Failed to parse expression component");
     }
-    return AddCurrentFileInfo(node);
+    return node;
 }
 
 /*****************************************************************************/
@@ -481,30 +478,21 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         auto node = AstNode::CreateNode<BinaryExpr>();
         node->_right = result_stack.Pop();
         node->_left = result_stack.Pop();
-        node->_op = op_stack.Pop()->lexeme;
+        node->_op = op_stack.Pop()->GetLexeme();
         return std::static_pointer_cast<BinaryExpr>(TransformBinaryExpr(node));
     };
 
     auto parse_bracketed_node = [this, &result_stack]() mutable {
-        if (Lookback()->token_type == TokenType::NAME ||
-            Current()->token_type == TokenType::L_PARAN) {
+        if (Lookback()->GetType() == TokenType::NAME ||
+            Lookback()->GetType() == TokenType::L_PARAN) {
             result_stack.push_back(ParseIndexedExpr(result_stack.Pop()));
         } else {
             result_stack.Push(ParseArrayLiteral());
         }
     };
 
-    // Grab any immediate unary operators and apply them to the closest
-    // expression. This may need some fine-tuning.
     if (Current()->IsUnaryOp()) {
-        auto node = AstNode::CreateNode<UnaryExpr>();
-        node->op = Current()->lexeme;
-        AdvanceBuffer(1);
-        if (Current()->token_type == TokenType::R_PARAN) {
-            node->expr = ParseExpr(TokenType::L_PARAN);
-        } else {
-            node->expr = GetExprComponent();
-        }
+        auto node = ParseUnaryExpr();
         result_stack.push_back(node);
     }
 
@@ -514,7 +502,7 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         INCR_LOOP_COUNTER
         if (Lookback() &&
             (Lookback()->IsOperator() ||
-             unary_lookback_set.contains(Lookback()->token_type)) &&
+             unary_lookback_set.contains(Lookback()->GetType())) &&
             Current()->IsUnaryOp()) {
             if (Peek()->IsOneOf({TokenType::INT_LITERAL, TokenType::FLOAT_LITERAL})) {
                 result_stack.push_back(GetExprComponent());
@@ -527,14 +515,14 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
             ThrowError("Failed to parse expression");
         }
 
-        if (Current()->token_type == TokenType::R_BRACK) {
+        if (Current()->GetType() == TokenType::R_BRACK) {
             parse_bracketed_node();
         }
 
         if (Current()->IsOneOf({TokenType::BEGIN, TokenType::R_BRACE,
                                 TokenType::SEMICOLON, TokenType::L_BRACK}) ||
-            (Current()->token_type == TokenType::L_PARAN && op_stack.IsEmpty()) ||
-            Current()->token_type == stop_token || Current()->IsCompoundOp()) {
+            (Current()->GetType() == TokenType::L_PARAN && op_stack.IsEmpty()) ||
+            Current()->GetType() == stop_token || Current()->IsCompoundOp()) {
             // We should only get here at the end of an expression and at
             // the end of an expression we should always be here.
             ConditionalBufAdvance(stop_token);
@@ -551,15 +539,15 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
                 }
 
                 while (result_stack.Size() > 2 && !op_stack.IsEmpty()) {
-                    if (op_stack.back()->token_type == TokenType::R_PARAN) {
+                    if (op_stack.back()->GetType() == TokenType::R_PARAN) {
                         op_stack.Pop();
                     }
 
                     result_stack.Push(make_binary_expr());
                     if (!EndOfSequence()) {
-                        if (Current()->token_type == TokenType::R_BRACK) {
+                        if (Current()->GetType() == TokenType::R_BRACK) {
                             parse_bracketed_node();
-                        } else if (Current()->token_type == TokenType::R_PARAN) {
+                        } else if (Current()->GetType() == TokenType::R_PARAN) {
                             result_stack.Push(ParseFuncCall(result_stack.Pop()));
                         }
                     }
@@ -570,29 +558,29 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
             // Shunting-yard _prec_tbl parsing
             if (Current()->IsOperator() ||
                 Current()->IsOneOf({TokenType::L_PARAN, TokenType::R_PARAN})) {
-                if (Current()->token_type == TokenType::R_PARAN) {
+                if (Current()->GetType() == TokenType::R_PARAN) {
                     if (!Lookback()->IsOperator() && result_stack.Top() &&
-                        Lookback()->token_type != TokenType::R_PARAN) {
+                        Lookback()->GetType() != TokenType::R_PARAN) {
                         result_stack.Push(ParseFuncCall(result_stack.Pop()));
                     } else {
                         op_stack.push_back(Current());
                         AdvanceBuffer(1);
                     }
                 } else if (op_stack.IsEmpty() ||
-                           _prec_tbl[Current()->token_type] >
-                               _prec_tbl[op_stack.back()->token_type]) {
+                           _prec_tbl[Current()->GetType()] >
+                               _prec_tbl[op_stack.back()->GetType()]) {
                     // Push operator onto operator stack if it is higher _prec_tbl than Top of stack
                     op_stack.Push(Current());
                     AdvanceBuffer(1);
-                } else if (_prec_tbl[Current()->token_type] <=
-                           _prec_tbl[op_stack.back()->token_type]) {
+                } else if (_prec_tbl[Current()->GetType()] <=
+                           _prec_tbl[op_stack.back()->GetType()]) {
                     // Create subtree from result stack if it is lower _prec_tbl than Top of operator stack
                     if (op_stack.back()->IsBinaryOp()) {
                         result_stack.Push(TransformBinaryExpr(make_binary_expr()));
 
                         // Handle _left associativity
                         if (!op_stack.IsEmpty() and
-                            _associativity[op_stack.back()->token_type] == LEFT) {
+                            _associativity[op_stack.back()->GetType()] == LEFT) {
                             result_stack.Push(make_binary_expr());
                         }
                     }
@@ -605,16 +593,16 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
 
                 // If matching parantheses are found, Pop the operator stack and advance the buffer
                 if (!op_stack.IsEmpty() &&
-                    op_stack.back()->token_type == TokenType::R_PARAN &&
-                    Current()->token_type == TokenType::L_PARAN) {
+                    op_stack.back()->GetType() == TokenType::R_PARAN &&
+                    Current()->GetType() == TokenType::L_PARAN) {
                     op_stack.Pop();
                     AdvanceBuffer(1);
                 }
-            } else if (Current()->token_type == TokenType::R_BRACK) {
+            } else if (Current()->GetType() == TokenType::R_BRACK) {
                 result_stack.Push(ParseIndexedExpr(result_stack.Pop()));
             } else {
                 result_stack.Push(GetExprComponent());
-                if (Current()->token_type == TokenType::R_BRACK) {
+                if (Current()->GetType() == TokenType::R_BRACK) {
                     result_stack.Push(ParseIndexedExpr(result_stack.Pop()));
                 }
             }
@@ -639,13 +627,20 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
 /*****************************************************************************/
 AstNodePtr<UnaryExpr> Parser::ParseUnaryExpr(const AstNodePtr<AstNode>& expr) {
     auto node = AstNode::CreateNode<UnaryExpr>();
-    node->op = Current()->lexeme;
+    AddCurrentFileInfo(node);
+    node->op = Current()->GetLexeme();
     AdvanceBuffer(1);
 
     if (expr != nullptr) {
         node->expr = expr;
+    } else if (Current()->IsUnaryOp()) {
+        node->expr = ParseUnaryExpr();
     } else {
-        node->expr = ParseExpr();
+        if (Current()->GetType() == TokenType::R_PARAN) {
+            node->expr = ParseExpr(TokenType::L_PARAN);
+        } else {
+            node->expr = GetExprComponent();
+        }
     }
 
     return node;
@@ -656,7 +651,7 @@ AstNodePtr<FlowControl> Parser::ParseFlowControlStmt() {
     auto node = AstNode::CreateNode<FlowControl>();
     AddCurrentFileInfo(node);
     Expect(TokenType::SEMICOLON);
-    if (Current()->token_type == TokenType::CONTINUE) {
+    if (Current()->GetType() == TokenType::CONTINUE) {
         node->node_type = AST_CONTINUE_STMT;
     } else {
         node->node_type = AST_BREAK_STMT;
@@ -672,7 +667,7 @@ AstNodePtr<ReturnStmt> Parser::ParseReturnStmt() {
     AddCurrentFileInfo(node);
     AdvanceBuffer(1);
 
-    if (Current()->token_type == TokenType::SEMICOLON) {
+    if (Current()->GetType() == TokenType::SEMICOLON) {
         AdvanceBuffer(1);
     } else {
         node->expr = ParseExpr();
@@ -688,7 +683,7 @@ AstNodePtr<DeleteStmt> Parser::ParseDeleteStmt() {
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
 
-    if (Current()->token_type == TokenType::SEMICOLON) {
+    if (Current()->GetType() == TokenType::SEMICOLON) {
         AdvanceBuffer(1);
     } else {
         node->SetName(ParseExpr());
@@ -703,7 +698,7 @@ AstNodePtr<ExitStmt> Parser::ParseExitStmt() {
     AddCurrentFileInfo(node);
     AdvanceBuffer(1);
 
-    if (Current()->token_type == TokenType::SEMICOLON) {
+    if (Current()->GetType() == TokenType::SEMICOLON) {
         AdvanceBuffer(1);
     } else {
         node->AddChild(ParseExpr());
@@ -720,10 +715,10 @@ AstNodePtr<AstNode> Parser::ParseAssignmentStatement(const AstNodePtr<AstNode>& 
 
     std::string op;
     if (Current()->IsCompoundOp()) {
-        op = Current()->lexeme[0];
+        op = Current()->GetLexeme()[0];
         AdvanceBuffer(1);
     } else if (Lookback()->IsCompoundOp()) {
-        op = Lookback()->lexeme[0];
+        op = Lookback()->GetLexeme()[0];
     }
 
     if (!op.empty()) {
@@ -751,7 +746,7 @@ AstNodePtr<ConditionalStmt> Parser::ParseConditionalStmt() {
     AddCurrentFileInfo(node);
 
     if (Current()->IsOneOf({TokenType::IF, TokenType::ELIF})) {
-        if (Current()->token_type == TokenType::IF) {
+        if (Current()->GetType() == TokenType::IF) {
             node->node_type = AST_IF_STMT;
         } else {
             node->node_type = AST_ELIF_STMT;
@@ -766,7 +761,7 @@ AstNodePtr<ConditionalStmt> Parser::ParseConditionalStmt() {
             parent_node->alternative = AstNode::CreateNode<ConditionalStmt>();
             AddCurrentFileInfo(parent_node->alternative);
 
-            if (Current()->token_type == TokenType::ELIF) {
+            if (Current()->GetType() == TokenType::ELIF) {
                 parent_node->alternative->node_type = AST_ELIF_STMT;
                 AdvanceBuffer(1);
                 parent_node->alternative->test = ParseExpr(TokenType::COLON);
@@ -781,7 +776,7 @@ AstNodePtr<ConditionalStmt> Parser::ParseConditionalStmt() {
             parent_node = parent_node->alternative;
         }
     } else {
-        ThrowError("Invalid token '" + Current()->lexeme +
+        ThrowError("Invalid token '" + Current()->GetLexeme() +
                    "' for conditional statement.");
     }
 
@@ -880,15 +875,15 @@ AstNodePtr<Loop> Parser::ParseForLoop() {
     Expect(TokenType::R_PARAN);
     AdvanceBuffer(1);
 
-    if (Peek()->token_type == TokenType::VAR ||
-        Peek()->token_type == TokenType::LOCAL) {
+    if (Peek()->GetType() == TokenType::VAR ||
+        Peek()->GetType() == TokenType::LOCAL) {
         AdvanceBuffer(1);
         node->init = ParseVarDecl();
 
-    } else if (Peek()->token_type == TokenType::NAME) {
+    } else if (Peek()->GetType() == TokenType::NAME) {
         AdvanceBuffer(1);
 
-        if (Peek()->token_type == TokenType::EQUAL) {
+        if (Peek()->GetType() == TokenType::EQUAL) {
             auto lexpr = ParseExpr(TokenType::EQUAL);
             node->init = ParseAssignmentStatement(lexpr);
         } else {
@@ -903,7 +898,7 @@ AstNodePtr<Loop> Parser::ParseForLoop() {
     node->test = ParseExpr();
     ConditionalBufAdvance(TokenType::SEMICOLON);
 
-    if (Peek()->token_type == TokenType::EQUAL || Peek()->IsCompoundOp()) {
+    if (Peek()->GetType() == TokenType::EQUAL || Peek()->IsCompoundOp()) {
         auto name = ParseName();
         node->update = ParseAssignmentStatement(name);
     } else {
@@ -933,7 +928,7 @@ AstNodePtr<AliasDecl> Parser::ParseAliasDecl() {
     AdvanceBuffer(1);
     node->AddChild(ParseName(true));
 
-    node->alias_type = Peek()->token_type == TokenType::TYPE ? TYPE_ALIAS : NAME_ALIAS;
+    node->alias_type = Peek()->GetType() == TokenType::TYPE ? TYPE_ALIAS : NAME_ALIAS;
 
     if (node->alias_type == NAME_ALIAS) {
         Expect(TokenType::NAME);
@@ -960,9 +955,9 @@ AstNodePtr<AstNode> Parser::ParseIndexedExpr(const AstNodePtr<AstNode>& expr) {
 
     // Since the first parent expression is passed, we only loop for
     // subsequent index accesses.
-    if (Current()->token_type == TokenType::R_BRACK) {
+    if (Current()->GetType() == TokenType::R_BRACK) {
         AstNodePtr<AstNode> multiDimNode = ParseIndexedExpr(node);
-        while (Current()->token_type == TokenType::R_BRACK) {
+        while (Current()->GetType() == TokenType::R_BRACK) {
             multiDimNode = ParseIndexedExpr(node);
         }
         return multiDimNode;
@@ -975,12 +970,12 @@ AstNodePtr<AstNode> Parser::ParseIndexedExpr(const AstNodePtr<AstNode>& expr) {
 AstNodePtr<Name> Parser::ParseName(bool is_declaration) {
     auto node = AstNode::CreateNode<Name>();
     AddCurrentFileInfo(node);
-    node->value += Current()->lexeme;
+    node->value += Current()->GetLexeme();
     AdvanceBuffer(1);
 
-    while (Current()->token_type == TokenType::NAME ||
-           Current()->token_type == TokenType::DBL_COLON) {
-        node->value += Current()->lexeme;
+    while (Current()->GetType() == TokenType::NAME ||
+           Current()->GetType() == TokenType::DBL_COLON) {
+        node->value += Current()->GetLexeme();
         AdvanceBuffer(1);
     }
 
@@ -1034,9 +1029,9 @@ AstNodePtr<CatchBlock> Parser::ParseCatchBlock() {
     AdvanceBuffer(1);
 
     // Check if any specific exceptions are caught, otherwise all exceptions are caught
-    if (Current()->token_type == TokenType::R_PARAN) {
+    if (Current()->GetType() == TokenType::R_PARAN) {
         AdvanceBuffer(1);
-        while (Current()->token_type == TokenType::NAME) {
+        while (Current()->GetType() == TokenType::NAME) {
             node->AddExceptionId(ParseName());
             ConditionalBufAdvance(TokenType::COMMA);
         }
@@ -1070,14 +1065,7 @@ void Parser::ConvertScope(const AstNodePtr<ScopeNode>& scope) {
 
 /*****************************************************************************/
 std::string Parser::DumpsAst() const {
-    std::string output;
-
-    for (auto& [key, module] : ast->modules) {
-        output += module->ToString(true);
-    }
-    output += ast->root->ToString(true);
-
-    return output;
+    return ast->root->ToString(true);
 }
 
 /*****************************************************************************/
@@ -1091,7 +1079,7 @@ void Parser::Parse() {
                 return;
             }
             INCR_LOOP_COUNTER
-            switch (Current()->token_type) {
+            switch (Current()->GetType()) {
                 case TokenType::BLOCK_COMMENT:
                 case TokenType::INLINE_COMMENT:
                     AdvanceBuffer(1);
@@ -1105,7 +1093,7 @@ void Parser::Parse() {
                     break;
                 }
                 case TokenType::MODULE: {
-                    auto node = ParseModule();
+                    ParseModule();
                     break;
                 }
                 case TokenType::R_BRACE:
@@ -1158,12 +1146,12 @@ void Parser::Parse() {
                 }
                 case TokenType::R_PARAN:
                 case TokenType::NAME: {
-                    if (Current()->lexeme == "__pragma") {
+                    if (Current()->GetLexeme() == "__pragma") {
                         AdvanceBuffer(2);
-                        auto key = Current()->lexeme;
+                        auto key = Current()->GetLexeme();
                         Expect(TokenType::COMMA);
                         AdvanceBuffer(2);
-                        auto value = Current()->lexeme;
+                        auto value = Current()->GetLexeme();
                         Expect(TokenType::L_PARAN);
                         AdvanceBuffer(2);
                         _current_scope->pragma_table[key] = value;
@@ -1171,21 +1159,21 @@ void Parser::Parse() {
                         ConditionalBufAdvance(TokenType::SEMICOLON);
                         Log::DEBUG("Pragma: " + key + ", " + value);
                     } else {
-                        if (_current_scope->GetLiteral(Current()->lexeme)) {
+                        if (_current_scope->GetLiteral(Current()->GetLexeme())) {
                             ThrowError("Misuse of literal replacement '" +
-                                       Current()->lexeme + "'");
+                                       Current()->GetLexeme() + "'");
                         }
                         auto expr = ParseExpr(TokenType::EQUAL);
 
-                        if (Current()->token_type == TokenType::EQUAL ||
-                            Lookback()->token_type == TokenType::EQUAL ||
+                        if (Current()->GetType() == TokenType::EQUAL ||
+                            Lookback()->GetType() == TokenType::EQUAL ||
                             Current()->IsCompoundOp()) {
                             _current_scope->AddSubTree(ParseAssignmentStatement(expr));
                         } else if (Current()->IsUnaryOp()) {
                             _current_scope->AddSubTree(ParseUnaryExpr(expr));
-                        } else if (Current()->token_type == TokenType::R_PARAN) {
+                        } else if (Current()->GetType() == TokenType::R_PARAN) {
                             _current_scope->AddSubTree(ParseFuncCall(expr));
-                        } else if (Current()->token_type == TokenType::R_BRACK) {
+                        } else if (Current()->GetType() == TokenType::R_BRACK) {
                             _current_scope->AddSubTree(ParseIndexedExpr(expr));
                         } else if (Current()->IsUnaryOp()) {
                             if (Current()->IsOneOf(
@@ -1258,13 +1246,11 @@ AstNodePtr<AstNode> Parser::TransformBinaryExpr(AstNodePtr<BinaryExpr> binary_ex
 }
 
 /*****************************************************************************/
-AstNodePtr<Module> Parser::ParseModule() {
+void Parser::ParseModule() {
     Expect(TokenType::NAME);
     AdvanceBuffer(1);
-    auto node = AstNode::CreateNode<Module>();
-    AddCurrentFileInfo(node);
-    node->name = ParseName(true);
-    _namespaces.push_back(node->name->value);
+    auto name = ParseName(true);
+    _namespaces.push_back(name->value);
 
     Expect(TokenType::IS);
     CheckExpected();
@@ -1274,12 +1260,11 @@ AstNodePtr<Module> Parser::ParseModule() {
     assert(_scope_count == previous_scope_count);
     _namespaces.pop_back();
     AdvanceBuffer(1);
-    return node;
 }
 
 /*****************************************************************************/
 TokenType Parser::GetCurrentAsExpectedType() {
-    return Current()->token_type;
+    return Current()->GetType();
 }
 
 /*****************************************************************************/
@@ -1294,7 +1279,7 @@ std::string Parser::ItemToString(Token* token) {
 
 /*****************************************************************************/
 void Parser::HandleUnexpectedItem() {
-    ThrowError("Unexpected token '" + Current()->lexeme + "'");
+    ThrowError("Unexpected token '" + Current()->GetLexeme() + "'");
 }
 
 /*****************************************************************************/
@@ -1306,14 +1291,14 @@ void Parser::ThrowError(const std::string& message) {
 
 /*****************************************************************************/
 std::shared_ptr<RnTypeComposite> Parser::ParseType() {
-    auto basic_type = RnType::StringToType(Current()->lexeme);
+    auto basic_type = RnType::StringToType(Current()->GetLexeme());
     if (basic_type == RnType::RN_UNKNOWN) {
-        std::string type_lexeme = Current()->lexeme;
+        std::string type_lexeme = Current()->GetLexeme();
 
-        while (Peek()->token_type == TokenType::DBL_COLON ||
-               Peek()->token_type == TokenType::NAME) {
+        while (Peek()->GetType() == TokenType::DBL_COLON ||
+               Peek()->GetType() == TokenType::NAME) {
             AdvanceBuffer(1);
-            type_lexeme += Current()->lexeme;
+            type_lexeme += Current()->GetLexeme();
         }
         if (_user_defined_type_map.find(type_lexeme) != _user_defined_type_map.end()) {
             auto type_composite = _user_defined_type_map[type_lexeme];
@@ -1324,21 +1309,21 @@ std::shared_ptr<RnTypeComposite> Parser::ParseType() {
 
     auto type = std::make_shared<RnTypeComposite>(basic_type);
     if (_current_scope->pragma_table["require"] == "bounds") {
-        if (Peek()->token_type != TokenType::R_CARAT) {
-            ThrowError("Missing bounds on type " + Current()->lexeme);
+        if (Peek()->GetType() != TokenType::R_CARAT) {
+            ThrowError("Missing bounds on type " + Current()->GetLexeme());
         }
     }
     AdvanceBuffer(1);
 
-    if (Current()->token_type == TokenType::R_CARAT) {
+    if (Current()->GetType() == TokenType::R_CARAT) {
         AdvanceBuffer(1);
         char* p;
-        size_t lower_bnd_idx = Current()->lexeme.find("..");
-        size_t upper_bnd_idx = Current()->lexeme.find("..") + 2;
+        size_t lower_bnd_idx = Current()->GetLexeme().find("..");
+        size_t upper_bnd_idx = Current()->GetLexeme().find("..") + 2;
         auto lower =
-            std::strtof(Current()->lexeme.substr(0, lower_bnd_idx).c_str(), &p);
+            std::strtof(Current()->GetLexeme().substr(0, lower_bnd_idx).c_str(), &p);
         auto upper = std::strtof(
-            Current()->lexeme.substr(lower_bnd_idx + 2, upper_bnd_idx).c_str(), &p);
+            Current()->GetLexeme().substr(lower_bnd_idx + 2, upper_bnd_idx).c_str(), &p);
         type->SetBounds(lower, upper);
         AdvanceBuffer(2);
     }

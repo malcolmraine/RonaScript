@@ -72,7 +72,7 @@ public:
     virtual void SetData(RnIntNative data) = 0;
     virtual void SetData(RnFloatNative data) = 0;
     virtual void SetData(RnBoolNative data) = 0;
-    virtual void SetData(RnArrayNative data) = 0;
+    virtual void SetData(const RnArrayNative& data) = 0;
     virtual void SetData(RnObject* data) = 0;
     virtual void SetData(RnFunction* data) = 0;
     virtual void SetData(RnScope* data) = 0;
@@ -90,8 +90,8 @@ public:
     virtual size_t GetBytes(char* buf) = 0;
     virtual void SetBytes(const char* buf, size_t n) = 0;
     [[noreturn]] static void ThrowUndefinedOperatorError(const RnStringNative& op,
-                                                         RnObject* obj1,
-                                                         RnObject* obj2);
+                                                         const RnObject* obj1,
+                                                         const RnObject* obj2);
 
     /*************************************************************************/
     [[nodiscard]] virtual std::string GetTypeName() const {
@@ -114,16 +114,6 @@ public:
     }
 
     /*************************************************************************/
-    [[nodiscard]] inline bool IsModule() const {
-        return _is_module;
-    }
-
-    /*************************************************************************/
-    inline void SetIsModule(bool flag) {
-        _is_module = flag;
-    }
-
-    /*************************************************************************/
     [[nodiscard]] bool IsClass() const {
         return _is_class;
     }
@@ -138,6 +128,5 @@ public:
 
 private:
     bool _is_marked = false;
-    bool _is_module = false;
     bool _is_class = false;
 };

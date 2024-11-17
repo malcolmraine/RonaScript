@@ -8,7 +8,7 @@
 ###############################################################################
 
 file(GLOB source_files ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
-file(GLOB include_files ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
+file(GLOB include_files ${CMAKE_CURRENT_LIST_DIR}/*.h)
 list(APPEND RN_SOURCES_PARSER ${source_files})
 list(APPEND RN_INCLUDES_AST ${include_files})
 

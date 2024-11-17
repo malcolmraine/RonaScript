@@ -33,6 +33,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include "../codegen/RnCodeFrame.h"
 #include "../codegen/RnInstruction.h"
 #include "../common/RnInternment.h"
 #include "RnScope.h"
@@ -61,6 +62,8 @@ public:
     }
 
     inline RnObject* StackPop() {
+        if (GetStack().empty()) return nullptr;
+
         auto item = GetStack().back();
         GetStack().pop_back();
         assert(item);
@@ -75,9 +78,10 @@ public:
 
     void CallStackPush(RnScope* scope);
     void CallStackPop();
-    RnObject* CallFunction(RnFunction* func, RnArrayNative args);
+    RnObject* CallFunction(RnFunction* func, const RnArrayNative& args);
     RnIntNative Run();
-    void LoadInstructions(std::vector<RnInstruction*> instructions);
+    RnIntNative ExecuteCodeFrame(RnCodeFrame* frame, RnScope* scope);
+    void LoadInstructions(RnStdVector<RnInstruction*>& instructions);
     static RnVirtualMachine* GetInstance();
     RnObject* CreateObject(RnType::Type type);
     RnObject* CreateObject(RnStringNative data);
@@ -98,10 +102,11 @@ private:
     void Init();
 
 protected:
+    RnCodeFrame* _current_frame = nullptr;
     RnArrayNative _stack;
-    std::vector<RnScope*> _scopes;
-    std::vector<RnScope*> _call_stack;
-    std::vector<RnInstruction*> _instructions;
+    RnStdVector<RnScope*> _scopes;
+    RnStdVector<RnScope*> _call_stack;
+    RnStdVector<RnInstruction*> _instructions;
     RnMemoryManager* _memory_manager;
     size_t i_idx = 0;
     size_t _gc_count = 0;

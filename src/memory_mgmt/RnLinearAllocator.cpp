@@ -36,11 +36,17 @@ RnLinearAllocator* RnLinearAllocator::_instance = nullptr;
 
 /*****************************************************************************/
 void RnLinearAllocator::SetInstance(RnLinearAllocator* instance) {
+    if (_instance) {
+        delete _instance;
+    }
     _instance = instance;
 }
 
 /*****************************************************************************/
 RnLinearAllocator* RnLinearAllocator::Instance() {
+    if (!_instance) {
+        RnLinearAllocator::SetInstance(new RnLinearAllocator(100000, 100000000));
+    }
     return _instance;
 }
 

@@ -83,11 +83,12 @@ public:
     UNDEFINED_CAST(RnScope*, ToObject(), "object")
     UNDEFINED_CAST(RnBoolNative, ToBool(), "bool")
 
+    #define  RN_ARRAY_NATIVE_CONST_REF const RnArrayNative&
     UNDEFINED_ASSIGNMENT(RnStringNative, RnType::RN_STRING, data)
     UNDEFINED_ASSIGNMENT(RnIntNative, RnType::RN_INT, std::to_string(data))
     UNDEFINED_ASSIGNMENT(RnFloatNative, RnType::RN_FLOAT, std::to_string(data))
     UNDEFINED_ASSIGNMENT(RnBoolNative, RnType::RN_BOOLEAN, std::to_string(data))
-    UNDEFINED_ASSIGNMENT(RnArrayNative, RnType::RN_ARRAY, "[...]")
+    UNDEFINED_ASSIGNMENT(RN_ARRAY_NATIVE_CONST_REF, RnType::RN_ARRAY, "[...]")
     UNDEFINED_ASSIGNMENT(RnObject*, data->GetType(), data->ToString())
     UNDEFINED_ASSIGNMENT(RnScope*, RnType::RN_OBJECT, "object")
     UNDEFINED_ASSIGNMENT(RnFunction*, RnType::RN_FUNCTION, "")

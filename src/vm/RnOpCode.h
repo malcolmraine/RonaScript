@@ -53,8 +53,8 @@ typedef enum : uint8_t {
     OP_UNARY_NOT,
     OP_TRY_CONTEXT,
     OP_UNARY_INVERT,
-    OP_UNARY_DECREMENT,
-    OP_UNARY_INCREMENT,
+    OP_FAST_SUB,
+    OP_FAST_ADD,
     OP_UNARY_NEGATION,
     OP_STORE,
     OP_POP,
@@ -86,6 +86,7 @@ typedef enum : uint8_t {
     OP_EXIT,
     OP_INDEX_ACCESS,
     OP_CHECK_MEMBERSHIP,
+    OP_IMPORT,
 } RnOpCode;
 
 RnStringNative GetOpCodeAsString(RnOpCode opcode);

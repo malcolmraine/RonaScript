@@ -1,0 +1,13 @@
+// Operator Associativity
+
+print(!false); // true
+print(!true); // false
+print(!!false); // false
+print(!!true); // true
+print(!!!true); // false
+print(!!!false); // true
+print(1 - -1); // 2
+print(1 - ---1); // 2
+print(!~4); // false
+print(~~5); // 5
+print(1^~2**6); // -66

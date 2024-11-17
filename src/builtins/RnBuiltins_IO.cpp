@@ -79,7 +79,7 @@ RN_BUILTIN_FUNC_DEFINE(print, RnType::RN_VOID, 1) {
             s.append(" ");
         }
     }
-    printf("%s\n", s.c_str());
+    fprintf(stdout, "%s\n", s.c_str());
 }
 
 /*****************************************************************************/

@@ -12,7 +12,6 @@
 #include <string>
 #include "Ast.h"
 #include "AstNode.h"
-#include "Module.h"
 #include "NodeType.h"
 
 class RnScope;

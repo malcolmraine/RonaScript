@@ -42,6 +42,8 @@ struct MemoryHeap {
     MemoryHeap* prev = nullptr;
 };
 
+/*****************************************************************************/
+/*****************************************************************************/
 class RnAllocator {
 public:
     [[nodiscard]] virtual void* Malloc(size_t n) = 0;

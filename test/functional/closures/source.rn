@@ -1,0 +1,18 @@
+// Closures
+
+var fn: callable = routine (int, int): float { return 4.9 * $1 + $2; };
+print(fn(8, 6));
+
+var wrap: callable = routine (callable, array): int { return ($1)($2[0], $2[1]); };
+print(wrap(fn, [4, 5]));
+
+routine transform(var data: array, var fn: callable): array
+begin
+    var result: array = [];
+    for (var i: int = 0; i < count(data); i++):
+        array_push(result, fn(data[i]));
+    end
+    return result;
+end
+
+print(transform([1, 2, 3, 4, 5], routine (int): float {return 1.5 * $1; }));

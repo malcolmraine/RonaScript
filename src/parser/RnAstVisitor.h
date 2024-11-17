@@ -57,7 +57,6 @@ class CatchBlock;
 class DeleteStmt;
 class ExitStmt;
 class AttributeAccess;
-class Module;
 
 template <typename T>
 class RnAstVisitor {
@@ -67,7 +66,6 @@ class RnAstVisitor {
     virtual T Visit(ScopeNode* node) = 0;
     virtual T Visit(Loop* node) = 0;
     virtual T Visit(ImportStmt* node) = 0;
-    virtual T Visit(Module* node) = 0;
     virtual T Visit(FuncDecl* node) = 0;
     virtual T Visit(FuncCall* node) = 0;
     virtual T Visit(VarDecl* node) = 0;

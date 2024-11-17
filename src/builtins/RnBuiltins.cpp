@@ -188,9 +188,10 @@ RN_BUILTIN_FUNC_DEFINE(hasattr, RnType::RN_VOID, 2) {
     auto obj_scope = args[0]->ToObject();
     if (!obj_scope) {
         ret_val->SetData(false);
+    } else {
+        auto attr_key = RnConstStore::InternValue(args[1]->ToString());
+        ret_val->SetData(obj_scope->GetSymbolTable()->SymbolExists(attr_key));
     }
-    auto attr_key = RnConstStore::InternValue(args[1]->ToString());
-    ret_val->SetData(obj_scope->GetSymbolTable()->SymbolExists(attr_key));
 }
 
 /*****************************************************************************/

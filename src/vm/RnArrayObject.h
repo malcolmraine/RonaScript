@@ -48,7 +48,7 @@ public:
     void SetData(RnStringNative data) override;
     void SetData(RnIntNative data) override;
     void SetData(RnFloatNative data) override;
-    void SetData(RnArrayNative data) override;
+    void SetData(const RnArrayNative& data) override;
     void SetData(RnObject* data) override;
     [[nodiscard]] RnStringNative ToString() const override;
     [[nodiscard]] RnArrayNative ToArray() const override;

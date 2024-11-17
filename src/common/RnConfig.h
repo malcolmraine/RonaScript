@@ -37,7 +37,7 @@ public:
     static void SetCallStackMaxDepth(size_t n);
     static size_t GetCallStackMaxDepth();
     static RnArrayNative GetArgv();
-    static void SetArgv(RnArrayNative argv);
+    static void SetArgv(const RnArrayNative& argv);
 
 private:
     static size_t _call_stack_max_depth;

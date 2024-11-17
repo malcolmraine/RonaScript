@@ -39,8 +39,8 @@ union argdata {
 };
 
 /*****************************************************************************/
-RnInstruction::RnInstruction(RnOpCode opcode, uint32_t arg1, uint32_t arg2,
-                             uint32_t arg3)
+RnInstruction::RnInstruction(RnOpCode opcode, RnInstructionArg arg1,
+                             RnInstructionArg arg2, RnInstructionArg arg3)
     : _opcode(opcode), _arg1(arg1), _arg2(arg2), _arg3(arg3) {}
 
 /*****************************************************************************/
@@ -65,6 +65,8 @@ auto RnInstruction::ToString() -> std::string {
     }
 
     switch (_opcode) {
+        case OP_IMPORT:
+            arg1_str = std::to_string(_arg1);
         case OP_LOAD_LITERAL:
             if (_arg1 == UINT32_MAX) {
                 arg1_str = "null";
@@ -74,8 +76,8 @@ auto RnInstruction::ToString() -> std::string {
             }
             break;
         case OP_LOAD_ATTR:
-        case OP_UNARY_INCREMENT:
-        case OP_UNARY_DECREMENT:
+        case OP_FAST_ADD:
+        case OP_FAST_SUB:
         case OP_LOAD_VALUE:
             arg1_str = RnConstStore::GetInternedString(_arg1);
             break;

@@ -27,7 +27,7 @@
 ******************************************************************************/
 
 #include "RnCodeGenerator.h"
-#include "../parser/ast/Module.h"
+#include "../parser/ast/ScopeNode.h"
 #include "RnCodeGenVisitor.h"
 
 /*****************************************************************************/
@@ -38,21 +38,21 @@ RnCodeGenerator::~RnCodeGenerator() = default;
 
 /*****************************************************************************/
 void RnCodeGenerator::Generate(Ast* ast) {
-    _result.clear();
-    for (auto& module : ast->modules) {
-        InstructionBlock module_instructions = visitor.GeneralVisit(module.second);
-        _result.insert(_result.end(), module_instructions.begin(),
-                       module_instructions.end());
-    }
-
+    //    _result.clear();
+    _result = RnCodeFrame::CreateEmpty();
+    visitor.SetCurrentFrame(_result);
     InstructionBlock root_instructions = visitor.GeneralVisit(ast->root);
-    _result.insert(_result.end(), root_instructions.begin(), root_instructions.end());
-
-    if (_result.empty() || _result.back()->GetOpcode() != OP_EXIT) {
-        _result.emplace_back(new RnInstruction(
-            OP_LOAD_LITERAL, RnConstStore::InternValue(static_cast<RnIntNative>(0))));
-        _result.emplace_back(new RnInstruction(OP_EXIT, 0));
+    for (auto instruction : root_instructions) {
+        _result->AddInstruction(instruction->GetOpcode(), instruction->GetArg1(),
+                                instruction->GetArg2(), instruction->GetArg3());
     }
+    //    _result.insert(_result.end(), root_instructions.begin(), root_instructions.end());
+
+    //    if (_result.empty() || _result.back()->GetOpcode() != OP_EXIT) {
+    _result->AddInstruction(OP_LOAD_LITERAL,
+                            RnConstStore::InternValue(static_cast<RnIntNative>(0)));
+    _result->AddInstruction(OP_EXIT, 0);
+    //    }
 }
 
 /*****************************************************************************/

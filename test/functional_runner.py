@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import glob
 import json
@@ -155,7 +157,7 @@ class Test(object):
                 [rn_executable, *self.fixed_args, *self.args, self.source_file],
                 stderr=subprocess.PIPE,
                 stdout=subprocess.PIPE)
-            self.process.communicate()
+            self.process.wait(self.timeout)
 
         self.similarity_scores = []
         start = time.time()
@@ -229,7 +231,7 @@ if __name__ == "__main__":
                              manifest.get("name"),
                              os.path.dirname(file),
                              expected_output_file=manifest.get("expected_output", "expected_output.txt"),
-                             args=[*manifest.get("args", []), "-c"],
+                             args=[*manifest.get("args", [])],
                              timeout=manifest.get("timeout", 5),
                              invoke_count=manifest.get("invoke_count", 1),
                              enabled=manifest.get("enabled", False),

@@ -1,13 +1,13 @@
 /*****************************************************************************
-* File: Module.h
+* File: RnObjectList.cpp
 * Description:
 * Author: Malcolm Hall
-* Date: 6/23/22
+* Date: 11/9/24
 * Version: 1
 *
 * MIT License
 *
-* Copyright (c) 2020 - 2023 Malcolm Hall
+* Copyright (c) 2020 - 2024 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,17 +28,23 @@
 
 #pragma once
 
-#include <string>
-#include "AstNode.h"
-#include "Name.h"
-#include "NodeType.h"
-#include "ScopeNode.h"
+#include <initializer_list>
+#include "../memory_mgmt/RnStdAllocator.h"
 
-class Module : public AstNode {
+class RnObject;
+
+/*****************************************************************************/
+/*****************************************************************************/
+class RnObjectList : public RnStdVector<RnObject*> {
 public:
-    Module();
-    ~Module() override;
-    std::string ToString(bool nl) override;
-    AstNodePtr<Name> name = nullptr;
-    AstNodePtr<ScopeNode> scope = nullptr;
+    RnObjectList() : RnStdVector<RnObject*>() {}
+
+    RnObjectList(std::initializer_list<RnObject*> initializerList)
+        : RnStdVector<RnObject*>(initializerList) {}
+
+    RnObjectList(RnStdVector<RnObject*>::const_iterator first, RnStdVector<RnObject*>::const_iterator last)
+        : RnStdVector<RnObject*>(first, last) {}
+
+    RnObjectList(size_t n, RnObject* value)
+        : RnStdVector<RnObject*>(n, value) {}
 };

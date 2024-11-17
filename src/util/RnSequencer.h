@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <string>
 #include <utility>
+#include "../memory_mgmt/RnStdAllocator.h"
 
 template <typename T, typename E>
 class RnSequencer {
@@ -47,7 +48,7 @@ public:
     T Current() const;
     T Lookback(size_t n = 1) const;
     void Expect(E item);
-    void Expect(std::vector<E> items);
+    void Expect(const std::vector<E>& items);
     void AdvanceBuffer(size_t n);
     virtual void LoadNextItem();
     virtual bool CheckExpected();
@@ -66,8 +67,8 @@ public:
     }
 
     /*************************************************************************/
-    void SetItemTypeName(std::string item_type_name) {
-        _item_type_name = std::move(item_type_name);
+    void SetItemTypeName(const std::string& item_type_name) {
+        _item_type_name = item_type_name;
     }
 
     /*************************************************************************/
@@ -125,13 +126,13 @@ public:
     virtual E GetCurrentAsExpectedType() = 0;
 
 protected:
-    std::vector<T> _buffer;  // Window buffer
+    RnStdVector<T> _buffer;  // Window buffer
     int _window_idx_current = 1;
     T* _data = nullptr;
     size_t _data_idx = 0;
     size_t _data_size = 0;
-    std::vector<E> _expected_items;
-    std::vector<T> _unexpected_captures;
+    RnStdVector<E> _expected_items;
+    RnStdVector<T> _unexpected_captures;
     std::string _item_type_name;
     bool _capture_unexpected = false;
     size_t _buffer_size = DEFAULT_BUFFER_SIZE;
@@ -175,7 +176,7 @@ void RnSequencer<T, E>::Expect(E item) {
 
 /*****************************************************************************/
 template <class T, typename E>
-void RnSequencer<T, E>::Expect(std::vector<E> items) {
+void RnSequencer<T, E>::Expect(const std::vector<E>& items) {
     _expected_items.insert(std::end(_expected_items), std::begin(items),
                            std::end(items));
 }

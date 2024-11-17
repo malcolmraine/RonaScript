@@ -45,15 +45,6 @@ public:
         _name = name;
     }
 
-    [[nodiscard]] bool IsModule() const {
-        return _is_module;
-    }
-
-    void SetIsModule(bool flag) {
-        _is_module = flag;
-    }
-
 private:
     RnStringNative _name;
-    bool _is_module = false;
 };

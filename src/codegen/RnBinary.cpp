@@ -51,7 +51,7 @@ typedef union {
 #define STRING_SIZE(s) static_cast<std::streamsize>(s.length())
 
 /*****************************************************************************/
-BinaryWriter::BinaryWriter(std::string file) : _outfile(std::move(file)) {}
+BinaryWriter::BinaryWriter(const std::string& file) : _outfile(std::move(file)) {}
 
 /*****************************************************************************/
 BinaryWriter::~BinaryWriter() = default;
@@ -131,7 +131,7 @@ bool BinaryWriter::Write() {
 
 /*****************************************************************************/
 /*****************************************************************************/
-BinaryReader::BinaryReader(std::string file) : _infile(std::move(file)) {}
+BinaryReader::BinaryReader(const std::string& file) : _infile(file) {}
 
 /*****************************************************************************/
 BinaryReader::~BinaryReader() = default;

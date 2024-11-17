@@ -37,10 +37,10 @@ std::unordered_map<TokenType, std::string> Token::token_name_map{RN_TOKEN_LIST};
 
 /*****************************************************************************/
 Token::Token(std::string s, TokenType token, int line_num, int char_num) {
-    lexeme = std::move(s);
+    _lexeme = std::move(s);
     file_info.SetCharNum(char_num);
     file_info.SetLineNum(line_num);
-    token_type = token;
+    _token_type = token;
 }
 
 /*****************************************************************************/
@@ -52,7 +52,7 @@ bool Token::IsLiteral() const {
 
 /*****************************************************************************/
 bool Token::IsBinaryOp() const {
-    return token_type == TokenType::DBL_COLON ||
+    return _token_type == TokenType::DBL_COLON ||
            IsOneOf(
                {TokenType::PLUS,        TokenType::MINUS,       TokenType::STAR,
                 TokenType::BAR,         TokenType::DBL_BAR,     TokenType::DBL_AMPER,
@@ -93,5 +93,5 @@ bool Token::IsType() const {
 
 /*****************************************************************************/
 std::string Token::ToString() const {
-    return "Token('" + lexeme + "', " + Token::token_name_map[token_type] + ")";
+    return "Token('" + _lexeme + "', " + Token::token_name_map[_token_type] + ")";
 }

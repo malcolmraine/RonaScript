@@ -79,10 +79,10 @@ RnStringNative GetOpCodeAsString(RnOpCode opcode) {
             return "OP_TRY_CONTEXT";
         case OP_UNARY_INVERT:
             return "OP_UNARY_INVERT";
-        case OP_UNARY_DECREMENT:
-            return "OP_UNARY_DECREMENT";
-        case OP_UNARY_INCREMENT:
-            return "OP_UNARY_INCREMENT";
+        case OP_FAST_SUB:
+            return "OP_FAST_SUB";
+        case OP_FAST_ADD:
+            return "OP_FAST_ADD";
         case OP_UNARY_NOT:
             return "OP_UNARY_NOT";
         case OP_UNARY_NEGATION:
@@ -141,6 +141,8 @@ RnStringNative GetOpCodeAsString(RnOpCode opcode) {
             return "OP_CHECK_MEMBERSHIP";
         case OP_MAKE_CLOSURE:
             return "OP_MAKE_CLOSURE";
+        case OP_IMPORT:
+            return "OP_IMPORT";
         default:
             return "UNKNOWN";
     }
@@ -192,6 +194,10 @@ RnOpCode GetOpCodeFromOperator(const RnStringNative& op) {
         return OP_BINARY_MOD;
     } else if (op == "in") {
         return OP_CHECK_MEMBERSHIP;
+    } else if (op == "<<") {
+        return OP_BINARY_LSH;
+    } else if (op == ">>") {
+        return OP_BINARY_RSH;
     } else {
         return OP_NOP;
     }

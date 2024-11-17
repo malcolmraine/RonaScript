@@ -142,11 +142,10 @@
 #define RESERVED_WORD TOKEN_DEF
 #define TOKEN_DEF(token, lexeme) token,
 
-enum TokenType : int { RN_TOKEN_LIST };
+enum TokenType : uint8_t {INVALID_TOKEN = 0, RN_TOKEN_LIST };
 
 class Token {
 public:
-    static std::unordered_map<TokenType, std::string> token_name_map;
     Token(std::string s, TokenType token, int line_num = -1, int char_num = -1);
     ~Token() = default;
     [[nodiscard]] bool IsLiteral() const;
@@ -159,10 +158,29 @@ public:
 
     [[nodiscard]] inline bool IsOneOf(
         const std::unordered_set<TokenType>& tokens) const {
-        return tokens.contains(token_type);
+        return tokens.contains(_token_type);
     }
 
-    TokenType token_type = TokenType::UNDEFINED;
-    std::string lexeme;
+    const std::string& GetLexeme() const {
+        return _lexeme;
+    }
+
+    void SetLexeme(const std::string& value) {
+        _lexeme = value;
+    }
+
+    TokenType GetType() const {
+        return _token_type;
+    }
+
+    void SetType(TokenType type) {
+        _token_type = type;
+    }
+
     FileInfo file_info;
+
+private:
+    std::string _lexeme;
+    TokenType _token_type = TokenType::UNDEFINED;
+    static std::unordered_map<TokenType, std::string> token_name_map;
 };

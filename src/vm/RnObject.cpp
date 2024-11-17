@@ -172,8 +172,8 @@ RnObject* RnObject::Copy(RnObject* obj) {
 }
 
 /*****************************************************************************/
-void RnObject::ThrowUndefinedOperatorError(const RnStringNative& op, RnObject* obj1,
-                                           RnObject* obj2) {
+void RnObject::ThrowUndefinedOperatorError(const RnStringNative& op,
+                                           const RnObject* obj1, const RnObject* obj2) {
     throw std::runtime_error("Operator '" + op + "' is not defined for types '" +
                              obj1->GetTypeName() + "' and '" + obj2->GetTypeName() +
                              "'");

@@ -1,13 +1,13 @@
 /*****************************************************************************
-* File:
+* File: RnObjectList.cpp
 * Description:
 * Author: Malcolm Hall
-* Date:
+* Date: 11/9/24
 * Version: 1
 *
 * MIT License
 *
-* Copyright (c) 2020 - 2023 Malcolm Hall
+* Copyright (c) 2020 - 2024 Malcolm Hall
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,28 +26,4 @@
 * SOFTWARE.
 ******************************************************************************/
 
-#include "Module.h"
-#include "../../codegen/RnCodeGenVisitor.h"
-
-/*****************************************************************************/
-Module::Module() {
-    node_type = AST_MODULE;
-}
-
-/*****************************************************************************/
-Module::~Module() = default;
-
-/*****************************************************************************/
-std::string Module::ToString(bool nl) {
-    std::string s = MakeTabStr() + "Module( " + name->value + " )";
-    if (nl) {
-        s += "\n";
-    }
-
-    if (scope != nullptr) {
-        scope->nest_lvl = nest_lvl + 1;
-        s += scope->ToString(true);
-    }
-
-    return s;
-}
+#include "RnObjectList.h"

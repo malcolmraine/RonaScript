@@ -32,10 +32,14 @@
 #include <vector>
 #include "../vm/RnOpCode.h"
 
+typedef uint32_t RnInstructionArg;
+constexpr size_t RN_INSTRUCTION_OP_WIDTH = sizeof(RnOpCode);
+constexpr size_t RN_INSTRUCTION_ARG_WIDTH = sizeof(RnInstructionArg);
+
 class RnInstruction {
 public:
-    explicit RnInstruction(RnOpCode opcode = OP_NOP, uint32_t arg1 = 0,
-                           uint32_t arg2 = 0, uint32_t arg3 = 0);
+    explicit RnInstruction(RnOpCode opcode = OP_NOP, RnInstructionArg arg1 = 0,
+                           RnInstructionArg arg2 = 0, RnInstructionArg arg3 = 0);
     ~RnInstruction();
     std::string ToString();
 
@@ -43,35 +47,35 @@ public:
         return _opcode;
     }
 
-    [[nodiscard]] inline uint32_t GetArg1() const {
+    [[nodiscard]] inline RnInstructionArg GetArg1() const {
         return _arg1;
     }
 
-    void inline SetArg1(uint32_t arg1) {
+    void inline SetArg1(RnInstructionArg arg1) {
         _arg1 = arg1;
     }
 
-    [[nodiscard]] inline uint32_t GetArg2() const {
+    [[nodiscard]] inline RnInstructionArg GetArg2() const {
         return _arg2;
     }
 
-    void inline SetArg2(uint32_t arg2) {
+    void inline SetArg2(RnInstructionArg arg2) {
         _arg2 = arg2;
     }
 
-    [[nodiscard]] inline uint32_t GetArg3() const {
+    [[nodiscard]] inline RnInstructionArg GetArg3() const {
         return _arg3;
     }
 
-    void inline SetArg3(uint32_t arg3) {
+    void inline SetArg3(RnInstructionArg arg3) {
         _arg3 = arg3;
     }
 
 private:
     RnOpCode _opcode = OP_NOP;
-    uint32_t _arg1 = 0;
-    uint32_t _arg2 = 0;
-    uint32_t _arg3 = 0;
+    RnInstructionArg _arg1 = 0;
+    RnInstructionArg _arg2 = 0;
+    RnInstructionArg _arg3 = 0;
 };
 
 typedef std::vector<RnInstruction*> InstructionBlock;

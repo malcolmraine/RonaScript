@@ -56,7 +56,7 @@ std::string VarDecl::ToString(bool nl) {
     s.append("( ").append(id).append(", ").append(type->ToString());
 
     for (auto& qualifier : qualifiers) {
-        s.append(", ").append(qualifier->lexeme);
+        s.append(", ").append(qualifier->GetLexeme());
     }
 
     s.append(" )");

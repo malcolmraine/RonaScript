@@ -2,7 +2,7 @@ module System is
 begin
 
 
-const argv: array = __argv();
+var argv: array = __argv();
 
 
 routine set_recursion_limit(var depth: int): bool
@@ -18,3 +18,5 @@ end // routine exec
 
 
 end // module System
+
+print("Inside module", System::argv);

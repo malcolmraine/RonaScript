@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <utility>
 #include "Token.h"
+#include "../memory_mgmt/RnLinearAllocator.h"
 
 #undef TOKEN_DEF
 #undef RESERVED_WORD
@@ -87,10 +88,10 @@ Token* Lexer::Emit(TokenType type) {
     auto token = MakeToken(_lexeme, type);
 
     // This is a little awkward, but it handles repeated unary operators
-    if (token->token_type == TokenType::NAME &&
-        (token->lexeme[0] == '+' || token->lexeme[0] == '-')) {
-        tokens.emplace_back(MakeToken(std::string(1, token->lexeme[0])));
-        token->lexeme = token->lexeme.substr(1);
+    if (token->GetType() == TokenType::NAME &&
+        (token->GetLexeme()[0] == '+' || token->GetLexeme()[0] == '-')) {
+        tokens.emplace_back(MakeToken(std::string(1, token->GetLexeme()[0])));
+        token->SetLexeme(token->GetLexeme().substr(1));
     }
     _lexeme.clear();
     tokens.emplace_back(token);
@@ -123,26 +124,26 @@ Token* Lexer::MakeToken(const std::string& s, TokenType initial_type) const {
 
     if (initial_type == TokenType::UNDEFINED) {
         if (_token_map.count(s) || (_token_map.count(s) && IsReservedWord(s))) {
-            token->token_type = _token_map[s];
+            token->SetType(_token_map[s]);
         } else if (IsIntLiteral(s)) {
-            token->token_type = TokenType::INT_LITERAL;
-            token->lexeme = normalize_sign(s);
+            token->SetType(TokenType::INT_LITERAL);
+            token->SetLexeme(normalize_sign(s));
         } else if (IsFloatLiteral(s)) {
-            token->token_type = TokenType::FLOAT_LITERAL;
-            token->lexeme = normalize_sign(s);
+            token->SetType(TokenType::FLOAT_LITERAL);
+            token->SetLexeme(normalize_sign(s));
         } else if (IsStrLiteral(s)) {
-            token->token_type = TokenType::STRING_LITERAL;
+            token->SetType(TokenType::STRING_LITERAL);
         } else if (IsBoolLiteral(s)) {
-            token->token_type = TokenType::BOOL_LITERAL;
+            token->SetType(TokenType::BOOL_LITERAL);
         } else {
-            token->token_type = TokenType::NAME;
+            token->SetType(TokenType::NAME);
         }
     }
     return token;
 }
 
 /*****************************************************************************/
-bool Lexer::IsIntLiteral(std::string s) {
+bool Lexer::IsIntLiteral(const std::string& s) {
     size_t i = 0;
     char c;
     for (; i < s.length(); i++) {
@@ -159,7 +160,7 @@ bool Lexer::IsIntLiteral(std::string s) {
 }
 
 /*****************************************************************************/
-bool Lexer::IsFloatLiteral(std::string s) {
+bool Lexer::IsFloatLiteral(const std::string& s) {
     bool decimal_found = false;
     size_t i = 0;
     char c;
@@ -182,7 +183,7 @@ bool Lexer::IsFloatLiteral(std::string s) {
 }
 
 /*****************************************************************************/
-bool Lexer::IsHexLiteral(std::string s) {
+bool Lexer::IsHexLiteral(const std::string& s) {
     std::string prefix = std::string(1, s[0]) + std::string(1, s[1]);
     if (prefix == "0x" || prefix == "0X") {
         for (size_t i = 2; i < s.length(); ++i) {
@@ -378,7 +379,7 @@ Token* Lexer::Consume() {
                 AdvanceBuffer(2);
                 return Emit();
             } else {
-                if ((tokens.back()->token_type != TokenType::R_PARAN &&
+                if ((tokens.back()->GetType() != TokenType::R_PARAN &&
                      !tokens.back()->IsBinaryOp()) ||
                     !_lexeme.empty() || Peek() == '=' || Peek() == '>')
                     return ProcessOperator();

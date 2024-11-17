@@ -59,6 +59,7 @@ class CatchBlock;
 class DeleteStmt;
 class ExitStmt;
 class AttributeAccess;
+class RnCodeFrame;
 
 class RnCodeGenVisitor : public RnAstVisitor<InstructionBlock> {
 public:
@@ -72,7 +73,6 @@ public:
     InstructionBlock Visit(ScopeNode* node) override;
     InstructionBlock Visit(Loop* node) override;
     InstructionBlock Visit(ImportStmt* node) override;
-    InstructionBlock Visit(Module* node) override;
     InstructionBlock Visit(FuncDecl* node) override;
     InstructionBlock Visit(FuncCall* node) override;
     InstructionBlock Visit(VarDecl* node) override;
@@ -94,10 +94,15 @@ public:
     InstructionBlock Visit(IndexedExpr* node) override;
     InstructionBlock Visit(FlowControl* node) override;
 
+    void SetCurrentFrame(RnCodeFrame* frame) {
+        _current_frame = frame;
+    }
+
 private:
     static void WrapContext(InstructionBlock& block);
 
 private:
+    RnCodeFrame* _current_frame = nullptr;
     InstructionBlock _instructions;
     std::vector<int> _scope_start_indices;
     std::vector<std::vector<RnInstruction*>> _break_instructions;
