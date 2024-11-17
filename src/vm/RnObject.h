@@ -72,7 +72,7 @@ public:
     virtual void SetData(RnIntNative data) = 0;
     virtual void SetData(RnFloatNative data) = 0;
     virtual void SetData(RnBoolNative data) = 0;
-    virtual void SetData(RnArrayNative data) = 0;
+    virtual void SetData(const RnArrayNative& data) = 0;
     virtual void SetData(RnObject* data) = 0;
     virtual void SetData(RnFunction* data) = 0;
     virtual void SetData(RnScope* data) = 0;

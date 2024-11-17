@@ -72,7 +72,7 @@ RnAnyObject::RnAnyObject(RnScope* data) {
 }
 
 /*****************************************************************************/
-RnAnyObject::RnAnyObject(RnArrayNative data) {
+RnAnyObject::RnAnyObject(const RnArrayNative& data) {
     _data = RnArrayObject();
     _active_type = RnType::RN_ARRAY;
 }
@@ -228,7 +228,7 @@ void RnAnyObject::SetData(RnFloatNative data) {
 }
 
 /*****************************************************************************/
-void RnAnyObject::SetData(RnArrayNative data) {
+void RnAnyObject::SetData(const RnArrayNative& data) {
     _data = RnArrayObject(data);
     _active_type = RnType::RN_ARRAY;
 }

@@ -192,7 +192,7 @@ AstNodePtr<ImportStmt> Parser::ParseImportStmt() {
 }
 
 /*****************************************************************************/
-AstNodePtr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
+AstNodePtr<VarDecl> Parser::ParseVarDecl(const std::vector<Token*>& qualifiers) {
     auto node = AstNode::CreateNode<VarDecl>();
     AddCurrentFileInfo(node);
     Expect(TokenType::NAME);
@@ -248,7 +248,7 @@ AstNodePtr<VarDecl> Parser::ParseVarDecl(std::vector<Token*> qualifiers) {
 }
 
 /*****************************************************************************/
-AstNodePtr<FuncDecl> Parser::ParseFuncDecl(std::vector<Token*> qualifiers) {
+AstNodePtr<FuncDecl> Parser::ParseFuncDecl(const std::vector<Token*>& qualifiers) {
     auto node = AstNode::CreateNode<FuncDecl>();
     AddCurrentFileInfo(node);
 

@@ -67,8 +67,8 @@ public:
     }
 
     /*************************************************************************/
-    void SetItemTypeName(std::string item_type_name) {
-        _item_type_name = std::move(item_type_name);
+    void SetItemTypeName(const std::string& item_type_name) {
+        _item_type_name = item_type_name;
     }
 
     /*************************************************************************/

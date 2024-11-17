@@ -120,7 +120,7 @@ void RnArrayObject::SetData(RnFloatNative data) {
 }
 
 /*****************************************************************************/
-void RnArrayObject::SetData(RnArrayNative data) {
+void RnArrayObject::SetData(const RnArrayNative& data) {
     SetDataInternal(data);
 }
 
