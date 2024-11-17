@@ -80,6 +80,7 @@ Lexer::~Lexer() {
     _file_obj.close();
     for (auto& token : tokens)
         delete token;
+    delete _data;
 }
 
 /*****************************************************************************/
