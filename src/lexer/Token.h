@@ -146,8 +146,10 @@ enum TokenType : uint8_t {INVALID_TOKEN = 0, RN_TOKEN_LIST };
 
 class Token {
 public:
-    Token(std::string s, TokenType token, int line_num = -1, int char_num = -1);
+    Token(const std::string& s, TokenType token, int line_num = -1, int char_num = -1);
     ~Token() = default;
+    static Token* Create(const std::string& s, TokenType token);
+    static void Destroy(Token* token);
     [[nodiscard]] bool IsLiteral() const;
     [[nodiscard]] bool IsBinaryOp() const;
     [[nodiscard]] bool IsUnaryOp() const;

@@ -78,8 +78,9 @@ Lexer::Lexer() {
 /*****************************************************************************/
 Lexer::~Lexer() {
     _file_obj.close();
-    for (auto& token : tokens)
-        delete token;
+    for (auto token : tokens) {
+        Token::Destroy(token);
+    }
 }
 
 /*****************************************************************************/
@@ -100,7 +101,7 @@ Token* Lexer::Emit(TokenType type) {
 
 /*****************************************************************************/
 Token* Lexer::MakeToken(const std::string& s, TokenType initial_type) const {
-    auto token = new Token(s, initial_type);
+    auto token = Token::Create(s, initial_type);
     token->file_info = file_info;
 
     // A number can have an abitrary number of signs in front of it
@@ -264,7 +265,7 @@ Token* Lexer::ProcessComment(bool is_block_comment) {
 
         if (is_block_comment)
             AdvanceBuffer(1);
-        return new Token("", TokenType::UNDEFINED);
+        return Token::Create("", TokenType::UNDEFINED);
     } else {
         return Emit();
     }
@@ -391,7 +392,7 @@ Token* Lexer::Consume() {
             break;
         }
     }
-    return new Token("", TokenType::UNDEFINED);
+    return Token::Create("", TokenType::UNDEFINED);
 }
 
 /*****************************************************************************/
