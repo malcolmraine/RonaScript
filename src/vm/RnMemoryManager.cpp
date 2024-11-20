@@ -47,7 +47,7 @@ RnObjectAllocator<RnClassObject> class_allocator(10000, 1000000);
 RnObjectAllocator<RnAnyObject> any_allocator(10000, 1000000);
 RnObjectAllocator<RnFloatObject> float_allocator(10000, 1000000);
 RnObjectAllocator<RnFunctionObject> func_allocator(10000, 1000000);
-RnObjectAllocator<RnIntObject> int_allocator(10000, 1000000);
+RnObjectAllocator<RnIntObject> int_allocator(1000000, 100000000);
 RnObjectAllocator<RnStringObject> string_allocator(10000, 1000000);
 RnObjectAllocator<RnScope> scope_allocator(10000, 1000000);
 RnObject* RnMemoryManager::_true_boolean = nullptr;
@@ -162,12 +162,15 @@ void RnMemoryManager::GCSweep() {
         object->UnMark();
     };
 
+    bool_allocator.FreeIf(checkIfMarked, unmarkObject);
     int_allocator.FreeIf(checkIfMarked, unmarkObject);
     float_allocator.FreeIf(checkIfMarked, unmarkObject);
     string_allocator.FreeIf(checkIfMarked, unmarkObject);
     class_allocator.FreeIf(checkIfMarked, unmarkObject);
     func_allocator.FreeIf(checkIfMarked, unmarkObject);
     any_allocator.FreeIf(checkIfMarked, unmarkObject);
+    array_allocator.FreeIf(checkIfMarked, unmarkObject);
+
 }
 
 /*****************************************************************************/

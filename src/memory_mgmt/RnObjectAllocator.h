@@ -63,8 +63,8 @@ public:
 #ifdef USE_STD_MALLOC
         std::free(object);
 #else
-        object->~T();
-        //    std::destroy_at<T>(object);
+//        object->~T();
+        std::destroy_at<T>(object);
         _allocator.Free(object);
 #endif
     }

@@ -43,17 +43,18 @@ public:
     void AddChildGroup(RnMemoryGroup* child);
     [[nodiscard]] RnMemoryGroup* GetParent() const;
     void SetParent(RnMemoryGroup* parent);
+    void Clear();
 
     [[nodiscard]] RnArrayNative GetObjects() {
         return _objects;
     }
 
-    [[nodiscard]] std::vector<RnMemoryGroup*> GetChildGroups() {
+    [[nodiscard]] RnStdVector<RnMemoryGroup*> GetChildGroups() {
         return _child_groups;
     }
 
 private:
     RnMemoryGroup* _parent = nullptr;
-    std::vector<RnMemoryGroup*> _child_groups;
+    RnStdVector<RnMemoryGroup*> _child_groups;
     RnArrayNative _objects;
 };

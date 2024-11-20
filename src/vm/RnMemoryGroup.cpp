@@ -70,3 +70,9 @@ void RnMemoryGroup::SetParent(RnMemoryGroup* parent) {
     if (parent)
         _parent->AddChildGroup(this);
 }
+
+/*****************************************************************************/
+void RnMemoryGroup::Clear() {
+    _child_groups.clear();
+    _objects.clear();
+}

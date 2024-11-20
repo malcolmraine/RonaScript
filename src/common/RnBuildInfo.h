@@ -13,4 +13,4 @@
 #define ENABLE_OPCODE_PREDICTION
 
 // Switch to builtin malloc/calloc/realloc
-#define USE_STD_MALLOC 0
+//#define USE_STD_MALLOC

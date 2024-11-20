@@ -200,5 +200,6 @@ RnObject* RnScope::MakeLocal(RnType::Type type) {
 /*****************************************************************************/
 void RnScope::Reset() {
     GetSymbolTable()->Clear();
+    GetMemoryGroup()->Clear();
     _locals.clear();
 }

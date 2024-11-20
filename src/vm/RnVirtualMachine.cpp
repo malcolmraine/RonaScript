@@ -160,11 +160,14 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, const RnArrayNative& 
             StackPop();
         }
 
+        RnObject* ret_val = nullptr;
         if (has_returned) {
-            return scope->ret_val;
+            ret_val = scope->ret_val;
         } else {
-            return RnObject::Create(RnType::RN_NULL);
+            ret_val = RnObject::Create(RnType::RN_NULL);
         }
+        RnMemoryManager::DestroyScope(scope);
+        return ret_val;
     }
 }
 
@@ -172,7 +175,6 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, const RnArrayNative& 
     RnObject* b = StackPop();                        \
     RnObject* a = StackPop();                        \
     RnObject* result = *a op b;                      \
-    GetScope()->GetMemoryGroup()->AddObject(result); \
     StackPush(result);                               \
     PREDICT_OPCODE2(OP_LOAD_VALUE, OP_LOAD_LITERAL)
 
@@ -230,10 +232,10 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, const RnArrayNative& 
 
 /*****************************************************************************/
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
-    if (_gc_count > 20) {
-//                std::cout << "Garbage collecting...\n";
-//                _memory_manager->GCMark();
-//                RnMemoryManager::GCSweep();
+    if (_gc_count > 2000) {
+//        std::cout << "Garbage collecting...\n";
+        _memory_manager->GCMark();
+        RnMemoryManager::GCSweep();
         _gc_count = 0;
     }
 
