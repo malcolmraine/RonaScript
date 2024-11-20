@@ -27,8 +27,8 @@
 ******************************************************************************/
 
 #include "RnCallFrame.h"
+#include "../objects/RnObject.h"
 #include "RnFunction.h"
-#include "RnObject.h"
 #include "RnScope.h"
 
 /*****************************************************************************/

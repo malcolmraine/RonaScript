@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "RnClass.h"
+#include "../vm/RnClass.h"
 #include "RnObjectBase.h"
 
 /**

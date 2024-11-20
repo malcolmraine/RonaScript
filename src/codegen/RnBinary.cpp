@@ -28,8 +28,8 @@
 
 #include "RnBinary.h"
 #include "../common/RnInternment.h"
+#include "../objects/RnObject.h"
 #include "../util/Time.h"
-#include "../vm/RnObject.h"
 
 const std::string CONST_HEADER = "$$CONST$$";
 const std::string CODE_HEADER = "$$CODE$$";

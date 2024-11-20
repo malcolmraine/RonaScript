@@ -27,6 +27,7 @@
 ******************************************************************************/
 
 #include "RnObject.h"
+#include "../vm/RnVirtualMachine.h"
 #include "RnAnyObject.h"
 #include "RnArrayObject.h"
 #include "RnBoolObject.h"
@@ -35,7 +36,6 @@
 #include "RnFunctionObject.h"
 #include "RnIntObject.h"
 #include "RnStringObject.h"
-#include "RnVirtualMachine.h"
 
 /*****************************************************************************/
 bool RnObject::ValueCompare(const RnObject* a, const RnObject* b) {

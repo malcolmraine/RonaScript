@@ -27,7 +27,7 @@
 ******************************************************************************/
 
 #include "RnBuiltins_Array.h"
-#include "../vm/RnArrayObject.h"
+#include "../objects/RnArrayObject.h"
 #include "../vm/RnScope.h"
 
 #undef BUILTIN_CLASS

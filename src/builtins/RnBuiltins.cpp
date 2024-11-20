@@ -31,11 +31,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <stdexcept>
+#include "../objects/RnArrayObject.h"
+#include "../objects/RnClassObject.h"
+#include "../objects/RnFunctionObject.h"
 #include "../util/String.h"
-#include "../vm/RnArrayObject.h"
-#include "../vm/RnClassObject.h"
 #include "../vm/RnFunction.h"
-#include "../vm/RnFunctionObject.h"
 #include "../vm/RnScope.h"
 #include "../vm/RnVirtualMachine.h"
 

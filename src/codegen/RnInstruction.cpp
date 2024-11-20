@@ -27,8 +27,8 @@
 ******************************************************************************/
 
 #include "RnInstruction.h"
+#include "../objects/RnObject.h"
 #include "../util/String.h"
-#include "../vm/RnObject.h"
 
 #define OPCODE_BYTES_CNT 1
 #define ARG_BYTES_CNT 1

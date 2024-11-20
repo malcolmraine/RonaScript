@@ -30,13 +30,13 @@
 
 #include <string>
 #include <vector>
-#include "../vm/RnArrayObject.h"
-#include "../vm/RnBoolObject.h"
-#include "../vm/RnFloatObject.h"
-#include "../vm/RnFunctionObject.h"
-#include "../vm/RnIntObject.h"
-#include "../vm/RnObject.h"
-#include "../vm/RnStringObject.h"
+#include "../objects/RnArrayObject.h"
+#include "../objects/RnBoolObject.h"
+#include "../objects/RnFloatObject.h"
+#include "../objects/RnFunctionObject.h"
+#include "../objects/RnIntObject.h"
+#include "../objects/RnObject.h"
+#include "../objects/RnStringObject.h"
 
 #if defined(_WIN32)
 #define LIBRARY_API __declspec(dllexport)

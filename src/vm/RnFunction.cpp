@@ -28,7 +28,7 @@
 
 #include "RnFunction.h"
 #include <utility>
-#include "RnObject.h"
+#include "../objects/RnObject.h"
 #include "RnScope.h"
 
 /*****************************************************************************/

@@ -29,14 +29,14 @@
 #include "RnMemoryManager.h"
 #include <memory>
 #include <utility>
-#include "RnAnyObject.h"
-#include "RnArrayObject.h"
-#include "RnBoolObject.h"
-#include "RnClassObject.h"
-#include "RnFloatObject.h"
-#include "RnFunctionObject.h"
-#include "RnIntObject.h"
-#include "RnStringObject.h"
+#include "../objects/RnAnyObject.h"
+#include "../objects/RnArrayObject.h"
+#include "../objects/RnBoolObject.h"
+#include "../objects/RnClassObject.h"
+#include "../objects/RnFloatObject.h"
+#include "../objects/RnFunctionObject.h"
+#include "../objects/RnIntObject.h"
+#include "../objects/RnStringObject.h"
 
 #include "../memory_mgmt/RnObjectAllocator.h"
 

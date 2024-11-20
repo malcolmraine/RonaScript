@@ -28,7 +28,7 @@
 
 #include "RnFunctionObject.h"
 #include <sstream>
-#include "RnFunction.h"
+#include "../vm/RnFunction.h"
 
 /*****************************************************************************/
 RnFunctionObject::RnFunctionObject() = default;

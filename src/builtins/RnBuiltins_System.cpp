@@ -28,7 +28,7 @@
 
 #include "RnBuiltins_System.h"
 #include "../common/RnConfig.h"
-#include "../vm/RnObject.h"
+#include "../objects/RnObject.h"
 #include "../vm/RnScope.h"
 
 #undef BUILTIN_CLASS

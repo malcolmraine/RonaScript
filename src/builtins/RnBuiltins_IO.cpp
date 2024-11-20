@@ -32,10 +32,10 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include "../vm/RnClassObject.h"
-#include "../vm/RnObject.h"
+#include "../objects/RnClassObject.h"
+#include "../objects/RnObject.h"
+#include "../objects/RnStringObject.h"
 #include "../vm/RnScope.h"
-#include "../vm/RnStringObject.h"
 
 #undef BUILTIN_CLASS
 #define BUILTIN_CLASS RnBuiltins_IO

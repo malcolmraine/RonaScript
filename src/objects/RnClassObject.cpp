@@ -30,9 +30,8 @@
 #include <iomanip>
 #include <sstream>
 #include "../vm/RnFunction.h"
-#include "../vm/RnIntObject.h"
+#include "../vm/RnVirtualMachine.h"
 #include "RnIntObject.h"
-#include "RnVirtualMachine.h"
 
 RnIntNative RnClassObject::MAGIC_METHOD_KEY_STR =
     RnConstStore::InternValue(std::string("__str"));

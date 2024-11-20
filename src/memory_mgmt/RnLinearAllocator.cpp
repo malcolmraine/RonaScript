@@ -71,10 +71,10 @@ void* RnLinearAllocator::Malloc(size_t n) {
 #if USE_STD_MALLOC == 1
     return std::malloc(n);
 #else
-    if (n > _current_heap->size) {
-        throw std::runtime_error("Memory allocation request (" + std::to_string(n) +
-                                 " bytes) is larger than the allowed heap size.");
-    }
+//    if (n > _current_heap->size) {
+//        throw std::runtime_error("Memory allocation request (" + std::to_string(n) +
+//                                 " bytes) is larger than the allowed heap size.");
+//    }
     if (n == 0) {
         return nullptr;
     }
@@ -89,7 +89,7 @@ void* RnLinearAllocator::Malloc(size_t n) {
     // If the current heap isn't going to work, maybe we can get another heap
     if (!result && (GetTotalMemorySize() < _max_size)) {
         //		std::cout << "Adding a new heap...\n";
-        _current_heap = AddNewHeap(_current_heap->size);
+        _current_heap = AddNewHeap(std::max(_current_heap->size * 2, n));
         _last_heap = _current_heap;
         _first_block = (MemoryBlock*)_current_heap->memory;
         _first_block->size = _current_heap->size - sizeof(MemoryBlock);

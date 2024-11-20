@@ -27,8 +27,8 @@
 ******************************************************************************/
 
 #include "RnBuiltins_String.h"
+#include "../objects/RnObject.h"
 #include "../util/String.h"
-#include "../vm/RnObject.h"
 #include "../vm/RnScope.h"
 
 #undef BUILTIN_CLASS

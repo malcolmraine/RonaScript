@@ -16,6 +16,7 @@ include(src/common/CMakeLists.txt)
 include(src/lexer/CMakeLists.txt)
 include(src/parser/CMakeLists.txt)
 include(src/parser/ast/CMakeLists.txt)
+include(src/objects/CMakeLists.txt)
 include(src/vm/CMakeLists.txt)
 include(src/builtins/CMakeLists.txt)
 include(src/util/CMakeLists.txt)
@@ -28,6 +29,7 @@ add_executable(${TARGET_RONASCRIPT_MAIN} src/main.cpp)
 target_link_libraries(
         ${TARGET_RONASCRIPT_MAIN}
         RN_ALIB_VM
+        RN_ALIB_OBJECTS
         RN_ALIB_PARSER
         RN_ALIB_AST
         RN_ALIB_MEMORY_MGMT

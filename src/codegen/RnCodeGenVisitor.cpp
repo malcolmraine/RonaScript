@@ -27,6 +27,7 @@
 ******************************************************************************/
 
 #include "RnCodeGenVisitor.h"
+#include "../objects/RnObject.h"
 #include "../parser/ast/AliasDecl.h"
 #include "../parser/ast/ArgDecl.h"
 #include "../parser/ast/ArrayLiteral.h"
@@ -52,7 +53,6 @@
 #include "../parser/ast/TryBlock.h"
 #include "../parser/ast/UnaryExpr.h"
 #include "../parser/ast/VarDecl.h"
-#include "../vm/RnObject.h"
 #include "RnCodeFrame.h"
 
 /*****************************************************************************/

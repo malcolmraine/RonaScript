@@ -27,8 +27,8 @@
 ******************************************************************************/
 
 #include "RnSymbolTable.h"
+#include "../objects/RnObject.h"
 #include "RnMemoryGroup.h"
-#include "RnObject.h"
 
 /*****************************************************************************/
 RnSymbolTable::RnSymbolTable(RnSymbolTable* parent_table) {
