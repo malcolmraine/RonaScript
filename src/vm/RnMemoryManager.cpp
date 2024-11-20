@@ -30,14 +30,6 @@
 #include <memory>
 #include <utility>
 #include "../objects/RnAnyObject.h"
-#include "../objects/RnArrayObject.h"
-#include "../objects/RnBoolObject.h"
-#include "../objects/RnClassObject.h"
-#include "../objects/RnFloatObject.h"
-#include "../objects/RnFunctionObject.h"
-#include "../objects/RnIntObject.h"
-#include "../objects/RnStringObject.h"
-
 #include "../memory_mgmt/RnObjectAllocator.h"
 
 // Need to figure out the best settings for heap and max sizes

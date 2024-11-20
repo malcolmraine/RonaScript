@@ -28,9 +28,7 @@
 
 #include "RnBuiltins_Type.h"
 #include "../objects/RnClassObject.h"
-#include "../objects/RnObject.h"
 #include "../vm/RnFunction.h"
-#include "../vm/RnScope.h"
 #include "../vm/RnVirtualMachine.h"
 
 #undef BUILTIN_CLASS

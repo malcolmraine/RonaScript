@@ -28,7 +28,6 @@
 
 #include "Name.h"
 #include <utility>
-#include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
 Name::Name() {

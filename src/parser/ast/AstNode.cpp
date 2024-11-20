@@ -27,7 +27,6 @@
 ******************************************************************************/
 
 #include "AstNode.h"
-#include "../../codegen/RnCodeGenVisitor.h"
 
 #define TAB_CHAR "  "
 

@@ -2,7 +2,6 @@
 #include <fstream>
 #include <iostream>
 #include <set>
-#include "codegen/RnBinary.h"
 #include "codegen/RnCodeGenerator.h"
 #include "common/RnConfig.h"
 #include "lexer/Lexer.h"
@@ -14,12 +13,11 @@
 #include "util/StopWatch.h"
 #include "util/String.h"
 #include "util/log.h"
+#include "objects/RnBoolObject.h"
 #include "vm/RnMemoryManager.h"
 #include "vm/RnVirtualMachine.h"
 
 #include "codegen/RnCodeFrame.h"
-#include "codegen/RnInstruction.h"
-#include "vm/RnOpCode.h"
 
 // @formatter:off
 #include "common/RnBuildInfo.h"
@@ -207,7 +205,7 @@ void RonaScriptMain(int argc, char* argv[]) {
         Compile(file, code_generator);
         auto frame = code_generator.GetResult();
 
-        if (arg_parser.IsSet("--compile")) {
+        if (arg_parser.IsSet("-c")) {
             frame->WriteToFile("matrix_test.rnc");
         } else {
             Run(frame);
@@ -215,8 +213,8 @@ void RonaScriptMain(int argc, char* argv[]) {
     }
 }
 
-#include "objects/RnBoolObject.h"
-#include "vm/RnMemoryManager.h"
+
+
 /*****************************************************************************/
 int main(int argc, char* argv[]) {
     RonaScriptMain(argc, argv);

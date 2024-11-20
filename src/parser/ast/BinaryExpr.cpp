@@ -28,7 +28,6 @@
 
 #include "BinaryExpr.h"
 #include <utility>
-#include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
 BinaryExpr::BinaryExpr() {

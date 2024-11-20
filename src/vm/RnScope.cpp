@@ -29,17 +29,8 @@
 #include "RnScope.h"
 #include <dlfcn.h>
 #include "../objects/RnAnyObject.h"
-#include "../objects/RnArrayObject.h"
-#include "../objects/RnBoolObject.h"
-#include "../objects/RnClassObject.h"
-#include "../objects/RnFloatObject.h"
-#include "../objects/RnFunctionObject.h"
-#include "../objects/RnIntObject.h"
-#include "../objects/RnObject.h"
-#include "../objects/RnStringObject.h"
 #include "../util/log.h"
 #include "RnFunction.h"
-#include "RnMemoryManager.h"
 #include "RnSymbolTable.h"
 
 std::unordered_map<RnStringNative, void*> RnScope::_handles;

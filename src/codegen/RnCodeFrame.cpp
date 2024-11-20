@@ -8,7 +8,6 @@
 *****************************************************************************/
 
 #include "RnCodeFrame.h"
-#include <chrono>
 #include <memory>
 #include "RnInstruction.h"
 
@@ -100,7 +99,6 @@ RnInstruction* RnCodeFrame::AddInstruction(RnOpCode opcode, RnInstructionArg arg
     return instruction;
 }
 
-#include <iostream>
 /*****************************************************************************/
 void RnCodeFrame::ReadFrame(std::ifstream& fs, RnCodeFrame* frame) {
     delete frame->_module_path;

@@ -36,7 +36,6 @@
 #include "../objects/RnFunctionObject.h"
 #include "../util/String.h"
 #include "../vm/RnFunction.h"
-#include "../vm/RnScope.h"
 #include "../vm/RnVirtualMachine.h"
 
 #undef RN_BUILTIN_FUNC
