@@ -5,6 +5,7 @@
 #include "codegen/RnCodeGenerator.h"
 #include "common/RnConfig.h"
 #include "lexer/Lexer.h"
+#include "objects/RnBoolObject.h"
 #include "objects/RnObject.h"
 #include "parser/Parser.h"
 #include "parser/RnAstValidator.h"
@@ -13,7 +14,6 @@
 #include "util/StopWatch.h"
 #include "util/String.h"
 #include "util/log.h"
-#include "objects/RnBoolObject.h"
 #include "vm/RnMemoryManager.h"
 #include "vm/RnVirtualMachine.h"
 
@@ -212,8 +212,6 @@ void RonaScriptMain(int argc, char* argv[]) {
         }
     }
 }
-
-
 
 /*****************************************************************************/
 int main(int argc, char* argv[]) {

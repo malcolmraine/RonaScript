@@ -68,5 +68,5 @@ private:
     }
 };
 
-template<class T>
+template <class T>
 using RnStdVector = std::vector<T, RnStdAllocator<T>>;

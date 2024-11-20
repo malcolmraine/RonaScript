@@ -58,11 +58,11 @@ public:
     Token* Emit(TokenType type = TokenType::UNDEFINED);
     Token* MakeToken(const std::string& s,
                      TokenType initial_type = TokenType::UNDEFINED) const;
-    static bool IsIntLiteral(const std::string& s);          // TODO: Unit test
-    static bool IsFloatLiteral(const std::string& s);        // TODO: Unit test
-    static bool IsHexLiteral(const std::string& s);          // TODO: Unit test
-    static bool IsBoolLiteral(const std::string& s);  // TODO: Unit test
-    static bool IsStrLiteral(const std::string& s);   // TODO: Unit test
+    static bool IsIntLiteral(const std::string& s);    // TODO: Unit test
+    static bool IsFloatLiteral(const std::string& s);  // TODO: Unit test
+    static bool IsHexLiteral(const std::string& s);    // TODO: Unit test
+    static bool IsBoolLiteral(const std::string& s);   // TODO: Unit test
+    static bool IsStrLiteral(const std::string& s);    // TODO: Unit test
     bool IsCompound() const;
     static bool IsReservedWord(const std::string& s);
     std::string GetCompoundCandidate(int n = 2) const;

@@ -42,9 +42,9 @@ public:
     RnObjectList(std::initializer_list<RnObject*> initializerList)
         : RnStdVector<RnObject*>(initializerList) {}
 
-    RnObjectList(RnStdVector<RnObject*>::const_iterator first, RnStdVector<RnObject*>::const_iterator last)
+    RnObjectList(RnStdVector<RnObject*>::const_iterator first,
+                 RnStdVector<RnObject*>::const_iterator last)
         : RnStdVector<RnObject*>(first, last) {}
 
-    RnObjectList(size_t n, RnObject* value)
-        : RnStdVector<RnObject*>(n, value) {}
+    RnObjectList(size_t n, RnObject* value) : RnStdVector<RnObject*>(n, value) {}
 };

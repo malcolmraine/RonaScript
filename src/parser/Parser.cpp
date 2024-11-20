@@ -295,8 +295,8 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(const std::vector<Token*>& qualifiers
             if (Current()->IsType()) {
                 arg->SetType(ParseType());
             } else {
-                ThrowError("Invalid type '" + Current()->GetLexeme() + "' for parameter '" +
-                           arg->GetChild<Name>(0)->value +
+                ThrowError("Invalid type '" + Current()->GetLexeme() +
+                           "' for parameter '" + arg->GetChild<Name>(0)->value +
                            "' while declaring routine '" + node->id + "'");
             }
 
@@ -875,8 +875,7 @@ AstNodePtr<Loop> Parser::ParseForLoop() {
     Expect(TokenType::R_PARAN);
     AdvanceBuffer(1);
 
-    if (Peek()->GetType() == TokenType::VAR ||
-        Peek()->GetType() == TokenType::LOCAL) {
+    if (Peek()->GetType() == TokenType::VAR || Peek()->GetType() == TokenType::LOCAL) {
         AdvanceBuffer(1);
         node->init = ParseVarDecl();
 
@@ -1323,7 +1322,8 @@ std::shared_ptr<RnTypeComposite> Parser::ParseType() {
         auto lower =
             std::strtof(Current()->GetLexeme().substr(0, lower_bnd_idx).c_str(), &p);
         auto upper = std::strtof(
-            Current()->GetLexeme().substr(lower_bnd_idx + 2, upper_bnd_idx).c_str(), &p);
+            Current()->GetLexeme().substr(lower_bnd_idx + 2, upper_bnd_idx).c_str(),
+            &p);
         type->SetBounds(lower, upper);
         AdvanceBuffer(2);
     }

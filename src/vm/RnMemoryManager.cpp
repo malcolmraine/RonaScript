@@ -29,8 +29,8 @@
 #include "RnMemoryManager.h"
 #include <memory>
 #include <utility>
-#include "../objects/RnAnyObject.h"
 #include "../memory_mgmt/RnObjectAllocator.h"
+#include "../objects/RnAnyObject.h"
 
 // Need to figure out the best settings for heap and max sizes
 RnObjectAllocator<RnBoolObject> bool_allocator(10000, 1000000);
@@ -162,7 +162,6 @@ void RnMemoryManager::GCSweep() {
     func_allocator.FreeIf(checkIfMarked, unmarkObject);
     any_allocator.FreeIf(checkIfMarked, unmarkObject);
     array_allocator.FreeIf(checkIfMarked, unmarkObject);
-
 }
 
 /*****************************************************************************/

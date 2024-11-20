@@ -71,10 +71,10 @@ void* RnLinearAllocator::Malloc(size_t n) {
 #if USE_STD_MALLOC == 1
     return std::malloc(n);
 #else
-//    if (n > _current_heap->size) {
-//        throw std::runtime_error("Memory allocation request (" + std::to_string(n) +
-//                                 " bytes) is larger than the allowed heap size.");
-//    }
+    //    if (n > _current_heap->size) {
+    //        throw std::runtime_error("Memory allocation request (" + std::to_string(n) +
+    //                                 " bytes) is larger than the allowed heap size.");
+    //    }
     if (n == 0) {
         return nullptr;
     }

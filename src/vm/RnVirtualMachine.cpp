@@ -167,11 +167,11 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, const RnArrayNative& 
     }
 }
 
-#define SIMPLE_BINARY_OPERATION(op)                  \
-    RnObject* b = StackPop();                        \
-    RnObject* a = StackPop();                        \
-    RnObject* result = *a op b;                      \
-    StackPush(result);                               \
+#define SIMPLE_BINARY_OPERATION(op) \
+    RnObject* b = StackPop();       \
+    RnObject* a = StackPop();       \
+    RnObject* result = *a op b;     \
+    StackPush(result);              \
     PREDICT_OPCODE2(OP_LOAD_VALUE, OP_LOAD_LITERAL)
 
 // This is exactly how cpython handles opcode prediction, so all credit to the
@@ -224,12 +224,12 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, const RnArrayNative& 
 #define PREDICTION_TARGET(op)
 #endif
 
-#define GET_INSTRUCTION(i)  _current_frame->GetInstruction(i)
+#define GET_INSTRUCTION(i) _current_frame->GetInstruction(i)
 
 /*****************************************************************************/
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
     if (_gc_count > 2000) {
-//        std::cout << "Garbage collecting...\n";
+        //        std::cout << "Garbage collecting...\n";
         _memory_manager->GCMark();
         RnMemoryManager::GCSweep();
         _gc_count = 0;
@@ -411,7 +411,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 RnObject* result = CreateObject(
                     static_cast<RnBoolNative>(any_object->Contains(rhs_object)));
                 StackPush(result);
-            }else {
+            } else {
                 auto class_object = dynamic_cast<RnClassObject*>(lhs_object);
                 if (class_object) {
                     RnObject* result = CreateObject(
@@ -457,8 +457,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 if (object->IsClass() &&
                     GET_INSTRUCTION(index + 1)->GetOpcode() == OP_CALL) {
                     auto class_obj = dynamic_cast<RnClassObject*>(object);
-                    auto instance = dynamic_cast<RnClassObject*>(
-                        CreateObject(RnType::RN_OBJECT));
+                    auto instance =
+                        dynamic_cast<RnClassObject*>(CreateObject(RnType::RN_OBJECT));
                     instance->SetData(CreateScope());
                     instance->ToObject()->SetParent(class_obj->ToObject());
                     instance->SetDefinition(class_obj);
@@ -498,8 +498,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             RnObject* func_obj = nullptr;
             if (stack_val->GetType() == RnType::RN_OBJECT) {
                 auto class_obj = dynamic_cast<RnClassObject*>(stack_val);
-                auto instance = dynamic_cast<RnClassObject*>(
-                    CreateObject(RnType::RN_OBJECT));
+                auto instance =
+                    dynamic_cast<RnClassObject*>(CreateObject(RnType::RN_OBJECT));
                 GetScope()->GetMemoryGroup()->AddObject(instance);
                 instance->ToObject()->SetParent(class_obj->ToObject());
                 class_obj->CopySymbols(instance->GetScope());
@@ -589,8 +589,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_MAKE_FUNC: {
-            auto obj = dynamic_cast<RnFunctionObject*>(
-               CreateObject(RnType::RN_FUNCTION));
+            auto obj =
+                dynamic_cast<RnFunctionObject*>(CreateObject(RnType::RN_FUNCTION));
             RnStringNative name =
                 RnConstStore::GetInternedString(instruction->GetArg1());
             auto type = static_cast<RnType::Type>(instruction->GetArg2());
@@ -620,8 +620,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_MAKE_CLOSURE: {
-            auto obj = dynamic_cast<RnFunctionObject*>(
-                CreateObject(RnType::RN_FUNCTION));
+            auto obj =
+                dynamic_cast<RnFunctionObject*>(CreateObject(RnType::RN_FUNCTION));
             auto type = static_cast<RnType::Type>(instruction->GetArg1());
             RnInstructionArg scope_size = instruction->GetArg2();
             void* func_addr = RnLinearAllocator::Instance()->Malloc(sizeof(RnFunction));
@@ -929,8 +929,7 @@ void RnVirtualMachine::RegisterBuiltins() {
         auto func = new RnBuiltinFunction(std::get<0>(parts), std::get<1>(parts));
         func->SetScope(GetScope());
         func->SetReturnType(std::get<2>(parts));
-        auto obj = dynamic_cast<RnFunctionObject*>(
-            CreateObject(RnType::RN_FUNCTION));
+        auto obj = dynamic_cast<RnFunctionObject*>(CreateObject(RnType::RN_FUNCTION));
         obj->SetData(func);
         GetScope()->StoreObject(RnConstStore::InternValue(std::get<0>(parts)), obj);
     }

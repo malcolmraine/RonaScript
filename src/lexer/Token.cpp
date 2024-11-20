@@ -51,7 +51,7 @@ Token* Token::Create(const std::string& s, TokenType token) {
 }
 
 /*****************************************************************************/
- void Token::Destroy(Token* token) {
+void Token::Destroy(Token* token) {
     token_allocator.FreeObject(token);
 }
 

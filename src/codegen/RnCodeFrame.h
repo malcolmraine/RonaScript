@@ -33,9 +33,9 @@
 #include <string>
 #include <vector>
 #include "../common/RnType.h"
+#include "../memory_mgmt/RnStdAllocator.h"
 #include "../vm/RnOpCode.h"
 #include "RnInstruction.h"
-#include "../memory_mgmt/RnStdAllocator.h"
 
 class RnInstruction;
 

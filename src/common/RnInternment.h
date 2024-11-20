@@ -31,8 +31,8 @@
 #include <functional>
 #include <string>
 #include <unordered_map>
-#include "RnType.h"
 #include "../vm/RnObjectList.h"
+#include "RnType.h"
 
 class RnObject;
 
