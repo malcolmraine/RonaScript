@@ -4,7 +4,6 @@ begin
 
 var argv: array = __argv();
 
-
 routine set_recursion_limit(var depth: int): bool
 begin
     return depth == __set_recursion_limit(depth);
@@ -16,7 +15,4 @@ begin
 
 end // routine exec
 
-
 end // module System
-
-print("Inside module", System::argv);
