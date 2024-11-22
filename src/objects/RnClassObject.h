@@ -96,7 +96,7 @@ public:
         return GetData();
     }
 
-    [[nodiscard]] RnScope* ToObject() const override {
+    [[nodiscard]] RnScope* ToScope() const override {
         return GetData();
     }
 

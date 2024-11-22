@@ -248,7 +248,7 @@ RN_BUILTIN_FUNC_DEFINE(is_null, RnType::RN_BOOLEAN, 1) {
     auto obj = args[0];
     if (obj->GetActiveType() == RnType::RN_OBJECT ||
         obj->GetActiveType() == RnType::RN_CLASS_INSTANCE) {
-        ret_val->SetData(obj->ToObject() == nullptr);
+        ret_val->SetData(obj->ToScope() == nullptr);
     } else {
         ret_val->SetData(false);
     }

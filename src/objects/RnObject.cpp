@@ -58,13 +58,14 @@ bool RnObject::ValueCompare(const RnObject* a, const RnObject* b) {
             return a->ToFunction() == b->ToFunction();
         case RnType::RN_CLASS_INSTANCE:
         case RnType::RN_OBJECT:
-            return a->ToObject() == b->ToObject();
+            return a->ToScope() == b->ToScope();
         case RnType::RN_NULL:
             return false;
         case RnType::RN_ANY: {
             return dynamic_cast<const RnAnyObject*>(a)->IsActiveDataEqual(b);
         }
         case RnType::RN_VOID:
+        case RnType::RN_OBJECT_PACK:
         case RnType::RN_UNKNOWN:
             break;
     }
@@ -161,7 +162,7 @@ RnObject* RnObject::Copy(RnObject* obj) {
             break;
         case RnType::RN_CLASS_INSTANCE:
         case RnType::RN_OBJECT:
-            result->SetData(obj->ToObject());
+            result->SetData(obj->ToScope());
             break;
         case RnType::RN_UNKNOWN:
         default:

@@ -43,6 +43,7 @@
 #include "../common/RnConfig.h"
 #include "../objects/RnAnyObject.h"
 #include "../util/StopWatch.h"
+#include "../objects/RnPackedObject.h"
 #include "RnFunction.h"
 #include "RnMemoryManager.h"
 #include "RnOpCode.h"
@@ -72,7 +73,7 @@ RnVirtualMachine::RnVirtualMachine() {
 void RnVirtualMachine::Init() {
     RnObject* obj = CreateObject(RnType::RN_OBJECT);
     obj->SetData(CreateScope());
-    RnScope* scope = obj->ToObject();
+    RnScope* scope = obj->ToScope();
     scope->GetMemoryGroup()->AddObject(obj);
     if (!_scopes.empty()) {
         scope->SetParent(GetScope());
@@ -460,19 +461,19 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                     auto instance =
                         dynamic_cast<RnClassObject*>(CreateObject(RnType::RN_OBJECT));
                     instance->SetData(CreateScope());
-                    instance->ToObject()->SetParent(class_obj->ToObject());
+                    instance->ToScope()->SetParent(class_obj->ToScope());
                     instance->SetDefinition(class_obj);
                     class_obj->CopySymbols(instance->GetScope());
                     BindThis(instance->GetScope(), instance);
                     BindCls(instance->GetScope(), class_obj);
 
-                    if (!class_obj->ToObject()) {
+                    if (!class_obj->ToScope()) {
                         throw std::runtime_error(
                             "Cannot call constructor routine on null object");
                     }
 
                     RnObject* func_obj =
-                        class_obj->ToObject()->GetObject(_object_construct_key);
+                        class_obj->ToScope()->GetObject(_object_construct_key);
                     RnFunction* func = func_obj->ToFunction();
                     RnScope* func_scope = CreateScope();
                     func_scope->SetParent(instance->GetScope());
@@ -501,16 +502,16 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 auto instance =
                     dynamic_cast<RnClassObject*>(CreateObject(RnType::RN_OBJECT));
                 GetScope()->GetMemoryGroup()->AddObject(instance);
-                instance->ToObject()->SetParent(class_obj->ToObject());
+                instance->ToScope()->SetParent(class_obj->ToScope());
                 class_obj->CopySymbols(instance->GetScope());
 
                 BindThis(instance->GetScope(), instance);
                 BindCls(instance->GetScope(), class_obj);
 
                 auto constructor_obj = dynamic_cast<RnFunctionObject*>(
-                    class_obj->ToObject()->GetObject(_object_construct_key));
+                    class_obj->ToScope()->GetObject(_object_construct_key));
                 RnFunction* func = constructor_obj->ToFunction();
-                RnScope* func_scope = RnObject::Create(RnType::RN_OBJECT)->ToObject();
+                RnScope* func_scope = RnObject::Create(RnType::RN_OBJECT)->ToScope();
                 func_scope->SetParent(instance->GetScope());
 
                 BindThis(func_scope, instance);
@@ -520,9 +521,18 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 func_obj = stack_val;
             }
 
-            RnArrayNative args(instruction->GetArg1(), nullptr);
-            for (uint32_t i = instruction->GetArg1(); i > 0; --i) {
-                args[i - 1] = StackPop();
+            RnIntNative arg_count = instruction->GetArg1();
+            RnArrayNative args;
+            args.reserve(arg_count);
+            for (uint32_t i = arg_count; i > 0; --i) {
+                auto stack_obj = StackPop();
+                if (stack_obj->GetType() == RnType::RN_OBJECT_PACK) {
+                    auto unpack_obj = dynamic_cast<RnPackedObject*>(stack_obj);
+                    unpack_obj->UnpackToStack(GetStack());
+                    i += unpack_obj->GetDataItemCount();
+                    continue;
+                }
+                args.push_back(stack_obj);
             }
 
             RnObject* ret_val = CallFunction(func_obj->ToFunction(), args);
@@ -571,7 +581,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             obj->GetScope()->StoreObject(RnConstStore::InternValue("__class"),
                                          name_obj);
             GetScope()->StoreObject(instruction->GetArg1(), obj);
-            RnScope* class_scope = obj->ToObject();
+            RnScope* class_scope = obj->ToScope();
 
             if (!class_scope) {
                 throw std::runtime_error("Invalid use of null object.");
@@ -748,14 +758,32 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto obj = dynamic_cast<RnArrayObject*>(CreateObject(RnType::RN_ARRAY));
             GetScope()->GetMemoryGroup()->AddObject(obj);
 
-            for (RnIntNative i = 0; i < instruction->GetArg1(); i++) {
+            RnIntNative item_count = instruction->GetArg1();
+            for (RnIntNative i = 0; i < item_count; i++) {
+                auto stack_obj = StackPop();
+                if (stack_obj->GetActiveType() == RnType::RN_OBJECT_PACK) {
+                    auto unpack_obj = dynamic_cast<RnPackedObject*>(stack_obj);
+                    unpack_obj->UnpackToStack(GetStack());
+                    item_count += unpack_obj->GetDataItemCount();
+                    continue;
+                }
                 auto copy =
                     dynamic_cast<RnAnyObject*>(RnObject::Create(RnType::RN_ANY));
-                copy->CopyFrom(StackPop());
+                copy->CopyFrom(stack_obj);
                 GetScope()->GetMemoryGroup()->AddObject(copy);
                 obj->Append(copy);
             }
             StackPush(obj);
+            break;
+        }
+        case OP_UNPACK: {
+            RnObject* stack_obj = StackPop();
+            assert(stack_obj);
+            assert(stack_obj->GetType() == RnType::RN_ARRAY);
+
+            auto unpack_obj = CreateObject(RnType::RN_OBJECT_PACK);
+            unpack_obj->SetData(stack_obj);
+            StackPush(unpack_obj);
             break;
         }
         case OP_LOAD_ATTR: {

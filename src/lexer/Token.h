@@ -71,6 +71,7 @@
     TOKEN_DEF(DBL_AMPER, "&&")            \
     TOKEN_DEF(DBL_BAR, "||")              \
     TOKEN_DEF(DBL_COLON, "::")            \
+    TOKEN_DEF(ELLIPSIS, "...")            \
     RESERVED_WORD(FLOAT, "float")         \
     RESERVED_WORD(AND, "and")             \
     RESERVED_WORD(OR, "or")               \

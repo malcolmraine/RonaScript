@@ -58,7 +58,7 @@ RN_BUILTIN_FUNC_DEFINE(print, RnType::RN_VOID, 1) {
         assert(arg);
         if (arg->GetActiveType() == RnType::RN_OBJECT) {
             auto instance = dynamic_cast<RnClassObject*>(arg);
-            if (instance->ToObject() != nullptr) {
+            if (instance->ToScope() != nullptr) {
                 RnStringObject string_repr;
                 if (instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_STR, {arg},
                                              &string_repr)) {

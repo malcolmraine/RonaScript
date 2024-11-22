@@ -147,9 +147,9 @@ RN_BUILTIN_FUNC_DEFINE(listattr, RnType::RN_ARRAY, 1) {
 
     RnArrayNative attrs;
 
-    if (args.front()->ToObject()) {
+    if (args.front()->ToScope()) {
         for (const auto& attr :
-             args.front()->ToObject()->GetSymbolTable()->GetSymbols()) {
+             args.front()->ToScope()->GetSymbolTable()->GetSymbols()) {
             attrs.push_back(RnObject::Create(RnConstStore::GetInternedString(attr)));
         }
     }
@@ -165,7 +165,7 @@ RN_BUILTIN_FUNC_DEFINE(attrpairs, RnType::RN_ARRAY, 1) {
     }
 
     RnArrayNative attrs;
-    auto target_scope = args.front()->ToObject();
+    auto target_scope = args.front()->ToScope();
     if (target_scope) {
         for (const auto& attr : target_scope->GetSymbolTable()->GetSymbols()) {
             auto pair_obj =
@@ -184,7 +184,7 @@ RN_BUILTIN_FUNC_DEFINE(attrpairs, RnType::RN_ARRAY, 1) {
 RN_BUILTIN_FUNC_DEFINE(hasattr, RnType::RN_VOID, 2) {
     BUILTIN_ASSERTS
 
-    auto obj_scope = args[0]->ToObject();
+    auto obj_scope = args[0]->ToScope();
     if (!obj_scope) {
         ret_val->SetData(false);
     } else {
@@ -197,7 +197,7 @@ RN_BUILTIN_FUNC_DEFINE(hasattr, RnType::RN_VOID, 2) {
 RN_BUILTIN_FUNC_DEFINE(getattr, RnType::RN_VOID, 2) {
     BUILTIN_ASSERTS
 
-    auto obj_scope = args[0]->ToObject();
+    auto obj_scope = args[0]->ToScope();
     if (obj_scope) {
         auto attr_key = RnConstStore::InternValue(args[1]->ToString());
         if (obj_scope->GetSymbolTable()->SymbolExists(attr_key)) {
@@ -217,7 +217,7 @@ RN_BUILTIN_FUNC_DEFINE(getattr, RnType::RN_VOID, 2) {
 RN_BUILTIN_FUNC_DEFINE(setattr, RnType::RN_VOID, 3) {
     BUILTIN_ASSERTS
 
-    auto obj_scope = args[0]->ToObject();
+    auto obj_scope = args[0]->ToScope();
     if (obj_scope) {
         auto attr_key = RnConstStore::InternValue(args[1]->ToString());
         if (obj_scope->GetSymbolTable()->SymbolExists(attr_key)) {
@@ -236,7 +236,7 @@ RN_BUILTIN_FUNC_DEFINE(setattr, RnType::RN_VOID, 3) {
 RN_BUILTIN_FUNC_DEFINE(delattr, RnType::RN_VOID, 2) {
     BUILTIN_ASSERTS
 
-    auto obj_scope = args[0]->ToObject();
+    auto obj_scope = args[0]->ToScope();
     if (obj_scope) {
         auto attr_key = RnConstStore::InternValue(args[1]->ToString());
         if (obj_scope->GetSymbolTable()->SymbolExists(attr_key)) {

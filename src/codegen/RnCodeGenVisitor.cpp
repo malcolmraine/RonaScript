@@ -442,7 +442,6 @@ InstructionBlock RnCodeGenVisitor::Visit(DeleteStmt* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(UnaryExpr* node) {
-
     if (node->op == "++") {
         return {new RnInstruction(
             OP_FAST_ADD,
@@ -459,6 +458,8 @@ InstructionBlock RnCodeGenVisitor::Visit(UnaryExpr* node) {
             instructions.push_back(new RnInstruction(OP_UNARY_INVERT));
         } else if (node->op == "!") {
             instructions.push_back(new RnInstruction(OP_UNARY_NOT));
+        } else if (node->op == "...") {
+            instructions.push_back(new RnInstruction(OP_UNPACK));
         }
         return instructions;
     }

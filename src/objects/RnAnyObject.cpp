@@ -101,6 +101,7 @@ RnAnyObject::~RnAnyObject() = default;
         case RnType::RN_NULL:                                \
         case RnType::RN_VOID:                                \
         case RnType::RN_ANY:                                 \
+        case RnType::RN_OBJECT_PACK:                         \
         case RnType::RN_UNKNOWN:                             \
             assert(false);                                   \
             return nullptr;                                  \
@@ -127,6 +128,7 @@ RnAnyObject::~RnAnyObject() = default;
         case RnType::RN_NULL:                              \
         case RnType::RN_VOID:                              \
         case RnType::RN_ANY:                               \
+        case RnType::RN_OBJECT_PACK:                       \
         case RnType::RN_UNKNOWN:                           \
             assert(false);                                 \
             return default_value;                          \
@@ -202,7 +204,7 @@ RnArrayNative RnAnyObject::ToArray() const {ANY_TO_NATIVE(ToArray, {})}
 RnBoolNative RnAnyObject::ToBool() const {ANY_TO_NATIVE(ToBool, false)}
 
 /*****************************************************************************/
-RnScope* RnAnyObject::ToObject() const {ANY_TO_NATIVE(ToObject, nullptr)}
+RnScope* RnAnyObject::ToScope() const {ANY_TO_NATIVE(ToScope, nullptr)}
 
 /*****************************************************************************/
 RnFunction* RnAnyObject::ToFunction() const {
@@ -277,7 +279,7 @@ void RnAnyObject::CopyFrom(RnObject* obj) {
             break;
         case RnType::RN_CLASS_INSTANCE:
         case RnType::RN_OBJECT:
-            SetData(obj->ToObject());
+            SetData(obj->ToScope());
             break;
         case RnType::RN_NULL:
         case RnType::RN_UNKNOWN:

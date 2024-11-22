@@ -384,6 +384,21 @@ Token* Lexer::Consume() {
                     return ProcessOperator();
             }
         }
+        case '.':
+        {
+            _lexeme += Current();
+            AdvanceBuffer(1);
+            if (Current() == '.') {
+                _lexeme += Current();
+                AdvanceBuffer(1);
+                if (Current() == '.') {
+                    _lexeme += Current();
+                    AdvanceBuffer(1);
+                    Emit();
+                }
+            }
+            break;
+        }
         default: {
             if (Current() != '\r' && Current() != '\t' && Current() != '\n')
                 _lexeme += Current();

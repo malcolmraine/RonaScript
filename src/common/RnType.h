@@ -70,6 +70,7 @@ public:
         RN_NULL,
         RN_VOID,
         RN_ANY,
+        RN_OBJECT_PACK,
         RN_UNKNOWN,
     };
 
@@ -98,6 +99,8 @@ public:
                 return "null";
             case RN_VOID:
                 return "void";
+            case RN_OBJECT_PACK:
+                return "objectpack";
             case RN_UNKNOWN:
             default:
                 assert(false);
