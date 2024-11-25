@@ -42,8 +42,8 @@
 #include "../builtins/RnBuiltins_Type.h"
 #include "../common/RnConfig.h"
 #include "../objects/RnAnyObject.h"
-#include "../util/StopWatch.h"
 #include "../objects/RnPackedObject.h"
+#include "../util/StopWatch.h"
 #include "RnFunction.h"
 #include "RnMemoryManager.h"
 #include "RnOpCode.h"
@@ -528,12 +528,13 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 auto stack_obj = StackPop();
                 if (stack_obj->GetType() == RnType::RN_OBJECT_PACK) {
                     auto unpack_obj = dynamic_cast<RnPackedObject*>(stack_obj);
-                    unpack_obj->UnpackToStack(GetStack());
+                    unpack_obj->UnpackToStack(GetStack(), false);
                     i += unpack_obj->GetDataItemCount();
                     continue;
                 }
                 args.push_back(stack_obj);
             }
+            std::reverse(args.begin(), args.end());
 
             RnObject* ret_val = CallFunction(func_obj->ToFunction(), args);
             StackPush(ret_val);
@@ -763,7 +764,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 auto stack_obj = StackPop();
                 if (stack_obj->GetActiveType() == RnType::RN_OBJECT_PACK) {
                     auto unpack_obj = dynamic_cast<RnPackedObject*>(stack_obj);
-                    unpack_obj->UnpackToStack(GetStack());
+                    unpack_obj->UnpackToStack(GetStack(), true);
                     item_count += unpack_obj->GetDataItemCount();
                     continue;
                 }
@@ -779,7 +780,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_UNPACK: {
             RnObject* stack_obj = StackPop();
             assert(stack_obj);
-            assert(stack_obj->GetType() == RnType::RN_ARRAY);
+            assert(stack_obj->GetType() == RnType::RN_ARRAY ||
+                   stack_obj->GetType() == RnType::RN_STRING);
 
             auto unpack_obj = CreateObject(RnType::RN_OBJECT_PACK);
             unpack_obj->SetData(stack_obj);

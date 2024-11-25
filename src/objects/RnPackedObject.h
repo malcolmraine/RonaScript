@@ -15,14 +15,18 @@ class RnPackedObject : public RnObjectBase<RnObject*> {
 public:
     RnPackedObject();
     ~RnPackedObject() override;
-    void UnpackToStack(RnArrayNative& stack) const;
+    void UnpackToStack(RnArrayNative& stack, bool reverse) const;
 
     RnObject* At(RnIntNative index) override {
         return _data->At(index);
     }
 
     [[nodiscard]] RnIntNative GetDataItemCount() const override {
-        return _data->GetDataItemCount();
+        if (GetActiveType() == RnType::RN_ARRAY) {
+            return _data->GetDataItemCount();
+        } else {
+            return static_cast<RnIntNative >(_data->ToString().length());
+        }
     }
 
     void SetData(RnObject* data) override {
