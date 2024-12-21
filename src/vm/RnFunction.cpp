@@ -28,6 +28,7 @@
 
 #include "RnFunction.h"
 #include <utility>
+#include "RnVirtualMachine.h"
 #include "../objects/RnObject.h"
 #include "RnScope.h"
 
@@ -78,7 +79,9 @@ bool RnFunction::IsBuiltIn() const {
 }
 
 /*****************************************************************************/
-void RnFunction::Call(const RnArrayNative& args, RnObject* ret_val) {}
+RnObject* RnFunction::Call(const RnArrayNative& args) {
+    return RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_NULL);
+}
 
 /*****************************************************************************/
 void RnFunction::CreateArgument(RnIntNative key, RnType::Type type, size_t index) {
@@ -127,6 +130,6 @@ bool RnBuiltinFunction::IsBuiltIn() const {
 }
 
 /*****************************************************************************/
-void RnBuiltinFunction::Call(const RnArrayNative& args, RnObject* ret_val) {
-    _function(GetScope(), args, ret_val);
+RnObject* RnBuiltinFunction::Call(const RnArrayNative& args) {
+    return _function(GetScope(), args);
 }

@@ -23,14 +23,20 @@ begin
         this->c2 = c2;
 
         for (var i: int = 0; i < dimension; i++):
-            array_push(this->x, random_float());
-            array_push(this->v, random_float());
+            array_push(this->x, 1);
+            array_push(this->v, 1);
         end // loop
         return this;
     end // routine construct
 
     /*************************************************************************/
-    routine update(var w: float, var g: array): void
+    routine __str(): string
+    begin
+        print("Particle(pbest=" + to_string(this->pbest) + ")");
+    end
+
+    /*************************************************************************/
+    routine update(var w: float, var gbest: array): void
     begin
         var u1: float = 0.1;
         var u2: float = 0.1;
@@ -60,7 +66,7 @@ begin
     routine construct(var n: int, var dimension: int, var c1: float, var c2: float): object
     begin
         for (var i: int = 0; i < n; i++):
-            array_push(this->x, Particle(dimension, this->c1, this->c2));
+            array_push(this->particles, Particle(dimension, this->c1, this->c2));
         end // loop
         return this;
     end // routine construct
@@ -71,6 +77,7 @@ begin
         for (var i: int; i < count(this->particles); i++):
             this->particles[i]->update(this->w, this->gbest);
         end // loop
+        print(this->particles);
     end // routine update_particles
 
     /*************************************************************************/

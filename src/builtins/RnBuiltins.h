@@ -58,18 +58,17 @@ class RnObject;
     RN_BUILTIN_FUNC(RnBuiltins, call, RnType::RN_ANY, 2)        \
     RN_BUILTIN_FUNC(RnBuiltins, lload, RnType::RN_OBJECT, 1)    \
     RN_BUILTIN_FUNC(RnBuiltins, bind, RnType::RN_VOID, 2)       \
-    RN_BUILTIN_FUNC(RnBuiltins, setenv, RnType::RN_VOID, 2)     \
+    RN_BUILTIN_FUNC(RnBuiltins, setenv, RnType::RN_INT, 2)     \
     RN_BUILTIN_FUNC(RnBuiltins, getenv, RnType::RN_ANY, 1)      \
     RN_BUILTIN_FUNC(RnBuiltins, unsetenv, RnType::RN_VOID, 1)   \
     RN_BUILTIN_FUNC(RnBuiltins, listattr, RnType::RN_ARRAY, 1)  \
     RN_BUILTIN_FUNC(RnBuiltins, attrpairs, RnType::RN_ARRAY, 1) \
-    RN_BUILTIN_FUNC(RnBuiltins, hasattr, RnType::RN_VOID, 2)    \
-    RN_BUILTIN_FUNC(RnBuiltins, getattr, RnType::RN_VOID, 2)    \
-    RN_BUILTIN_FUNC(RnBuiltins, setattr, RnType::RN_VOID, 3)    \
-    RN_BUILTIN_FUNC(RnBuiltins, delattr, RnType::RN_VOID, 2)
+    RN_BUILTIN_FUNC(RnBuiltins, hasattr, RnType::RN_BOOLEAN, 2)    \
+    RN_BUILTIN_FUNC(RnBuiltins, getattr, RnType::RN_ANY, 2)    \
+    RN_BUILTIN_FUNC(RnBuiltins, setattr, RnType::RN_BOOLEAN, 3)    \
+    RN_BUILTIN_FUNC(RnBuiltins, delattr, RnType::RN_BOOLEAN, 2)
 
 #define BUILTIN_ASSERTS \
-    assert(ret_val);    \
     assert(scope);
 
 #define FIXED_ARG_COUNT_CHECK(name, n)                                              \
@@ -80,12 +79,10 @@ class RnObject;
     }
 
 #define RN_BUILTIN_FUNC_DECLARE(ns, name, retval, argcnt)                    \
-    static void rn_builtin_##name(RnScope* scope, const RnArrayNative& args, \
-                                  RnObject* ret_val);
+    static RnObject* rn_builtin_##name(RnScope* scope, const RnArrayNative& args);
 
 #define RN_BUILTIN_FUNC_DEFINE(name, retval, argcnt)                                 \
-    void BUILTIN_CLASS::rn_builtin_##name(RnScope* scope, const RnArrayNative& args, \
-                                          RnObject* ret_val)
+    RnObject* BUILTIN_CLASS::rn_builtin_##name(RnScope* scope, const RnArrayNative& args)
 
 #define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DECLARE
 

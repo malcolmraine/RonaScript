@@ -29,6 +29,7 @@
 #include "RnBuiltins_Array.h"
 #include "../objects/RnArrayObject.h"
 #include "../vm/RnScope.h"
+#include "../vm/RnVirtualMachine.h"
 
 #undef BUILTIN_CLASS
 #define BUILTIN_CLASS RnBuiltins_Array
@@ -37,18 +38,33 @@
 //#define RN_BUILTIN_FUNC RN_BUILTIN_FUNC_DEFINE
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC_DEFINE(filter, RnType::RN_ARRAY, 1){BUILTIN_ASSERTS}
+RN_BUILTIN_FUNC_DEFINE(filter, RnType::RN_ARRAY, 1) {
+    BUILTIN_ASSERTS
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_INT);
+    return ret_val;
+}
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC_DEFINE(union, RnType::RN_ARRAY, 1){BUILTIN_ASSERTS}
+RN_BUILTIN_FUNC_DEFINE(union, RnType::RN_ARRAY, 1) {
+    BUILTIN_ASSERTS
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_INT);
+    return ret_val;
+}
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC_DEFINE(intersect, RnType::RN_ARRAY, 1){BUILTIN_ASSERTS}
+RN_BUILTIN_FUNC_DEFINE(intersect, RnType::RN_ARRAY, 1) {
+    BUILTIN_ASSERTS
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_INT);
+    return ret_val;
+}
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(count, RnType::RN_INT, 1) {
     BUILTIN_ASSERTS
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_INT);
     auto obj = args.front();
     if (obj->GetActiveType() == RnType::RN_STRING) {
         ret_val->SetData(static_cast<RnIntNative>(obj->ToString().length()));
@@ -57,12 +73,14 @@ RN_BUILTIN_FUNC_DEFINE(count, RnType::RN_INT, 1) {
     } else {
         ret_val->SetData(static_cast<RnIntNative>(1));
     }
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(array_merge, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ARRAY);
     RnArrayNative data;
     for (auto arg : args) {
         for (auto& item : arg->ToArray()) {
@@ -70,43 +88,54 @@ RN_BUILTIN_FUNC_DEFINE(array_merge, RnType::RN_ARRAY, 1) {
         }
     }
     ret_val->SetData(data);
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(array_push, RnType::RN_VOID, 1) {
     BUILTIN_ASSERTS
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_NULL);
     auto array_obj = dynamic_cast<RnArrayObject*>(args.front());
     for (size_t i = 1; i < args.size(); i++) {
         array_obj->Append(args.at(i));
     }
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(array_pop, RnType::RN_ANY, 1) {
     BUILTIN_ASSERTS
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ANY);
     auto data = args.front()->ToArray();
     ret_val->SetData(data.back());
     data.pop_back();
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(array_zeros, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
-
     assert(args.size() == 1);
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ARRAY);
     RnArrayNative data;
     data.reserve(args.front()->ToInt());
     for (RnIntNative i = 0; i < args.front()->ToInt(); i++) {
         data.push_back(RnObject::Create(static_cast<RnIntNative>(0)));
     }
     ret_val->SetData(data);
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(array_fill, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
     assert(args.size() == 2);
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ARRAY);
+    return ret_val;
 }
 
 /*****************************************************************************/
@@ -119,6 +148,9 @@ RN_BUILTIN_FUNC_DEFINE(sequence, RnType::RN_ARRAY, 1) {
 	 * arg3: start
 	 * arg4: step
 	 */
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ARRAY);
+    return ret_val;
 }
 
 /*****************************************************************************/
@@ -129,6 +161,7 @@ RN_BUILTIN_FUNC_DEFINE(slice, RnType::RN_ANY, 3) {
     auto start_offset = args[1]->ToInt();
     auto count = args[2]->ToInt();
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ANY);
     if (subject->GetActiveType() == RnType::RN_STRING) {
         RnStringNative data = subject->ToString();
         ret_val->SetData(static_cast<RnStringNative>(data.substr(start_offset, count)));
@@ -144,4 +177,5 @@ RN_BUILTIN_FUNC_DEFINE(slice, RnType::RN_ANY, 3) {
             "Routine 'slice' expects a string or array but received a " +
             RnType::TypeToString(subject->GetActiveType()));
     }
+    return ret_val;
 }

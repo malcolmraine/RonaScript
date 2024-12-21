@@ -30,6 +30,7 @@
 #include "../objects/RnObject.h"
 #include "../util/String.h"
 #include "../vm/RnScope.h"
+#include "../vm/RnVirtualMachine.h"
 
 #undef BUILTIN_CLASS
 #define BUILTIN_CLASS RnBuiltins_String
@@ -40,31 +41,40 @@
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(str_titlecase, RnType::RN_STRING, 1) {
     BUILTIN_ASSERTS
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_STRING);
     ret_val->SetData(String::TitleCase(args.front()->ToString()));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(str_lower, RnType::RN_STRING, 1) {
     BUILTIN_ASSERTS
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_STRING);
     ret_val->SetData(String::Lower(args.front()->ToString()));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(str_upper, RnType::RN_STRING, 1) {
     BUILTIN_ASSERTS
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_STRING);
     ret_val->SetData(String::Upper(args.front()->ToString()));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(str_snakecase, RnType::RN_STRING, 1) {
     BUILTIN_ASSERTS
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_STRING);
     ret_val->SetData(String::SnakeCase(args.front()->ToString()));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(str_split, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ARRAY);
     RnArrayNative result;
 
     if (args.size() == 1 || args.size() == 2 && args[1]->ToString().empty()) {
@@ -81,13 +91,15 @@ RN_BUILTIN_FUNC_DEFINE(str_split, RnType::RN_ARRAY, 1) {
         }
     }
     ret_val->SetData(result);
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(str_substr, RnType::RN_STRING, 1) {
     BUILTIN_ASSERTS
-
     assert(args.size() == 2 || args.size() == 3);
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_STRING);
     // original string, position, count
     if (args.size() == 2) {
         ret_val->SetData(args[0]->ToString().substr(args[1]->ToInt()));
@@ -95,35 +107,39 @@ RN_BUILTIN_FUNC_DEFINE(str_substr, RnType::RN_STRING, 1) {
         ret_val->SetData(
             args[0]->ToString().substr(args[1]->ToInt(), args[2]->ToInt()));
     }
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(str_startswith, RnType::RN_BOOLEAN, 1) {
     BUILTIN_ASSERTS
-
     assert(args.size() == 2);
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_STRING);
     // subject, search
     ret_val->SetData(static_cast<bool>(
         String::StartsWith(args.front()->ToString(), args.back()->ToString())));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(str_endswith, RnType::RN_BOOLEAN, 1) {
     BUILTIN_ASSERTS
-
     assert(args.size() == 2);
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_STRING);
     // subject, search
     ret_val->SetData(static_cast<bool>(
         String::EndsWith(args.front()->ToString(), args.back()->ToString())));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(str_join, RnType::RN_STRING, 1) {
     BUILTIN_ASSERTS
-
     assert(args.size() == 1 || args.size() == 2 || args.size() == 3);
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_STRING);
     std::string result;
     auto strings = args[0]->ToArray();
     std::string join_str;
@@ -147,4 +163,5 @@ RN_BUILTIN_FUNC_DEFINE(str_join, RnType::RN_STRING, 1) {
         }
         ret_val->SetData(result);
     }
+    return ret_val;
 }

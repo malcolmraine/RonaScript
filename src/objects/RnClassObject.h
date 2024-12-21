@@ -148,6 +148,7 @@ public:
     static RnIntNative MAGIC_METHOD_KEY_BINOR;
     static RnIntNative MAGIC_METHOD_KEY_GET_INDEX;
     static RnIntNative MAGIC_METHOD_KEY_MEMBERSHIP;
+    static RnIntNative MAGIC_METHOD_KEY_CALL;
 
 private:
     RnClassObject* _definition = nullptr;

@@ -29,6 +29,7 @@
 #include "RnBuiltins_Math.h"
 #include "../objects/RnObject.h"
 #include "../vm/RnScope.h"
+#include "../vm/RnVirtualMachine.h"
 
 #undef BUILTIN_CLASS
 #define BUILTIN_CLASS RnBuiltins_Math
@@ -38,7 +39,6 @@
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(sum, RnType::RN_FLOAT, 1) {
-    assert(ret_val);
     assert(scope);
 
     RnFloatNative result = 0.0;
@@ -47,80 +47,92 @@ RN_BUILTIN_FUNC_DEFINE(sum, RnType::RN_FLOAT, 1) {
         result += operand->ToFloat();
     }
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_FLOAT);
     ret_val->SetData(result);
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(pow, RnType::RN_FLOAT, 2) {
-    assert(ret_val);
     assert(scope);
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_FLOAT);
     ret_val->SetData(std::pow(args.front()->ToFloat(), args.back()->ToFloat()));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(mod, RnType::RN_INT, 2) {
-    assert(ret_val);
     assert(scope);
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_INT);
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(sqrt, RnType::RN_FLOAT, 2) {
-    assert(ret_val);
     assert(scope);
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_FLOAT);
     ret_val->SetData(std::sqrt(args.front()->ToFloat()));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(cbrt, RnType::RN_FLOAT, 2) {
-    assert(ret_val);
     assert(scope);
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_FLOAT);
     ret_val->SetData(std::cbrt(args.front()->ToFloat()));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(randf, RnType::RN_FLOAT, 2) {
-    assert(ret_val);
     assert(scope);
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_FLOAT);
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(randint, RnType::RN_INT, 2) {
-    assert(ret_val);
     assert(scope);
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_INT);
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(normal, RnType::RN_ARRAY, 1) {
-    assert(ret_val);
     assert(scope);
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ARRAY);
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(abs, RnType::RN_FLOAT, 1) {
-    assert(ret_val);
     assert(scope);
     FIXED_ARG_COUNT_CHECK(abs, 1)
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_FLOAT);
     ret_val->SetData(std::fabs(args[0]->ToFloat()));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(floor, RnType::RN_FLOAT, 1) {
-    assert(ret_val);
     assert(scope);
     FIXED_ARG_COUNT_CHECK(abs, 1)
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_FLOAT);
     ret_val->SetData(std::floor(args[0]->ToFloat()));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(ceil, RnType::RN_FLOAT, 1) {
-    assert(ret_val);
     assert(scope);
     FIXED_ARG_COUNT_CHECK(abs, 1)
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_FLOAT);
     ret_val->SetData(std::ceil(args[0]->ToFloat()));
+    return ret_val;
 }

@@ -97,10 +97,9 @@ private:
     inline void ExecuteInstruction(bool& break_scope, size_t& index);
     void RegisterBuiltins();
     RnVirtualMachine();
-
-private:
     static RnVirtualMachine* _instance;
     void Init();
+    RnIntNative HandleObjectUnpack(RnObject* obj);
 
 protected:
     RnCodeFrame* _current_frame = nullptr;

@@ -51,7 +51,7 @@ public:
     [[nodiscard]] RnScope* GetScope();
     void SetScope(RnScope* scope);
     [[nodiscard]] virtual bool IsBuiltIn() const;
-    virtual void Call(const RnArrayNative& args, RnObject* ret_val);
+    virtual RnObject*  Call(const RnArrayNative& args);
     void CreateArgument(RnIntNative key, RnType::Type type, size_t index);
     void PassArguments(const RnArrayNative& args, RnScope* scope);
     void InitScope(RnScope* scope);
@@ -93,7 +93,7 @@ private:
 };
 
 /*****************************************************************************/
-typedef void (*BuiltinFunction)(RnScope*, RnArrayNative, RnObject*);
+typedef RnObject* (*BuiltinFunction)(RnScope*, RnArrayNative);
 
 auto CastToBuiltin = [](auto f) {
     return reinterpret_cast<BuiltinFunction>(f);
@@ -104,7 +104,7 @@ public:
     RnBuiltinFunction(const RnStringNative& name, BuiltinFunction func);
     ~RnBuiltinFunction();
     [[nodiscard]] bool IsBuiltIn() const override;
-    void Call(const RnArrayNative& args, RnObject* ret_val) override;
+    RnObject* Call(const RnArrayNative& args) override;
 
 private:
     BuiltinFunction _function;
