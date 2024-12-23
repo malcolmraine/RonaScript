@@ -46,6 +46,7 @@ RN_BUILTIN_FUNC_DEFINE(__set_recursion_limit, RnType::RN_INT, 1) {
     auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_INT);
     RnConfig::SetCallStackMaxDepth(args.at(0)->ToInt());
     ret_val->SetData(static_cast<RnIntNative>(RnConfig::GetCallStackMaxDepth()));
+    return ret_val;
 }
 
 /*****************************************************************************/
@@ -54,4 +55,5 @@ RN_BUILTIN_FUNC_DEFINE(__argv, RnType::RN_ARRAY, 0) {
 
     auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ARRAY);
     ret_val->SetData(RnConfig::GetArgv());
+    return ret_val;
 }

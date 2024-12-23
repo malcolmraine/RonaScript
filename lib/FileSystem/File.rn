@@ -26,6 +26,8 @@
 * SOFTWARE.
 ******************************************************************************/
 
+import FileSystem.Path;
+
 /******************************************************************************/
 /******************************************************************************/
 module File is
@@ -40,43 +42,53 @@ begin
 /******************************************************************************/
 class FileObject is
 begin
-    var fd: int = -1;
-    var path: string = "";
+    var _fd: int = -1;
+    var _path: object = null;
 
     /**************************************************************************/
     routine construct(var file_path: string): object
     begin
-        this->path = file_path;
+        this->_path = Path(file_path);
         return this;
     end // routine construct
+
+    routine __str(): string
+    begin
+        return "{File @ '" + to_string(this->_path) + "'}";
+    end
+
+    /**************************************************************************/
+    routine path(): object
+    begin
+        return this->_path;
+    end
 
     /**************************************************************************/
     routine open(var flags: int): bool
     begin
-        this->fd = _file_open(this->path, flags);
-        print(this->fd);
-        if (this->fd == -1):
+        this->_fd = _file_open(to_string(this->_path), flags);
+        if (this->_fd == -1):
             return false;
         end
         return true;
     end // routine open
 
     /**************************************************************************/
-    routine close(): void
+    routine close(): bool
     begin
-        _file_fd_close(this->fd);
+        return _file_fd_close(this->_fd);
     end // routine close
 
     /**************************************************************************/
     routine readall(): string
     begin
-        return _file_fd_read(this->fd, file_size(this->path));
+        return _file_fd_read(this->_fd, file_size(to_string(this->_path)));
     end // routine readall
 
     /**************************************************************************/
     routine read(var n: int): string
     begin
-        return _file_fd_read(this->fd, n);
+        return _file_fd_read(this->_fd, n);
     end // routine read
 end // class FileObject
 
@@ -87,5 +99,18 @@ begin
     file->open(flags);
     return file;
 end
+
+/******************************************************************************/
+routine close(var file: object): void
+begin
+    return file->close();
+end
+
+/******************************************************************************/
+routine size(var path: string): int
+begin
+    return file_size(path);
+end
+
 
 end // module File

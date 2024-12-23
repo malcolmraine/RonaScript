@@ -70,7 +70,7 @@ class RnObject;
     RN_BUILTIN_FUNC(RnBuiltins_IO, print, RnType::RN_VOID, 1)             \
     RN_BUILTIN_FUNC(RnBuiltins_IO, file_read, RnType::RN_STRING, 1)       \
     RN_BUILTIN_FUNC(RnBuiltins_IO, prompt, RnType::RN_STRING, 1)          \
-    RN_BUILTIN_FUNC(RnBuiltins_IO, _file_open, RnType::RN_INT, 1)         \
+    RN_BUILTIN_FUNC(RnBuiltins_IO, _file_open, RnType::RN_INT, 2)         \
     RN_BUILTIN_FUNC(RnBuiltins_IO, _file_fd_close, RnType::RN_BOOLEAN, 1) \
     RN_BUILTIN_FUNC(RnBuiltins_IO, _file_fd_write, RnType::RN_INT, 1)     \
     RN_BUILTIN_FUNC(RnBuiltins_IO, _file_fd_read, RnType::RN_STRING, 1)   \

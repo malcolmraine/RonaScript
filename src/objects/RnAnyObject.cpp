@@ -345,7 +345,7 @@ RnBoolNative RnAnyObject::IsActiveDataEqual(const RnObject* obj) const {
         case RnType::RN_ANY:
         default:
             assert(false);
-            break;
+            return false;
     }
 }
 

@@ -549,6 +549,14 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_MAKE_CONST: {
             auto type = static_cast<RnType::Type>(instruction->GetArg1());
             RnObject* obj = CreateObject(type);
+
+//            RnInstructionArg key = instruction->GetArg3();
+//            if (key == UINT32_MAX) {
+//                throw std::runtime_error("Invalid literal key while making const value");
+//            } else {
+//                obj->CopyDataFromObject(RnConstStore::GetInternedObject(key));
+//            }
+
             obj->SetConstFlag(true);
             GetScope()->GetMemoryGroup()->AddObject(obj);
             GetScope()->StoreObject(instruction->GetArg2(), obj);

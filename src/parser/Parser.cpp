@@ -292,7 +292,7 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(const std::vector<Token*>& qualifiers
             }
             AdvanceBuffer(1);  // Advance past the ':' separating the name from the type
 
-            if (Current()->IsType()) {
+            if (Current()->IsType() or _user_defined_type_map.find((Current()->GetLexeme())) != _user_defined_type_map.end()) {
                 arg->SetType(ParseType());
             } else {
                 ThrowError("Invalid type '" + Current()->GetLexeme() +

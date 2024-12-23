@@ -53,7 +53,10 @@ RN_BUILTIN_FUNC_DEFINE(file_size, RnType::RN_INT, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC_DEFINE(file_write, RnType::RN_INT, 2){BUILTIN_ASSERTS}
+RN_BUILTIN_FUNC_DEFINE(file_write, RnType::RN_INT, 2) {
+    BUILTIN_ASSERTS
+    return RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_NULL);
+}
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(print, RnType::RN_VOID, 1) {
@@ -93,15 +96,14 @@ RN_BUILTIN_FUNC_DEFINE(file_read, RnType::RN_STRING, 1) {
 
     auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_STRING);
     std::ifstream file;
-    file.open(args.front()->ToString());
+    RnStringNative path = std::filesystem::absolute(args.front()->ToString());
+    file.open(path);
 
-    std::string contents;
     file.seekg(0, std::ios::end);
-    contents.reserve(file.tellg());
+    size_t file_size = std::filesystem::file_size(path);
+    std::string contents(file_size, '\0');
     file.seekg(0, std::ios::beg);
-
-    contents.assign((std::istreambuf_iterator<char>(file)),
-                    std::istreambuf_iterator<char>());
+    file.read(&contents[0], file_size);
     file.close();
     ret_val->SetData(contents);
 
@@ -120,7 +122,7 @@ RN_BUILTIN_FUNC_DEFINE(prompt, RnType::RN_STRING, 1) {
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC_DEFINE(_file_open, RnType::RN_INT, 1) {
+RN_BUILTIN_FUNC_DEFINE(_file_open, RnType::RN_INT, 2) {
     BUILTIN_ASSERTS
 
     auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_INT);
