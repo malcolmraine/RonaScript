@@ -64,3 +64,11 @@ std::string AstNode::MakeTabStr() const {
 void AstNode::AddChild(const AstNodePtr<AstNode>& child) {
     _children.push_back(child);
 }
+
+/*****************************************************************************/
+void AstNode::SetChild(size_t index, AstNodePtr<AstNode> node) {
+    while (_children.size() < index + 1) {
+        _children.push_back(nullptr);
+    }
+    _children[index] = node;
+}

@@ -150,9 +150,9 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
         case AST_BINARY_EXPR: {
             auto node = AstNode::CastNode<BinaryExpr>(subtree);
             if (node->_op == "->") {
-                //                if (node->_left->node_type == AST_NAME) {
+                //                if (node->GetChild(AstNode::LEFT_CHILD)->node_type == AST_NAME) {
                 //                    auto previous_scope = _current_scope;
-                //                    auto name_node = AstNode::CastNode<Name>(node->_left);
+                //                    auto name_node = AstNode::CastNode<Name>(node->GetChild(AstNode::LEFT_CHILD));
                 //                    _current_scope = AstNode::CastNode<ClassDecl>(
                 //                                         _current_scope->symbol_table
                 //                                             ->GetSymbolEntry(name_node->value)
@@ -162,10 +162,10 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
                 //                    _current_scope = previous_scope;
                 //                    return subtree_type;
                 //                }
-                return EvaluateSubtreeType(node->_right);
+                return EvaluateSubtreeType(node->GetChild(AstNode::RIGHT_CHILD));
             }
-            return ResolveTypes(EvaluateSubtreeType(node->_left),
-                                EvaluateSubtreeType(node->_right));
+            return ResolveTypes(EvaluateSubtreeType(node->GetChild(AstNode::LEFT_CHILD)),
+                                EvaluateSubtreeType(node->GetChild(AstNode::RIGHT_CHILD)));
         }
         case AST_INDEXED_EXPR:
             // TODO: Evaluate type information for indexed expressions

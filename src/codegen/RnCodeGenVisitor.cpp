@@ -501,15 +501,15 @@ InstructionBlock RnCodeGenVisitor::Visit(BinaryExpr* node) {
     RnOpCode opcode = GetOpCodeFromOperator(node->_op);
 
     if (opcode == OP_LOAD_ATTR) {
-        instructions = GeneralVisit(node->_left);
+        instructions = GeneralVisit(node->GetChild(AstNode::LEFT_CHILD));
         instructions.push_back(new RnInstruction(
             opcode, RnConstStore::InternValue(
-                        AstNode::CastNode<Name>(node->_right)->value)));
+                        AstNode::CastNode<Name>(node->GetChild(AstNode::RIGHT_CHILD))->value)));
         return instructions;
     }
 
-    InstructionBlock left = GeneralVisit(node->_left);
-    InstructionBlock right = GeneralVisit(node->_right);
+    InstructionBlock left = GeneralVisit(node->GetChild(AstNode::LEFT_CHILD));
+    InstructionBlock right = GeneralVisit(node->GetChild(AstNode::RIGHT_CHILD));
     instructions.insert(instructions.end(), left.begin(), left.end());
     instructions.insert(instructions.end(), right.begin(), right.end());
     instructions.emplace_back(new RnInstruction(opcode));

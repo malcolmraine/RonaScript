@@ -476,8 +476,8 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
 
     auto make_binary_expr = [this, &result_stack, &op_stack]() mutable {
         auto node = AstNode::CreateNode<BinaryExpr>();
-        node->_right = result_stack.Pop();
-        node->_left = result_stack.Pop();
+        node->SetChild(AstNode::RIGHT_CHILD, result_stack.Pop());
+        node->SetChild(AstNode::LEFT_CHILD, result_stack.Pop());
         node->_op = op_stack.Pop()->GetLexeme();
         return AstNode::CastNode<BinaryExpr>(TransformBinaryExpr(node));
     };
@@ -578,7 +578,7 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
                     if (op_stack.back()->IsBinaryOp()) {
                         result_stack.Push(TransformBinaryExpr(make_binary_expr()));
 
-                        // Handle _left associativity
+                        // Handle left associativity
                         if (!op_stack.IsEmpty() and
                             _associativity[op_stack.back()->GetType()] == LEFT) {
                             result_stack.Push(make_binary_expr());
@@ -723,9 +723,9 @@ AstNodePtr<AstNode> Parser::ParseAssignmentStatement(const AstNodePtr<AstNode>& 
 
     if (!op.empty()) {
         auto bin_expr = AstNode::CreateNode<BinaryExpr>();
-        bin_expr->_left = node->GetLexpr();
+        bin_expr->SetChild(AstNode::LEFT_CHILD, node->GetLexpr());
         bin_expr->_op = op;
-        bin_expr->_right = ParseExpr();
+        bin_expr->SetChild(AstNode::RIGHT_CHILD, ParseExpr());
         auto final_rexpr = TransformBinaryExpr(bin_expr);
         if (bin_expr != final_rexpr && final_rexpr->node_type == AST_UNARY_EXPR) {
             return final_rexpr;
@@ -1223,18 +1223,19 @@ void Parser::Parse() {
 AstNodePtr<AstNode> Parser::TransformBinaryExpr(AstNodePtr<BinaryExpr> binary_expr) {
     assert(binary_expr);
 
+    auto rightChild = binary_expr->GetChild(AstNode::RIGHT_CHILD);
     if (binary_expr->_op == "->" || binary_expr->_op == "::") {
-        if (binary_expr->_right->node_type == AST_INDEXED_EXPR) {
-            auto right_tmp = AstNode::CastNode<IndexedExpr>(binary_expr->_right);
+        if (rightChild->node_type == AST_INDEXED_EXPR) {
+            auto right_tmp = AstNode::CastNode<IndexedExpr>(rightChild);
             right_tmp->file_info = binary_expr->file_info;
-            binary_expr->_right = right_tmp->expr;
+            binary_expr->SetChild(AstNode::RIGHT_CHILD, right_tmp->expr);
             right_tmp->expr = binary_expr;
 
             return right_tmp;
-        } else if (binary_expr->_right->node_type == AST_FUNC_CALL) {
-            auto right_tmp = AstNode::CastNode<FuncCall>(binary_expr->_right);
+        } else if (rightChild->node_type == AST_FUNC_CALL) {
+            auto right_tmp = AstNode::CastNode<FuncCall>(rightChild);
             right_tmp->file_info = binary_expr->file_info;
-            binary_expr->_right = right_tmp->expr;
+            binary_expr->SetChild(AstNode::RIGHT_CHILD, right_tmp->expr);
             right_tmp->expr = TransformBinaryExpr(binary_expr);
 
             return right_tmp;

@@ -51,6 +51,7 @@ public:
     [[nodiscard]] bool IsLiteral() const;
     virtual std::string ToString(bool nl);
     void AddChild(const AstNodePtr<AstNode>& child);
+    void SetChild(size_t index, AstNodePtr<AstNode> node);
 
     std::vector<AstNodePtr<AstNode>> GetChildren() const {
         return _children;
