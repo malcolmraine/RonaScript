@@ -59,7 +59,7 @@ void Compile(const std::filesystem::path& infile, RnCodeGenerator& code_generato
 
         if (!arg_parser.IsSet("--no-validation")) {
             RnAstValidator validator;
-            validator.Visit(parser.ast->root.get());
+            validator.Visit(parser.ast->root);
         }
     } catch (const std::exception& e) {
         Log::ERROR("Parse Error: " + std::string(e.what()));

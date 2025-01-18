@@ -35,14 +35,19 @@
 #include "NodeType.h"
 
 template <typename T>
-using AstNodePtr = std::shared_ptr<T>;
+using AstNodePtr = T*;
 
 class RnCodeGenVisitor;
 
 class AstNode {
 public:
+    enum : size_t {
+        LEFT_CHILD = 0,
+        RIGHT_CHILD = 1,
+    };
+
     AstNode() = default;
-    virtual ~AstNode() = default;
+    virtual ~AstNode();
     [[nodiscard]] bool IsLiteral() const;
     virtual std::string ToString(bool nl);
     void AddChild(const AstNodePtr<AstNode>& child);
@@ -52,18 +57,20 @@ public:
     }
 
     template <class T = AstNode>
-    std::shared_ptr<T> GetChild(size_t index) const {
+    AstNodePtr<T> GetChild(size_t index) const {
         return AstNode::CastNode<T>(_children.at(index));
     }
 
     template <class T, typename... Args>
     static AstNodePtr<T> CreateNode(Args... args) {
-        return std::make_shared<T>(std::forward<Args>(args)...);
+//        return std::make_shared<T>(std::forward<Args>(args)...);
+        return new T(std::forward<Args>(args)...);
     }
 
     template <class TO, class FROM>
     static AstNodePtr<TO> CastNode(AstNodePtr<FROM> node) {
-        return std::dynamic_pointer_cast<TO>(node);
+//        return std::dynamic_pointer_cast<TO>(node);
+        return dynamic_cast<TO*>(node);
     }
 
     NodeType_t node_type = AST_DEFAULT;

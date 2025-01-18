@@ -479,7 +479,7 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         node->_right = result_stack.Pop();
         node->_left = result_stack.Pop();
         node->_op = op_stack.Pop()->GetLexeme();
-        return std::static_pointer_cast<BinaryExpr>(TransformBinaryExpr(node));
+        return AstNode::CastNode<BinaryExpr>(TransformBinaryExpr(node));
     };
 
     auto parse_bracketed_node = [this, &result_stack]() mutable {

@@ -68,7 +68,7 @@ public:
     ~RnAstValidator() override = default;
 
     bool GeneralVisit(AstNode* node) override;
-    bool GeneralVisit(const AstNodePtr<AstNode>& node) override;
+//    bool GeneralVisit(const AstNodePtr<AstNode>& node-) override;
     bool Visit(ArrayLiteral* node) override;
     bool Visit(ScopeNode* node) override;
     bool Visit(Loop* node) override;

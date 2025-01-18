@@ -296,14 +296,14 @@ bool RnAstValidator::GeneralVisit(AstNode* node) {
     }
 }
 
-/*****************************************************************************/
-bool RnAstValidator::GeneralVisit(const AstNodePtr<AstNode>& node) {
-    if (node) {
-        return GeneralVisit(node.get());
-    } else {
-        return {};
-    }
-}
+///*****************************************************************************/
+//bool RnAstValidator::GeneralVisit(const AstNodePtr<AstNode>& node) {
+//    if (node) {
+//        return GeneralVisit(node);
+//    } else {
+//        return {};
+//    }
+//}
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(LiteralValue* node) {

@@ -30,6 +30,13 @@
 
 #define TAB_CHAR "  "
 
+
+/*****************************************************************************/
+ AstNode::~AstNode() {
+    for (auto child: _children)
+        delete child;
+}
+
 /*****************************************************************************/
 bool AstNode::IsLiteral() const {
     return node_type == AST_FLOAT_LITERAL || node_type == AST_STRING_LITERAL ||
