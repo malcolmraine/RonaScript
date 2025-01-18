@@ -41,10 +41,17 @@ class RnCodeGenVisitor;
 
 class AstNode {
 public:
-    enum : size_t {
-        LEFT_CHILD = 0,
-        RIGHT_CHILD = 1,
-    };
+//    enum : size_t {
+//        LEFT_CHILD_INDEX = 0,
+//        RIGHT_CHILD_INDEX = 1,
+//    };
+    static const size_t LEFT_CHILD_INDEX = 0;
+    static const size_t RIGHT_CHILD_INDEX = 1;
+    static const size_t PRIMARY_EXPR_INDEX = 0;
+    static const size_t TEST_INDEX = 0;
+    static const size_t CONSEQUENT_INDEX = 1;
+    static const size_t ALTERNATIVE_INDEX = 2;
+
 
     AstNode() = default;
     virtual ~AstNode();
@@ -59,6 +66,9 @@ public:
 
     template <class T = AstNode>
     AstNodePtr<T> GetChild(size_t index) const {
+        if (_children.size() < index + 1) {
+            return nullptr;
+        }
         return AstNode::CastNode<T>(_children.at(index));
     }
 

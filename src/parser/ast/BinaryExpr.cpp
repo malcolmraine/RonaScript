@@ -37,8 +37,8 @@ BinaryExpr::BinaryExpr() {
 /*****************************************************************************/
 BinaryExpr::BinaryExpr(AstNodePtr<AstNode> left, AstNodePtr<AstNode> right,
                        std::string op) {
-    SetChild(AstNode::LEFT_CHILD, left);
-    SetChild(AstNode::RIGHT_CHILD, right);
+    SetChild(AstNode::LEFT_CHILD_INDEX, left);
+    SetChild(AstNode::RIGHT_CHILD_INDEX, right);
     _op = std::move(op);
 }
 
@@ -48,8 +48,8 @@ std::string BinaryExpr::ToString(bool nl) {
     if (nl) {
         s += "\n";
     }
-    auto leftChild = GetChild(AstNode::LEFT_CHILD);
-        auto rightChild = GetChild(AstNode::RIGHT_CHILD);
+    auto leftChild = GetChild(AstNode::LEFT_CHILD_INDEX);
+        auto rightChild = GetChild(AstNode::RIGHT_CHILD_INDEX);
     leftChild->nest_lvl = nest_lvl + 1;
     rightChild->nest_lvl = nest_lvl + 1;
     s += leftChild->ToString(true) + rightChild->ToString(true);

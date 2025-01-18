@@ -18,6 +18,6 @@ public:
     BinaryExpr(AstNodePtr<AstNode> left, AstNodePtr<AstNode> right, std::string op);
     ~BinaryExpr() override = default;
     std::string ToString(bool nl) override;
-    
+
     std::string _op;
 };

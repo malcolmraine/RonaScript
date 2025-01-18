@@ -407,9 +407,9 @@ InstructionBlock RnCodeGenVisitor::Visit(CatchBlock* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ConditionalStmt* node) {
     InstructionBlock instructions;
-    InstructionBlock test = GeneralVisit(node->test);
-    InstructionBlock consequent = GeneralVisit(node->consequent);
-    InstructionBlock alternative = GeneralVisit(node->alternative);
+    InstructionBlock test = GeneralVisit(node->GetChild(AstNode::TEST_INDEX));
+    InstructionBlock consequent = GeneralVisit(node->GetChild(AstNode::CONSEQUENT_INDEX));
+    InstructionBlock alternative = GeneralVisit(node->GetChild(AstNode::ALTERNATIVE_INDEX));
 
     WrapContext(consequent);
     if (node->node_type == AST_ELSE_STMT) {
@@ -501,15 +501,15 @@ InstructionBlock RnCodeGenVisitor::Visit(BinaryExpr* node) {
     RnOpCode opcode = GetOpCodeFromOperator(node->_op);
 
     if (opcode == OP_LOAD_ATTR) {
-        instructions = GeneralVisit(node->GetChild(AstNode::LEFT_CHILD));
+        instructions = GeneralVisit(node->GetChild(AstNode::LEFT_CHILD_INDEX));
         instructions.push_back(new RnInstruction(
             opcode, RnConstStore::InternValue(
-                        AstNode::CastNode<Name>(node->GetChild(AstNode::RIGHT_CHILD))->value)));
+                        AstNode::CastNode<Name>(node->GetChild(AstNode::RIGHT_CHILD_INDEX))->value)));
         return instructions;
     }
 
-    InstructionBlock left = GeneralVisit(node->GetChild(AstNode::LEFT_CHILD));
-    InstructionBlock right = GeneralVisit(node->GetChild(AstNode::RIGHT_CHILD));
+    InstructionBlock left = GeneralVisit(node->GetChild(AstNode::LEFT_CHILD_INDEX));
+    InstructionBlock right = GeneralVisit(node->GetChild(AstNode::RIGHT_CHILD_INDEX));
     instructions.insert(instructions.end(), left.begin(), left.end());
     instructions.insert(instructions.end(), right.begin(), right.end());
     instructions.emplace_back(new RnInstruction(opcode));

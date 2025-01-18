@@ -46,6 +46,7 @@ std::string ConditionalStmt::ToString(bool nl) {
         output += MakeTabStr() + "ElseStmt( )" + newline;
     }
 
+    auto test = GetChild(AstNode::TEST_INDEX);
     if (test) {
         test->nest_lvl = nest_lvl + 1;
         output += test->ToString(true);
@@ -53,9 +54,10 @@ std::string ConditionalStmt::ToString(bool nl) {
 
     nest_lvl++;
     output += MakeTabStr() + "Consequent( )" + newline;
-    consequent->nest_lvl = nest_lvl + 1;
-    output += consequent->ToString(true);
+    GetChild(AstNode::CONSEQUENT_INDEX)->nest_lvl = nest_lvl + 1;
+    output += GetChild(AstNode::CONSEQUENT_INDEX)->ToString(true);
 
+    auto alternative = GetChild(AstNode::ALTERNATIVE_INDEX);
     if (alternative) {
         output += MakeTabStr() + "Alternative( )" + newline;
         alternative->nest_lvl = nest_lvl + 1;

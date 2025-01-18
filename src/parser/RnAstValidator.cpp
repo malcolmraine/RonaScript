@@ -150,9 +150,9 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
         case AST_BINARY_EXPR: {
             auto node = AstNode::CastNode<BinaryExpr>(subtree);
             if (node->_op == "->") {
-                //                if (node->GetChild(AstNode::LEFT_CHILD)->node_type == AST_NAME) {
+                //                if (node->GetChild(AstNode::LEFT_CHILD_INDEX)->node_type == AST_NAME) {
                 //                    auto previous_scope = _current_scope;
-                //                    auto name_node = AstNode::CastNode<Name>(node->GetChild(AstNode::LEFT_CHILD));
+                //                    auto name_node = AstNode::CastNode<Name>(node->GetChild(AstNode::LEFT_CHILD_INDEX));
                 //                    _current_scope = AstNode::CastNode<ClassDecl>(
                 //                                         _current_scope->symbol_table
                 //                                             ->GetSymbolEntry(name_node->value)
@@ -162,10 +162,10 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
                 //                    _current_scope = previous_scope;
                 //                    return subtree_type;
                 //                }
-                return EvaluateSubtreeType(node->GetChild(AstNode::RIGHT_CHILD));
+                return EvaluateSubtreeType(node->GetChild(AstNode::RIGHT_CHILD_INDEX));
             }
-            return ResolveTypes(EvaluateSubtreeType(node->GetChild(AstNode::LEFT_CHILD)),
-                                EvaluateSubtreeType(node->GetChild(AstNode::RIGHT_CHILD)));
+            return ResolveTypes(EvaluateSubtreeType(node->GetChild(AstNode::LEFT_CHILD_INDEX)),
+                                EvaluateSubtreeType(node->GetChild(AstNode::RIGHT_CHILD_INDEX)));
         }
         case AST_INDEXED_EXPR:
             // TODO: Evaluate type information for indexed expressions
@@ -418,10 +418,10 @@ bool RnAstValidator::Visit(CatchBlock* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(ConditionalStmt* node) {
-    if (node->consequent)
-        GeneralVisit(node->consequent);
-    if (node->alternative)
-        GeneralVisit(node->alternative);
+    if (node->GetChild(AstNode::CONSEQUENT_INDEX))
+        GeneralVisit(node->GetChild(AstNode::CONSEQUENT_INDEX));
+    if (node->GetChild(AstNode::ALTERNATIVE_INDEX))
+        GeneralVisit(node->GetChild(AstNode::ALTERNATIVE_INDEX));
     return true;
 }
 
