@@ -36,7 +36,6 @@ FuncCall::FuncCall() {
 /*****************************************************************************/
 FuncCall::~FuncCall() {
     for (auto& arg : args) {
-//        arg.reset();
     }
 }
 
