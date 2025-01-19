@@ -465,8 +465,10 @@ bool RnAstValidator::Visit(ArgDecl* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(AssignmentStmt* node) {
-    if (!CanAssignTypeTo(EvaluateSubtreeType(node->GetLexpr()),
-                         EvaluateSubtreeType(node->GetRexpr()), ASSIGNMENT_VALUE)) {
+    if (!CanAssignTypeTo(
+            EvaluateSubtreeType(node->GetChild(AstNode::LEFT_CHILD_INDEX)),
+            EvaluateSubtreeType(node->GetChild(AstNode::RIGHT_CHILD_INDEX)),
+            ASSIGNMENT_VALUE)) {
         throw std::runtime_error("Type error.");
     }
     return true;

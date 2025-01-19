@@ -713,7 +713,7 @@ AstNodePtr<ExitStmt> Parser::ParseExitStmt() {
 AstNodePtr<AstNode> Parser::ParseAssignmentStatement(const AstNodePtr<AstNode>& rexpr) {
     auto node = AstNode::CreateNode<AssignmentStmt>();
     AddCurrentFileInfo(node);
-    node->SetLexpr(rexpr ? rexpr : ParseExpr());
+    node->SetChild(AstNode::LEFT_CHILD_INDEX, rexpr ? rexpr : ParseExpr());
 
     std::string op;
     if (Current()->IsCompoundOp()) {
@@ -725,18 +725,19 @@ AstNodePtr<AstNode> Parser::ParseAssignmentStatement(const AstNodePtr<AstNode>& 
 
     if (!op.empty()) {
         auto bin_expr = AstNode::CreateNode<BinaryExpr>();
-        bin_expr->SetChild(AstNode::LEFT_CHILD_INDEX, node->GetLexpr());
+        bin_expr->SetChild(AstNode::LEFT_CHILD_INDEX,
+                           node->GetChild(AstNode::LEFT_CHILD_INDEX));
         bin_expr->_op = op;
         bin_expr->SetChild(AstNode::RIGHT_CHILD_INDEX, ParseExpr());
         auto final_rexpr = TransformBinaryExpr(bin_expr);
         if (bin_expr != final_rexpr && final_rexpr->node_type == AST_UNARY_EXPR) {
             return final_rexpr;
         } else {
-            node->SetRexpr(final_rexpr);
+            node->SetChild(AstNode::RIGHT_CHILD_INDEX, final_rexpr);
         }
     } else {
         ConditionalBufAdvance(TokenType::EQUAL);
-        node->SetRexpr(ParseExpr());
+        node->SetChild(AstNode::RIGHT_CHILD_INDEX, ParseExpr());
     }
 
     return node;

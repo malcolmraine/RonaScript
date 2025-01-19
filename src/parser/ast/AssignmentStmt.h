@@ -36,24 +36,4 @@ public:
     AssignmentStmt();
     ~AssignmentStmt() override;
     std::string ToString(bool nl) override;
-
-    [[nodiscard]] const AstNodePtr<AstNode>& GetRexpr() const {
-        return _rexpr;
-    }
-
-    void SetRexpr(const AstNodePtr<AstNode>& rexpr) {
-        _rexpr = rexpr;
-    }
-
-    [[nodiscard]] const AstNodePtr<AstNode>& GetLexpr() const {
-        return _lexpr;
-    }
-
-    void SetLexpr(const AstNodePtr<AstNode>& lexpr) {
-        _lexpr = lexpr;
-    }
-
-private:
-    AstNodePtr<AstNode> _rexpr{};
-    AstNodePtr<AstNode> _lexpr = nullptr;
 };

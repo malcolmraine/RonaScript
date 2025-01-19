@@ -495,8 +495,8 @@ InstructionBlock RnCodeGenVisitor::Visit(ArgDecl* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(AssignmentStmt* node) {
     InstructionBlock instructions;
-    InstructionBlock lvalue = GeneralVisit(node->GetLexpr());
-    InstructionBlock rvalue = GeneralVisit(node->GetRexpr());
+    InstructionBlock lvalue = GeneralVisit(node->GetChild(AstNode::LEFT_CHILD_INDEX));
+    InstructionBlock rvalue = GeneralVisit(node->GetChild(AstNode::RIGHT_CHILD_INDEX));
     instructions.insert(instructions.end(), rvalue.begin(), rvalue.end());
     instructions.insert(instructions.end(), lvalue.begin(), lvalue.end());
     instructions.push_back(new RnInstruction(OP_STORE));
