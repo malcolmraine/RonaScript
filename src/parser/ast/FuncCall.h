@@ -46,7 +46,6 @@ public:
         return _discard_return_value;
     }
 
-    AstNodePtr<AstNode> expr = nullptr;
     std::vector<AstNodePtr<AstNode>> args;
 
 private:

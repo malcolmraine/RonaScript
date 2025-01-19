@@ -172,7 +172,7 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
             return std::make_shared<RnTypeComposite>(RnType::RN_NULL);
         case AST_FUNC_CALL: {
             auto node = AstNode::CastNode<FuncCall>(subtree);
-            return EvaluateSubtreeType(node->expr);
+            return EvaluateSubtreeType(node->GetChild(AstNode::PRIMARY_EXPR_INDEX));
         }
         case AST_LIST_LITERAL: {
             auto node = AstNode::CastNode<ArrayLiteral>(subtree);
@@ -213,11 +213,11 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
         }
         case AST_RETURN_STMT: {
             auto node = AstNode::CastNode<ReturnStmt>(subtree);
-            return EvaluateSubtreeType(node->expr);
+            return EvaluateSubtreeType(node->GetChild(AstNode::PRIMARY_EXPR_INDEX));
         }
         case AST_UNARY_EXPR: {
             auto node = AstNode::CastNode<UnaryExpr>(subtree);
-            return EvaluateSubtreeType(node->expr);
+            return EvaluateSubtreeType(node->GetChild(AstNode::PRIMARY_EXPR_INDEX));
         }
         case AST_NAME: {
             auto node = AstNode::CastNode<Name>(subtree);
@@ -353,8 +353,8 @@ bool RnAstValidator::Visit(FuncDecl* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(FuncCall* node) {
-    if (node->expr->node_type == AST_NAME) {
-        SymbolExistsCheck(AstNode::CastNode<Name>(node->expr)->value);
+    if (node->GetChild(AstNode::PRIMARY_EXPR_INDEX)->node_type == AST_NAME) {
+        SymbolExistsCheck(AstNode::CastNode<Name>(node->GetChild(AstNode::PRIMARY_EXPR_INDEX))->value);
     }
     return true;
 }
@@ -395,7 +395,7 @@ bool RnAstValidator::Visit(ExitStmt* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(ReturnStmt* node) {
-    CanAssignTypeTo(_current_type_reference, EvaluateSubtreeType(node->expr),
+    CanAssignTypeTo(_current_type_reference, EvaluateSubtreeType(node->GetChild(AstNode::PRIMARY_EXPR_INDEX)),
                     RETURN_VALUE);
     return true;
 }

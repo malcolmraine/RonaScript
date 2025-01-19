@@ -39,6 +39,7 @@ Expr::~Expr() {
 
 /*****************************************************************************/
 std::string Expr::ToString(bool nl) {
+    auto expr = GetChild(AstNode::PRIMARY_EXPR_INDEX);
     expr->nest_lvl = nest_lvl;
     return expr->ToString(nl);
 }

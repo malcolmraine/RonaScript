@@ -632,14 +632,14 @@ AstNodePtr<UnaryExpr> Parser::ParseUnaryExpr(const AstNodePtr<AstNode>& expr) {
     AdvanceBuffer(1);
 
     if (expr != nullptr) {
-        node->expr = expr;
+        node->SetChild(AstNode::PRIMARY_EXPR_INDEX, expr);
     } else if (Current()->IsUnaryOp()) {
-        node->expr = ParseUnaryExpr();
+        node->SetChild(AstNode::PRIMARY_EXPR_INDEX, ParseUnaryExpr());
     } else {
         if (Current()->GetType() == TokenType::R_PARAN) {
-            node->expr = ParseExpr(TokenType::L_PARAN);
+            node->SetChild(AstNode::PRIMARY_EXPR_INDEX, ParseExpr(TokenType::L_PARAN));
         } else {
-            node->expr = GetExprComponent();
+            node->SetChild(AstNode::PRIMARY_EXPR_INDEX, GetExprComponent());
         }
     }
 
@@ -670,7 +670,7 @@ AstNodePtr<ReturnStmt> Parser::ParseReturnStmt() {
     if (Current()->GetType() == TokenType::SEMICOLON) {
         AdvanceBuffer(1);
     } else {
-        node->expr = ParseExpr();
+        node->SetChild(AstNode::PRIMARY_EXPR_INDEX, ParseExpr());
     }
 
     return node;
@@ -824,9 +824,9 @@ AstNodePtr<FuncCall> Parser::ParseFuncCall(const AstNodePtr<AstNode>& expr) {
     AddCurrentFileInfo(node);
 
     if (expr == nullptr) {
-        node->expr = ParseExpr();
+        node->SetChild(AstNode::PRIMARY_EXPR_INDEX, ParseExpr());
     } else {
-        node->expr = expr;
+        node->SetChild(AstNode::PRIMARY_EXPR_INDEX, expr);
     }
     ConditionalBufAdvance(TokenType::R_PARAN);
 
@@ -950,7 +950,7 @@ AstNodePtr<AstNode> Parser::ParseIndexedExpr(const AstNodePtr<AstNode>& expr) {
     auto node = AstNode::CreateNode<IndexedExpr>();
     AddCurrentFileInfo(node);
     ConditionalBufAdvance(TokenType::R_BRACK);
-    node->expr = expr ? expr : ParseExpr();
+    node->SetChild(AstNode::PRIMARY_EXPR_INDEX, expr ? expr : ParseExpr());
     node->idx = ParseExpr(TokenType::L_BRACK);
 
     // Since the first parent expression is passed, we only loop for
@@ -1086,10 +1086,7 @@ void Parser::Parse() {
                     break;
                 case TokenType::IMPORT: {
                     auto node = ParseImportStmt();
-                    if (node)
-                        // Any import parsing should have thrown so a simple existence
-                        // check is fine here
-                        _global_scope->AddSubTree(node, true);
+                    _global_scope->AddSubTree(node, true);
                     break;
                 }
                 case TokenType::MODULE: {
@@ -1229,15 +1226,15 @@ AstNodePtr<AstNode> Parser::TransformBinaryExpr(AstNodePtr<BinaryExpr> binary_ex
         if (rightChild->node_type == AST_INDEXED_EXPR) {
             auto right_tmp = AstNode::CastNode<IndexedExpr>(rightChild);
             right_tmp->file_info = binary_expr->file_info;
-            binary_expr->SetChild(AstNode::RIGHT_CHILD_INDEX, right_tmp->expr);
-            right_tmp->expr = binary_expr;
+            binary_expr->SetChild(AstNode::RIGHT_CHILD_INDEX, right_tmp->GetChild(AstNode::PRIMARY_EXPR_INDEX));
+            right_tmp->SetChild(AstNode::PRIMARY_EXPR_INDEX, binary_expr);
 
             return right_tmp;
         } else if (rightChild->node_type == AST_FUNC_CALL) {
             auto right_tmp = AstNode::CastNode<FuncCall>(rightChild);
             right_tmp->file_info = binary_expr->file_info;
-            binary_expr->SetChild(AstNode::RIGHT_CHILD_INDEX, right_tmp->expr);
-            right_tmp->expr = TransformBinaryExpr(binary_expr);
+            binary_expr->SetChild(AstNode::RIGHT_CHILD_INDEX, right_tmp->GetChild(AstNode::PRIMARY_EXPR_INDEX));
+            right_tmp->SetChild(AstNode::PRIMARY_EXPR_INDEX, TransformBinaryExpr(binary_expr));
 
             return right_tmp;
         }

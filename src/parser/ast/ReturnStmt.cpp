@@ -44,9 +44,10 @@ std::string ReturnStmt::ToString(bool nl) {
         s += "\n";
     }
 
+    auto expr = GetChild(AstNode::PRIMARY_EXPR_INDEX);
     if (expr != nullptr) {
         expr->nest_lvl = nest_lvl + 1;
-        s += expr->ToString(nl);
+        s += GetChild(AstNode::PRIMARY_EXPR_INDEX)->ToString(nl);
     }
 
     return s;

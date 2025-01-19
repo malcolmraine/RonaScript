@@ -36,6 +36,5 @@ public:
     UnaryExpr();
     ~UnaryExpr() override;
     std::string ToString(bool nl) override;
-    AstNodePtr<AstNode> expr = nullptr;
     std::string op;
 };

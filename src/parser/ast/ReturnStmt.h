@@ -36,5 +36,4 @@ public:
     ReturnStmt();
     ~ReturnStmt() override;
     std::string ToString(bool nl) override;
-    AstNodePtr<AstNode> expr = nullptr;
 };

@@ -43,7 +43,7 @@ std::string ExitStmt::ToString(bool nl) {
         s += "\n";
     }
 
-    auto expr = GetChild<AstNode>(0);
+    auto expr = GetChild<AstNode>(PRIMARY_EXPR_INDEX);
     expr->nest_lvl = nest_lvl + 1;
     s += expr->ToString(true);
     return s;
