@@ -51,7 +51,7 @@ public:
     [[nodiscard]] RnScope* GetScope();
     void SetScope(RnScope* scope);
     [[nodiscard]] virtual bool IsBuiltIn() const;
-    virtual RnObject*  Call(const RnArrayNative& args);
+    virtual RnObject* Call(const RnArrayNative& args);
     void CreateArgument(RnIntNative key, RnType::Type type, size_t index);
     void PassArguments(const RnArrayNative& args, RnScope* scope);
     void InitScope(RnScope* scope);

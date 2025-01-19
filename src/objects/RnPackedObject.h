@@ -25,7 +25,7 @@ public:
         if (_data->GetActiveType() == RnType::RN_ARRAY) {
             return _data->GetDataItemCount();
         } else {
-            return static_cast<RnIntNative >(_data->ToString().length());
+            return static_cast<RnIntNative>(_data->ToString().length());
         }
     }
 

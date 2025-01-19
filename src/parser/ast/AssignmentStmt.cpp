@@ -33,8 +33,7 @@ AssignmentStmt::AssignmentStmt() {
 }
 
 /*****************************************************************************/
-AssignmentStmt::~AssignmentStmt() {
-}
+AssignmentStmt::~AssignmentStmt() {}
 
 /*****************************************************************************/
 std::string AssignmentStmt::ToString(bool nl) {

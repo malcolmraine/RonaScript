@@ -384,8 +384,7 @@ Token* Lexer::Consume() {
                     return ProcessOperator();
             }
         }
-        case '.':
-        {
+        case '.': {
             _lexeme += Current();
             AdvanceBuffer(1);
             if (Current() == '.') {

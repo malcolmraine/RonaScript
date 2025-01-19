@@ -61,7 +61,7 @@ class AttributeAccess;
 template <typename T>
 class RnAstVisitor {
     virtual T GeneralVisit(AstNode* node) = 0;
-//    virtual T GeneralVisit(const AstNodePtr<AstNode>& node) = 0;
+    //    virtual T GeneralVisit(const AstNodePtr<AstNode>& node) = 0;
     virtual T Visit(ArrayLiteral* node) = 0;
     virtual T Visit(ScopeNode* node) = 0;
     virtual T Visit(Loop* node) = 0;

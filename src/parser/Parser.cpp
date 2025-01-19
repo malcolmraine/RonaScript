@@ -292,7 +292,9 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl(const std::vector<Token*>& qualifiers
             }
             AdvanceBuffer(1);  // Advance past the ':' separating the name from the type
 
-            if (Current()->IsType() or _user_defined_type_map.find((Current()->GetLexeme())) != _user_defined_type_map.end()) {
+            if (Current()->IsType() or
+                _user_defined_type_map.find((Current()->GetLexeme())) !=
+                    _user_defined_type_map.end()) {
                 arg->SetType(ParseType());
             } else {
                 ThrowError("Invalid type '" + Current()->GetLexeme() +
@@ -1226,15 +1228,18 @@ AstNodePtr<AstNode> Parser::TransformBinaryExpr(AstNodePtr<BinaryExpr> binary_ex
         if (rightChild->node_type == AST_INDEXED_EXPR) {
             auto right_tmp = AstNode::CastNode<IndexedExpr>(rightChild);
             right_tmp->file_info = binary_expr->file_info;
-            binary_expr->SetChild(AstNode::RIGHT_CHILD_INDEX, right_tmp->GetChild(AstNode::PRIMARY_EXPR_INDEX));
+            binary_expr->SetChild(AstNode::RIGHT_CHILD_INDEX,
+                                  right_tmp->GetChild(AstNode::PRIMARY_EXPR_INDEX));
             right_tmp->SetChild(AstNode::PRIMARY_EXPR_INDEX, binary_expr);
 
             return right_tmp;
         } else if (rightChild->node_type == AST_FUNC_CALL) {
             auto right_tmp = AstNode::CastNode<FuncCall>(rightChild);
             right_tmp->file_info = binary_expr->file_info;
-            binary_expr->SetChild(AstNode::RIGHT_CHILD_INDEX, right_tmp->GetChild(AstNode::PRIMARY_EXPR_INDEX));
-            right_tmp->SetChild(AstNode::PRIMARY_EXPR_INDEX, TransformBinaryExpr(binary_expr));
+            binary_expr->SetChild(AstNode::RIGHT_CHILD_INDEX,
+                                  right_tmp->GetChild(AstNode::PRIMARY_EXPR_INDEX));
+            right_tmp->SetChild(AstNode::PRIMARY_EXPR_INDEX,
+                                TransformBinaryExpr(binary_expr));
 
             return right_tmp;
         }

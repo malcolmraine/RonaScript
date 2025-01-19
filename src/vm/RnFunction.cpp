@@ -28,9 +28,9 @@
 
 #include "RnFunction.h"
 #include <utility>
-#include "RnVirtualMachine.h"
 #include "../objects/RnObject.h"
 #include "RnScope.h"
+#include "RnVirtualMachine.h"
 
 /*****************************************************************************/
 RnFunction::RnFunction(RnStringNative name, long i_start, long i_cnt) {

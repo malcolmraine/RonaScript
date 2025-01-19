@@ -41,17 +41,16 @@ class RnCodeGenVisitor;
 
 class AstNode {
 public:
-//    enum : size_t {
-//        LEFT_CHILD_INDEX = 0,
-//        RIGHT_CHILD_INDEX = 1,
-//    };
+    //    enum : size_t {
+    //        LEFT_CHILD_INDEX = 0,
+    //        RIGHT_CHILD_INDEX = 1,
+    //    };
     static const size_t LEFT_CHILD_INDEX = 0;
     static const size_t RIGHT_CHILD_INDEX = 1;
     static const size_t PRIMARY_EXPR_INDEX = 0;
     static const size_t TEST_INDEX = 0;
     static const size_t CONSEQUENT_INDEX = 1;
     static const size_t ALTERNATIVE_INDEX = 2;
-
 
     AstNode() = default;
     virtual ~AstNode();
@@ -74,13 +73,13 @@ public:
 
     template <class T, typename... Args>
     static AstNodePtr<T> CreateNode(Args... args) {
-//        return std::make_shared<T>(std::forward<Args>(args)...);
+        //        return std::make_shared<T>(std::forward<Args>(args)...);
         return new T(std::forward<Args>(args)...);
     }
 
     template <class TO, class FROM>
     static AstNodePtr<TO> CastNode(AstNodePtr<FROM> node) {
-//        return std::dynamic_pointer_cast<TO>(node);
+        //        return std::dynamic_pointer_cast<TO>(node);
         return dynamic_cast<TO*>(node);
     }
 

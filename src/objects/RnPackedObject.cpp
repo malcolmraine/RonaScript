@@ -20,7 +20,7 @@ void RnPackedObject::UnpackToStack(RnArrayNative& stack, bool reverse) const {
     RnType::Type active_type = _data->GetActiveType();
     if (active_type == RnType::RN_ARRAY || active_type == RnType::RN_STRING) {
         if (reverse) {
-            for (RnIntNative i = GetDataItemCount() - 1; i >=0; --i) {
+            for (RnIntNative i = GetDataItemCount() - 1; i >= 0; --i) {
                 stack.push_back(_data->At(i));
             }
         } else {

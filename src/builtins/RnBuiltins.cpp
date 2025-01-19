@@ -251,8 +251,7 @@ RN_BUILTIN_FUNC_DEFINE(setattr, RnType::RN_BOOLEAN, 3) {
             obj_scope->StoreObject(attr_key, copy);
         }
         ret_val->SetData(true);
-    }
-    else {
+    } else {
         ret_val->SetData(true);
     }
     return ret_val;

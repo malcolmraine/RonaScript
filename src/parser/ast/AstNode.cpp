@@ -30,10 +30,9 @@
 
 #define TAB_CHAR "  "
 
-
 /*****************************************************************************/
- AstNode::~AstNode() {
-    for (auto child: _children)
+AstNode::~AstNode() {
+    for (auto child : _children)
         delete child;
 }
 

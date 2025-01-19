@@ -56,5 +56,4 @@ public:
 private:
     AstNodePtr<AstNode> _rexpr{};
     AstNodePtr<AstNode> _lexpr = nullptr;
-    AstNodePtr<AstNode> _offset = nullptr;
 };
