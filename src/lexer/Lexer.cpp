@@ -77,6 +77,7 @@ Lexer::Lexer() {
 /*****************************************************************************/
 Lexer::~Lexer() {
     _file_obj.close();
+  
     for (auto token : tokens) {
         Token::Destroy(token);
     }
