@@ -127,7 +127,7 @@ RN_BUILTIN_FUNC_DEFINE(str_endswith, RnType::RN_BOOLEAN, 1) {
     BUILTIN_ASSERTS
     assert(args.size() == 2);
 
-    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_STRING);
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_BOOLEAN);
     // subject, search
     ret_val->SetData(static_cast<bool>(
         String::EndsWith(args.front()->ToString(), args.back()->ToString())));

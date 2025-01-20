@@ -89,6 +89,7 @@ RnIntNative RnVirtualMachine::HandleObjectUnpack(RnObject* obj) {
     unpack_obj->UnpackToStack(GetStack(), false);
     RnIntNative item_count = unpack_obj->GetDataItemCount();
     GetScope()->IncrementStackCount(item_count);
+
     return item_count;
 }
 

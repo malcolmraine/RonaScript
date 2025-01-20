@@ -1181,9 +1181,6 @@ void Parser::Parse() {
                                 _current_scope->AddSubTree(ParseUnaryExpr(expr));
                             }
                         } else {
-                            if (expr->node_type == AST_FUNC_CALL)
-                                AstNode::CastNode<FuncCall>(expr)
-                                    ->SetDiscardReturnValue(true);
                             _current_scope->AddSubTree(expr);
                         }
                     }

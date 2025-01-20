@@ -265,6 +265,12 @@ InstructionBlock RnCodeGenVisitor::Visit(ImportStmt* node) {
 InstructionBlock RnCodeGenVisitor::Visit(FuncDecl* node) {
     InstructionBlock instructions;
     InstructionBlock scope = GeneralVisit(node->scope);
+
+    if (node->type->GetType() == RnType::RN_NULL) {
+        scope.push_back(new RnInstruction(OP_LOAD_LITERAL, UINT32_MAX));
+        scope.push_back(new RnInstruction(OP_RETURN));
+    }
+
     instructions.reserve(scope.size());
     RnInstruction* make_instruction = nullptr;
 

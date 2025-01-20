@@ -69,12 +69,14 @@ public:
         GetStack().pop_back();
         assert(item);
         GetScope()->DecrementStackCount();
+        assert(GetStack().size() == GetScope()->GetStackCount());
         return item;
     }
 
     inline void StackPush(RnObject* object) {
         GetStack().push_back(object);
         GetScope()->IncrementStackCount();
+        assert(GetStack().size() == GetScope()->GetStackCount());
     }
 
     void CallStackPush(RnScope* scope);
