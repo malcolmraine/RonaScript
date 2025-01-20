@@ -52,9 +52,16 @@ begin
         return this;
     end // routine construct
 
+    /**************************************************************************/
     routine __str(): string
     begin
         return "{File @ '" + to_string(this->_path) + "'}";
+    end
+
+    /**************************************************************************/
+    routine fd(): int
+    begin
+        return this->_fd;
     end
 
     /**************************************************************************/
@@ -101,9 +108,13 @@ begin
 end
 
 /******************************************************************************/
-routine close(var file: object): void
+routine close(var file: any): void
 begin
-    return file->close();
+    if is_object(file):
+        return file->close();
+    elif is_int(file):
+        return _file_fd_close(this->_fd);
+    end
 end
 
 /******************************************************************************/
