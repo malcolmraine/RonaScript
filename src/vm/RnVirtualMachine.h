@@ -101,7 +101,7 @@ private:
     RnVirtualMachine();
     static RnVirtualMachine* _instance;
     void Init();
-    RnIntNative HandleObjectUnpack(RnObject* obj);
+    RnIntNative HandleObjectUnpack(RnObject* obj, bool reverse);
 
 protected:
     RnCodeFrame* _current_frame = nullptr;

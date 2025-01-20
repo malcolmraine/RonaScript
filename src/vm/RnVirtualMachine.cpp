@@ -84,9 +84,9 @@ void RnVirtualMachine::Init() {
 }
 
 /*****************************************************************************/
-RnIntNative RnVirtualMachine::HandleObjectUnpack(RnObject* obj) {
+RnIntNative RnVirtualMachine::HandleObjectUnpack(RnObject* obj, bool reverse) {
     auto unpack_obj = dynamic_cast<RnPackedObject*>(obj);
-    unpack_obj->UnpackToStack(GetStack(), false);
+    unpack_obj->UnpackToStack(GetStack(), reverse);
     RnIntNative item_count = unpack_obj->GetDataItemCount();
     GetScope()->IncrementStackCount(item_count);
 
@@ -535,7 +535,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             for (uint32_t i = arg_count; i > 0; --i) {
                 auto stack_obj = StackPop();
                 if (stack_obj->GetType() == RnType::RN_OBJECT_PACK) {
-                    i += HandleObjectUnpack(stack_obj);
+                    i += HandleObjectUnpack(stack_obj, false);
                     continue;
                 }
                 args.push_back(stack_obj);
@@ -777,7 +777,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             for (RnIntNative i = 0; i < item_count; i++) {
                 auto stack_obj = StackPop();
                 if (stack_obj->GetActiveType() == RnType::RN_OBJECT_PACK) {
-                    item_count += HandleObjectUnpack(stack_obj);
+                    item_count += HandleObjectUnpack(stack_obj, true);
                     continue;
                 }
                 auto copy =
