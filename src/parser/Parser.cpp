@@ -481,7 +481,7 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
         node->SetChild(AstNode::RIGHT_CHILD_INDEX, result_stack.Pop());
         node->SetChild(AstNode::LEFT_CHILD_INDEX, result_stack.Pop());
         node->_op = op_stack.Pop()->GetLexeme();
-        return AstNode::CastNode<BinaryExpr>(TransformBinaryExpr(node));
+        return node;
     };
 
     auto parse_bracketed_node = [this, &result_stack]() mutable {
@@ -578,7 +578,14 @@ AstNodePtr<AstNode> Parser::ParseExpr(TokenType stop_token) {
                            _prec_tbl[op_stack.back()->GetType()]) {
                     // Create subtree from result stack if it is lower _prec_tbl than Top of operator stack
                     if (op_stack.back()->IsBinaryOp()) {
-                        result_stack.Push(TransformBinaryExpr(make_binary_expr()));
+                        AstNodePtr<BinaryExpr> binaryExpr = make_binary_expr();
+                        auto transformedExpr = TransformBinaryExpr(binaryExpr);
+                        if (transformedExpr->node_type == AST_BINARY_EXPR) {
+                            result_stack.Push(TransformBinaryExpr(
+                                AstNode::CastNode<BinaryExpr>(transformedExpr)));
+                        } else {
+                            result_stack.push_back(transformedExpr);
+                        }
 
                         // Handle left associativity
                         if (!op_stack.IsEmpty() and
@@ -1181,6 +1188,10 @@ void Parser::Parse() {
                                 _current_scope->AddSubTree(ParseUnaryExpr(expr));
                             }
                         } else {
+                            if (expr->node_type == AST_FUNC_CALL) {
+                                AstNode::CastNode<FuncCall>(expr)
+                                    ->SetDiscardReturnValue(true);
+                            }
                             _current_scope->AddSubTree(expr);
                         }
                     }
