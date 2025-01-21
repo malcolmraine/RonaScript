@@ -320,7 +320,7 @@ bool RnAstValidator::Visit(ArrayLiteral* node) {
 bool RnAstValidator::Visit(ScopeNode* node) {
     _current_scope = node;
 
-    for (const auto& child : node->children) {
+    for (const auto& child : node->GetChildren()) {
         GeneralVisit(child);
     }
     return true;

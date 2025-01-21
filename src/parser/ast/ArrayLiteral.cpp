@@ -43,7 +43,7 @@ std::string ArrayLiteral::ToString(bool nl) {
         s += "\n";
     }
 
-    for (auto& item : _children) {
+    for (auto& item : GetChildren()) {
         item->nest_lvl = nest_lvl + 1;
         s += item->ToString(nl);
     }

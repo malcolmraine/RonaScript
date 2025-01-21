@@ -32,8 +32,9 @@
 
 /*****************************************************************************/
 AstNode::~AstNode() {
-    for (auto child : _children)
-        delete child;
+    for (RnSizetNative i = 0; i < _child_count; i++) {
+        delete _children[i];
+    }
 }
 
 /*****************************************************************************/
@@ -55,19 +56,25 @@ std::string AstNode::MakeTabStr() const {
         outp_str.append("|");
         outp_str.append(TAB_CHAR);
     }
-
     return outp_str;
 }
 
 /*****************************************************************************/
 void AstNode::AddChild(const AstNodePtr<AstNode>& child) {
     _children.push_back(child);
+    _child_count++;
 }
 
 /*****************************************************************************/
-void AstNode::SetChild(size_t index, AstNodePtr<AstNode> node) {
-    while (_children.size() < index + 1) {
-        _children.push_back(nullptr);
+void AstNode::PrependChild(const AstNodePtr<AstNode>& child) {
+    _children.insert(_children.begin(), child);
+    _child_count++;
+}
+
+/*****************************************************************************/
+void AstNode::SetChild(RnSizetNative index, AstNodePtr<AstNode> node) {
+    while (_child_count < index + 1) {
+        AddChild(nullptr);
     }
     _children[index] = node;
 }

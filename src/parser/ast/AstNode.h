@@ -31,6 +31,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "../../common/RnType.h"
 #include "../../util/FileInfo.h"
 #include "NodeType.h"
 
@@ -39,55 +40,58 @@ using AstNodePtr = T*;
 
 class RnCodeGenVisitor;
 
+/*****************************************************************************/
 class AstNode {
 public:
-    //    enum : size_t {
-    //        LEFT_CHILD_INDEX = 0,
-    //        RIGHT_CHILD_INDEX = 1,
-    //    };
-    static const size_t LEFT_CHILD_INDEX = 0;
-    static const size_t RIGHT_CHILD_INDEX = 1;
-    static const size_t PRIMARY_EXPR_INDEX = 0;
-    static const size_t TEST_INDEX = 0;
-    static const size_t CONSEQUENT_INDEX = 1;
-    static const size_t ALTERNATIVE_INDEX = 2;
+    static const RnSizetNative LEFT_CHILD_INDEX = 0;
+    static const RnSizetNative RIGHT_CHILD_INDEX = 1;
+    static const RnSizetNative PRIMARY_EXPR_INDEX = 0;
+    static const RnSizetNative TEST_INDEX = 0;
+    static const RnSizetNative CONSEQUENT_INDEX = 1;
+    static const RnSizetNative ALTERNATIVE_INDEX = 2;
 
     AstNode() = default;
     virtual ~AstNode();
     [[nodiscard]] bool IsLiteral() const;
     virtual std::string ToString(bool nl);
     void AddChild(const AstNodePtr<AstNode>& child);
-    void SetChild(size_t index, AstNodePtr<AstNode> node);
+    void PrependChild(const AstNodePtr<AstNode>& child);
+    void SetChild(RnSizetNative index, AstNodePtr<AstNode> node);
 
-    std::vector<AstNodePtr<AstNode>> GetChildren() const {
+    std::vector<AstNodePtr<AstNode>>& GetChildren() {
         return _children;
+    }
+
+    RnSizetNative GetChildCount() const {
+        return _child_count;
     }
 
     template <class T = AstNode>
     AstNodePtr<T> GetChild(size_t index) const {
-        if (_children.size() < index + 1) {
+        if (GetChildCount() < index + 1) {
             return nullptr;
         }
-        return AstNode::CastNode<T>(_children.at(index));
+        return AstNode::CastNode<T>(_children[index]);
     }
 
     template <class T, typename... Args>
     static AstNodePtr<T> CreateNode(Args... args) {
-        //        return std::make_shared<T>(std::forward<Args>(args)...);
         return new T(std::forward<Args>(args)...);
     }
 
     template <class TO, class FROM>
     static AstNodePtr<TO> CastNode(AstNodePtr<FROM> node) {
-        //        return std::dynamic_pointer_cast<TO>(node);
         return dynamic_cast<TO*>(node);
     }
 
     NodeType_t node_type = AST_DEFAULT;
-    int nest_lvl = 0;  // For adding \t characters to string output
+    RnSizetNative nest_lvl = 0;  // For adding \t characters to string output
     FileInfo file_info;
 
 protected:
     std::string MakeTabStr() const;
+
+private:
     std::vector<AstNodePtr<AstNode>> _children;
+    RnSizetNative _child_count = 0;
 };

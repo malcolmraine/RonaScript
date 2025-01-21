@@ -176,7 +176,7 @@ InstructionBlock RnCodeGenVisitor::Visit(ArrayLiteral* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ScopeNode* node) {
     InstructionBlock instructions;
-    for (auto& child : node->children) {
+    for (auto& child : node->GetChildren()) {
         InstructionBlock instruction_block = GeneralVisit(child);
         instructions.insert(instructions.end(), instruction_block.begin(),
                             instruction_block.end());

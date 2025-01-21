@@ -38,6 +38,7 @@
 class RnObject;
 
 typedef int64_t RnIntNative;
+typedef uint64_t RnSizetNative;
 typedef double RnFloatNative;
 typedef std::string RnStringNative;
 typedef bool RnBoolNative;

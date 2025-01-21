@@ -39,12 +39,7 @@ ScopeNode::ScopeNode() {
 }
 
 /*****************************************************************************/
-ScopeNode::~ScopeNode() {
-    //	var_decls.clear();
-    //	class_decls.clear();
-    //	func_decls.clear();
-    children.clear();
-}
+ScopeNode::~ScopeNode() {}
 
 /*****************************************************************************/
 std::string ScopeNode::ToString(bool nl) {
@@ -53,7 +48,7 @@ std::string ScopeNode::ToString(bool nl) {
         s += "\n";
     }
 
-    for (auto& child : children) {
+    for (auto& child : GetChildren()) {
         child->nest_lvl = nest_lvl + 1;
         s += child->ToString(nl);
     }
@@ -66,28 +61,28 @@ void ScopeNode::AddSubTree(const AstNodePtr<AstNode>& subtree, bool hoist) {
     subtree->nest_lvl = nest_lvl + 1;
 
     if (hoist) {
-        children.insert(children.begin(), subtree);
+        PrependChild(subtree);
     } else {
-        children.emplace_back(subtree);
+        AddChild(subtree);
     }
 }
 
 /*****************************************************************************/
 void ScopeNode::AddClassDecl(const AstNodePtr<ClassDecl>& class_decl) {
     class_decl->nest_lvl = nest_lvl + 1;
-    children.emplace_back(class_decl);
+    AddChild(class_decl);
 }
 
 /*****************************************************************************/
 void ScopeNode::AddVarDecl(const AstNodePtr<VarDecl>& var_decl) {
     var_decl->nest_lvl = nest_lvl + 1;
-    children.emplace_back(var_decl);
+    AddChild(var_decl);
 }
 
 /*****************************************************************************/
 void ScopeNode::AddFuncDecl(const AstNodePtr<FuncDecl>& func_decl) {
     func_decl->nest_lvl = nest_lvl + 1;
-    children.emplace_back(func_decl);
+    AddChild(func_decl);
 }
 
 /*****************************************************************************/
