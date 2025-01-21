@@ -88,8 +88,8 @@ public:
 
     void ConditionalBufAdvance(TokenType t);
     AstNodePtr<ImportStmt> ParseImportStmt();
-    AstNodePtr<VarDecl> ParseVarDecl(const std::vector<Token*>& qualifiers = {});
-    AstNodePtr<FuncDecl> ParseFuncDecl(const std::vector<Token*>& qualifiers = {});
+    AstNodePtr<VarDecl> ParseVarDecl();
+    AstNodePtr<FuncDecl> ParseFuncDecl();
     AstNodePtr<ClassDecl> ParseClassDecl();
     AstNodePtr<AstNode> GetExprComponent();
     AstNodePtr<AstNode> ParseExpr(TokenType stop_token = TokenType::SEMICOLON);

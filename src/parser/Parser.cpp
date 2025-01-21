@@ -192,7 +192,7 @@ AstNodePtr<ImportStmt> Parser::ParseImportStmt() {
 }
 
 /*****************************************************************************/
-AstNodePtr<VarDecl> Parser::ParseVarDecl(const std::vector<Token*>& qualifiers) {
+AstNodePtr<VarDecl> Parser::ParseVarDecl() {
     auto node = AstNode::CreateNode<VarDecl>();
     AddCurrentFileInfo(node);
     Expect(TokenType::NAME);
@@ -214,10 +214,6 @@ AstNodePtr<VarDecl> Parser::ParseVarDecl(const std::vector<Token*>& qualifiers) 
             break;
         default:
             assert(false);
-    }
-
-    if (!qualifiers.empty()) {
-        node->qualifiers = std::move(qualifiers);
     }
 
     AdvanceBuffer(1);
@@ -248,14 +244,9 @@ AstNodePtr<VarDecl> Parser::ParseVarDecl(const std::vector<Token*>& qualifiers) 
 }
 
 /*****************************************************************************/
-AstNodePtr<FuncDecl> Parser::ParseFuncDecl(const std::vector<Token*>& qualifiers) {
+AstNodePtr<FuncDecl> Parser::ParseFuncDecl() {
     auto node = AstNode::CreateNode<FuncDecl>();
     AddCurrentFileInfo(node);
-
-    if (!qualifiers.empty()) {
-        node->qualifiers = std::move(qualifiers);
-    }
-
     ConditionalBufAdvance(TokenType::ROUTINE);
 
     if (Current()->GetType() == TokenType::R_PARAN) {
@@ -1080,8 +1071,6 @@ std::string Parser::DumpsAst() const {
 
 /*****************************************************************************/
 void Parser::Parse() {
-    std::vector<Token*> qualifiers;
-
     if (GetTokenCount()) {
         MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
         while (true) {
@@ -1120,19 +1109,17 @@ void Parser::Parse() {
                 case TokenType::GLOBAL:
                 case TokenType::LOCAL:
                 case TokenType::VAR:
-                    _current_scope->AddVarDecl(ParseVarDecl(qualifiers));
+                    _current_scope->AddVarDecl(ParseVarDecl());
                     if (Current()) {
                         ConditionalBufAdvance(TokenType::SEMICOLON);
                     }
-                    qualifiers.clear();
                     break;
                 case TokenType::TYPE:
                 case TokenType::ALIAS:
                     _current_scope->AddSubTree(ParseAliasDecl());
                     break;
                 case TokenType::ROUTINE:
-                    _current_scope->AddFuncDecl(ParseFuncDecl(qualifiers));
-                    qualifiers.clear();
+                    _current_scope->AddFuncDecl(ParseFuncDecl());
                     break;
                 case TokenType::RETURN:
                     _current_scope->AddSubTree(ParseReturnStmt());

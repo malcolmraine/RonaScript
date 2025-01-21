@@ -43,10 +43,10 @@ public:
     ~FuncDecl() override;
 
     std::string ToString(bool nl) override;
+    
     std::string id;
-    std::vector<ArgDecl*> args;
-    std::shared_ptr<RnTypeComposite> type;
-    std::vector<Token*> qualifiers;
-    AstNodePtr<ScopeNode> scope = nullptr;
     bool is_closure = false;
+    std::shared_ptr<RnTypeComposite> type;
+    AstNodePtr<ScopeNode> scope = nullptr;
+    std::vector<ArgDecl*> args;
 };
