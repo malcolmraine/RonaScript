@@ -48,8 +48,10 @@ std::string CatchBlock::ToString(bool nl) {
     if (nl) {
         s += "\n";
     }
-    _scope->nest_lvl = nest_lvl + 1;
-    s += _scope->ToString(true);
+
+    auto scope = GetChild(AstNode::SCOPE_CHILD_INDEX);
+    scope->nest_lvl = nest_lvl + 1;
+    s += scope->ToString(true);
 
     return s;
 }

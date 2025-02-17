@@ -64,6 +64,8 @@ std::string Loop::ToString(bool nl) {
         update->nest_lvl = nest_lvl + 1;
         output += update->ToString(nl);
     }
+
+    auto scope = GetChild(AstNode::SCOPE_CHILD_INDEX);
     scope->nest_lvl = nest_lvl + 1;
     output += scope->ToString(nl);
 

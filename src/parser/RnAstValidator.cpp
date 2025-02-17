@@ -157,7 +157,7 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
                 //                                         _current_scope->symbol_table
                 //                                             ->GetSymbolEntry(name_node->value)
                 //                                             ->GetTypeDeclNode())
-                //                                         ->scope.get();
+                //                                         ->GetChild(AstNode::SCOPE_CHILD_INDEX);
                 //                    auto subtree_type = EvaluateSubtreeType(name_node);
                 //                    _current_scope = previous_scope;
                 //                    return subtree_type;
@@ -328,7 +328,7 @@ bool RnAstValidator::Visit(ScopeNode* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(Loop* node) {
-    GeneralVisit(node->scope);
+    GeneralVisit(node->GetChild(AstNode::SCOPE_CHILD_INDEX));
     return true;
 }
 
@@ -342,12 +342,13 @@ bool RnAstValidator::Visit(FuncDecl* node) {
     SymbolRedeclarationCheck(node->id);
     _current_scope->symbol_table->AddSymbol(node->id, node->type);
 
-    for (auto arg : node->args) {
-        node->scope->symbol_table->AddSymbol(arg->GetChild<Name>(0)->value,
-                                             arg->GetType());
+    for (auto child : node->GetChildren()) {
+        auto arg = AstNode::CastNode<ArgDecl>(child);
+        node->GetChild<ScopeNode>(AstNode::SCOPE_CHILD_INDEX)
+            ->symbol_table->AddSymbol(arg->GetChild<Name>(0)->value, arg->GetType());
     }
     _current_type_reference = node->type;
-    GeneralVisit(node->scope);
+    GeneralVisit(node->GetChild(AstNode::SCOPE_CHILD_INDEX));
     _current_type_reference = nullptr;
     return true;
 }
@@ -387,7 +388,7 @@ bool RnAstValidator::Visit(ClassDecl* node) {
     SymbolRedeclarationCheck(node->id);
     _current_scope->symbol_table->AddSymbol(
         node->id, std::make_shared<RnTypeComposite>(RnType::RN_OBJECT));
-    GeneralVisit(node->scope);
+    GeneralVisit(node->GetChild(AstNode::SCOPE_CHILD_INDEX));
     return true;
 }
 

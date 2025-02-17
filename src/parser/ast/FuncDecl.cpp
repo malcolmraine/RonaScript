@@ -51,6 +51,7 @@ std::string FuncDecl::ToString(bool nl) {
         s += arg->ToString(true);
     }
 
+    auto scope = GetChild(AstNode::SCOPE_CHILD_INDEX);
     if (scope != nullptr) {
         scope->nest_lvl = nest_lvl + 1;
         s += scope->ToString(true);

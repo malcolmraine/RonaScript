@@ -113,7 +113,7 @@ public:
     AstNodePtr<CatchBlock> ParseCatchBlock();
     void ParseModule();
     void RevertScope();
-    void ConvertScope(const AstNodePtr<ScopeNode>& scope);
+    void ConvertScope(AstNodePtr<ScopeNode> scope);
     [[nodiscard]] std::string DumpsAst() const;
     void Parse();
     AstNodePtr<AstNode> TransformBinaryExpr(AstNodePtr<BinaryExpr> binary_expr);

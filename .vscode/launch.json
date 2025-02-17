@@ -1,0 +1,16 @@
+{
+    "configurations": [
+    {
+        "name": "macOS - RonaScript - Debug",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "./build/RonaScript",
+        "args": ["-h"],
+        "stopAtEntry": false,
+        "cwd": "${fileDirname}",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "lldb"
+    }
+    ]
+}

@@ -301,7 +301,7 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl() {
         }
 
         ConditionalBufAdvance(TokenType::COMMA);
-        node->args.emplace_back(arg);
+        node->AddChild(arg);
         arg_symbols[arg->GetChild<Name>(0)->value] = arg->GetType();
 
         if (Current()->GetType() != TokenType::VAR && !Current()->IsType()) {
@@ -327,17 +327,19 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl() {
 
     // Get the function's scope
     auto previous_scope_count = _scope_count;
-    node->scope = ParseScope();
+    node->SetChild(AstNode::SCOPE_CHILD_INDEX, ParseScope());
     assert(_scope_count == previous_scope_count);
-    assert(node->scope);
+    assert(node->GetChild(AstNode::SCOPE_CHILD_INDEX));
 
     for (const auto& symbol : arg_symbols) {
-        node->scope->symbol_table->AddSymbol(symbol.first, symbol.second, node);
+        node->GetChild<ScopeNode>(AstNode::SCOPE_CHILD_INDEX)
+            ->symbol_table->AddSymbol(symbol.first, symbol.second, node);
     }
 
     if (_current_state == CLASS_DECL_CONTEXT) {
-        node->scope->symbol_table->AddSymbol(
-            "this", std::make_shared<RnTypeComposite>(RnType::RN_OBJECT), node);
+        node->GetChild<ScopeNode>(AstNode::SCOPE_CHILD_INDEX)
+            ->symbol_table->AddSymbol(
+                "this", std::make_shared<RnTypeComposite>(RnType::RN_OBJECT), node);
     }
 
     _current_scope->symbol_table->AddSymbol(
@@ -378,11 +380,12 @@ AstNodePtr<ClassDecl> Parser::ParseClassDecl() {
     _previous_state = _current_state;
     _current_state = ParserState::CLASS_DECL_CONTEXT;
     auto previous_scope_count = _scope_count;
-    node->scope = ParseScope();
+    node->SetChild(AstNode::SCOPE_CHILD_INDEX, ParseScope());
     assert(_scope_count == previous_scope_count);
     _current_state = _previous_state;
 
-    if (!node->scope->symbol_table->HasSymbolEntry("construct")) {
+    if (!node->GetChild<ScopeNode>(AstNode::SCOPE_CHILD_INDEX)
+             ->symbol_table->HasSymbolEntry("construct")) {
         ThrowError("No constructor found for class '" + node->id + "'");
     }
     return node;
@@ -834,7 +837,7 @@ AstNodePtr<FuncCall> Parser::ParseFuncCall(const AstNodePtr<AstNode>& expr) {
     MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
     while (!Current()->IsOneOf({TokenType::L_PARAN, TokenType::SEMICOLON})) {
         INCR_LOOP_COUNTER
-        node->args.emplace_back(ParseExpr(TokenType::COMMA));
+        node->AddChild(ParseExpr(TokenType::COMMA));
     }
     AdvanceBuffer(1);
 
@@ -863,7 +866,7 @@ AstNodePtr<Loop> Parser::ParseWhileLoop() {
     ConditionalBufAdvance(TokenType::WHILE);
     node->test = ParseExpr(TokenType::COLON);
     auto previous_scope_count = _scope_count;
-    node->scope = ParseScope();
+    node->SetChild(AstNode::SCOPE_CHILD_INDEX, ParseScope());
     assert(_scope_count == previous_scope_count);
 
     return node;
@@ -909,12 +912,13 @@ AstNodePtr<Loop> Parser::ParseForLoop() {
     ConditionalBufAdvance(TokenType::BEGIN);
     ConditionalBufAdvance(TokenType::R_BRACE);
     auto previous_scope_count = _scope_count;
-    node->scope = ParseScope();
+    node->SetChild(AstNode::SCOPE_CHILD_INDEX, ParseScope());
     assert(_scope_count == previous_scope_count);
 
     if (node->init->node_type == AST_VAR_DECL) {
         auto var_decl = AstNode::CastNode<VarDecl>(node->init);
-        node->scope->symbol_table->AddSymbol(var_decl->id, var_decl->type, var_decl);
+        node->GetChild<ScopeNode>(AstNode::SCOPE_CHILD_INDEX)
+            ->symbol_table->AddSymbol(var_decl->id, var_decl->type, var_decl);
     }
 
     return node;
@@ -1013,7 +1017,7 @@ AstNodePtr<TryBlock> Parser::ParseTryBlock() {
     AddCurrentFileInfo(node);
     AdvanceBuffer(1);
     auto previous_scope_count = _scope_count;
-    node->scope = ParseScope();
+    node->SetChild(AstNode::SCOPE_CHILD_INDEX, ParseScope());
     assert(_scope_count == previous_scope_count);
     node->catch_block = ParseCatchBlock();
     node->exception_ids = node->catch_block->GetExceptionIds();
@@ -1040,7 +1044,7 @@ AstNodePtr<CatchBlock> Parser::ParseCatchBlock() {
     }
 
     auto previous_scope_count = _scope_count;
-    node->SetScope(ParseScope());
+    node->SetChild(AstNode::SCOPE_CHILD_INDEX, ParseScope());
     assert(_scope_count == previous_scope_count);
 
     return node;
@@ -1056,7 +1060,7 @@ void Parser::RevertScope() {
 }
 
 /*****************************************************************************/
-void Parser::ConvertScope(const AstNodePtr<ScopeNode>& scope) {
+void Parser::ConvertScope(AstNodePtr<ScopeNode> scope) {
     assert(scope);
 
     scope->parent = _current_scope;

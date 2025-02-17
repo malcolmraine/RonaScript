@@ -46,8 +46,6 @@ public:
         return _discard_return_value;
     }
 
-    std::vector<AstNodePtr<AstNode>> args;
-
 private:
     bool _discard_return_value = false;
 };

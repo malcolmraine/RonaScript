@@ -43,6 +43,8 @@ std::string TryBlock::ToString(bool nl) {
     if (nl) {
         s += "\n";
     }
+    
+    auto scope = GetChild(AstNode::SCOPE_CHILD_INDEX);
     scope->nest_lvl = nest_lvl + 1;
     catch_block->nest_lvl = nest_lvl + 1;
     s += scope->ToString(true);

@@ -43,6 +43,7 @@ class RnCodeGenVisitor;
 /*****************************************************************************/
 class AstNode {
 public:
+    static const RnSizetNative SCOPE_CHILD_INDEX = 0;
     static const RnSizetNative LEFT_CHILD_INDEX = 0;
     static const RnSizetNative RIGHT_CHILD_INDEX = 1;
     static const RnSizetNative PRIMARY_EXPR_INDEX = 0;

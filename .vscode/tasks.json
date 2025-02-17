@@ -1,0 +1,56 @@
+{
+    "version": "2.0.0",
+    "inputs": [
+        {
+            "id": "test_name",
+            "description": "TestName:",
+            "default": "new_test",
+            "type": "promptString"
+        },
+    ],
+    "tasks": [
+        {
+            "label": "Create Test",
+            "command": "scripts/create_test.sh ${input:test_name}",
+            "type": "shell",
+            "args": [],
+            "group": "build"
+        },
+        {
+            "label": "Build - Release",
+            "command": "scripts/build.sh",
+            "type": "shell",
+            "args": [
+                "--target", "build", "-j10", "--type", "Release"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "Rebuild - Release",
+            "command": "scripts/build.sh",
+            "type": "shell",
+            "args": [
+                "--target", "build", "-j10", "--type", "Release"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "Build - Debug",
+            "command": "scripts/build.sh",
+            "type": "shell",
+            "args": [
+                "--target", "build", "-j10", "--type", "Debug"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "Rebuild - Debug",
+            "command": "scripts/build.sh",
+            "type": "shell",
+            "args": [
+                "--target", "build", "-j10", "--type", "Debug"
+            ],
+            "group": "build"
+        }
+    ]
+}

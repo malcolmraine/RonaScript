@@ -34,9 +34,7 @@ FuncCall::FuncCall() {
 }
 
 /*****************************************************************************/
-FuncCall::~FuncCall() {
-    for (auto& arg : args) {}
-}
+FuncCall::~FuncCall() {}
 
 /*****************************************************************************/
 std::string FuncCall::ToString(bool nl) {
@@ -48,7 +46,7 @@ std::string FuncCall::ToString(bool nl) {
     expr->nest_lvl = nest_lvl + 1;
     s += expr->ToString(true);
 
-    for (auto& arg : args) {
+    for (auto& arg : GetChildren()) {
         arg->nest_lvl = nest_lvl + 1;
         s += arg->ToString(true);
     }
