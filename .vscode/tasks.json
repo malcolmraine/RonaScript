@@ -18,37 +18,61 @@
         },
         {
             "label": "Build - Release",
-            "command": "scripts/build.sh",
+            "command": "python3",
             "type": "shell",
             "args": [
-                "--target", "build", "-j10", "--type", "Release"
+                "${workspaceFolder}/scripts/build.py",
+                "--type", 
+                "Release",
+                "--target", 
+                "build", 
+                "--jobs",
+                "10", 
             ],
             "group": "build"
         },
         {
             "label": "Rebuild - Release",
-            "command": "scripts/build.sh",
+            "command": "python3",
             "type": "shell",
             "args": [
-                "--target", "build", "-j10", "--type", "Release"
+                "${workspaceFolder}/scripts/build.py",
+                "--type", 
+                "Release",
+                "--target", 
+                "rebuild", 
+                "--jobs",
+                "10", 
             ],
             "group": "build"
         },
         {
             "label": "Build - Debug",
-            "command": "scripts/build.sh",
+            "command": "python3",
             "type": "shell",
             "args": [
-                "--target", "build", "-j10", "--type", "Debug"
+                "${workspaceFolder}/scripts/build.py",
+                "--type", 
+                "Debug",
+                "--target", 
+                "build", 
+                "--jobs",
+                "10", 
             ],
             "group": "build"
         },
         {
             "label": "Rebuild - Debug",
-            "command": "scripts/build.sh",
+            "command": "python3",
             "type": "shell",
             "args": [
-                "--target", "build", "-j10", "--type", "Debug"
+                "${workspaceFolder}/scripts/build.py",
+                "--type", 
+                "Debug",
+                "--target", 
+                "rebuild", 
+                "--jobs",
+                "10", 
             ],
             "group": "build"
         }
