@@ -12,7 +12,6 @@
                 "--no-validation",
                 "${workspaceFolder}/sandbox/Test.rn"
             ],
-            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [
                 {
@@ -21,6 +20,7 @@
                 }
             ],
             "externalConsole": false,
+            "MIMode": "lldb"
         },
         {
             "name": "macOS - Release - RonaScript",
@@ -34,7 +34,6 @@
                 "--no-validation",
                 "${workspaceFolder}/sandbox/Test.rn"
             ],
-            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [
                 {
@@ -53,7 +52,6 @@
             "args": [
                 "${workspaceFolder}/test/functional_runner.py"
             ],
-            "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [
                 {
