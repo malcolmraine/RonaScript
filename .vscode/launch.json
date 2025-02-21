@@ -1,21 +1,66 @@
 {
     "configurations": [
-    {
-        "name": "macOS - Debug - RonaScript",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceFolder}/build/RonaScript",
-        "args": [
-            "-t",
-            "-p",
-            "-a",
-            "${workspaceFolder}/sandbox/Test.rn"
-        ],
-        "stopAtEntry": false,
-        "cwd": "${workspaceFolder}",
-        "environment": [],
-        "externalConsole": false,
-        "MIMode": "lldb"
-    }
+        {
+            "name": "macOS - Debug - RonaScript",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Debug/RonaScript",
+            "args": [
+                "-t",
+                "-p",
+                "-a",
+                "--no-validation",
+                "${workspaceFolder}/sandbox/Test.rn"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "RN_LIBPATH",
+                    "value": "${workspaceFolder}/lib"
+                }
+            ],
+            "externalConsole": false,
+        },
+        {
+            "name": "macOS - Release - RonaScript",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/Release/RonaScript",
+            "args": [
+                "-t",
+                "-p",
+                "-a",
+                "--no-validation",
+                "${workspaceFolder}/sandbox/Test.rn"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "RN_LIBPATH",
+                    "value": "${workspaceFolder}/lib"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        },
+        {
+            "name": "Release - Functional Tests",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/usr/local/bin/python3",
+            "args": [
+                "${workspaceFolder}/test/functional_runner.py"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "RN_LIBPATH",
+                    "value": "${workspaceFolder}/lib"
+                }
+            ],
+        },
     ]
 }

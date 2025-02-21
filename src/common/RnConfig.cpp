@@ -32,9 +32,14 @@
 size_t RnConfig::_call_stack_max_depth = 1000;
 RnArrayNative RnConfig::_argv;
 
+const std::string RN_LIBPATH_ENV = "RN_LIBPATH";
+
 /*****************************************************************************/
 std::string RnConfig::GetLibraryPath() {
-    return RnOS::GetEnv("RN_LIBPATH");
+    if (!RnOS::HasEnv(RN_LIBPATH_ENV)) {
+        throw std::runtime_error(RN_LIBPATH_ENV + " is not defined.");
+    }
+    return RnOS::GetEnv(RN_LIBPATH_ENV);
 }
 
 /*****************************************************************************/
