@@ -51,14 +51,24 @@ RnObject* RnArrayObject::operator+(RnObject* obj) {
     for (auto& item : obj->ToArray()) {
         data.emplace_back(item);
     }
-    result->SetData(data);
 
+    result->SetData(data);
     return result;
 }
 
 /*****************************************************************************/
 RnObject* RnArrayObject::operator-(RnObject* obj) {
-    return nullptr;
+    RnArrayNative data;
+    auto result = RnObject::Create(RnType::RN_ARRAY);
+    auto other_array = dynamic_cast<RnArrayObject*>(obj);
+    for (auto& item : ToArray()) {
+        if (!other_array->Contains(item)) {
+            data.emplace_back(item);
+        }
+    }
+
+    result->SetData(data);
+    return result;
 }
 
 /*****************************************************************************/
