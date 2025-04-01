@@ -1076,6 +1076,11 @@ std::string Parser::DumpsAst() const {
 /*****************************************************************************/
 void Parser::Parse() {
     if (GetTokenCount()) {
+        if (_current_scope == _global_scope &&
+            _current_scope->file_info.GetFilePath().empty()) {
+            _current_scope->file_info.SetFilePath(Current()->file_info.GetFilePath());
+        }
+
         MAKE_LOOP_COUNTER(DEFAULT_ITERATION_MAX)
         while (true) {
             if (EndOfSequence()) {

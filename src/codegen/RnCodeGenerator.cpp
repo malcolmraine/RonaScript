@@ -40,6 +40,7 @@ RnCodeGenerator::~RnCodeGenerator() = default;
 void RnCodeGenerator::Generate(Ast* ast) {
     //    _result.clear();
     _result = RnCodeFrame::CreateEmpty();
+    _result->SetModulePath(ast->root->file_info.GetFilePath());
     visitor.SetCurrentFrame(_result);
     InstructionBlock root_instructions = visitor.GeneralVisit(ast->root);
     for (auto instruction : root_instructions) {
