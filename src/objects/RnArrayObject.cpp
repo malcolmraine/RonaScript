@@ -45,11 +45,10 @@ RnObject* RnArrayObject::operator+(RnObject* obj) {
     RnArrayNative data;
     auto result = RnObject::Create(RnType::RN_ARRAY);
 
-    for (auto& item : obj->ToArray()) {
+    for (auto& item : ToArray()) {
         data.emplace_back(item);
     }
-
-    for (auto& item : ToArray()) {
+    for (auto& item : obj->ToArray()) {
         data.emplace_back(item);
     }
     result->SetData(data);
