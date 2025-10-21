@@ -286,8 +286,8 @@ InstructionBlock RnCodeGenVisitor::Visit(FuncDecl* node) {
 
     instructions.emplace_back(make_instruction);
 
-    for (auto& arg : node->GetChildren()) {
-        InstructionBlock arg_decl = GeneralVisit(arg);
+    for (RnIntNative i = AstNode::SCOPE_CHILD_INDEX + 1; i <= node->arg_count; i++) {
+        InstructionBlock arg_decl = GeneralVisit(node->GetChild(i));
         instructions.insert(instructions.end(), arg_decl.begin(), arg_decl.end());
     }
 

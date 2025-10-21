@@ -47,6 +47,5 @@ public:
     std::string id;
     bool is_closure = false;
     std::shared_ptr<RnTypeComposite> type;
-
-    std::vector<ArgDecl*> args;
+    RnIntNative arg_count = 0;
 };
