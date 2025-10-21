@@ -126,7 +126,7 @@ std::string ArgParser::GetValue(const std::string& arg) {
 /*****************************************************************************/
 void ArgParser::ShowHelp() {
     std::string help;
-    help.append(_main_description + "\n");
+    help.append(_main_description).append("\n");
     for (const auto& key : _ordered_args) {
         if (_help_exclusions.find(key) != _help_exclusions.end()) {
             continue;
@@ -135,12 +135,13 @@ void ArgParser::ShowHelp() {
         auto argument = _arguments[key];
         std::string key_str = key;
         for (const auto& alternate_key : argument->GetAlternateKeys()) {
-            key_str.append(", " + alternate_key);
+            key_str.append(", ").append(alternate_key);
         }
-        help.append(
-            "  " +
-            String::Pad(key_str, _longest_key_length + HELP_STRING_COLUMN_PAD, ' ') +
-            argument->GetDescription() + "\n");
+        help.append("  ")
+            .append(
+                String::Pad(key_str, _longest_key_length + HELP_STRING_COLUMN_PAD, ' '))
+            .append(argument->GetDescription())
+            .append("\n");
     }
 
     std::cout << help;
