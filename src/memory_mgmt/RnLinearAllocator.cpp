@@ -32,16 +32,16 @@
 #include <stdexcept>
 
 /*****************************************************************************/
-RnLinearAllocator* RnLinearAllocator::_instance = nullptr;
+RnLinearAllocator *RnLinearAllocator::_instance = nullptr;
 
 /*****************************************************************************/
-void RnLinearAllocator::SetInstance(RnLinearAllocator* instance) {
+void RnLinearAllocator::SetInstance(RnLinearAllocator *instance) {
     delete _instance;
     _instance = instance;
 }
 
 /*****************************************************************************/
-RnLinearAllocator* RnLinearAllocator::Instance() {
+RnLinearAllocator *RnLinearAllocator::Instance() {
     if (!_instance) {
         RnLinearAllocator::SetInstance(new RnLinearAllocator(100000, 100000000));
     }
@@ -55,7 +55,7 @@ RnLinearAllocator::RnLinearAllocator(size_t heap_size, size_t max_size)
     _current_heap = AddNewHeap(heap_size);
     _first_heap = _current_heap;
     _last_heap = _current_heap;
-    _first_block = (MemoryBlock*)_current_heap->memory;
+    _first_block = reinterpret_cast<MemoryBlock *>(_current_heap->memory);
     _first_block->size = _current_heap->size - sizeof(MemoryBlock);
     _first_block->available = 1;
     _current_block = _first_block;
@@ -67,7 +67,7 @@ RnLinearAllocator::~RnLinearAllocator() {
 }
 
 /*****************************************************************************/
-void* RnLinearAllocator::Malloc(size_t n) {
+void *RnLinearAllocator::Malloc(size_t n) {
 #if USE_STD_MALLOC == 1
     return std::malloc(n);
 #else
@@ -91,18 +91,18 @@ void* RnLinearAllocator::Malloc(size_t n) {
         //		std::cout << "Adding a new heap...\n";
         _current_heap = AddNewHeap(std::max(_current_heap->size * 2, n));
         _last_heap = _current_heap;
-        _first_block = (MemoryBlock*)_current_heap->memory;
+        _first_block = reinterpret_cast<MemoryBlock *>(_current_heap->memory);
         _first_block->size = _current_heap->size - sizeof(MemoryBlock);
         _first_block->available = 1;
         _current_block = _first_block;
-        result = RnLinearAllocator::Malloc(n);  // Only attempt to malloc once here
+        result = RnLinearAllocator::Malloc(n); // Only attempt to malloc once here
     }
     return result;
 #endif
 }
 
 /*****************************************************************************/
-void* RnLinearAllocator::Calloc(size_t n, int c) {
+void *RnLinearAllocator::Calloc(size_t n, int c) {
 #if USE_STD_MALLOC == 1
     return std::calloc(n, c);
 #else
@@ -116,7 +116,7 @@ void* RnLinearAllocator::Calloc(size_t n, int c) {
 }
 
 /*************************************************************************/
-void* RnLinearAllocator::Realloc(void* data, size_t n) {
+void *RnLinearAllocator::Realloc(void *data, size_t n) {
 #if USE_STD_MALLOC == 1
     return std::realloc(data, n);
 #else
@@ -154,7 +154,7 @@ void* RnLinearAllocator::Realloc(void* data, size_t n) {
 }
 
 /*****************************************************************************/
-void RnLinearAllocator::Free(void* addr) {
+void RnLinearAllocator::Free(void *addr) {
 #if USE_STD_MALLOC == 1
     return std::free(addr);
 #else
@@ -162,7 +162,7 @@ void RnLinearAllocator::Free(void* addr) {
         throw std::runtime_error("Out of bounds memory deallocation");
     }
 
-    auto* block = GetBlockForAddr(addr);
+    auto *block = GetBlockForAddr(addr);
     block->available = 1;
     _blocks_in_use--;
     _bytes_in_use -= TOTAL_BLOCK_SIZE(block);
@@ -177,7 +177,7 @@ void RnLinearAllocator::Free(void* addr) {
 }
 
 /*****************************************************************************/
-[[nodiscard]] void* RnLinearAllocator::MallocInternal(size_t n, MemoryBlock* start) {
+[[nodiscard]] void *RnLinearAllocator::MallocInternal(size_t n, MemoryBlock *start) {
     auto current = start;
     while (current) {
         if (!current->available || current->size < n) {
@@ -205,7 +205,7 @@ void RnLinearAllocator::Free(void* addr) {
 }
 
 /*****************************************************************************/
-bool RnLinearAllocator::SplitBlock(MemoryBlock* block, size_t n) {
+bool RnLinearAllocator::SplitBlock(MemoryBlock *block, size_t n) {
     // Split a memory block of size M bytes into two separate blocks of size n and
     // M - n. No split occurs if the second block size would be less than the
     // minimum required size
@@ -221,7 +221,7 @@ bool RnLinearAllocator::SplitBlock(MemoryBlock* block, size_t n) {
 }
 
 /*****************************************************************************/
-MemoryBlock* RnLinearAllocator::GetMergedBlockUntil(MemoryBlock* block, size_t n) {
+MemoryBlock *RnLinearAllocator::GetMergedBlockUntil(MemoryBlock *block, size_t n) {
     // Merge the block with the next blocks if available until a memory block of
     // up to n bytes is created. If n == 0, keep merging until next unavailable
     // block

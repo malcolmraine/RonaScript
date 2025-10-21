@@ -119,10 +119,10 @@ public:
     AstNodePtr<AstNode> TransformBinaryExpr(AstNodePtr<BinaryExpr> binary_expr);
 
     TokenType GetCurrentAsExpectedType() override;
-    size_t GetTokenCount();
+    size_t GetTokenCount() const;
     std::string ItemToString(Token* token) override;
     void HandleUnexpectedItem() override;
-    [[noreturn]] void ThrowError(const std::string& message);
+    [[noreturn]] void ThrowError(const std::string& message) const;
     std::shared_ptr<RnTypeComposite> ParseType();
     void Reset() override;
     void Run() override;
@@ -137,7 +137,7 @@ public:
     static std::vector<std::string> parsed_files;
 
 private:
-    AstNodePtr<AstNode> AddCurrentFileInfo(AstNodePtr<AstNode> node);
+    AstNodePtr<AstNode> AddCurrentFileInfo(AstNodePtr<AstNode> node) const;
 
 private:
     size_t _scope_count = 0;  // Simple way to check if we are missing scope reversions
