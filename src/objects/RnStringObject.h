@@ -40,6 +40,8 @@ public:
     RnObject* operator==(RnObject* obj) override;
     RnObject* operator!=(RnObject* obj) override;
     RnObject* operator*(RnObject* obj) override;
+    RnObject* operator||(RnObject* obj) override;
+    RnObject* operator&&(RnObject* obj) override;
     [[nodiscard]] RnStringNative ToString() const override;
     [[nodiscard]] RnBoolNative ToBool() const override;
     void SetData(RnStringNative data) override;
