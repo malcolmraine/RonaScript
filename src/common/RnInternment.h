@@ -31,8 +31,8 @@
 #include <functional>
 #include <string>
 #include <unordered_map>
-#include "RnType.h"
 #include "../vm/RnObjectList.h"
+#include "RnType.h"
 
 class RnObject;
 
@@ -49,7 +49,7 @@ public:
     ~RnInternment() = default;
 
     InternmentKey InternItem(T item) {
-        for (InternmentKey i = 0; i < static_cast<InternmentKey>(_items.size()); i++) {
+        for (InternmentKey i = 0; i < static_cast<InternmentKey>(_items.size()); ++i) {
             if (_compare(item, _items[i])) {
                 return i;
             }

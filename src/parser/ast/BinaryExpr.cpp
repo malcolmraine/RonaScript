@@ -28,7 +28,6 @@
 
 #include "BinaryExpr.h"
 #include <utility>
-#include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
 BinaryExpr::BinaryExpr() {
@@ -38,8 +37,8 @@ BinaryExpr::BinaryExpr() {
 /*****************************************************************************/
 BinaryExpr::BinaryExpr(AstNodePtr<AstNode> left, AstNodePtr<AstNode> right,
                        std::string op) {
-    _left = std::move(left);
-    _right = std::move(right);
+    SetChild(AstNode::LEFT_CHILD_INDEX, left);
+    SetChild(AstNode::RIGHT_CHILD_INDEX, right);
     _op = std::move(op);
 }
 
@@ -49,9 +48,11 @@ std::string BinaryExpr::ToString(bool nl) {
     if (nl) {
         s += "\n";
     }
-    _left->nest_lvl = nest_lvl + 1;
-    _right->nest_lvl = nest_lvl + 1;
-    s += _left->ToString(true) + _right->ToString(true);
+    auto leftChild = GetChild(AstNode::LEFT_CHILD_INDEX);
+    auto rightChild = GetChild(AstNode::RIGHT_CHILD_INDEX);
+    leftChild->nest_lvl = nest_lvl + 1;
+    rightChild->nest_lvl = nest_lvl + 1;
+    s += leftChild->ToString(true) + rightChild->ToString(true);
 
     return s;
 }

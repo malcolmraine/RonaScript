@@ -28,18 +28,9 @@
 
 #include "RnScope.h"
 #include <dlfcn.h>
+#include "../objects/RnAnyObject.h"
 #include "../util/log.h"
-#include "RnAnyObject.h"
-#include "RnArrayObject.h"
-#include "RnBoolObject.h"
-#include "RnClassObject.h"
-#include "RnFloatObject.h"
 #include "RnFunction.h"
-#include "RnFunctionObject.h"
-#include "RnIntObject.h"
-#include "RnMemoryManager.h"
-#include "RnObject.h"
-#include "RnStringObject.h"
 #include "RnSymbolTable.h"
 
 std::unordered_map<RnStringNative, void*> RnScope::_handles;
@@ -200,5 +191,6 @@ RnObject* RnScope::MakeLocal(RnType::Type type) {
 /*****************************************************************************/
 void RnScope::Reset() {
     GetSymbolTable()->Clear();
+    GetMemoryGroup()->Clear();
     _locals.clear();
 }

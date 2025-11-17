@@ -31,12 +31,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <stdexcept>
+#include "../objects/RnArrayObject.h"
+#include "../objects/RnClassObject.h"
+#include "../objects/RnFunctionObject.h"
 #include "../util/String.h"
-#include "../vm/RnArrayObject.h"
-#include "../vm/RnClassObject.h"
 #include "../vm/RnFunction.h"
-#include "../vm/RnFunctionObject.h"
-#include "../vm/RnScope.h"
 #include "../vm/RnVirtualMachine.h"
 
 #undef RN_BUILTIN_FUNC
@@ -47,6 +46,7 @@
 RN_BUILTIN_FUNC_DEFINE(unpack, RnType::RN_VOID, 1) {
     BUILTIN_ASSERTS
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_NULL);
     auto parent_scope = scope->GetParent();
     RnScope* unpack_scope = parent_scope;
     if (!unpack_scope) {
@@ -56,12 +56,14 @@ RN_BUILTIN_FUNC_DEFINE(unpack, RnType::RN_VOID, 1) {
     for (auto obj : args.front()->ToArray()) {
         RnVirtualMachine::GetInstance()->GetStack().push_back(obj);
     }
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(system, RnType::RN_ANY, 1) {
     BUILTIN_ASSERTS
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ANY);
     std::array<char, 128> buffer{};
     std::string result;
     std::unique_ptr<FILE, decltype(&pclose)> pipe(
@@ -75,6 +77,7 @@ RN_BUILTIN_FUNC_DEFINE(system, RnType::RN_ANY, 1) {
     result = String::Replace(result, "\n", "\\n");
     RnArrayNative output = {RnObject::Create(result)};
     ret_val->SetData(output);
+    return ret_val;
 }
 
 /*****************************************************************************/
@@ -84,13 +87,14 @@ RN_BUILTIN_FUNC_DEFINE(call, RnType::RN_ANY, 2) {
     auto obj = scope->GetObject(RnConstStore::InternValue(args.front()->ToString()));
     auto func_obj = dynamic_cast<RnFunctionObject*>(obj);
     auto func = func_obj->GetData();
-    ret_val->CopyDataFromObject(
-        RnVirtualMachine::GetInstance()->CallFunction(func, args));
+    return RnVirtualMachine::GetInstance()->CallFunction(func, args);
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(lload, RnType::RN_OBJECT, 1) {
     BUILTIN_ASSERTS
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_OBJECT);
 
     // TODO: Add file existence check for library
     // TODO: Add check to make sure library actually loaded and return status accordingly
@@ -100,6 +104,7 @@ RN_BUILTIN_FUNC_DEFINE(lload, RnType::RN_OBJECT, 1) {
     } else {
         dynamic_cast<RnClassObject*>(ret_val)->SetNull();
     }
+    return ret_val;
 }
 
 /*****************************************************************************/
@@ -108,6 +113,7 @@ RN_BUILTIN_FUNC_DEFINE(bind, RnType::RN_VOID, 2) {
     // arg 1: object to bind to
     // arg 2: function object
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_NULL);
     std::string name = "this";
     auto obj = args[0];
     auto func = dynamic_cast<RnFunctionObject*>(args[1]);
@@ -118,55 +124,64 @@ RN_BUILTIN_FUNC_DEFINE(bind, RnType::RN_VOID, 2) {
     }
     func->GetData()->GetScope()->StoreObject(RnConstStore::InternValue(name), obj);
     ret_val->SetData(func->GetData());
+    return ret_val;
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC_DEFINE(setenv, RnType::RN_VOID, 2) {
+RN_BUILTIN_FUNC_DEFINE(setenv, RnType::RN_INT, 2) {
     BUILTIN_ASSERTS
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_INT);
     ret_val->SetData(static_cast<RnIntNative>(
         setenv(args[0]->ToString().c_str(), args[1]->ToString().c_str(), 1)));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(getenv, RnType::RN_ANY, 1) {
     BUILTIN_ASSERTS
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ANY);
     ret_val->SetData(getenv(args[0]->ToString().c_str()));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(unsetenv, RnType::RN_VOID, 1) {
     BUILTIN_ASSERTS
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_VOID);
     ret_val->SetData(static_cast<RnIntNative>(unsetenv(args[0]->ToString().c_str())));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(listattr, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ARRAY);
     RnArrayNative attrs;
-
-    if (args.front()->ToObject()) {
+    if (args.front()->ToScope()) {
         for (const auto& attr :
-             args.front()->ToObject()->GetSymbolTable()->GetSymbols()) {
+             args.front()->ToScope()->GetSymbolTable()->GetSymbols()) {
             attrs.push_back(RnObject::Create(RnConstStore::GetInternedString(attr)));
         }
     }
     ret_val->SetData(attrs);
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(attrpairs, RnType::RN_ARRAY, 1) {
     BUILTIN_ASSERTS
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ARRAY);
     if (args.front()->GetType() != RnType::RN_OBJECT) {
-        return;
+        return RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_NULL);
     }
 
     RnArrayNative attrs;
-    auto target_scope = args.front()->ToObject();
+    auto target_scope = args.front()->ToScope();
     if (target_scope) {
         for (const auto& attr : target_scope->GetSymbolTable()->GetSymbols()) {
             auto pair_obj =
@@ -179,26 +194,30 @@ RN_BUILTIN_FUNC_DEFINE(attrpairs, RnType::RN_ARRAY, 1) {
         }
     }
     ret_val->SetData(attrs);
+    return ret_val;
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC_DEFINE(hasattr, RnType::RN_VOID, 2) {
+RN_BUILTIN_FUNC_DEFINE(hasattr, RnType::RN_BOOLEAN, 2) {
     BUILTIN_ASSERTS
 
-    auto obj_scope = args[0]->ToObject();
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_BOOLEAN);
+    auto obj_scope = args[0]->ToScope();
     if (!obj_scope) {
         ret_val->SetData(false);
     } else {
         auto attr_key = RnConstStore::InternValue(args[1]->ToString());
         ret_val->SetData(obj_scope->GetSymbolTable()->SymbolExists(attr_key));
     }
+    return ret_val;
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC_DEFINE(getattr, RnType::RN_VOID, 2) {
+RN_BUILTIN_FUNC_DEFINE(getattr, RnType::RN_ANY, 2) {
     BUILTIN_ASSERTS
 
-    auto obj_scope = args[0]->ToObject();
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ANY);
+    auto obj_scope = args[0]->ToScope();
     if (obj_scope) {
         auto attr_key = RnConstStore::InternValue(args[1]->ToString());
         if (obj_scope->GetSymbolTable()->SymbolExists(attr_key)) {
@@ -212,13 +231,15 @@ RN_BUILTIN_FUNC_DEFINE(getattr, RnType::RN_VOID, 2) {
         throw std::runtime_error("null object has no attribute '" +
                                  args[1]->ToString() + "'");
     }
+    return ret_val;
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC_DEFINE(setattr, RnType::RN_VOID, 3) {
+RN_BUILTIN_FUNC_DEFINE(setattr, RnType::RN_BOOLEAN, 3) {
     BUILTIN_ASSERTS
 
-    auto obj_scope = args[0]->ToObject();
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_BOOLEAN);
+    auto obj_scope = args[0]->ToScope();
     if (obj_scope) {
         auto attr_key = RnConstStore::InternValue(args[1]->ToString());
         if (obj_scope->GetSymbolTable()->SymbolExists(attr_key)) {
@@ -230,14 +251,18 @@ RN_BUILTIN_FUNC_DEFINE(setattr, RnType::RN_VOID, 3) {
             obj_scope->StoreObject(attr_key, copy);
         }
         ret_val->SetData(true);
+    } else {
+        ret_val->SetData(true);
     }
+    return ret_val;
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC_DEFINE(delattr, RnType::RN_VOID, 2) {
+RN_BUILTIN_FUNC_DEFINE(delattr, RnType::RN_BOOLEAN, 2) {
     BUILTIN_ASSERTS
 
-    auto obj_scope = args[0]->ToObject();
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_BOOLEAN);
+    auto obj_scope = args[0]->ToScope();
     if (obj_scope) {
         auto attr_key = RnConstStore::InternValue(args[1]->ToString());
         if (obj_scope->GetSymbolTable()->SymbolExists(attr_key)) {
@@ -250,4 +275,5 @@ RN_BUILTIN_FUNC_DEFINE(delattr, RnType::RN_VOID, 2) {
         throw std::runtime_error("null object has no attribute '" +
                                  args[1]->ToString() + "'");
     }
+    return ret_val;
 }

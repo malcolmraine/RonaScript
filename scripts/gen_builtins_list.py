@@ -10,7 +10,9 @@ def generate_list() -> dict:
     for file in glob("../src/builtins/*.h"):
         functions[os.path.basename(file).strip(".h")] = []
         with open(file, "r") as header:
-            functions[os.path.basename(file).strip(".h")].extend(handle_rgx.findall(header.read()))
+            functions[os.path.basename(file).strip(".h")].extend(
+                handle_rgx.findall(header.read())
+            )
     return functions
 
 
@@ -19,7 +21,11 @@ def generate_registry(function_map: dict) -> list:
     for namespace in function_map:
         functions = function_map[namespace]
         for f in functions:
-            registry.append("{" + f"\"{f}\", CastToBuiltin(&{namespace}::rn_builtin_{f}), RnType::RN_VOID" + "},")
+            registry.append(
+                "{"
+                + f'"{f}", CastToBuiltin(&{namespace}::rn_builtin_{f}), RnType::RN_VOID'
+                + "},"
+            )
     return registry
 
 

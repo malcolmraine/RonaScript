@@ -19,7 +19,5 @@ public:
     ~BinaryExpr() override = default;
     std::string ToString(bool nl) override;
 
-    AstNodePtr<AstNode> _left = nullptr;
-    AstNodePtr<AstNode> _right = nullptr;
     std::string _op;
 };

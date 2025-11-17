@@ -28,7 +28,6 @@
 #include <algorithm>
 #include <utility>
 #include "Token.h"
-#include "../memory_mgmt/RnLinearAllocator.h"
 
 #undef TOKEN_DEF
 #undef RESERVED_WORD
@@ -78,9 +77,10 @@ Lexer::Lexer() {
 /*****************************************************************************/
 Lexer::~Lexer() {
     _file_obj.close();
-    for (auto& token : tokens)
-        delete token;
-    delete _data;
+  
+    for (auto token : tokens) {
+        Token::Destroy(token);
+    }
 }
 
 /*****************************************************************************/
@@ -101,14 +101,14 @@ Token* Lexer::Emit(TokenType type) {
 
 /*****************************************************************************/
 Token* Lexer::MakeToken(const std::string& s, TokenType initial_type) const {
-    auto token = new Token(s, initial_type);
+    auto token = Token::Create(s, initial_type);
     token->file_info = file_info;
 
     // A number can have an abitrary number of signs in front of it
     auto normalize_sign = [](const std::string& s) {
         size_t i = 0;
         int sign = 1;
-        for (; i < s.length(); i++) {
+        for (; i < s.length(); ++i) {
             if (s[i] == '-') {
                 sign *= -1;
                 continue;
@@ -146,12 +146,12 @@ Token* Lexer::MakeToken(const std::string& s, TokenType initial_type) const {
 bool Lexer::IsIntLiteral(const std::string& s) {
     size_t i = 0;
     char c;
-    for (; i < s.length(); i++) {
+    for (; i < s.length(); ++i) {
         c = s[i];
         if (c != '+' && c != '-')
             break;
     }
-    for (; i < s.length(); i++) {
+    for (; i < s.length(); ++i) {
         c = s[i];
         if (!std::isdigit(c))
             return false;
@@ -164,7 +164,7 @@ bool Lexer::IsFloatLiteral(const std::string& s) {
     bool decimal_found = false;
     size_t i = 0;
     char c;
-    for (; i < s.length(); i++) {
+    for (; i < s.length(); ++i) {
         c = s[i];
         if (c != '+' && c != '-')
             break;
@@ -265,7 +265,7 @@ Token* Lexer::ProcessComment(bool is_block_comment) {
 
         if (is_block_comment)
             AdvanceBuffer(1);
-        return new Token("", TokenType::UNDEFINED);
+        return Token::Create("", TokenType::UNDEFINED);
     } else {
         return Emit();
     }
@@ -385,6 +385,20 @@ Token* Lexer::Consume() {
                     return ProcessOperator();
             }
         }
+        case '.': {
+            _lexeme += Current();
+            AdvanceBuffer(1);
+            if (Current() == '.') {
+                _lexeme += Current();
+                AdvanceBuffer(1);
+                if (Current() == '.') {
+                    _lexeme += Current();
+                    AdvanceBuffer(1);
+                    Emit();
+                }
+            }
+            break;
+        }
         default: {
             if (Current() != '\r' && Current() != '\t' && Current() != '\n')
                 _lexeme += Current();
@@ -392,7 +406,7 @@ Token* Lexer::Consume() {
             break;
         }
     }
-    return new Token("", TokenType::UNDEFINED);
+    return Token::Create("", TokenType::UNDEFINED);
 }
 
 /*****************************************************************************/

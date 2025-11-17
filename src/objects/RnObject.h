@@ -65,7 +65,7 @@ public:
     [[nodiscard]] virtual RnStringNative ToString() const = 0;
     [[nodiscard]] virtual RnArrayNative ToArray() const = 0;
     [[nodiscard]] virtual RnFunction* ToFunction() const = 0;
-    [[nodiscard]] virtual RnScope* ToObject() const = 0;
+    [[nodiscard]] virtual RnScope* ToScope() const = 0;
     [[nodiscard]] virtual RnBoolNative ToBool() const = 0;
     [[nodiscard]] virtual RnIntNative GetDataItemCount() const = 0;
     virtual void SetData(RnStringNative data) = 0;

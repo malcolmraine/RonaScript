@@ -1,5 +1,5 @@
 /*****************************************************************************
-* File: RnBinary.h
+* File: RnStringObject.h
 * Description:
 * Author: Malcolm Hall
 * Date: 6/20/22
@@ -28,36 +28,29 @@
 
 #pragma once
 
-#include <fstream>
-#include <iostream>
 #include <string>
-#include "../codegen/RnInstruction.h"
+#include "RnObjectBase.h"
 
-class RnObject;
-
-/*****************************************************************************/
-/*****************************************************************************/
-class BinaryWriter {
+class RnStringObject : public RnObjectBase<RnStringNative> {
 public:
-    explicit BinaryWriter(const std::string& file);
-    ~BinaryWriter();
-    void SetInstructions(const InstructionBlock& instructions);
-    bool Write();
+    explicit RnStringObject(const RnStringNative& data = "");
+    ~RnStringObject() override;
 
-private:
-    std::string _outfile;
-    InstructionBlock _instructions;
-};
+    RnObject* operator+(RnObject* obj) override;
+    RnObject* operator==(RnObject* obj) override;
+    RnObject* operator!=(RnObject* obj) override;
+    RnObject* operator*(RnObject* obj) override;
+    RnObject* operator||(RnObject* obj) override;
+    RnObject* operator&&(RnObject* obj) override;
+    [[nodiscard]] RnStringNative ToString() const override;
+    [[nodiscard]] RnBoolNative ToBool() const override;
+    void SetData(RnStringNative data) override;
+    [[nodiscard]] size_t GetByteSize() const override;
+    size_t GetBytes(char* buf) override;
+    void SetBytes(const char* buf, size_t n) override;
+    RnObject* At(RnIntNative index) override;
 
-/*****************************************************************************/
-/*****************************************************************************/
-class BinaryReader {
-public:
-    explicit BinaryReader(const std::string& file);
-    ~BinaryReader();
-    bool Read(InstructionBlock& instructions);
-    RnObject* ReadObject(std::fstream& fs);
-
-private:
-    std::string _infile;
+    [[nodiscard]] RnType::Type GetType() const override {
+        return RnType::RN_STRING;
+    }
 };

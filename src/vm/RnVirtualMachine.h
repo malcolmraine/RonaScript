@@ -62,18 +62,21 @@ public:
     }
 
     inline RnObject* StackPop() {
-        if (GetStack().empty()) return nullptr;
+        if (GetStack().empty())
+            return nullptr;
 
         auto item = GetStack().back();
         GetStack().pop_back();
         assert(item);
         GetScope()->DecrementStackCount();
+        assert(GetStack().size() == GetScope()->GetStackCount());
         return item;
     }
 
     inline void StackPush(RnObject* object) {
         GetStack().push_back(object);
         GetScope()->IncrementStackCount();
+        assert(GetStack().size() == GetScope()->GetStackCount());
     }
 
     void CallStackPush(RnScope* scope);
@@ -96,10 +99,9 @@ private:
     inline void ExecuteInstruction(bool& break_scope, size_t& index);
     void RegisterBuiltins();
     RnVirtualMachine();
-
-private:
     static RnVirtualMachine* _instance;
     void Init();
+    RnIntNative HandleObjectUnpack(RnObject* obj, bool reverse);
 
 protected:
     RnCodeFrame* _current_frame = nullptr;

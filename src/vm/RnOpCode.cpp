@@ -143,6 +143,8 @@ RnStringNative GetOpCodeAsString(RnOpCode opcode) {
             return "OP_MAKE_CLOSURE";
         case OP_IMPORT:
             return "OP_IMPORT";
+        case OP_UNPACK:
+            return "OP_UNPACK";
         default:
             return "UNKNOWN";
     }
@@ -198,6 +200,8 @@ RnOpCode GetOpCodeFromOperator(const RnStringNative& op) {
         return OP_BINARY_LSH;
     } else if (op == ">>") {
         return OP_BINARY_RSH;
+    } else if (op == "...") {
+        return OP_UNPACK;
     } else {
         return OP_NOP;
     }

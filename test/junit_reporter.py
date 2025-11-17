@@ -15,7 +15,7 @@ class TestXmlObject(object):
         result += f"<{self.tag}"
 
         for key in self.attributes:
-            result += f" {key}=\"{self.attributes[key]}\""
+            result += f' {key}="{self.attributes[key]}"'
 
         if self.detail:
             result += ">" + self.detail + "\n" + TAB_STR * tabs
@@ -153,7 +153,7 @@ class JUnitReporter(TestXmlObject):
         self.attributes["failures"] = sum([_.failed_count() for _ in self.test_suites])
         self.attributes["skipped"] = sum([_.skipped_count() for _ in self.test_suites])
         self.attributes["time"] = sum([_.total_time() for _ in self.test_suites])
-        result = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+        result = '<?xml version="1.0" encoding="UTF-8" ?>\n'
 
         for test_suite in self.test_suites:
             self.detail += "\n" + test_suite.to_xml_string(1) + "\n"

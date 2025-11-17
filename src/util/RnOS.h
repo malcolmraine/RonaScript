@@ -14,5 +14,6 @@
 class RnOS {
 public:
     static std::string GetEnv(const std::string& name);
+    static bool HasEnv(const std::string& name);
     static void SetEnv(const std::string& name, const std::string& value);
 };

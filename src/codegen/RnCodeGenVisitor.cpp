@@ -27,6 +27,7 @@
 ******************************************************************************/
 
 #include "RnCodeGenVisitor.h"
+#include "../objects/RnObject.h"
 #include "../parser/ast/AliasDecl.h"
 #include "../parser/ast/ArgDecl.h"
 #include "../parser/ast/ArrayLiteral.h"
@@ -52,7 +53,6 @@
 #include "../parser/ast/TryBlock.h"
 #include "../parser/ast/UnaryExpr.h"
 #include "../parser/ast/VarDecl.h"
-#include "../vm/RnObject.h"
 #include "RnCodeFrame.h"
 
 /*****************************************************************************/
@@ -124,14 +124,14 @@ InstructionBlock RnCodeGenVisitor::GeneralVisit(AstNode* node) {
     }
 }
 
-/*****************************************************************************/
-InstructionBlock RnCodeGenVisitor::GeneralVisit(const AstNodePtr<AstNode>& node) {
-    if (node) {
-        return GeneralVisit(node.get());
-    } else {
-        return {};
-    }
-}
+///*****************************************************************************/
+//InstructionBlock RnCodeGenVisitor::GeneralVisit(const AstNodePtr<AstNode>& node) {
+//    if (node) {
+//        return GeneralVisit(node);
+//    } else {
+//        return {};
+//    }
+//}
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(LiteralValue* node) {
@@ -176,7 +176,7 @@ InstructionBlock RnCodeGenVisitor::Visit(ArrayLiteral* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ScopeNode* node) {
     InstructionBlock instructions;
-    for (auto& child : node->children) {
+    for (auto& child : node->GetChildren()) {
         InstructionBlock instruction_block = GeneralVisit(child);
         instructions.insert(instructions.end(), instruction_block.begin(),
                             instruction_block.end());
@@ -192,7 +192,7 @@ InstructionBlock RnCodeGenVisitor::Visit(Loop* node) {
     InstructionBlock init = GeneralVisit(node->init);
     InstructionBlock test = GeneralVisit(node->test);
     InstructionBlock update = GeneralVisit(node->update);
-    InstructionBlock scope = GeneralVisit(node->scope);
+    InstructionBlock scope = GeneralVisit(node->GetChild(AstNode::SCOPE_CHILD_INDEX));
     test.push_back(new RnInstruction(OP_JUMPF_IF, scope.size() + update.size() + 2));
     scope.insert(scope.begin(), test.begin(), test.end());
     scope.insert(scope.begin(), new RnInstruction(OP_CREATE_CONTEXT));
@@ -215,7 +215,7 @@ InstructionBlock RnCodeGenVisitor::Visit(Loop* node) {
     // Fill in jump offsets for continue and break statements
     auto break_instructions = _break_instructions.back();
     if (!break_instructions.empty()) {
-        for (size_t i = 0; i < instructions.size(); i++) {
+        for (size_t i = 0; i < instructions.size(); ++i) {
             auto it = std::find(break_instructions.begin(), break_instructions.end(),
                                 instructions[i]);
             if (it != break_instructions.end()) {
@@ -227,7 +227,7 @@ InstructionBlock RnCodeGenVisitor::Visit(Loop* node) {
 
     auto continue_instructions = _continue_instructions.back();
     if (!continue_instructions.empty()) {
-        for (size_t i = 0; i < instructions.size(); i++) {
+        for (size_t i = 0; i < instructions.size(); ++i) {
             auto it = std::find(continue_instructions.begin(),
                                 continue_instructions.end(), instructions[i]);
             if (it != continue_instructions.end()) {
@@ -264,7 +264,13 @@ InstructionBlock RnCodeGenVisitor::Visit(ImportStmt* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(FuncDecl* node) {
     InstructionBlock instructions;
-    InstructionBlock scope = GeneralVisit(node->scope);
+    InstructionBlock scope = GeneralVisit(node->GetChild(AstNode::SCOPE_CHILD_INDEX));
+
+    if (node->type->GetType() == RnType::RN_NULL) {
+        scope.push_back(new RnInstruction(OP_LOAD_LITERAL, UINT32_MAX));
+        scope.push_back(new RnInstruction(OP_RETURN));
+    }
+
     instructions.reserve(scope.size());
     RnInstruction* make_instruction = nullptr;
 
@@ -280,8 +286,8 @@ InstructionBlock RnCodeGenVisitor::Visit(FuncDecl* node) {
 
     instructions.emplace_back(make_instruction);
 
-    for (auto& arg : node->args) {
-        InstructionBlock arg_decl = GeneralVisit(arg);
+    for (RnIntNative i = AstNode::SCOPE_CHILD_INDEX + 1; i <= node->arg_count; ++i) {
+        InstructionBlock arg_decl = GeneralVisit(node->GetChild(i));
         instructions.insert(instructions.end(), arg_decl.begin(), arg_decl.end());
     }
 
@@ -292,15 +298,15 @@ InstructionBlock RnCodeGenVisitor::Visit(FuncDecl* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(FuncCall* node) {
     InstructionBlock instructions;
-    InstructionBlock expr = GeneralVisit(node->expr);
-    for (auto& arg : node->args) {
-        InstructionBlock arg_instructions = GeneralVisit(arg);
+    InstructionBlock expr = GeneralVisit(node->GetChild(AstNode::PRIMARY_EXPR_INDEX));
+    for (RnSizetNative i = 1; i < node->GetChildCount(); ++i) {
+        InstructionBlock arg_instructions = GeneralVisit(node->GetChild(i));
         instructions.insert(instructions.end(), arg_instructions.begin(),
                             arg_instructions.end());
     }
     instructions.insert(instructions.end(), expr.begin(), expr.end());
     instructions.emplace_back(
-        new RnInstruction(OP_CALL, static_cast<long>(node->args.size())));
+        new RnInstruction(OP_CALL, static_cast<long>(node->GetChildCount() - 1)));
 
     if (node->GetDiscardReturnValue()) {
         instructions.push_back(new RnInstruction(OP_POP));
@@ -324,19 +330,19 @@ InstructionBlock RnCodeGenVisitor::Visit(VarDecl* node) {
         switch (node->init_value->node_type) {
             case AST_STRING_LITERAL:
                 RnConstStore::InternValue(std::get<RnStringNative>(
-                    std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
+                    AstNode::CastNode<LiteralValue>(node->init_value)->data));
                 return {};
             case AST_BOOL_LITERAL:
                 RnConstStore::InternValue(std::get<RnBoolNative>(
-                    std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
+                    AstNode::CastNode<LiteralValue>(node->init_value)->data));
                 return {};
             case AST_FLOAT_LITERAL:
                 RnConstStore::InternValue(std::get<RnFloatNative>(
-                    std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
+                    AstNode::CastNode<LiteralValue>(node->init_value)->data));
                 return {};
             case AST_INT_LITERAL:
                 RnConstStore::InternValue(std::get<RnIntNative>(
-                    std::dynamic_pointer_cast<LiteralValue>(node->init_value)->data));
+                    AstNode::CastNode<LiteralValue>(node->init_value)->data));
                 return {};
             default:
                 assert(false);
@@ -364,7 +370,7 @@ InstructionBlock RnCodeGenVisitor::Visit(Name* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ClassDecl* node) {
     InstructionBlock instructions;
-    InstructionBlock scope = GeneralVisit(node->scope);
+    InstructionBlock scope = GeneralVisit(node->GetChild(AstNode::SCOPE_CHILD_INDEX));
     instructions.reserve(scope.size());
     instructions.emplace_back(new RnInstruction(
         OP_MAKE_CLASS, RnConstStore::InternValue(node->id), scope.size()));
@@ -382,7 +388,8 @@ InstructionBlock RnCodeGenVisitor::Visit(ExitStmt* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ReturnStmt* node) {
-    InstructionBlock instructions = GeneralVisit(node->expr);
+    InstructionBlock instructions =
+        GeneralVisit(node->GetChild(AstNode::PRIMARY_EXPR_INDEX));
     instructions.push_back(new RnInstruction(OP_RETURN));
     return instructions;
 }
@@ -407,9 +414,11 @@ InstructionBlock RnCodeGenVisitor::Visit(CatchBlock* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(ConditionalStmt* node) {
     InstructionBlock instructions;
-    InstructionBlock test = GeneralVisit(node->test);
-    InstructionBlock consequent = GeneralVisit(node->consequent);
-    InstructionBlock alternative = GeneralVisit(node->alternative);
+    InstructionBlock test = GeneralVisit(node->GetChild(AstNode::TEST_INDEX));
+    InstructionBlock consequent =
+        GeneralVisit(node->GetChild(AstNode::CONSEQUENT_INDEX));
+    InstructionBlock alternative =
+        GeneralVisit(node->GetChild(AstNode::ALTERNATIVE_INDEX));
 
     WrapContext(consequent);
     if (node->node_type == AST_ELSE_STMT) {
@@ -435,30 +444,36 @@ InstructionBlock RnCodeGenVisitor::Visit(ConditionalStmt* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(DeleteStmt* node) {
     size_t internvalue =
-        RnConstStore::InternValue(dynamic_pointer_cast<Name>(node->GetName())->value);
+        RnConstStore::InternValue(AstNode::CastNode<Name>(node->GetName())->value);
 
     return {new RnInstruction(OP_DELETE, internvalue)};
 }
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(UnaryExpr* node) {
-
     if (node->op == "++") {
         return {new RnInstruction(
             OP_FAST_ADD,
-            RnConstStore::InternValue(dynamic_pointer_cast<Name>(node->expr)->value))};
+            RnConstStore::InternValue(
+                AstNode::CastNode<Name>(node->GetChild(AstNode::PRIMARY_EXPR_INDEX))
+                    ->value))};
     } else if (node->op == "--") {
         return {new RnInstruction(
             OP_FAST_SUB,
-            RnConstStore::InternValue(dynamic_pointer_cast<Name>(node->expr)->value))};
+            RnConstStore::InternValue(
+                AstNode::CastNode<Name>(node->GetChild(AstNode::PRIMARY_EXPR_INDEX))
+                    ->value))};
     } else {
-        InstructionBlock instructions = GeneralVisit(node->expr);
+        InstructionBlock instructions =
+            GeneralVisit(node->GetChild(AstNode::PRIMARY_EXPR_INDEX));
         if (node->op == "-") {
             instructions.push_back(new RnInstruction(OP_UNARY_NEGATION));
         } else if (node->op == "~") {
             instructions.push_back(new RnInstruction(OP_UNARY_INVERT));
         } else if (node->op == "!") {
             instructions.push_back(new RnInstruction(OP_UNARY_NOT));
+        } else if (node->op == "...") {
+            instructions.push_back(new RnInstruction(OP_UNPACK));
         }
         return instructions;
     }
@@ -466,7 +481,7 @@ InstructionBlock RnCodeGenVisitor::Visit(UnaryExpr* node) {
 
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(Expr* node) {
-    return GeneralVisit(node->expr);
+    return GeneralVisit(node->GetChild(AstNode::PRIMARY_EXPR_INDEX));
 }
 
 /*****************************************************************************/
@@ -486,8 +501,8 @@ InstructionBlock RnCodeGenVisitor::Visit(ArgDecl* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(AssignmentStmt* node) {
     InstructionBlock instructions;
-    InstructionBlock lvalue = GeneralVisit(node->GetLexpr());
-    InstructionBlock rvalue = GeneralVisit(node->GetRexpr());
+    InstructionBlock lvalue = GeneralVisit(node->GetChild(AstNode::LEFT_CHILD_INDEX));
+    InstructionBlock rvalue = GeneralVisit(node->GetChild(AstNode::RIGHT_CHILD_INDEX));
     instructions.insert(instructions.end(), rvalue.begin(), rvalue.end());
     instructions.insert(instructions.end(), lvalue.begin(), lvalue.end());
     instructions.push_back(new RnInstruction(OP_STORE));
@@ -500,15 +515,17 @@ InstructionBlock RnCodeGenVisitor::Visit(BinaryExpr* node) {
     RnOpCode opcode = GetOpCodeFromOperator(node->_op);
 
     if (opcode == OP_LOAD_ATTR) {
-        instructions = GeneralVisit(node->_left);
+        instructions = GeneralVisit(node->GetChild(AstNode::LEFT_CHILD_INDEX));
         instructions.push_back(new RnInstruction(
-            opcode, RnConstStore::InternValue(
-                        std::static_pointer_cast<Name>(node->_right)->value)));
+            opcode,
+            RnConstStore::InternValue(
+                AstNode::CastNode<Name>(node->GetChild(AstNode::RIGHT_CHILD_INDEX))
+                    ->value)));
         return instructions;
     }
 
-    InstructionBlock left = GeneralVisit(node->_left);
-    InstructionBlock right = GeneralVisit(node->_right);
+    InstructionBlock left = GeneralVisit(node->GetChild(AstNode::LEFT_CHILD_INDEX));
+    InstructionBlock right = GeneralVisit(node->GetChild(AstNode::RIGHT_CHILD_INDEX));
     instructions.insert(instructions.end(), left.begin(), left.end());
     instructions.insert(instructions.end(), right.begin(), right.end());
     instructions.emplace_back(new RnInstruction(opcode));
@@ -518,7 +535,7 @@ InstructionBlock RnCodeGenVisitor::Visit(BinaryExpr* node) {
 /*****************************************************************************/
 InstructionBlock RnCodeGenVisitor::Visit(IndexedExpr* node) {
     InstructionBlock instructions;
-    InstructionBlock expr = GeneralVisit(node->expr);
+    InstructionBlock expr = GeneralVisit(node->GetChild(AstNode::PRIMARY_EXPR_INDEX));
     InstructionBlock index = GeneralVisit(node->idx);
     instructions.insert(instructions.end(), expr.begin(), expr.end());
     instructions.insert(instructions.end(), index.begin(), index.end());

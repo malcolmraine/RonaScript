@@ -45,21 +45,30 @@ RnObject* RnArrayObject::operator+(RnObject* obj) {
     RnArrayNative data;
     auto result = RnObject::Create(RnType::RN_ARRAY);
 
+    for (auto& item : ToArray()) {
+        data.emplace_back(item);
+    }
     for (auto& item : obj->ToArray()) {
         data.emplace_back(item);
     }
 
-    for (auto& item : ToArray()) {
-        data.emplace_back(item);
-    }
     result->SetData(data);
-
     return result;
 }
 
 /*****************************************************************************/
 RnObject* RnArrayObject::operator-(RnObject* obj) {
-    return nullptr;
+    RnArrayNative data;
+    auto result = RnObject::Create(RnType::RN_ARRAY);
+    auto other_array = dynamic_cast<RnArrayObject*>(obj);
+    for (auto& item : ToArray()) {
+        if (!other_array->Contains(item)) {
+            data.emplace_back(item);
+        }
+    }
+
+    result->SetData(data);
+    return result;
 }
 
 /*****************************************************************************/
@@ -76,11 +85,7 @@ RnObject* RnArrayObject::operator==(RnObject* obj) {
 /*****************************************************************************/
 RnObject* RnArrayObject::operator!=(RnObject* obj) {
     auto result = RnObject::Create(RnType::RN_BOOLEAN);
-    if (obj->GetType() != RnType::RN_ARRAY) {
-        result->SetData(true);
-    } else {
-        result->SetData(!dynamic_cast<RnArrayObject*>(obj)->ContentsEqual(_data));
-    }
+    result->SetData(!(this == obj));
     return result;
 }
 
@@ -175,8 +180,8 @@ bool RnArrayObject::ContentsEqual(const RnArrayNative& data) {
     if (_data.size() != data.size()) {
         return false;
     } else {
-        for (size_t i = 0; i < _data.size(); i++) {
-            if (_data[i] != data[i]) {
+        for (size_t i = 0; i < _data.size(); ++i) {
+            if (!ValueCompare(_data[i], data[i])) {
                 return false;
             }
         }

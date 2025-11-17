@@ -12,6 +12,6 @@ header = """/*******************************************************************
 
 for file in glob("../src/vm/**"):
     print(os.path.basename(file))
-    with open(file, 'w') as f:
+    with open(file, "w") as f:
         contents = f.read().replace("* File:\n", f"* File: {os.path.basename(file)}")
         f.write(contents)

@@ -5,6 +5,7 @@
 * Date:
 * Version: 1
 *
+*
 * MIT License
 *
 * Copyright (c) 2020 - 2023 Malcolm Hall
@@ -30,9 +31,8 @@
 #include <iomanip>
 #include <sstream>
 #include "../vm/RnFunction.h"
-#include "../vm/RnIntObject.h"
+#include "../vm/RnVirtualMachine.h"
 #include "RnIntObject.h"
-#include "RnVirtualMachine.h"
 
 RnIntNative RnClassObject::MAGIC_METHOD_KEY_STR =
     RnConstStore::InternValue(std::string("__str"));
@@ -84,6 +84,8 @@ RnIntNative RnClassObject::MAGIC_METHOD_KEY_GET_INDEX =
     RnConstStore::InternValue(std::string("__getindex"));
 RnIntNative RnClassObject::MAGIC_METHOD_KEY_MEMBERSHIP =
     RnConstStore::InternValue(std::string("__in"));
+RnIntNative RnClassObject::MAGIC_METHOD_KEY_CALL =
+    RnConstStore::InternValue(std::string("__call"));
 
 /*****************************************************************************/
 RnClassObject::RnClassObject() {

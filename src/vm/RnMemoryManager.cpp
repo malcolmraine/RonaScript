@@ -29,16 +29,9 @@
 #include "RnMemoryManager.h"
 #include <memory>
 #include <utility>
-#include "RnAnyObject.h"
-#include "RnArrayObject.h"
-#include "RnBoolObject.h"
-#include "RnClassObject.h"
-#include "RnFloatObject.h"
-#include "RnFunctionObject.h"
-#include "RnIntObject.h"
-#include "RnStringObject.h"
-
 #include "../memory_mgmt/RnObjectAllocator.h"
+#include "../objects/RnAnyObject.h"
+#include "../objects/RnPackedObject.h"
 
 // Need to figure out the best settings for heap and max sizes
 RnObjectAllocator<RnBoolObject> bool_allocator(10000, 1000000);
@@ -47,8 +40,9 @@ RnObjectAllocator<RnClassObject> class_allocator(10000, 1000000);
 RnObjectAllocator<RnAnyObject> any_allocator(10000, 1000000);
 RnObjectAllocator<RnFloatObject> float_allocator(10000, 1000000);
 RnObjectAllocator<RnFunctionObject> func_allocator(10000, 1000000);
-RnObjectAllocator<RnIntObject> int_allocator(10000, 1000000);
+RnObjectAllocator<RnIntObject> int_allocator(1000000, 100000000);
 RnObjectAllocator<RnStringObject> string_allocator(10000, 1000000);
+RnObjectAllocator<RnPackedObject> obj_pack_allocator(10000, 1000000);
 RnObjectAllocator<RnScope> scope_allocator(10000, 1000000);
 RnObject* RnMemoryManager::_true_boolean = nullptr;
 RnObject* RnMemoryManager::_false_boolean = nullptr;
@@ -75,6 +69,8 @@ RnObject* RnMemoryManager::CreateObject(RnType::Type type) {
             return any_allocator.CreateObject();
         case RnType::RN_ARRAY:
             return array_allocator.CreateObject();
+        case RnType::RN_OBJECT_PACK:
+            return obj_pack_allocator.CreateObject();
         case RnType::RN_FUNCTION:
         case RnType::RN_CALLABLE:
             return func_allocator.CreateObject();
@@ -162,12 +158,14 @@ void RnMemoryManager::GCSweep() {
         object->UnMark();
     };
 
+    bool_allocator.FreeIf(checkIfMarked, unmarkObject);
     int_allocator.FreeIf(checkIfMarked, unmarkObject);
     float_allocator.FreeIf(checkIfMarked, unmarkObject);
     string_allocator.FreeIf(checkIfMarked, unmarkObject);
     class_allocator.FreeIf(checkIfMarked, unmarkObject);
     func_allocator.FreeIf(checkIfMarked, unmarkObject);
     any_allocator.FreeIf(checkIfMarked, unmarkObject);
+    array_allocator.FreeIf(checkIfMarked, unmarkObject);
 }
 
 /*****************************************************************************/

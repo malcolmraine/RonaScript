@@ -26,7 +26,6 @@
 *******************************************************************************/
 
 #include "AssignmentStmt.h"
-#include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
 AssignmentStmt::AssignmentStmt() {
@@ -34,9 +33,7 @@ AssignmentStmt::AssignmentStmt() {
 }
 
 /*****************************************************************************/
-AssignmentStmt::~AssignmentStmt() {
-    _lexpr.reset();
-}
+AssignmentStmt::~AssignmentStmt() {}
 
 /*****************************************************************************/
 std::string AssignmentStmt::ToString(bool nl) {
@@ -45,10 +42,12 @@ std::string AssignmentStmt::ToString(bool nl) {
         s += "\n";
     }
 
-    _rexpr->nest_lvl = nest_lvl + 1;
-    _lexpr->nest_lvl = nest_lvl + 1;
-    s.append(_lexpr->ToString(true));
-    s.append(_rexpr->ToString(true));
+    auto rightNode = GetChild(AstNode::RIGHT_CHILD_INDEX);
+    auto leftNode = GetChild(AstNode::LEFT_CHILD_INDEX);
+    rightNode->nest_lvl = nest_lvl + 1;
+    leftNode->nest_lvl = nest_lvl + 1;
+    s.append(rightNode->ToString(true));
+    s.append(leftNode->ToString(true));
 
     return s;
 }

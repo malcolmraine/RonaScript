@@ -110,8 +110,15 @@ end // routine pvariance
 /*****************************************************************************/
 routine std(var x: array): float
 begin
-    // Calculate the population standard deviation
+    // Calculate the sample standard deviation
     return sqrt(variance(x));
+end // routine std
+
+/*****************************************************************************/
+routine pstd(var x: array): float
+begin
+    // Calculate the sample standard deviation
+    return sqrt(pvariance(x));
 end // routine std
 
 /*****************************************************************************/

@@ -28,8 +28,9 @@
 
 #include "RnFunction.h"
 #include <utility>
-#include "RnObject.h"
+#include "../objects/RnObject.h"
 #include "RnScope.h"
+#include "RnVirtualMachine.h"
 
 /*****************************************************************************/
 RnFunction::RnFunction(RnStringNative name, long i_start, long i_cnt) {
@@ -78,7 +79,9 @@ bool RnFunction::IsBuiltIn() const {
 }
 
 /*****************************************************************************/
-void RnFunction::Call(const RnArrayNative& args, RnObject* ret_val) {}
+RnObject* RnFunction::Call(const RnArrayNative& args) {
+    return RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_NULL);
+}
 
 /*****************************************************************************/
 void RnFunction::CreateArgument(RnIntNative key, RnType::Type type, size_t index) {
@@ -99,7 +102,7 @@ void RnFunction::PassArguments(const RnArrayNative& args, RnScope* scope) {
         throw std::runtime_error("Too many arguments passed to function '" + GetName() +
                                  "'");
     } else {
-        for (size_t i = 0; i < args.size(); i++) {
+        for (size_t i = 0; i < args.size(); ++i) {
             scope->StoreObject(_argument_index_map[i], args[i]);
         }
     }
@@ -127,6 +130,6 @@ bool RnBuiltinFunction::IsBuiltIn() const {
 }
 
 /*****************************************************************************/
-void RnBuiltinFunction::Call(const RnArrayNative& args, RnObject* ret_val) {
-    _function(GetScope(), args, ret_val);
+RnObject* RnBuiltinFunction::Call(const RnArrayNative& args) {
+    return _function(GetScope(), args);
 }

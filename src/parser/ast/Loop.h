@@ -38,9 +38,8 @@ public:
     Loop();
     ~Loop() override;
     std::string ToString(bool nl) override;
-
+    
     AstNodePtr<AstNode> init = nullptr;
     AstNodePtr<AstNode> test = nullptr;
     AstNodePtr<AstNode> update = nullptr;
-    AstNodePtr<ScopeNode> scope = nullptr;
 };

@@ -27,7 +27,6 @@
 ******************************************************************************/
 
 #include "IndexedExpr.h"
-#include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
 IndexedExpr::IndexedExpr() {
@@ -43,6 +42,7 @@ std::string IndexedExpr::ToString(bool nl) {
     if (nl) {
         s += "\n";
     }
+    auto expr = GetChild(AstNode::PRIMARY_EXPR_INDEX);
     idx->nest_lvl = nest_lvl + 1;
     expr->nest_lvl = nest_lvl + 1;
     s += expr->ToString(nl) + idx->ToString(nl);

@@ -1,1 +1,24 @@
 // Variable Type String
+
+var s: string = "The quick brown fox jumped over the lazy dog.";
+var x: string = "one ";
+var y: string = x + "two ";
+var z: string = x + y;
+print(s);
+print(x);
+print(y);
+print(z);
+
+print("test " + to_string(1));
+print("test " + to_string(2.0));
+print("passed: " + to_string(true));
+print("one" + " " + "two");
+var long_string: string = "";
+for (var i: int = 0; i < 10000; i += 1):
+    if (i % 100 == 0):
+        long_string += "\n";
+    end
+    long_string += "==";
+end
+
+print(long_string);

@@ -27,7 +27,6 @@
 ******************************************************************************/
 
 #include "AttributeAccess.h"
-#include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
 AttributeAccess::AttributeAccess() {

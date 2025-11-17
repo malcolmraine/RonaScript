@@ -150,29 +150,30 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
         case AST_BINARY_EXPR: {
             auto node = AstNode::CastNode<BinaryExpr>(subtree);
             if (node->_op == "->") {
-                //                if (node->_left->node_type == AST_NAME) {
+                //                if (node->GetChild(AstNode::LEFT_CHILD_INDEX)->node_type == AST_NAME) {
                 //                    auto previous_scope = _current_scope;
-                //                    auto name_node = AstNode::CastNode<Name>(node->_left);
+                //                    auto name_node = AstNode::CastNode<Name>(node->GetChild(AstNode::LEFT_CHILD_INDEX));
                 //                    _current_scope = AstNode::CastNode<ClassDecl>(
                 //                                         _current_scope->symbol_table
                 //                                             ->GetSymbolEntry(name_node->value)
                 //                                             ->GetTypeDeclNode())
-                //                                         ->scope.get();
+                //                                         ->GetChild(AstNode::SCOPE_CHILD_INDEX);
                 //                    auto subtree_type = EvaluateSubtreeType(name_node);
                 //                    _current_scope = previous_scope;
                 //                    return subtree_type;
                 //                }
-                return EvaluateSubtreeType(node->_right);
+                return EvaluateSubtreeType(node->GetChild(AstNode::RIGHT_CHILD_INDEX));
             }
-            return ResolveTypes(EvaluateSubtreeType(node->_left),
-                                EvaluateSubtreeType(node->_right));
+            return ResolveTypes(
+                EvaluateSubtreeType(node->GetChild(AstNode::LEFT_CHILD_INDEX)),
+                EvaluateSubtreeType(node->GetChild(AstNode::RIGHT_CHILD_INDEX)));
         }
         case AST_INDEXED_EXPR:
             // TODO: Evaluate type information for indexed expressions
             return std::make_shared<RnTypeComposite>(RnType::RN_NULL);
         case AST_FUNC_CALL: {
             auto node = AstNode::CastNode<FuncCall>(subtree);
-            return EvaluateSubtreeType(node->expr);
+            return EvaluateSubtreeType(node->GetChild(AstNode::PRIMARY_EXPR_INDEX));
         }
         case AST_LIST_LITERAL: {
             auto node = AstNode::CastNode<ArrayLiteral>(subtree);
@@ -213,11 +214,11 @@ std::shared_ptr<RnTypeComposite> RnAstValidator::EvaluateSubtreeType(
         }
         case AST_RETURN_STMT: {
             auto node = AstNode::CastNode<ReturnStmt>(subtree);
-            return EvaluateSubtreeType(node->expr);
+            return EvaluateSubtreeType(node->GetChild(AstNode::PRIMARY_EXPR_INDEX));
         }
         case AST_UNARY_EXPR: {
             auto node = AstNode::CastNode<UnaryExpr>(subtree);
-            return EvaluateSubtreeType(node->expr);
+            return EvaluateSubtreeType(node->GetChild(AstNode::PRIMARY_EXPR_INDEX));
         }
         case AST_NAME: {
             auto node = AstNode::CastNode<Name>(subtree);
@@ -296,14 +297,14 @@ bool RnAstValidator::GeneralVisit(AstNode* node) {
     }
 }
 
-/*****************************************************************************/
-bool RnAstValidator::GeneralVisit(const AstNodePtr<AstNode>& node) {
-    if (node) {
-        return GeneralVisit(node.get());
-    } else {
-        return {};
-    }
-}
+///*****************************************************************************/
+//bool RnAstValidator::GeneralVisit(const AstNodePtr<AstNode>& node) {
+//    if (node) {
+//        return GeneralVisit(node);
+//    } else {
+//        return {};
+//    }
+//}
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(LiteralValue* node) {
@@ -319,7 +320,7 @@ bool RnAstValidator::Visit(ArrayLiteral* node) {
 bool RnAstValidator::Visit(ScopeNode* node) {
     _current_scope = node;
 
-    for (const auto& child : node->children) {
+    for (const auto& child : node->GetChildren()) {
         GeneralVisit(child);
     }
     return true;
@@ -327,7 +328,7 @@ bool RnAstValidator::Visit(ScopeNode* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(Loop* node) {
-    GeneralVisit(node->scope);
+    GeneralVisit(node->GetChild(AstNode::SCOPE_CHILD_INDEX));
     return true;
 }
 
@@ -341,20 +342,23 @@ bool RnAstValidator::Visit(FuncDecl* node) {
     SymbolRedeclarationCheck(node->id);
     _current_scope->symbol_table->AddSymbol(node->id, node->type);
 
-    for (auto arg : node->args) {
-        node->scope->symbol_table->AddSymbol(arg->GetChild<Name>(0)->value,
-                                             arg->GetType());
+    for (auto child : node->GetChildren()) {
+        auto arg = AstNode::CastNode<ArgDecl>(child);
+        node->GetChild<ScopeNode>(AstNode::SCOPE_CHILD_INDEX)
+            ->symbol_table->AddSymbol(arg->GetChild<Name>(0)->value, arg->GetType());
     }
     _current_type_reference = node->type;
-    GeneralVisit(node->scope);
+    GeneralVisit(node->GetChild(AstNode::SCOPE_CHILD_INDEX));
     _current_type_reference = nullptr;
     return true;
 }
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(FuncCall* node) {
-    if (node->expr->node_type == AST_NAME) {
-        SymbolExistsCheck(AstNode::CastNode<Name>(node->expr)->value);
+    if (node->GetChild(AstNode::PRIMARY_EXPR_INDEX)->node_type == AST_NAME) {
+        SymbolExistsCheck(
+            AstNode::CastNode<Name>(node->GetChild(AstNode::PRIMARY_EXPR_INDEX))
+                ->value);
     }
     return true;
 }
@@ -384,7 +388,7 @@ bool RnAstValidator::Visit(ClassDecl* node) {
     SymbolRedeclarationCheck(node->id);
     _current_scope->symbol_table->AddSymbol(
         node->id, std::make_shared<RnTypeComposite>(RnType::RN_OBJECT));
-    GeneralVisit(node->scope);
+    GeneralVisit(node->GetChild(AstNode::SCOPE_CHILD_INDEX));
     return true;
 }
 
@@ -395,7 +399,8 @@ bool RnAstValidator::Visit(ExitStmt* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(ReturnStmt* node) {
-    CanAssignTypeTo(_current_type_reference, EvaluateSubtreeType(node->expr),
+    CanAssignTypeTo(_current_type_reference,
+                    EvaluateSubtreeType(node->GetChild(AstNode::PRIMARY_EXPR_INDEX)),
                     RETURN_VALUE);
     return true;
 }
@@ -418,10 +423,10 @@ bool RnAstValidator::Visit(CatchBlock* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(ConditionalStmt* node) {
-    if (node->consequent)
-        GeneralVisit(node->consequent);
-    if (node->alternative)
-        GeneralVisit(node->alternative);
+    if (node->GetChild(AstNode::CONSEQUENT_INDEX))
+        GeneralVisit(node->GetChild(AstNode::CONSEQUENT_INDEX));
+    if (node->GetChild(AstNode::ALTERNATIVE_INDEX))
+        GeneralVisit(node->GetChild(AstNode::ALTERNATIVE_INDEX));
     return true;
 }
 
@@ -461,8 +466,10 @@ bool RnAstValidator::Visit(ArgDecl* node) {
 
 /*****************************************************************************/
 bool RnAstValidator::Visit(AssignmentStmt* node) {
-    if (!CanAssignTypeTo(EvaluateSubtreeType(node->GetLexpr()),
-                         EvaluateSubtreeType(node->GetRexpr()), ASSIGNMENT_VALUE)) {
+    if (!CanAssignTypeTo(
+            EvaluateSubtreeType(node->GetChild(AstNode::LEFT_CHILD_INDEX)),
+            EvaluateSubtreeType(node->GetChild(AstNode::RIGHT_CHILD_INDEX)),
+            ASSIGNMENT_VALUE)) {
         throw std::runtime_error("Type error.");
     }
     return true;

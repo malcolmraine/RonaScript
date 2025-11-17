@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "RnClass.h"
+#include "../vm/RnClass.h"
 #include "RnObjectBase.h"
 
 /**
@@ -96,7 +96,7 @@ public:
         return GetData();
     }
 
-    [[nodiscard]] RnScope* ToObject() const override {
+    [[nodiscard]] RnScope* ToScope() const override {
         return GetData();
     }
 
@@ -148,6 +148,7 @@ public:
     static RnIntNative MAGIC_METHOD_KEY_BINOR;
     static RnIntNative MAGIC_METHOD_KEY_GET_INDEX;
     static RnIntNative MAGIC_METHOD_KEY_MEMBERSHIP;
+    static RnIntNative MAGIC_METHOD_KEY_CALL;
 
 private:
     RnClassObject* _definition = nullptr;

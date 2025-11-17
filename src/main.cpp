@@ -2,10 +2,11 @@
 #include <fstream>
 #include <iostream>
 #include <set>
-#include "codegen/RnBinary.h"
 #include "codegen/RnCodeGenerator.h"
 #include "common/RnConfig.h"
 #include "lexer/Lexer.h"
+#include "objects/RnBoolObject.h"
+#include "objects/RnObject.h"
 #include "parser/Parser.h"
 #include "parser/RnAstValidator.h"
 #include "util/ArgParser.h"
@@ -14,12 +15,9 @@
 #include "util/String.h"
 #include "util/log.h"
 #include "vm/RnMemoryManager.h"
-#include "vm/RnObject.h"
 #include "vm/RnVirtualMachine.h"
 
 #include "codegen/RnCodeFrame.h"
-#include "codegen/RnInstruction.h"
-#include "vm/RnOpCode.h"
 
 // @formatter:off
 #include "common/RnBuildInfo.h"
@@ -37,7 +35,7 @@ void Compile(const std::filesystem::path& infile, RnCodeGenerator& code_generato
     }
 
     if (arg_parser.IsSet("-t")) {
-        for (size_t i = 0; i < lexer.tokens.size(); i++) {
+        for (size_t i = 0; i < lexer.tokens.size(); ++i) {
             Log::INFO(String::Pad(std::to_string(i), 6, ' ') +
                       lexer.tokens[i]->ToString());
         }
@@ -61,7 +59,7 @@ void Compile(const std::filesystem::path& infile, RnCodeGenerator& code_generato
 
         if (!arg_parser.IsSet("--no-validation")) {
             RnAstValidator validator;
-            validator.Visit(parser.ast->root.get());
+            validator.Visit(parser.ast->root);
         }
     } catch (const std::exception& e) {
         Log::ERROR("Parse Error: " + std::string(e.what()));
@@ -207,7 +205,7 @@ void RonaScriptMain(int argc, char* argv[]) {
         Compile(file, code_generator);
         auto frame = code_generator.GetResult();
 
-        if (arg_parser.IsSet("--compile")) {
+        if (arg_parser.IsSet("-c")) {
             frame->WriteToFile("matrix_test.rnc");
         } else {
             Run(frame);
@@ -215,8 +213,6 @@ void RonaScriptMain(int argc, char* argv[]) {
     }
 }
 
-#include "vm/RnBoolObject.h"
-#include "vm/RnMemoryManager.h"
 /*****************************************************************************/
 int main(int argc, char* argv[]) {
     RonaScriptMain(argc, argv);

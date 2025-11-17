@@ -73,22 +73,23 @@ public:
         return _linked_scope_count;
     }
 
-    void IncrementStackCount() {
-        _stack_count++;
+    void IncrementStackCount(RnIntNative n = 1) {
+        _stack_count += n;
     }
 
-    void DecrementStackCount() {
-        _stack_count--;
+    void DecrementStackCount(RnIntNative n = 1) {
+        assert(_stack_count > 0);
+        _stack_count -= n;
     }
 
-    [[nodiscard]] size_t GetStackCount() const {
+    [[nodiscard]] RnIntNative GetStackCount() const {
         return _stack_count;
     }
 
     RnObject* ret_val = nullptr;
 
 protected:
-    size_t _stack_count = 0;
+    RnIntNative _stack_count = 0;
     RnScope* _parent = nullptr;
     RnSymbolTable _symbolTable;
     RnMemoryGroup _memory_group;

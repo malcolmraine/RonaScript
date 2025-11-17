@@ -25,7 +25,7 @@
 * SOFTWARE.
 *******************************************************************************/
 #include "Token.h"
-#include <utility>
+#include "../memory_mgmt/RnObjectAllocator.h"
 
 /*****************************************************************************/
 
@@ -35,12 +35,24 @@
 #define RESERVED_WORD TOKEN_DEF
 std::unordered_map<TokenType, std::string> Token::token_name_map{RN_TOKEN_LIST};
 
+RnObjectAllocator<Token> token_allocator(sizeof(Token) * 10000, 1000000000);
+
 /*****************************************************************************/
-Token::Token(std::string s, TokenType token, int line_num, int char_num) {
-    _lexeme = std::move(s);
+Token::Token(const std::string& s, TokenType token, int line_num, int char_num) {
+    _lexeme = s;
     file_info.SetCharNum(char_num);
     file_info.SetLineNum(line_num);
     _token_type = token;
+}
+
+/*****************************************************************************/
+Token* Token::Create(const std::string& s, TokenType token) {
+    return token_allocator.CreateObject(s, token);
+}
+
+/*****************************************************************************/
+void Token::Destroy(Token* token) {
+    token_allocator.FreeObject(token);
 }
 
 /*****************************************************************************/
@@ -68,7 +80,7 @@ bool Token::IsBinaryOp() const {
 /*****************************************************************************/
 bool Token::IsUnaryOp() const {
     return IsOneOf({TokenType::DBL_PLUS, TokenType::DBL_MINUS, TokenType::MINUS,
-                    TokenType::TILDE, TokenType::NOT});
+                    TokenType::TILDE, TokenType::NOT, TokenType::ELLIPSIS});
 }
 
 /*****************************************************************************/

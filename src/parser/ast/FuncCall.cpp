@@ -27,7 +27,6 @@
 ******************************************************************************/
 
 #include "FuncCall.h"
-#include "../../codegen/RnCodeGenVisitor.h"
 
 /*****************************************************************************/
 FuncCall::FuncCall() {
@@ -35,11 +34,7 @@ FuncCall::FuncCall() {
 }
 
 /*****************************************************************************/
-FuncCall::~FuncCall() {
-    for (auto& arg : args) {
-        arg.reset();
-    }
-}
+FuncCall::~FuncCall() {}
 
 /*****************************************************************************/
 std::string FuncCall::ToString(bool nl) {
@@ -47,10 +42,11 @@ std::string FuncCall::ToString(bool nl) {
     if (nl) {
         s += "\n";
     }
+    auto expr = GetChild(AstNode::PRIMARY_EXPR_INDEX);
     expr->nest_lvl = nest_lvl + 1;
     s += expr->ToString(true);
 
-    for (auto& arg : args) {
+    for (auto& arg : GetChildren()) {
         arg->nest_lvl = nest_lvl + 1;
         s += arg->ToString(true);
     }

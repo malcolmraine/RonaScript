@@ -49,17 +49,17 @@ void RnAllocator::FreeAllHeaps() const {
 /*****************************************************************************/
 MemoryHeap* RnAllocator::AddNewHeap(size_t n) const {
     auto* heap = new MemoryHeap;
+    heap->next = nullptr;
+    heap->prev = nullptr;
     auto last_heap = LastHeap();
 
     if (last_heap) {
         assert(!last_heap->next);
         last_heap->next = heap;
-        heap = last_heap->next;
+        heap->prev = last_heap;
     } else {
         assert(!FirstHeap() && !CurrentHeap());
     }
-    heap->next = nullptr;
-    heap->prev = nullptr;
     heap->state = HeapState::EMPTY;
     heap->memory = new char[n];
 

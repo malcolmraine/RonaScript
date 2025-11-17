@@ -71,6 +71,7 @@
     TOKEN_DEF(DBL_AMPER, "&&")            \
     TOKEN_DEF(DBL_BAR, "||")              \
     TOKEN_DEF(DBL_COLON, "::")            \
+    TOKEN_DEF(ELLIPSIS, "...")            \
     RESERVED_WORD(FLOAT, "float")         \
     RESERVED_WORD(AND, "and")             \
     RESERVED_WORD(OR, "or")               \
@@ -142,12 +143,14 @@
 #define RESERVED_WORD TOKEN_DEF
 #define TOKEN_DEF(token, lexeme) token,
 
-enum TokenType : uint8_t {INVALID_TOKEN = 0, RN_TOKEN_LIST };
+enum TokenType : uint8_t { INVALID_TOKEN = 0, RN_TOKEN_LIST };
 
 class Token {
 public:
-    Token(std::string s, TokenType token, int line_num = -1, int char_num = -1);
+    Token(const std::string& s, TokenType token, int line_num = -1, int char_num = -1);
     ~Token() = default;
+    static Token* Create(const std::string& s, TokenType token);
+    static void Destroy(Token* token);
     [[nodiscard]] bool IsLiteral() const;
     [[nodiscard]] bool IsBinaryOp() const;
     [[nodiscard]] bool IsUnaryOp() const;

@@ -80,10 +80,10 @@ public:
     UNDEFINED_CAST(RnStringNative, ToString(), "string")
     UNDEFINED_CAST(RnArrayNative, ToArray(), "array")
     UNDEFINED_CAST(RnFunction*, ToFunction(), "function")
-    UNDEFINED_CAST(RnScope*, ToObject(), "object")
+    UNDEFINED_CAST(RnScope*, ToScope(), "object")
     UNDEFINED_CAST(RnBoolNative, ToBool(), "bool")
 
-    #define  RN_ARRAY_NATIVE_CONST_REF const RnArrayNative&
+#define RN_ARRAY_NATIVE_CONST_REF const RnArrayNative&
     UNDEFINED_ASSIGNMENT(RnStringNative, RnType::RN_STRING, data)
     UNDEFINED_ASSIGNMENT(RnIntNative, RnType::RN_INT, std::to_string(data))
     UNDEFINED_ASSIGNMENT(RnFloatNative, RnType::RN_FLOAT, std::to_string(data))
@@ -144,9 +144,10 @@ public:
                 break;
             case RnType::RN_OBJECT:
             case RnType::RN_CLASS_INSTANCE: {
-                SetData(obj->ToObject());
+                SetData(obj->ToScope());
                 break;
             }
+            case RnType::RN_OBJECT_PACK:
             case RnType::RN_ANY:
             case RnType::RN_NULL:
             case RnType::RN_VOID:

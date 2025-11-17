@@ -35,7 +35,4 @@ public:
     ConditionalStmt();
     ~ConditionalStmt() override;
     std::string ToString(bool nl) override;
-    AstNodePtr<AstNode> test;
-    AstNodePtr<AstNode> consequent;
-    AstNodePtr<ConditionalStmt> alternative;
 };

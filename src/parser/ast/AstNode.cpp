@@ -27,9 +27,15 @@
 ******************************************************************************/
 
 #include "AstNode.h"
-#include "../../codegen/RnCodeGenVisitor.h"
 
 #define TAB_CHAR "  "
+
+/*****************************************************************************/
+AstNode::~AstNode() {
+    for (RnSizetNative i = 0; i < _child_count; ++i) {
+        delete _children[i];
+    }
+}
 
 /*****************************************************************************/
 bool AstNode::IsLiteral() const {
@@ -50,11 +56,25 @@ std::string AstNode::MakeTabStr() const {
         outp_str.append("|");
         outp_str.append(TAB_CHAR);
     }
-
     return outp_str;
 }
 
 /*****************************************************************************/
-void AstNode::AddChild(const AstNodePtr<AstNode>& child) {
+void AstNode::AddChild(const AstNodePtr<AstNode> &child) {
     _children.push_back(child);
+    ++_child_count;
+}
+
+/*****************************************************************************/
+void AstNode::PrependChild(const AstNodePtr<AstNode> &child) {
+    _children.insert(_children.begin(), child);
+    ++_child_count;
+}
+
+/*****************************************************************************/
+void AstNode::SetChild(RnSizetNative index, AstNodePtr<AstNode> node) {
+    while (_child_count < index + 1) {
+        AddChild(nullptr);
+    }
+    _children[index] = node;
 }

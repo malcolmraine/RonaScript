@@ -27,10 +27,10 @@
 ******************************************************************************/
 
 #include "RnInternment.h"
-#include "../vm/RnBoolObject.h"
-#include "../vm/RnFloatObject.h"
-#include "../vm/RnIntObject.h"
-#include "../vm/RnStringObject.h"
+#include "../objects/RnBoolObject.h"
+#include "../objects/RnFloatObject.h"
+#include "../objects/RnIntObject.h"
+#include "../objects/RnStringObject.h"
 
 RnInternment<RnObject*>* RnConstStore::object_internment = nullptr;
 

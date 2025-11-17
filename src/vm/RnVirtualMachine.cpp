@@ -41,13 +41,10 @@
 #include "../builtins/RnBuiltins_System.h"
 #include "../builtins/RnBuiltins_Type.h"
 #include "../common/RnConfig.h"
+#include "../objects/RnAnyObject.h"
+#include "../objects/RnPackedObject.h"
 #include "../util/StopWatch.h"
-#include "../util/log.h"
-#include "RnAnyObject.h"
-#include "RnArrayObject.h"
-#include "RnClassObject.h"
 #include "RnFunction.h"
-#include "RnFunctionObject.h"
 #include "RnMemoryManager.h"
 #include "RnOpCode.h"
 
@@ -76,7 +73,7 @@ RnVirtualMachine::RnVirtualMachine() {
 void RnVirtualMachine::Init() {
     RnObject* obj = CreateObject(RnType::RN_OBJECT);
     obj->SetData(CreateScope());
-    RnScope* scope = obj->ToObject();
+    RnScope* scope = obj->ToScope();
     scope->GetMemoryGroup()->AddObject(obj);
     if (!_scopes.empty()) {
         scope->SetParent(GetScope());
@@ -84,6 +81,16 @@ void RnVirtualMachine::Init() {
     _scopes.push_back(scope);
     _memory_manager->SetRootMemoryGroup(GetScope()->GetMemoryGroup());
     RegisterBuiltins();
+}
+
+/*****************************************************************************/
+RnIntNative RnVirtualMachine::HandleObjectUnpack(RnObject* obj, bool reverse) {
+    auto unpack_obj = dynamic_cast<RnPackedObject*>(obj);
+    unpack_obj->UnpackToStack(GetStack(), reverse);
+    RnIntNative item_count = unpack_obj->GetDataItemCount();
+    GetScope()->IncrementStackCount(item_count);
+
+    return item_count;
 }
 
 /*****************************************************************************/
@@ -124,9 +131,7 @@ void RnVirtualMachine::CallStackPop() {
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CallFunction(RnFunction* func, const RnArrayNative& args) {
     if (func->IsBuiltIn()) {
-        RnObject* ret_val = CreateObject(func->GetReturnType());
-        func->Call(args, ret_val);
-        return ret_val;
+        return func->Call(args);
     } else {
         RnScope* scope = RnMemoryManager::CreateScope();
         scope->SetParent(func->GetScope());
@@ -152,28 +157,30 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, const RnArrayNative& 
         CallStackPop();
         PopScope();
 
-        for (int i = 0; i < scope->GetLinkedScopeCount(); i++) {
+        for (int i = 0; i < scope->GetLinkedScopeCount(); ++i) {
             PopScope();
         }
 
-        for (size_t i = 0; i < scope->GetStackCount(); i++) {
+        while (scope->GetStackCount() > 0) {
             StackPop();
         }
 
+        RnObject* ret_val = nullptr;
         if (has_returned) {
-            return scope->ret_val;
+            ret_val = scope->ret_val;
         } else {
-            return RnObject::Create(RnType::RN_NULL);
+            ret_val = RnObject::Create(RnType::RN_NULL);
         }
+        RnMemoryManager::DestroyScope(scope);
+        return ret_val;
     }
 }
 
-#define SIMPLE_BINARY_OPERATION(op)                  \
-    RnObject* b = StackPop();                        \
-    RnObject* a = StackPop();                        \
-    RnObject* result = *a op b;                      \
-    GetScope()->GetMemoryGroup()->AddObject(result); \
-    StackPush(result);                               \
+#define SIMPLE_BINARY_OPERATION(op) \
+    RnObject* b = StackPop();       \
+    RnObject* a = StackPop();       \
+    RnObject* result = *a op b;     \
+    StackPush(result);              \
     PREDICT_OPCODE2(OP_LOAD_VALUE, OP_LOAD_LITERAL)
 
 // This is exactly how cpython handles opcode prediction, so all credit to the
@@ -226,14 +233,14 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, const RnArrayNative& 
 #define PREDICTION_TARGET(op)
 #endif
 
-#define GET_INSTRUCTION(i)  _current_frame->GetInstruction(i)
+#define GET_INSTRUCTION(i) _current_frame->GetInstruction(i)
 
 /*****************************************************************************/
 void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
-    if (_gc_count > 20) {
-//                std::cout << "Garbage collecting...\n";
-//                _memory_manager->GCMark();
-//                RnMemoryManager::GCSweep();
+    if (_gc_count > 2000) {
+        //        std::cout << "Garbage collecting...\n";
+        _memory_manager->GCMark();
+        RnMemoryManager::GCSweep();
         _gc_count = 0;
     }
 
@@ -413,7 +420,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 RnObject* result = CreateObject(
                     static_cast<RnBoolNative>(any_object->Contains(rhs_object)));
                 StackPush(result);
-            }else {
+            } else {
                 auto class_object = dynamic_cast<RnClassObject*>(lhs_object);
                 if (class_object) {
                     RnObject* result = CreateObject(
@@ -459,22 +466,22 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 if (object->IsClass() &&
                     GET_INSTRUCTION(index + 1)->GetOpcode() == OP_CALL) {
                     auto class_obj = dynamic_cast<RnClassObject*>(object);
-                    auto instance = dynamic_cast<RnClassObject*>(
-                        CreateObject(RnType::RN_OBJECT));
+                    auto instance =
+                        dynamic_cast<RnClassObject*>(CreateObject(RnType::RN_OBJECT));
                     instance->SetData(CreateScope());
-                    instance->ToObject()->SetParent(class_obj->ToObject());
+                    instance->ToScope()->SetParent(class_obj->ToScope());
                     instance->SetDefinition(class_obj);
                     class_obj->CopySymbols(instance->GetScope());
                     BindThis(instance->GetScope(), instance);
                     BindCls(instance->GetScope(), class_obj);
 
-                    if (!class_obj->ToObject()) {
+                    if (!class_obj->ToScope()) {
                         throw std::runtime_error(
                             "Cannot call constructor routine on null object");
                     }
 
                     RnObject* func_obj =
-                        class_obj->ToObject()->GetObject(_object_construct_key);
+                        class_obj->ToScope()->GetObject(_object_construct_key);
                     RnFunction* func = func_obj->ToFunction();
                     RnScope* func_scope = CreateScope();
                     func_scope->SetParent(instance->GetScope());
@@ -500,19 +507,19 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             RnObject* func_obj = nullptr;
             if (stack_val->GetType() == RnType::RN_OBJECT) {
                 auto class_obj = dynamic_cast<RnClassObject*>(stack_val);
-                auto instance = dynamic_cast<RnClassObject*>(
-                    CreateObject(RnType::RN_OBJECT));
+                auto instance =
+                    dynamic_cast<RnClassObject*>(CreateObject(RnType::RN_OBJECT));
                 GetScope()->GetMemoryGroup()->AddObject(instance);
-                instance->ToObject()->SetParent(class_obj->ToObject());
+                instance->ToScope()->SetParent(class_obj->ToScope());
                 class_obj->CopySymbols(instance->GetScope());
 
                 BindThis(instance->GetScope(), instance);
                 BindCls(instance->GetScope(), class_obj);
 
                 auto constructor_obj = dynamic_cast<RnFunctionObject*>(
-                    class_obj->ToObject()->GetObject(_object_construct_key));
+                    class_obj->ToScope()->GetObject(_object_construct_key));
                 RnFunction* func = constructor_obj->ToFunction();
-                RnScope* func_scope = RnObject::Create(RnType::RN_OBJECT)->ToObject();
+                RnScope* func_scope = RnObject::Create(RnType::RN_OBJECT)->ToScope();
                 func_scope->SetParent(instance->GetScope());
 
                 BindThis(func_scope, instance);
@@ -522,10 +529,18 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
                 func_obj = stack_val;
             }
 
-            RnArrayNative args(instruction->GetArg1(), nullptr);
-            for (uint32_t i = instruction->GetArg1(); i > 0; --i) {
-                args[i - 1] = StackPop();
+            RnIntNative arg_count = instruction->GetArg1();
+            RnArrayNative args;
+            args.reserve(arg_count);
+            for (uint32_t i = arg_count; i > 0; --i) {
+                auto stack_obj = StackPop();
+                if (stack_obj->GetType() == RnType::RN_OBJECT_PACK) {
+                    i += HandleObjectUnpack(stack_obj, false);
+                    continue;
+                }
+                args.push_back(stack_obj);
             }
+            std::reverse(args.begin(), args.end());
 
             RnObject* ret_val = CallFunction(func_obj->ToFunction(), args);
             StackPush(ret_val);
@@ -535,6 +550,14 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
         case OP_MAKE_CONST: {
             auto type = static_cast<RnType::Type>(instruction->GetArg1());
             RnObject* obj = CreateObject(type);
+
+            //            RnInstructionArg key = instruction->GetArg3();
+            //            if (key == UINT32_MAX) {
+            //                throw std::runtime_error("Invalid literal key while making const value");
+            //            } else {
+            //                obj->CopyDataFromObject(RnConstStore::GetInternedObject(key));
+            //            }
+
             obj->SetConstFlag(true);
             GetScope()->GetMemoryGroup()->AddObject(obj);
             GetScope()->StoreObject(instruction->GetArg2(), obj);
@@ -573,7 +596,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             obj->GetScope()->StoreObject(RnConstStore::InternValue("__class"),
                                          name_obj);
             GetScope()->StoreObject(instruction->GetArg1(), obj);
-            RnScope* class_scope = obj->ToObject();
+            RnScope* class_scope = obj->ToScope();
 
             if (!class_scope) {
                 throw std::runtime_error("Invalid use of null object.");
@@ -581,9 +604,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
 
             class_scope->SetParent(GetScope());
             _scopes.push_back(class_scope);
-            index++;
+            ++index;
             size_t stop_index = index + instruction->GetArg2();
-            for (; index < stop_index; index++) {
+            for (; index < stop_index; ++index) {
                 ExecuteInstruction(break_scope, index);
             }
             index--;
@@ -591,8 +614,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_MAKE_FUNC: {
-            auto obj = dynamic_cast<RnFunctionObject*>(
-               CreateObject(RnType::RN_FUNCTION));
+            auto obj =
+                dynamic_cast<RnFunctionObject*>(CreateObject(RnType::RN_FUNCTION));
             RnStringNative name =
                 RnConstStore::GetInternedString(instruction->GetArg1());
             auto type = static_cast<RnType::Type>(instruction->GetArg2());
@@ -608,7 +631,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             obj->SetData(func);
 
             uint32_t i = 0;  // Argument count
-            for (; GET_INSTRUCTION(i + index + 1)->GetOpcode() == OP_MAKE_ARG; i++) {
+            for (; GET_INSTRUCTION(i + index + 1)->GetOpcode() == OP_MAKE_ARG; ++i) {
                 RnInstruction* arg_instruction = GET_INSTRUCTION(i + index + 1);
                 func->CreateArgument(
                     arg_instruction->GetArg2(),
@@ -622,8 +645,8 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             break;
         }
         case OP_MAKE_CLOSURE: {
-            auto obj = dynamic_cast<RnFunctionObject*>(
-                CreateObject(RnType::RN_FUNCTION));
+            auto obj =
+                dynamic_cast<RnFunctionObject*>(CreateObject(RnType::RN_FUNCTION));
             auto type = static_cast<RnType::Type>(instruction->GetArg1());
             RnInstructionArg scope_size = instruction->GetArg2();
             void* func_addr = RnLinearAllocator::Instance()->Malloc(sizeof(RnFunction));
@@ -638,7 +661,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             obj->SetData(func);
 
             uint32_t i = 0;  // Argument count
-            for (; GET_INSTRUCTION(i + index + 1)->GetOpcode() == OP_MAKE_ARG; i++) {
+            for (; GET_INSTRUCTION(i + index + 1)->GetOpcode() == OP_MAKE_ARG; ++i) {
                 RnInstruction* arg_instruction = GET_INSTRUCTION(i + index + 1);
                 func->CreateArgument(
                     arg_instruction->GetArg2(),
@@ -750,14 +773,31 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             auto obj = dynamic_cast<RnArrayObject*>(CreateObject(RnType::RN_ARRAY));
             GetScope()->GetMemoryGroup()->AddObject(obj);
 
-            for (RnIntNative i = 0; i < instruction->GetArg1(); i++) {
+            RnIntNative item_count = instruction->GetArg1();
+            for (RnIntNative i = 0; i < item_count; ++i) {
+                auto stack_obj = StackPop();
+                if (stack_obj->GetActiveType() == RnType::RN_OBJECT_PACK) {
+                    item_count += HandleObjectUnpack(stack_obj, true);
+                    continue;
+                }
                 auto copy =
                     dynamic_cast<RnAnyObject*>(RnObject::Create(RnType::RN_ANY));
-                copy->CopyFrom(StackPop());
+                copy->CopyFrom(stack_obj);
                 GetScope()->GetMemoryGroup()->AddObject(copy);
                 obj->Append(copy);
             }
             StackPush(obj);
+            break;
+        }
+        case OP_UNPACK: {
+            RnObject* stack_obj = StackPop();
+            assert(stack_obj);
+            assert(stack_obj->GetType() == RnType::RN_ARRAY ||
+                   stack_obj->GetType() == RnType::RN_STRING);
+
+            auto unpack_obj = CreateObject(RnType::RN_OBJECT_PACK);
+            unpack_obj->SetData(stack_obj);
+            StackPush(unpack_obj);
             break;
         }
         case OP_LOAD_ATTR: {
@@ -820,7 +860,7 @@ RnIntNative RnVirtualMachine::Run() {
         if (has_returned) {
             break;
         }
-        i_idx++;
+        ++i_idx;
     }
     stopwatch.Stop();
     //                Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
@@ -845,7 +885,7 @@ RnIntNative RnVirtualMachine::ExecuteCodeFrame(RnCodeFrame* frame, RnScope* scop
         if (has_returned) {
             break;
         }
-        instructionIndex++;
+        ++instructionIndex;
     }
     stopwatch.Stop();
     //    Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
@@ -872,7 +912,7 @@ RnVirtualMachine* RnVirtualMachine::GetInstance() {
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnType::Type type) {
-    _gc_count++;
+    ++_gc_count;
     auto obj = RnMemoryManager::CreateObject(type);
     if (!_scopes.empty()) {
         GetScope()->GetMemoryGroup()->AddObject(obj);
@@ -882,7 +922,7 @@ RnObject* RnVirtualMachine::CreateObject(RnType::Type type) {
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnStringNative data) {
-    _gc_count++;
+    ++_gc_count;
     auto obj = RnMemoryManager::Create(std::move(data));
     GetScope()->GetMemoryGroup()->AddObject(obj);
     return obj;
@@ -890,7 +930,7 @@ RnObject* RnVirtualMachine::CreateObject(RnStringNative data) {
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnBoolNative data) {
-    _gc_count++;
+    ++_gc_count;
     auto obj = RnMemoryManager::Create(data);
     GetScope()->GetMemoryGroup()->AddObject(obj);
     return obj;
@@ -898,7 +938,7 @@ RnObject* RnVirtualMachine::CreateObject(RnBoolNative data) {
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnIntNative data) {
-    _gc_count++;
+    ++_gc_count;
     auto obj = RnMemoryManager::Create(data);
     GetScope()->GetMemoryGroup()->AddObject(obj);
     return obj;
@@ -906,7 +946,7 @@ RnObject* RnVirtualMachine::CreateObject(RnIntNative data) {
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnFloatNative data) {
-    _gc_count++;
+    ++_gc_count;
     auto obj = RnMemoryManager::Create(data);
     GetScope()->GetMemoryGroup()->AddObject(obj);
     return obj;
@@ -914,7 +954,7 @@ RnObject* RnVirtualMachine::CreateObject(RnFloatNative data) {
 
 /*****************************************************************************/
 RnScope* RnVirtualMachine::CreateScope() {
-    _gc_count++;
+    ++_gc_count;
     return RnMemoryManager::CreateScope();
 }
 
@@ -931,8 +971,7 @@ void RnVirtualMachine::RegisterBuiltins() {
         auto func = new RnBuiltinFunction(std::get<0>(parts), std::get<1>(parts));
         func->SetScope(GetScope());
         func->SetReturnType(std::get<2>(parts));
-        auto obj = dynamic_cast<RnFunctionObject*>(
-            CreateObject(RnType::RN_FUNCTION));
+        auto obj = dynamic_cast<RnFunctionObject*>(CreateObject(RnType::RN_FUNCTION));
         obj->SetData(func);
         GetScope()->StoreObject(RnConstStore::InternValue(std::get<0>(parts)), obj);
     }

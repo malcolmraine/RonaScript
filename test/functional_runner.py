@@ -20,24 +20,24 @@ if os.name == "nt":
 
 
 def remove_ansi_codes(s: str) -> str:
-    return s.replace("\0[33m", "") \
-        .replace("\033[31m", "") \
-        .replace("\033[0m", "")
+    return s.replace("\0[33m", "").replace("\033[31m", "").replace("\033[0m", "")
 
 
 class Test(object):
     fixed_args = []
 
-    def __init__(self,
-                 name: str,
-                 test_id,
-                 source_dir: str,
-                 expected_output_file: str = "",
-                 args: list = None,
-                 timeout: int = 5,
-                 invoke_count: int = 1,
-                 enabled: bool = False,
-                 similarity: float = 1.0):
+    def __init__(
+        self,
+        name: str,
+        test_id,
+        source_dir: str,
+        expected_output_file: str = "",
+        args: list = None,
+        timeout: int = 5,
+        invoke_count: int = 1,
+        enabled: bool = False,
+        similarity: float = 1.0,
+    ):
         self.id = test_id
         self.stdout: list = []
         self.stderr: list = []
@@ -112,9 +112,13 @@ class Test(object):
                 self.msg = "PASSED"
 
             if self.passed and not self.timeout_occurred:
-                print(f"\033[92m{self.msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m")
+                print(
+                    f"\033[92m{self.msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m"
+                )
             else:
-                print(f"\033[91m{self.msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m")
+                print(
+                    f"\033[91m{self.msg} ({round(self.runtime, 6)}s) - {self.name}\033[0m"
+                )
 
             self.log(f"Test: {self.name}")
             self.log(f"Status: {self.msg}")
@@ -142,7 +146,9 @@ class Test(object):
                 self.log()
             self.log_header("Diff")
             if not self.passed:
-                self.log("\n".join(ndiff(expected.splitlines(), invalid_output.splitlines())))
+                self.log(
+                    "\n".join(ndiff(expected.splitlines(), invalid_output.splitlines()))
+                )
 
     def run(self) -> None:
         self.timestamp = str(datetime.datetime.now().replace(microsecond=0).isoformat())
@@ -156,7 +162,8 @@ class Test(object):
             self.process = subprocess.Popen(
                 [rn_executable, *self.fixed_args, *self.args, self.source_file],
                 stderr=subprocess.PIPE,
-                stdout=subprocess.PIPE)
+                stdout=subprocess.PIPE,
+            )
             self.process.wait(self.timeout)
 
         self.similarity_scores = []
@@ -216,7 +223,9 @@ class TestRunner(object):
         print(f"Failed: {self.failed_count}")
         print(f"Timed Out: {self.timeout_count}")
         print(f"Total runtime: {round(self.total_runtime, 3)}s")
-        print(f"Avg. runtime: {round(self.total_runtime / (self.enabled_count or 1), 3)}s")
+        print(
+            f"Avg. runtime: {round(self.total_runtime / (self.enabled_count or 1), 3)}s"
+        )
         print(f"\nPass rate: {round(self.passed_count / (self.enabled_count or 1), 3)}")
 
 
@@ -227,15 +236,21 @@ if __name__ == "__main__":
     for file in glob.glob("functional/**/manifest.json"):
         with open(file, "r") as manifest_file:
             manifest = json.load(manifest_file)
-        runner.add_test(Test(manifest.get("title"),
-                             manifest.get("name"),
-                             os.path.dirname(file),
-                             expected_output_file=manifest.get("expected_output", "expected_output.txt"),
-                             args=[*manifest.get("args", [])],
-                             timeout=manifest.get("timeout", 5),
-                             invoke_count=manifest.get("invoke_count", 1),
-                             enabled=manifest.get("enabled", False),
-                             similarity=manifest.get("similarity_threshold", 1.0)))
+        runner.add_test(
+            Test(
+                manifest.get("title"),
+                manifest.get("name"),
+                os.path.dirname(file),
+                expected_output_file=manifest.get(
+                    "expected_output", "expected_output.txt"
+                ),
+                args=[*manifest.get("args", [])],
+                timeout=manifest.get("timeout", 5),
+                invoke_count=manifest.get("invoke_count", 1),
+                enabled=manifest.get("enabled", False),
+                similarity=manifest.get("similarity_threshold", 1.0),
+            )
+        )
     timestamp = str(datetime.datetime.now().replace(microsecond=0).isoformat())
     runner.run()
     reporter = junit_reporter.JUnitReporter()
@@ -257,7 +272,9 @@ if __name__ == "__main__":
             testcase.skipped.append(junit_reporter.TestSkipped())
         elif not test.passed:
             failure_detail = f"Return code: {test.returncode}"
-            testcase.failures.append(junit_reporter.TestFailure(test.msg, "Error", failure_detail))
+            testcase.failures.append(
+                junit_reporter.TestFailure(test.msg, "Error", failure_detail)
+            )
         suite.add_testcase(testcase)
 
     reporter.test_suites.append(suite)

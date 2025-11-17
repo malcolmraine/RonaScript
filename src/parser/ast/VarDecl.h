@@ -45,7 +45,6 @@ public:
     std::string ToString(bool nl) override;
     std::string id;
     std::shared_ptr<RnTypeComposite> type;
-    std::vector<Token*> qualifiers;
     AstNodePtr<AstNode> init_value = nullptr;
     bool is_const = false;
     bool is_local = false;

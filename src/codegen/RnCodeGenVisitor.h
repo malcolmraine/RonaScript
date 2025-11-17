@@ -67,7 +67,7 @@ public:
     ~RnCodeGenVisitor() = default;
 
     InstructionBlock GeneralVisit(AstNode* node) override;
-    InstructionBlock GeneralVisit(const AstNodePtr<AstNode>& node) override;
+    //    InstructionBlock GeneralVisit(const AstNodePtr<AstNode>& node) override;
     InstructionBlock Visit(ArrayLiteral* node) override;
     InstructionBlock Visit(LiteralValue* node) override;
     InstructionBlock Visit(ScopeNode* node) override;

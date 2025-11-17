@@ -31,7 +31,16 @@
 
 /*****************************************************************************/
 std::string RnOS::GetEnv(const std::string& name) {
-    return std::getenv(name.c_str());
+    char* result = std::getenv(name.c_str());
+    if (result) {
+        return result;
+    }
+    return std::string();
+}
+
+/*****************************************************************************/
+bool RnOS::HasEnv(const std::string& name) {
+    return std::getenv(name.c_str()) != nullptr;
 }
 
 /*****************************************************************************/

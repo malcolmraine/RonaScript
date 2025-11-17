@@ -70,7 +70,7 @@ size_t RnNumericObject::GetByteSize() const {
 }
 
 /*****************************************************************************/
-size_t RnNumericObject::GetBytes(char* buf) {
+size_t RnNumericObject::GetBytes(char *buf) {
     size_t i = 0;
     buf[i++] = static_cast<char>(GetType());
     union {
@@ -78,19 +78,19 @@ size_t RnNumericObject::GetBytes(char* buf) {
         size_t len = 0;
     } size_bytes;
     size_bytes.len = RN_NUMERIC_DATA_LENGTH;
-    for (char byte : size_bytes.bytes) {
+    for (const char byte: size_bytes.bytes) {
         buf[i++] = byte;
     }
 
-    for (size_t n = 0; i < RN_NUMERIC_DATA_LENGTH; i++) {
+    for (size_t n = 0; i < RN_NUMERIC_DATA_LENGTH; ++i) {
         buf[i++] = _data.c_data[n];
     }
     return RN_NUMERIC_DATA_LENGTH;
 }
 
 /*****************************************************************************/
-void RnNumericObject::SetBytes(const char* buf, size_t n) {
-    for (size_t i = 0; i < n; i++) {
+void RnNumericObject::SetBytes(const char *buf, size_t n) {
+    for (size_t i = 0; i < n; ++i) {
         _data.c_data[i] = buf[i];
     }
 }

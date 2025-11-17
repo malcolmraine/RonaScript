@@ -30,9 +30,13 @@ class Path is
 begin
     var _path: string = "";
 
-    routine construct(var path: string): object
+    routine construct(var path: any): object
     begin
-        this->_path = path;
+        if instanceof(path, Path):
+            this->_path = to_string(path);
+        else:
+            this->_path = path;
+        end
         return this;
     end
 

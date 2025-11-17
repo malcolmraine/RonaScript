@@ -28,7 +28,7 @@ public:
     }
 
     void Increment() {
-        _count++;
+        ++_count;
     }
 
     void CheckCount() const {

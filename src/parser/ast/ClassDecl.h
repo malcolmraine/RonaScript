@@ -43,7 +43,7 @@ public:
     std::string ToString(bool nl) override;
 
     std::string id;
-    AstNodePtr<ScopeNode> scope = nullptr;
+    
     std::vector<AstNodePtr<Name>>
         parent_classes;  // Names of classes to inherit. Names are resolved at code generation time
 };

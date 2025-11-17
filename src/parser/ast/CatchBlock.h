@@ -30,9 +30,9 @@
 
 #include <vector>
 #include "AstNode.h"
+#include "ScopeNode.h"
 
 class Name;
-class ScopeNode;
 
 class CatchBlock : public AstNode {
 public:
@@ -47,20 +47,10 @@ public:
     void SetExceptionIds(const std::vector<AstNodePtr<Name>>& exceptionIds) {
         _exception_ids = exceptionIds;
     }
-
-    [[nodiscard]] const AstNodePtr<ScopeNode>& GetScope() const {
-        return _scope;
-    }
-
-    void SetScope(const AstNodePtr<ScopeNode>& scope) {
-        _scope = scope;
-    }
-
-    void AddExceptionId(const AstNodePtr<Name>& id) {
+    void AddExceptionId(AstNodePtr<Name> id) {
         _exception_ids.push_back(id);
     }
 
 private:
     std::vector<AstNodePtr<Name>> _exception_ids;
-    AstNodePtr<ScopeNode> _scope = nullptr;
 };

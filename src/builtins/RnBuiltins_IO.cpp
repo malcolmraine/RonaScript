@@ -32,10 +32,9 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include "../vm/RnClassObject.h"
-#include "../vm/RnObject.h"
-#include "../vm/RnScope.h"
-#include "../vm/RnStringObject.h"
+#include "../objects/RnClassObject.h"
+#include "../objects/RnStringObject.h"
+#include "../vm/RnVirtualMachine.h"
 
 #undef BUILTIN_CLASS
 #define BUILTIN_CLASS RnBuiltins_IO
@@ -47,11 +46,17 @@
 RN_BUILTIN_FUNC_DEFINE(file_size, RnType::RN_INT, 1) {
     BUILTIN_ASSERTS
     std::string path = args.front()->ToString();
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_INT);
     ret_val->SetData(static_cast<RnIntNative>(std::filesystem::file_size(path)));
+
+    return ret_val;
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC_DEFINE(file_write, RnType::RN_INT, 2){BUILTIN_ASSERTS}
+RN_BUILTIN_FUNC_DEFINE(file_write, RnType::RN_INT, 2) {
+    BUILTIN_ASSERTS
+    return RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_NULL);
+}
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(print, RnType::RN_VOID, 1) {
@@ -60,7 +65,7 @@ RN_BUILTIN_FUNC_DEFINE(print, RnType::RN_VOID, 1) {
         assert(arg);
         if (arg->GetActiveType() == RnType::RN_OBJECT) {
             auto instance = dynamic_cast<RnClassObject*>(arg);
-            if (instance->ToObject() != nullptr) {
+            if (instance->ToScope() != nullptr) {
                 RnStringObject string_repr;
                 if (instance->TryMagicMethod(RnClassObject::MAGIC_METHOD_KEY_STR, {arg},
                                              &string_repr)) {
@@ -80,64 +85,83 @@ RN_BUILTIN_FUNC_DEFINE(print, RnType::RN_VOID, 1) {
         }
     }
     fprintf(stdout, "%s\n", s.c_str());
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_NULL);
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(file_read, RnType::RN_STRING, 1) {
     BUILTIN_ASSERTS
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_STRING);
     std::ifstream file;
-    file.open(args.front()->ToString());
+    RnStringNative path = std::filesystem::absolute(args.front()->ToString());
+    file.open(path);
 
-    std::string contents;
     file.seekg(0, std::ios::end);
-    contents.reserve(file.tellg());
+    size_t file_size = std::filesystem::file_size(path);
+    std::string contents(file_size, '\0');
     file.seekg(0, std::ios::beg);
-
-    contents.assign((std::istreambuf_iterator<char>(file)),
-                    std::istreambuf_iterator<char>());
+    file.read(&contents[0], file_size);
     file.close();
     ret_val->SetData(contents);
+
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(prompt, RnType::RN_STRING, 1) {
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_STRING);
     std::string input;
     std::cout << args.front()->ToString();
     std::cin >> input;
     ret_val->SetData(input);
+
+    return ret_val;
 }
 
 /*****************************************************************************/
-RN_BUILTIN_FUNC_DEFINE(_file_open, RnType::RN_INT, 1) {
+RN_BUILTIN_FUNC_DEFINE(_file_open, RnType::RN_INT, 2) {
     BUILTIN_ASSERTS
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_INT);
     auto fd =
         open(args.front()->ToString().c_str(), static_cast<int>(args[1]->ToInt()));
     ret_val->SetData(static_cast<RnIntNative>(fd));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(_file_fd_close, RnType::RN_BOOLEAN, 1) {
     BUILTIN_ASSERTS
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_BOOLEAN);
     if (close(static_cast<int>(args[0]->ToInt())) == 0) {
         ret_val->SetData(true);
     } else {
         ret_val->SetData(false);
     }
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(_file_fd_write, RnType::RN_INT, 1) {
     BUILTIN_ASSERTS
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_INT);
     std::string content = args[1]->ToString();
     ssize_t result =
         write(static_cast<int>(args[0]->ToInt()), content.c_str(), content.length());
     ret_val->SetData(static_cast<RnIntNative>(result));
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(_file_fd_read, RnType::RN_STRING, 1) {
     BUILTIN_ASSERTS
 
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_STRING);
     auto size = static_cast<ssize_t>(args[1]->ToInt());
     if (size == 0) {
         ret_val->SetData(static_cast<RnIntNative>(0));
@@ -147,9 +171,13 @@ RN_BUILTIN_FUNC_DEFINE(_file_fd_read, RnType::RN_STRING, 1) {
         read(fd, (void*)content.c_str(), size);
         ret_val->SetData(content);
     }
+    return ret_val;
 }
 
 /*****************************************************************************/
 RN_BUILTIN_FUNC_DEFINE(_file_fd_truncate, RnType::RN_BOOLEAN, 1) {
     BUILTIN_ASSERTS
+
+    auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_BOOLEAN);
+    return ret_val;
 }

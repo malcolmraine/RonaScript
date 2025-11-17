@@ -49,16 +49,29 @@ RnObject* RnStringObject::operator==(RnObject* obj) {
 
 /*****************************************************************************/
 RnObject* RnStringObject::operator!=(RnObject* obj) {
-    return RnObject::Create(static_cast<bool>(_data != obj->ToString()));
+    if (obj->GetType() == RnType::RN_STRING) {
+        return RnObject::Create(static_cast<bool>(_data != obj->ToString()));
+    }
+    RnObject::Create(false);
 }
 
 /*****************************************************************************/
 RnObject* RnStringObject::operator*(RnObject* obj) {
     RnStringNative result;
-    for (RnIntNative i = 0; i < obj->ToInt(); i++) {
+    for (RnIntNative i = 0; i < obj->ToInt(); ++i) {
         result += _data;
     }
     return RnObject::Create(result);
+}
+
+/*****************************************************************************/
+RnObject* RnStringObject::operator||(RnObject* obj) {
+    return RnObject::Create(ToBool() || obj->ToBool());
+}
+
+/*****************************************************************************/
+RnObject* RnStringObject::operator&&(RnObject* obj) {
+    return RnObject::Create(ToBool() && obj->ToBool());
 }
 
 /*****************************************************************************/

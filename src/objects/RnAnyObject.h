@@ -76,7 +76,7 @@ public:
     [[nodiscard]] RnStringNative ToString() const override;
     [[nodiscard]] RnArrayNative ToArray() const override;
     [[nodiscard]] RnBoolNative ToBool() const override;
-    [[nodiscard]] RnScope* ToObject() const override;
+    [[nodiscard]] RnScope* ToScope() const override;
     [[nodiscard]] RnFunction* ToFunction() const override;
     void SetData(RnIntNative data) override;
     void SetData(RnBoolNative data) override;
