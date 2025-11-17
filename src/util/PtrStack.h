@@ -50,7 +50,7 @@ public:
             *_stack_ptr = item;
         else
             *(++_stack_ptr) = item;
-        _size++;
+        ++_size;
     }
 
     T Pop() {

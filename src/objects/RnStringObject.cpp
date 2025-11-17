@@ -58,7 +58,7 @@ RnObject* RnStringObject::operator!=(RnObject* obj) {
 /*****************************************************************************/
 RnObject* RnStringObject::operator*(RnObject* obj) {
     RnStringNative result;
-    for (RnIntNative i = 0; i < obj->ToInt(); i++) {
+    for (RnIntNative i = 0; i < obj->ToInt(); ++i) {
         result += _data;
     }
     return RnObject::Create(result);

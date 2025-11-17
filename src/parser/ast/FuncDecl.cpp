@@ -46,7 +46,7 @@ std::string FuncDecl::ToString(bool nl) {
         s += "\n";
     }
 
-    for (RnIntNative i = AstNode::SCOPE_CHILD_INDEX + 1; i <= arg_count; i++) {
+    for (RnIntNative i = AstNode::SCOPE_CHILD_INDEX + 1; i <= arg_count; ++i) {
         auto arg = GetChild(i);
         arg->nest_lvl = nest_lvl + 1;
         s += arg->ToString(true);

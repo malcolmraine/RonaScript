@@ -215,7 +215,7 @@ InstructionBlock RnCodeGenVisitor::Visit(Loop* node) {
     // Fill in jump offsets for continue and break statements
     auto break_instructions = _break_instructions.back();
     if (!break_instructions.empty()) {
-        for (size_t i = 0; i < instructions.size(); i++) {
+        for (size_t i = 0; i < instructions.size(); ++i) {
             auto it = std::find(break_instructions.begin(), break_instructions.end(),
                                 instructions[i]);
             if (it != break_instructions.end()) {
@@ -227,7 +227,7 @@ InstructionBlock RnCodeGenVisitor::Visit(Loop* node) {
 
     auto continue_instructions = _continue_instructions.back();
     if (!continue_instructions.empty()) {
-        for (size_t i = 0; i < instructions.size(); i++) {
+        for (size_t i = 0; i < instructions.size(); ++i) {
             auto it = std::find(continue_instructions.begin(),
                                 continue_instructions.end(), instructions[i]);
             if (it != continue_instructions.end()) {
@@ -286,7 +286,7 @@ InstructionBlock RnCodeGenVisitor::Visit(FuncDecl* node) {
 
     instructions.emplace_back(make_instruction);
 
-    for (RnIntNative i = AstNode::SCOPE_CHILD_INDEX + 1; i <= node->arg_count; i++) {
+    for (RnIntNative i = AstNode::SCOPE_CHILD_INDEX + 1; i <= node->arg_count; ++i) {
         InstructionBlock arg_decl = GeneralVisit(node->GetChild(i));
         instructions.insert(instructions.end(), arg_decl.begin(), arg_decl.end());
     }
@@ -299,7 +299,7 @@ InstructionBlock RnCodeGenVisitor::Visit(FuncDecl* node) {
 InstructionBlock RnCodeGenVisitor::Visit(FuncCall* node) {
     InstructionBlock instructions;
     InstructionBlock expr = GeneralVisit(node->GetChild(AstNode::PRIMARY_EXPR_INDEX));
-    for (RnSizetNative i = 1; i < node->GetChildCount(); i++) {
+    for (RnSizetNative i = 1; i < node->GetChildCount(); ++i) {
         InstructionBlock arg_instructions = GeneralVisit(node->GetChild(i));
         instructions.insert(instructions.end(), arg_instructions.begin(),
                             arg_instructions.end());

@@ -306,7 +306,7 @@ std::string String::Pad(const std::string& s, size_t len, char pad_char) {
         return s;
     }
 
-    for (size_t i = 0; i < pad_len; i++) {
+    for (size_t i = 0; i < pad_len; ++i) {
         out += std::string(1, pad_char);
     }
 
@@ -321,7 +321,7 @@ std::string String::SimpleTitleCase(const std::string& s) {
 
     std::string result = s;
     bool needsUpper = true;
-    for (size_t i = 0; i < s.length(); i++) {
+    for (size_t i = 0; i < s.length(); ++i) {
         char c = s[i];
         if (!std::isalpha(c) && c != '\'') {
             needsUpper = true;
@@ -352,7 +352,7 @@ std::string String::AdvancedTitleCase(const std::string& s, bool useExemptions) 
     std::string result = s;
     size_t currentWordStart = 0;
     bool needsUpper = true;
-    for (size_t i = 0; i < s.length(); i++) {
+    for (size_t i = 0; i < s.length(); ++i) {
         char c = s[i];
         if ((i == 0 || !std::isalpha(s[i - 1])) && c != '\'') {
             result[i] = static_cast<char>(std::toupper(s[i]));

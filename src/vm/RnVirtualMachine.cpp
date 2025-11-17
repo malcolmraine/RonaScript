@@ -157,7 +157,7 @@ RnObject* RnVirtualMachine::CallFunction(RnFunction* func, const RnArrayNative& 
         CallStackPop();
         PopScope();
 
-        for (int i = 0; i < scope->GetLinkedScopeCount(); i++) {
+        for (int i = 0; i < scope->GetLinkedScopeCount(); ++i) {
             PopScope();
         }
 
@@ -604,9 +604,9 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
 
             class_scope->SetParent(GetScope());
             _scopes.push_back(class_scope);
-            index++;
+            ++index;
             size_t stop_index = index + instruction->GetArg2();
-            for (; index < stop_index; index++) {
+            for (; index < stop_index; ++index) {
                 ExecuteInstruction(break_scope, index);
             }
             index--;
@@ -631,7 +631,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             obj->SetData(func);
 
             uint32_t i = 0;  // Argument count
-            for (; GET_INSTRUCTION(i + index + 1)->GetOpcode() == OP_MAKE_ARG; i++) {
+            for (; GET_INSTRUCTION(i + index + 1)->GetOpcode() == OP_MAKE_ARG; ++i) {
                 RnInstruction* arg_instruction = GET_INSTRUCTION(i + index + 1);
                 func->CreateArgument(
                     arg_instruction->GetArg2(),
@@ -661,7 +661,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             obj->SetData(func);
 
             uint32_t i = 0;  // Argument count
-            for (; GET_INSTRUCTION(i + index + 1)->GetOpcode() == OP_MAKE_ARG; i++) {
+            for (; GET_INSTRUCTION(i + index + 1)->GetOpcode() == OP_MAKE_ARG; ++i) {
                 RnInstruction* arg_instruction = GET_INSTRUCTION(i + index + 1);
                 func->CreateArgument(
                     arg_instruction->GetArg2(),
@@ -774,7 +774,7 @@ void RnVirtualMachine::ExecuteInstruction(bool& break_scope, size_t& index) {
             GetScope()->GetMemoryGroup()->AddObject(obj);
 
             RnIntNative item_count = instruction->GetArg1();
-            for (RnIntNative i = 0; i < item_count; i++) {
+            for (RnIntNative i = 0; i < item_count; ++i) {
                 auto stack_obj = StackPop();
                 if (stack_obj->GetActiveType() == RnType::RN_OBJECT_PACK) {
                     item_count += HandleObjectUnpack(stack_obj, true);
@@ -860,7 +860,7 @@ RnIntNative RnVirtualMachine::Run() {
         if (has_returned) {
             break;
         }
-        i_idx++;
+        ++i_idx;
     }
     stopwatch.Stop();
     //                Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
@@ -885,7 +885,7 @@ RnIntNative RnVirtualMachine::ExecuteCodeFrame(RnCodeFrame* frame, RnScope* scop
         if (has_returned) {
             break;
         }
-        instructionIndex++;
+        ++instructionIndex;
     }
     stopwatch.Stop();
     //    Log::INFO("\nRuntime duration: " + std::to_string(stopwatch.Duration()));
@@ -912,7 +912,7 @@ RnVirtualMachine* RnVirtualMachine::GetInstance() {
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnType::Type type) {
-    _gc_count++;
+    ++_gc_count;
     auto obj = RnMemoryManager::CreateObject(type);
     if (!_scopes.empty()) {
         GetScope()->GetMemoryGroup()->AddObject(obj);
@@ -922,7 +922,7 @@ RnObject* RnVirtualMachine::CreateObject(RnType::Type type) {
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnStringNative data) {
-    _gc_count++;
+    ++_gc_count;
     auto obj = RnMemoryManager::Create(std::move(data));
     GetScope()->GetMemoryGroup()->AddObject(obj);
     return obj;
@@ -930,7 +930,7 @@ RnObject* RnVirtualMachine::CreateObject(RnStringNative data) {
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnBoolNative data) {
-    _gc_count++;
+    ++_gc_count;
     auto obj = RnMemoryManager::Create(data);
     GetScope()->GetMemoryGroup()->AddObject(obj);
     return obj;
@@ -938,7 +938,7 @@ RnObject* RnVirtualMachine::CreateObject(RnBoolNative data) {
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnIntNative data) {
-    _gc_count++;
+    ++_gc_count;
     auto obj = RnMemoryManager::Create(data);
     GetScope()->GetMemoryGroup()->AddObject(obj);
     return obj;
@@ -946,7 +946,7 @@ RnObject* RnVirtualMachine::CreateObject(RnIntNative data) {
 
 /*****************************************************************************/
 RnObject* RnVirtualMachine::CreateObject(RnFloatNative data) {
-    _gc_count++;
+    ++_gc_count;
     auto obj = RnMemoryManager::Create(data);
     GetScope()->GetMemoryGroup()->AddObject(obj);
     return obj;
@@ -954,7 +954,7 @@ RnObject* RnVirtualMachine::CreateObject(RnFloatNative data) {
 
 /*****************************************************************************/
 RnScope* RnVirtualMachine::CreateScope() {
-    _gc_count++;
+    ++_gc_count;
     return RnMemoryManager::CreateScope();
 }
 

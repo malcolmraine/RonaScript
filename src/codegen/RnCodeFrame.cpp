@@ -56,7 +56,7 @@ RnCodeFrame* RnCodeFrame::GetSubframe(uint32_t index, LOAD_POLICY load_policy) c
             if (frame->GetIsExternal() && !frame->_is_loaded) {
                 frame->ReadFromFile(frame->GetModulePath());
             }
-            for (uint32_t i = 0; i < frame->GetSubframeCount(); i++) {
+            for (uint32_t i = 0; i < frame->GetSubframeCount(); ++i) {
                 frame->GetSubframe(i, load_policy);
             }
             frame->_is_loaded = true;
@@ -131,7 +131,7 @@ void RnCodeFrame::ReadFrame(std::ifstream& fs, RnCodeFrame* frame) {
     fs.read(reinterpret_cast<char*>(&instruction_count), sizeof(instruction_count));
     frame->_instructions.reserve(instruction_count);
 
-    for (uint32_t i = 0; i < instruction_count; i++) {
+    for (uint32_t i = 0; i < instruction_count; ++i) {
         RnOpCode opcode = OP_NOP;
         RnInstructionArg arg1 = 0;
         RnInstructionArg arg2 = 0;
@@ -144,7 +144,7 @@ void RnCodeFrame::ReadFrame(std::ifstream& fs, RnCodeFrame* frame) {
     }
 
     frame->_instructions.reserve(subframe_count);
-    for (uint32_t i = 0; i < subframe_count; i++) {
+    for (uint32_t i = 0; i < subframe_count; ++i) {
         auto subframe = frame->AddSubframe();
         ReadFrame(fs, subframe);
     }
@@ -174,7 +174,7 @@ void RnCodeFrame::WriteFrame(std::ofstream& fs, RnCodeFrame* frame) {
     fs.write(reinterpret_cast<char*>(&frame->_instruction_cnt),
              sizeof(_instruction_cnt));
 
-    for (uint32_t i = 0; i < frame->_instruction_cnt; i++) {
+    for (uint32_t i = 0; i < frame->_instruction_cnt; ++i) {
         auto instruction = frame->GetInstruction(i);
         RnOpCode opcode = instruction->GetOpcode();
         RnInstructionArg arg1 = instruction->GetArg1();
@@ -186,7 +186,7 @@ void RnCodeFrame::WriteFrame(std::ofstream& fs, RnCodeFrame* frame) {
         fs.write(reinterpret_cast<char*>(&arg3), RN_INSTRUCTION_ARG_WIDTH);
     }
 
-    for (uint32_t i = 0; i < frame->_subframe_cnt; i++) {
+    for (uint32_t i = 0; i < frame->_subframe_cnt; ++i) {
         WriteFrame(fs, frame->GetSubframe(i));
     }
 
@@ -239,7 +239,7 @@ std::string RnCodeFrame::ToString() const {
     str += "INSTRUCTION COUNT: " + std::to_string(_instruction_cnt) + "\n";
 
     str += "INSTRUCTIONS:\n";
-    for (uint32_t i = 0; i < _instruction_cnt; i++) {
+    for (uint32_t i = 0; i < _instruction_cnt; ++i) {
         str += "    " + GetInstruction(i)->ToString() + "\n";
     }
 
@@ -248,7 +248,7 @@ std::string RnCodeFrame::ToString() const {
         str += "N/A\n";
     } else {
         str += "\n";
-        for (uint32_t i = 0; i < _subframe_cnt; i++) {
+        for (uint32_t i = 0; i < _subframe_cnt; ++i) {
             str += GetSubframe(i)->ToString();
         }
     }

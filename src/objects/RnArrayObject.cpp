@@ -180,7 +180,7 @@ bool RnArrayObject::ContentsEqual(const RnArrayNative& data) {
     if (_data.size() != data.size()) {
         return false;
     } else {
-        for (size_t i = 0; i < _data.size(); i++) {
+        for (size_t i = 0; i < _data.size(); ++i) {
             if (!ValueCompare(_data[i], data[i])) {
                 return false;
             }

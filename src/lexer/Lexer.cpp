@@ -108,7 +108,7 @@ Token* Lexer::MakeToken(const std::string& s, TokenType initial_type) const {
     auto normalize_sign = [](const std::string& s) {
         size_t i = 0;
         int sign = 1;
-        for (; i < s.length(); i++) {
+        for (; i < s.length(); ++i) {
             if (s[i] == '-') {
                 sign *= -1;
                 continue;
@@ -146,12 +146,12 @@ Token* Lexer::MakeToken(const std::string& s, TokenType initial_type) const {
 bool Lexer::IsIntLiteral(const std::string& s) {
     size_t i = 0;
     char c;
-    for (; i < s.length(); i++) {
+    for (; i < s.length(); ++i) {
         c = s[i];
         if (c != '+' && c != '-')
             break;
     }
-    for (; i < s.length(); i++) {
+    for (; i < s.length(); ++i) {
         c = s[i];
         if (!std::isdigit(c))
             return false;
@@ -164,7 +164,7 @@ bool Lexer::IsFloatLiteral(const std::string& s) {
     bool decimal_found = false;
     size_t i = 0;
     char c;
-    for (; i < s.length(); i++) {
+    for (; i < s.length(); ++i) {
         c = s[i];
         if (c != '+' && c != '-')
             break;

@@ -300,7 +300,7 @@ AstNodePtr<FuncDecl> Parser::ParseFuncDecl() {
 
         ConditionalBufAdvance(TokenType::COMMA);
         node->AddChild(arg);
-        node->arg_count++;
+        ++(node->arg_count);
         arg_symbols[arg->GetChild<Name>(0)->value] = arg->GetType();
 
         if (Current()->GetType() != TokenType::VAR && !Current()->IsType()) {
@@ -424,27 +424,27 @@ AstNodePtr<AstNode> Parser::GetExprComponent() {
                 node->node_type = AST_INT_LITERAL;
                 AstNode::CastNode<LiteralValue>(node)->data =
                         static_cast<RnIntNative>(std::stol(Lookback()->GetLexeme()));
-                _intern_count++;
+                ++_intern_count;
                 break;
             }
             case TokenType::FLOAT_LITERAL: {
                 node->node_type = AST_FLOAT_LITERAL;
                 AstNode::CastNode<LiteralValue>(node)->data =
                         static_cast<RnFloatNative>(std::stod(Lookback()->GetLexeme()));
-                _intern_count++;
+                ++_intern_count;
                 break;
             }
             case TokenType::STRING_LITERAL: {
                 node->node_type = AST_STRING_LITERAL;
                 AstNode::CastNode<LiteralValue>(node)->data = Lookback()->GetLexeme();
-                _intern_count++;
+                ++_intern_count;
                 break;
             }
             case TokenType::BOOL_LITERAL: {
                 node->node_type = AST_BOOL_LITERAL;
                 AstNode::CastNode<LiteralValue>(node)->data =
                         Lookback()->GetLexeme() == "true";
-                _intern_count++;
+                ++_intern_count;
                 break;
             }
             case TokenType::NULL_LITERAL: {
@@ -1007,7 +1007,7 @@ AstNodePtr<Name> Parser::ParseName(bool is_declaration) {
         }
     }
 
-    _intern_count++;
+    ++_intern_count;
 
     return node;
 }
@@ -1066,7 +1066,7 @@ void Parser::ConvertScope(AstNodePtr<ScopeNode> scope) {
 
     scope->parent = _current_scope;
     _current_scope = scope;
-    _scope_count++;
+    ++_scope_count;
 }
 
 /*****************************************************************************/

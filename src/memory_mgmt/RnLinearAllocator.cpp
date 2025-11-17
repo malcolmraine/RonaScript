@@ -196,7 +196,7 @@ void RnLinearAllocator::Free(void *addr) {
             SplitBlock(current, n);
             current->available = 0;
             _current_block = NEXT_BLOCK(current);
-            _blocks_in_use++;
+            ++_blocks_in_use;
             _bytes_in_use += TOTAL_BLOCK_SIZE(current);
             return BLOCK_MEMORY_ADDR(current);
         }

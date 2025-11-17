@@ -149,13 +149,13 @@ void ArgParser::ShowHelp() {
 
 /*****************************************************************************/
 void ArgParser::Parse(int argc, char* argv[]) {
-    for (int i = 1; i < argc; i++) {
+    for (int i = 1; i < argc; ++i) {
         auto arg_str = std::string(argv[i]);
         if (_input_file.empty()) {
             if (_arguments.contains(arg_str)) {
                 auto argument = _arguments[arg_str];
                 if (argument->HasValue()) {
-                    i++;
+                    ++i;
                     argument->SetValue(std::string(argv[i]));
                 } else {
                     // Need to do this to toggle the set flag

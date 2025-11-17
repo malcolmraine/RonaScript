@@ -47,7 +47,7 @@ size_t File::LineCount(const std::string& path) {
 
     for (char c : GetContents(path)) {
         if (c == '\n') {
-            line_count++;
+            ++line_count;
         }
     }
     return line_count;

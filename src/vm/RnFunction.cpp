@@ -102,7 +102,7 @@ void RnFunction::PassArguments(const RnArrayNative& args, RnScope* scope) {
         throw std::runtime_error("Too many arguments passed to function '" + GetName() +
                                  "'");
     } else {
-        for (size_t i = 0; i < args.size(); i++) {
+        for (size_t i = 0; i < args.size(); ++i) {
             scope->StoreObject(_argument_index_map[i], args[i]);
         }
     }

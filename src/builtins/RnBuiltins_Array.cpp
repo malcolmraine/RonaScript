@@ -97,7 +97,7 @@ RN_BUILTIN_FUNC_DEFINE(array_push, RnType::RN_VOID, 1) {
 
     auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_NULL);
     auto array_obj = dynamic_cast<RnArrayObject*>(args.front());
-    for (size_t i = 1; i < args.size(); i++) {
+    for (size_t i = 1; i < args.size(); ++i) {
         array_obj->Append(args.at(i));
     }
     return ret_val;
@@ -122,7 +122,7 @@ RN_BUILTIN_FUNC_DEFINE(array_zeros, RnType::RN_ARRAY, 1) {
     auto ret_val = RnVirtualMachine::GetInstance()->CreateObject(RnType::RN_ARRAY);
     RnArrayNative data;
     data.reserve(args.front()->ToInt());
-    for (RnIntNative i = 0; i < args.front()->ToInt(); i++) {
+    for (RnIntNative i = 0; i < args.front()->ToInt(); ++i) {
         data.push_back(RnObject::Create(static_cast<RnIntNative>(0)));
     }
     ret_val->SetData(data);

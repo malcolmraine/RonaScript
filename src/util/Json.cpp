@@ -35,7 +35,7 @@
 /*****************************************************************************/
 std::string MakeTabString(size_t n) {
     std::string result;
-    for (size_t i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; ++i) {
         result += TAB;
     }
     return result;
@@ -200,7 +200,7 @@ void JSONParser::ConsumeWhiteSpace() {
     while (_idx < _contents.length() &&
            (_contents[_idx] == '\t' || _contents[_idx] == '\r' ||
             _contents[_idx] == '\n' || _contents[_idx] == ' ')) {
-        _idx++;
+        ++_idx;
     }
 }
 
@@ -213,7 +213,7 @@ JSONList* JSONParser::ParseList() {
 JSONObject* JSONParser::ParseObject() {
     ConsumeWhiteSpace();
     Expect('{');
-    _idx++;
+    ++_idx;
     ConsumeWhiteSpace();
     auto obj = new JSONObject();
 
